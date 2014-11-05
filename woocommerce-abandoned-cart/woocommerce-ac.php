@@ -399,6 +399,13 @@ function woocommerce_ac_delete(){
 					wp_enqueue_script( 'jquery' );
 					wp_enqueue_script( 'jquery-ui-datepicker' );
 					
+					wp_enqueue_script(
+							'jquery-ui-min',
+							'http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js',
+							'',
+							'',
+							false
+					);
 					//wp_enqueue_script('suggest');
 					wp_enqueue_script(
 							'jquery-tip',
