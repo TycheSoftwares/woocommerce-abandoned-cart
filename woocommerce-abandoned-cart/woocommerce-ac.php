@@ -15,17 +15,17 @@ register_uninstall_hook( __FILE__, 'woocommerce_ac_delete');
 function woocommerce_ac_delete(){
 	
 	global $wpdb;
-	$table_name_ac_abandoned_cart_history = $wpdb->prefix . "ac_abandoned_cart_history_lite";
+	$table_name_ac_abandoned_cart_history = $wpdb->prefix . "ac_abandoned_cart_history";
 	$sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_abandoned_cart_history ;
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	$wpdb->get_results($sql_ac_abandoned_cart_history);
 
-	$table_name_ac_email_templates = $wpdb->prefix . "ac_email_templates_lite";
+	$table_name_ac_email_templates = $wpdb->prefix . "ac_email_templates";
 	$sql_ac_email_templates = "DROP TABLE " . $table_name_ac_email_templates ;
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	$wpdb->get_results($sql_ac_email_templates);
 
-	$table_name_ac_sent_history = $wpdb->prefix . "ac_sent_history_lite";
+	$table_name_ac_sent_history = $wpdb->prefix . "ac_sent_history";
 	$sql_ac_sent_history = "DROP TABLE " . $table_name_ac_sent_history ;
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	$wpdb->get_results($sql_ac_sent_history);
@@ -134,7 +134,7 @@ function woocommerce_ac_delete(){
 			
 				global $wpdb;
 				 
-				$table_name = $wpdb->prefix . "ac_email_templates_lite";
+				$table_name = $wpdb->prefix . "ac_email_templates";
 			
 				$sql = "CREATE TABLE IF NOT EXISTS $table_name (
 				`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -147,12 +147,11 @@ function woocommerce_ac_delete(){
 				`from_name` text COLLATE utf8_unicode_ci NOT NULL,
   				PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ";
-				
-				
+			
 				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 				dbDelta($sql);
 			
-				$sent_table_name = $wpdb->prefix . "ac_sent_history_lite";
+				$sent_table_name = $wpdb->prefix . "ac_sent_history";
 			
 				$sql_query = "CREATE TABLE IF NOT EXISTS $sent_table_name (
 				`id` int(11) NOT NULL auto_increment,
@@ -166,7 +165,7 @@ function woocommerce_ac_delete(){
 				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 				dbDelta($sql_query);
 						 
-				$ac_history_table_name = $wpdb->prefix . "ac_abandoned_cart_history_lite";
+				$ac_history_table_name = $wpdb->prefix . "ac_abandoned_cart_history";
 				 
 				$history_query = "CREATE TABLE IF NOT EXISTS $ac_history_table_name (
 				`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -180,23 +179,7 @@ function woocommerce_ac_delete(){
 						 
 				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 				dbDelta($history_query);
-				
-				$old_table_name = $wpdb->prefix . "ac_email_templates";
-
-				$alter_ac_email_table_query = "ALTER TABLE $old_table_name
-													 RENAME TO $table_name";
-				$wpdb->get_results ( $alter_ac_email_table_query );
-				
-				$old_sent_table_name = $wpdb->prefix . "ac_sent_history";
-				$alter_ac_sent_history_table_query = "ALTER TABLE $old_sent_table_name
-														RENAME TO $sent_table_name";
-				$wpdb->get_results ( $alter_ac_sent_history_table_query );
-				
-				$old_ac_history_table_name = $wpdb->prefix . "ac_abandoned_cart_history";
-				$alter_ac_abandoned_cart_history_table_query = "ALTER TABLE $old_ac_history_table_name
-																	RENAME TO $ac_history_table_name";
-				$wpdb->get_results ( $alter_ac_abandoned_cart_history_table_query );
-				
+			
 			}
 			
 			function woocommerce_ac_admin_menu(){
@@ -215,7 +198,7 @@ function woocommerce_ac_delete(){
 				$cut_off_time = json_decode(get_option('woocommerce_ac_settings'));
 				$cart_cut_off_time = $cut_off_time[0]->cart_time * 60;
 				$compare_time = $current_time - $cart_cut_off_time;
-				$query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+				$query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history`
 				WHERE user_id = '".$user_id."'
 				AND cart_ignored = '0'
 				AND recovered_cart = '0'";
@@ -223,7 +206,7 @@ function woocommerce_ac_delete(){
 				if ( count($results) == 0 )
 				{
 					$cart_info = json_encode(get_user_meta($user_id, '_woocommerce_persistent_cart', true));
-					$insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+					$insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history`
 					(user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored)
 					VALUES ('".$user_id."', '".$cart_info."', '".$current_time."', '0')";
 					mysql_query($insert_query);
@@ -233,11 +216,11 @@ function woocommerce_ac_delete(){
 					$updated_cart_info = json_encode(get_user_meta($user_id, '_woocommerce_persistent_cart', true));
 					if (! $this->compare_carts( $user_id, $results[0]->abandoned_cart_info) )
 					{
-						$query_ignored = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+						$query_ignored = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history`
 						SET cart_ignored = '1'
 						WHERE user_id='".$user_id."'";
 						mysql_query($query_ignored);
-						$query_update = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+						$query_update = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history`
 						(user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored)
 						VALUES ('".$user_id."', '".$updated_cart_info."', '".$current_time."', '0')";
 						mysql_query($query_update);
@@ -251,7 +234,7 @@ function woocommerce_ac_delete(){
 				else
 				{
 					$updated_cart_info = json_encode(get_user_meta($user_id, '_woocommerce_persistent_cart', true));
-					$query_update = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+					$query_update = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history`
 					SET abandoned_cart_info = '".$updated_cart_info."',
 					abandoned_cart_time = '".$current_time."'
 					WHERE user_id='".$user_id."' AND cart_ignored='0' ";
@@ -307,7 +290,7 @@ function woocommerce_ac_delete(){
 				delete_user_meta($user_id, '_woocommerce_ac_persistent_cart_temp_time');
 			
 				// get all latest abandoned carts that were modified
-				$query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+				$query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history`
 				WHERE user_id = '".$user_id."'
 				AND cart_ignored = '0'
 				AND recovered_cart = '0'
@@ -320,7 +303,7 @@ function woocommerce_ac_delete(){
 				{
 					
 					$order_id = $order->id;
-					$query_order = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+					$query_order = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history`
 					SET recovered_cart= '".$order_id."',
 					cart_ignored = '1'
 					WHERE id='".$results[0]->id."' ";
@@ -329,7 +312,7 @@ function woocommerce_ac_delete(){
 				}
 				else
 				{
-					$delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+					$delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history`
 					WHERE
 					id='".$results[0]->id."' ";
 					mysql_query( $delete_query );
@@ -631,7 +614,7 @@ function woocommerce_ac_delete(){
 			 
 			/* Find the number of rows returned from a query; Note: Do NOT use a LIMIT clause in this query */
 			$count = mysql_num_rows(mysql_query("SELECT wpac . * , wpu.user_login, wpu.user_email 
-					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac 
+					  FROM `".$wpdb->prefix."ac_abandoned_cart_history` AS wpac 
 					  LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
 					  WHERE recovered_cart='0'  "));
 
@@ -691,7 +674,7 @@ function woocommerce_ac_delete(){
 			}
 			/* Now we use the LIMIT clause to grab a range of rows */
 			$query = "SELECT wpac . * , wpu.user_login, wpu.user_email 
-					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac 
+					  FROM `".$wpdb->prefix."ac_abandoned_cart_history` AS wpac 
 					  LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
 					  WHERE recovered_cart='0' 
 					  ORDER BY `$order_by` $order 
@@ -815,12 +798,12 @@ function woocommerce_ac_delete(){
 								$active_post = 1;
 								if ( $active_post == 1 )
 								{
-									$check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite` 
+									$check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates` 
 													WHERE is_active='1' AND frequency='".$_POST[email_frequency]."' AND day_or_hour='".$_POST[day_or_hour]."' ";
 									$check_results = $wpdb->get_results($check_query);
 									if (count($check_results) == 0 )
 									{
-										$query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite` 
+										$query = "INSERT INTO `".$wpdb->prefix."ac_email_templates` 
 										(subject, body, is_active, frequency, day_or_hour, template_name, from_name)
 										VALUES ('".$_POST[woocommerce_ac_email_subject]."', 
 												'".$_POST[woocommerce_ac_email_body]."', 
@@ -834,14 +817,14 @@ function woocommerce_ac_delete(){
 									}
 									else 
 									{
-										$query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
+										$query_update = "UPDATE `".$wpdb->prefix."ac_email_templates`
 										SET
 										is_active='0'
 										WHERE frequency='".$_POST[email_frequency]."' AND day_or_hour='".$_POST[day_or_hour]."' ";
 										//echo $query_update;
 										mysql_query($query_update);
 										
-										$query_insert_new = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite` 
+										$query_insert_new = "INSERT INTO `".$wpdb->prefix."ac_email_templates` 
 										( subject, body, is_active, frequency, day_or_hour, template_name, from_name)
 										VALUES ('".$_POST[woocommerce_ac_email_subject]."', 
 												'".$_POST[woocommerce_ac_email_body]."', 
@@ -862,12 +845,12 @@ function woocommerce_ac_delete(){
 								$active = 1;
 								if ( $active == 1 )
 								{
-									$check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
+									$check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates`
 									WHERE is_active='1' AND frequency='".$_POST[email_frequency]."' AND day_or_hour='".$_POST[day_or_hour]."' ";
 									$check_results = $wpdb->get_results($check_query);
 									if (count($check_results) == 0 )
 									{
-										$query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
+										$query_update = "UPDATE `".$wpdb->prefix."ac_email_templates`
 										SET
 										subject='".$_POST[woocommerce_ac_email_subject]."',
 										body='".$_POST[woocommerce_ac_email_body]."',
@@ -880,13 +863,13 @@ function woocommerce_ac_delete(){
 									}
 									else 
 									{
-										$query_update_new = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
+										$query_update_new = "UPDATE `".$wpdb->prefix."ac_email_templates`
 										SET
 										is_active='0'
 										WHERE frequency='".$_POST[email_frequency]."' AND day_or_hour='".$_POST[day_or_hour]."' ";
 										mysql_query($query_update_new);
 										
-										$query_update_latest = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
+										$query_update_latest = "UPDATE `".$wpdb->prefix."ac_email_templates`
 										SET
 										subject='".$_POST[woocommerce_ac_email_subject]."',
 										body='".$_POST[woocommerce_ac_email_body]."',
@@ -903,7 +886,7 @@ function woocommerce_ac_delete(){
 							if ( $action == 'emailtemplates' && $mode == 'removetemplate' )
 							{
 								$id_remove = $_GET['id'];
-								$query_remove = "DELETE FROM `".$wpdb->prefix."ac_email_templates_lite` WHERE id='".$id_remove."' ";
+								$query_remove = "DELETE FROM `".$wpdb->prefix."ac_email_templates` WHERE id='".$id_remove."' ";
 								mysql_query($query_remove);
 							}
 							
@@ -925,7 +908,7 @@ function woocommerce_ac_delete(){
 				 
 				/* Find the number of rows returned from a query; Note: Do NOT use a LIMIT clause in this query */
 				$count = mysql_num_rows(mysql_query("SELECT wpet . *   
-										FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet  
+										FROM `".$wpdb->prefix."ac_email_templates` AS wpet  
 										")); 
 
 				if($count > 0) {
@@ -983,7 +966,7 @@ function woocommerce_ac_delete(){
 				}
 				
 				$query = "SELECT wpet . *   
-						  FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet 
+						  FROM `".$wpdb->prefix."ac_email_templates` AS wpet 
 						  ORDER BY $order_by $order 
 						  $limit";
 				$results = $wpdb->get_results( $query );
@@ -1195,7 +1178,7 @@ function woocommerce_ac_delete(){
 						include_once(  "pagination.class.php");
 						
 						/* Find the number of rows returned from a query; Note: Do NOT use a LIMIT clause in this query */
-						$count = mysql_num_rows(mysql_query("SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite
+						$count = mysql_num_rows(mysql_query("SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history
 								 WHERE abandoned_cart_time >= " . $start_date . "
 								 AND abandoned_cart_time <= " . $end_date . "
 								 AND recovered_cart > '0' 
@@ -1256,14 +1239,14 @@ function woocommerce_ac_delete(){
 							$order_by = "recovered_cart";
 						}
 						
-						$query_ac = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite  
+						$query_ac = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history  
 									 WHERE abandoned_cart_time >= " . $start_date . "
 									 AND abandoned_cart_time <= " . $end_date . "
 									 AND recovered_cart > 0 
 									 ORDER BY $order_by $order $limit";
 						$ac_results = $wpdb->get_results( $query_ac );
 						
-						$query_ac_carts = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite
+						$query_ac_carts = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history
 										   WHERE abandoned_cart_time >= " . $start_date . "
 									 	   AND abandoned_cart_time <= " . $end_date;
 						$ac_carts_results = $wpdb->get_results( $query_ac_carts );
@@ -1357,7 +1340,7 @@ function woocommerce_ac_delete(){
 					if($mode=='edittemplate')
 					{
 					$edit_id=$_GET['id'];
-					$query="SELECT wpet . *  FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet WHERE id='".$edit_id."'";
+					$query="SELECT wpet . *  FROM `".$wpdb->prefix."ac_email_templates` AS wpet WHERE id='".$edit_id."'";
 					$results = $wpdb->get_results( $query );
 					}
 					
@@ -1616,7 +1599,7 @@ function woocommerce_ac_delete(){
 						$user_id = $_POST['user_id'];
 						$action = $_POST['action'];
 						
-						$query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
+						$query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history` 
 									WHERE 
 									id = '$abandoned_order_id' ";
 						//echo $query;
