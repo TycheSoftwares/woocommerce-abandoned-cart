@@ -2,7 +2,7 @@
 Contributors: ashokrane
 Tags: abandon cart, shopping cart abandonment
 Requires at least: 1.3
-Tested up to: 2.0.8
+Tested up to: 4.1.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -46,9 +46,9 @@ Note: Some features are available in the PRO version only.
 
 **Email Sending Setup:**
 
-You need to schedule the following script present in the plugin folder so emails are sent out: "woocommerce-abandon-cart-lite/cron/send_email.php"
+From version 1.3, it is not mandatory to set a cron job via CPanel for the abandoned cart email notifications to be sent. We are now using WP-Cron that sends the emails automatically whenever a page is requested.
 
-**[Create Cron Jobs](http://wpdailybits.com/blog/replace-wordpress-cron-with-real-cron-job/74 "Create Cron Jobs")**
+Abandoned Cart Plugin relies on a function called WP-Cron, and this function only runs when there is a page requested. So, if there are no visits to your website, then the scheduled jobs are not run. Generally this method of sending the abandoned cart notification emails is reliable. However, if you are not very confident about the traffic volume of your website, then you can set a manual cron job via Cpanel or any other control panel that your host provides. 
 
 == Installation ==
 
@@ -79,6 +79,14 @@ Please ensure you have followed the instructions in "Email Sending Setup" right 
 4. Lists Recovered Orders.
 
 == Changelog ==
+
+= 1.3 =
+* The abandoned cart email notifications are now sent out automatically without the necessity of having to set up a cron job manually.
+
+= 1.2 =
+* The test emails were not getting sent.
+* Warnings fixed for some of the plugin setting pages.
+* The image urls in the email were coming broken, this is fixed.
 
 = 1.1 =
 * Compatibility with WooCommerce 2.x versions
