@@ -71,9 +71,8 @@ require_once( ABSPATH . 'wp-load.php' );
 			
 					$email_subject = $value->subject;
 					$user_email_from = get_option('admin_email');
-					$headers[] = "From: ".$value->from_name." <".$user_email_from.">";
-					$headers[] = "Content-Type: text/html";
-					
+					$headers[] = "From: ".$value->from_name." <".$user_email_from.">"."\r\n";
+					$headers[] = "Content-Type: text/html"."\r\n";
 					$template_id = $value->id;
 					
 					foreach ($carts as $key => $value )
