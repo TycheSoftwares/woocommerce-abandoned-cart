@@ -96,7 +96,7 @@ require_once( ABSPATH . 'wp-load.php' );
 								$query_sent = "INSERT INTO `".$wpdb->prefix."ac_sent_history` (template_id, abandoned_order_id, sent_time, sent_email_id)
 								VALUES ('".$template_id."', '".$value->id."', '".current_time('mysql')."', '".$value->user_email."' )";
 			
-								mysql_query($query_sent);
+								$wpdb->query($query_sent);
 			
 								$query_id = "SELECT * FROM `".$wpdb->prefix."ac_sent_history` WHERE template_id='".$template_id."' AND abandoned_order_id='".$value->id."'
 								ORDER BY id DESC
