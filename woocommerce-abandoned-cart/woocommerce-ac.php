@@ -126,6 +126,7 @@ function woocommerce_ac_delete(){
 				add_filter('woocommerce_order_details_after_order_table', array(&$this, 'action_after_delivery_session'));
 				
 				add_action( 'admin_init', array(&$this, 'action_admin_init' ));
+				add_action( 'admin_init', array(&$this, 'ac_lite_update_db_check' ));
 				
 				add_action( 'admin_enqueue_scripts', array(&$this, 'my_enqueue_scripts_js' ));
 				add_action( 'admin_enqueue_scripts', array(&$this, 'my_enqueue_scripts_css' ));
@@ -202,23 +203,35 @@ function woocommerce_ac_delete(){
 						 
 				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 				dbDelta($history_query);
+			}
 			
-				$old_table_name = $wpdb->base_prefix . "ac_email_templates";
-
-				$alter_ac_email_table_query = "ALTER TABLE $old_table_name
-													 RENAME TO $table_name";
-				$wpdb->get_results ( $alter_ac_email_table_query );
-				
-				$old_sent_table_name = $wpdb->base_prefix . "ac_sent_history";
-				$alter_ac_sent_history_table_query = "ALTER TABLE $old_sent_table_name
-														RENAME TO $sent_table_name";
-				$wpdb->get_results ( $alter_ac_sent_history_table_query );
-				
-				$old_ac_history_table_name = $wpdb->base_prefix . "ac_abandoned_cart_history";
-				$alter_ac_abandoned_cart_history_table_query = "ALTER TABLE $old_ac_history_table_name
-																	RENAME TO $ac_history_table_name";
-				$wpdb->get_results ( $alter_ac_abandoned_cart_history_table_query );
-				
+			function ac_lite_update_db_check() {
+			    global $wpdb;
+			    if( get_option('ac_lite_alter_table_queries') != 'yes') {
+			         
+			        $old_table_name = $wpdb->base_prefix . "ac_email_templates";
+			        $table_name = $wpdb->base_prefix . "ac_email_templates_lite";
+			         
+			        $alter_ac_email_table_query = "ALTER TABLE $old_table_name
+			        RENAME TO $table_name";
+			        $wpdb->get_results ( $alter_ac_email_table_query );
+			         
+			        $old_sent_table_name = $wpdb->base_prefix . "ac_sent_history";
+			        $sent_table_name = $wpdb->base_prefix . "ac_sent_history_lite";
+			         
+			        $alter_ac_sent_history_table_query = "ALTER TABLE $old_sent_table_name
+			        RENAME TO $sent_table_name";
+			        $wpdb->get_results ( $alter_ac_sent_history_table_query );
+			         
+			        $old_ac_history_table_name = $wpdb->base_prefix . "ac_abandoned_cart_history";
+			        $ac_history_table_name = $wpdb->base_prefix . "ac_abandoned_cart_history_lite";
+			         
+			        $alter_ac_abandoned_cart_history_table_query = "ALTER TABLE $old_ac_history_table_name
+			        RENAME TO $ac_history_table_name";
+			        $wpdb->get_results ( $alter_ac_abandoned_cart_history_table_query );
+			         
+			        update_option('ac_lite_alter_table_queries','yes');
+			    }
 			}
 			
 			function woocommerce_ac_admin_menu(){
