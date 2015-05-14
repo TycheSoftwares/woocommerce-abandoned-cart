@@ -46,7 +46,7 @@ require_once( ABSPATH . 'wp-load.php' );
 			
 				//Fetch all active templates present in the system
 				$query = "SELECT wpet . *
-				FROM `".$wpdb->prefix."ac_email_templates` AS wpet
+				FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet
 				WHERE wpet.is_active = '1'
 				ORDER BY `day_or_hour` DESC, `frequency` ASC ";
 				$results = $wpdb->get_results( $query );
@@ -93,12 +93,12 @@ require_once( ABSPATH . 'wp-load.php' );
 								$email_body = str_replace("{{customer.lastname}}", get_user_meta($value->user_id, 'last_name', true), $email_body);
 								$email_body = str_replace("{{customer.fullname}}", get_user_meta($value->user_id, 'first_name', true)." ".get_user_meta($value->user_id, 'last_name', true), $email_body);
 								
-								$query_sent = "INSERT INTO `".$wpdb->prefix."ac_sent_history` (template_id, abandoned_order_id, sent_time, sent_email_id)
+								$query_sent = "INSERT INTO `".$wpdb->prefix."ac_sent_history_lite` (template_id, abandoned_order_id, sent_time, sent_email_id)
 								VALUES ('".$template_id."', '".$value->id."', '".current_time('mysql')."', '".$value->user_email."' )";
 			
 								$wpdb->query($query_sent);
 			
-								$query_id = "SELECT * FROM `".$wpdb->prefix."ac_sent_history` WHERE template_id='".$template_id."' AND abandoned_order_id='".$value->id."'
+								$query_id = "SELECT * FROM `".$wpdb->prefix."ac_sent_history_lite` WHERE template_id='".$template_id."' AND abandoned_order_id='".$value->id."'
 								ORDER BY id DESC
 								LIMIT 1 ";
 			
@@ -132,7 +132,7 @@ require_once( ABSPATH . 'wp-load.php' );
 				$cart_time = current_time('timestamp') - $template_to_send_after_time - $cart_abandon_cut_off_time;
 			
 				$query = "SELECT wpac . * , wpu.user_login, wpu.user_email
-				FROM `".$wpdb->prefix."ac_abandoned_cart_history` AS wpac
+				FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
 				LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
 				WHERE cart_ignored = '0'
 				AND abandoned_cart_time < $cart_time
@@ -149,8 +149,8 @@ require_once( ABSPATH . 'wp-load.php' );
 				
 				global $wpdb;
 				$query = "SELECT wpcs . * , wpac . abandoned_cart_time , wpac . user_id
-				FROM `".$wpdb->prefix."ac_sent_history` AS wpcs
-				LEFT JOIN ".$wpdb->prefix."ac_abandoned_cart_history AS wpac ON wpcs.abandoned_order_id =  wpac.id
+				FROM `".$wpdb->prefix."ac_sent_history_lite` AS wpcs
+				LEFT JOIN ".$wpdb->prefix."ac_abandoned_cart_history_lite AS wpac ON wpcs.abandoned_order_id =  wpac.id
 				WHERE
 				template_id='".$template_id."'
 				AND
