@@ -106,6 +106,68 @@ require_once( ABSPATH . 'wp-load.php' );
 			
 								$email_sent_id = $results_sent[0]->id;
 								
+								$var = '';
+								if( preg_match( "{{products.cart}}", $email_body, $matched ) ) {
+								    $var = '
+                                                                <h3> Your Shopping Cart </h3>
+                                                                <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
+                                                                <tr>
+                                                                <th> Item </th>
+                                                                <th> Name </th>
+                                                                <th> Quantity </th>
+                                                                <th> Price </th>
+                                                                <th> Line Subtotal </th>
+                                                                </tr>';
+								    $cart_details = $cart_info_db_field->cart;
+								    $cart_total = $item_subtotal = $item_total = 0;
+								    $sub_line_prod_name = '';
+								    foreach ( $cart_details as $k => $v ) {
+								        $quantity_total	= $v->quantity;
+								        $product_id	= $v->product_id;
+								        $prod_name = get_post($product_id);
+								        $product_link_track = get_permalink( $product_id );
+								        $product_name = $prod_name->post_title;
+								        if ($sub_line_prod_name == '') {
+								            $sub_line_prod_name = $product_name;
+								        }
+								        // Item subtotal is calculated as product total including taxes
+								        if( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
+								            $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
+								        } else {
+								            $item_subtotal = $item_subtotal + $v->line_total;
+								        }
+								
+								        //	Line total
+								        $item_total = $item_subtotal;
+								        $item_subtotal	= $item_subtotal / $quantity_total;
+								        $item_total_display = number_format( $item_total, 2 );
+								        $item_subtotal	= number_format( $item_subtotal, 2 );
+								        $product = get_product( $product_id );
+								        $prod_image = $product->get_image();
+								        $var .='<tr>
+                                                                        <td> <a href="'.$product_link_track.'">'.$prod_image.'</a></td>
+                                                                        <td> <a href="'.$product_link_track.'">'.$product_name.'</a></td>
+                                                                        <td> '.$quantity_total.'</td>
+                                                                        <td> '.get_woocommerce_currency_symbol()." ".$item_subtotal.'</td>
+                                                                        <td> '.get_woocommerce_currency_symbol()." ".$item_total_display.'</td>
+                                                                        </tr>';
+								        $cart_total += $item_total;
+								        $item_subtotal = $item_total = 0;
+								    }
+								    $cart_total = number_format( $cart_total, 2 );
+								    $var .= '<tr>
+                                                                <td> </td>
+                                                                <td> </td>
+                                                                <td> </td>
+                                                                <td> Cart Total : </td>
+                                                                <td> '.get_woocommerce_currency_symbol()." ".$cart_total.'</td>
+                                                                </tr>';
+								    $var .= '</table>
+                                                                ';
+								    $email_body = str_replace( "{{products.cart}}", $var, $email_body );
+								    $email_subject = str_replace( "{{product.name}}", $sub_line_prod_name, $email_subject );
+								}
+								
 								$user_email = $value->user_email;
 			
 								//echo $email_body."<hr>";

@@ -23,6 +23,8 @@
                                                                 a.addImmediate(b,"Customer Full Name", '{{customer.fullname}}');
                                                                 
 																b.addSeparator();
+																
+																a.addImmediate(b,"Product Information/Cart Content", '{{products.cart}}');
                                                                
                                                         });
                                                 return d
