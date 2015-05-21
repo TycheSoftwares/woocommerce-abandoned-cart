@@ -207,28 +207,33 @@ function woocommerce_ac_delete(){
 			
 			function ac_lite_update_db_check() {
 			    global $wpdb;
-			    if( get_option('ac_lite_alter_table_queries') != 'yes') {
-			         
-			        $old_table_name = $wpdb->base_prefix . "ac_email_templates";
-			        $table_name = $wpdb->base_prefix . "ac_email_templates_lite";
-			         
-			        $alter_ac_email_table_query = "ALTER TABLE $old_table_name
-			        RENAME TO $table_name";
-			        $wpdb->get_results ( $alter_ac_email_table_query );
-			         
-			        $old_sent_table_name = $wpdb->base_prefix . "ac_sent_history";
-			        $sent_table_name = $wpdb->base_prefix . "ac_sent_history_lite";
-			         
-			        $alter_ac_sent_history_table_query = "ALTER TABLE $old_sent_table_name
-			        RENAME TO $sent_table_name";
-			        $wpdb->get_results ( $alter_ac_sent_history_table_query );
-			         
-			        $old_ac_history_table_name = $wpdb->base_prefix . "ac_abandoned_cart_history";
-			        $ac_history_table_name = $wpdb->base_prefix . "ac_abandoned_cart_history_lite";
-			         
-			        $alter_ac_abandoned_cart_history_table_query = "ALTER TABLE $old_ac_history_table_name
-			        RENAME TO $ac_history_table_name";
-			        $wpdb->get_results ( $alter_ac_abandoned_cart_history_table_query );
+			    if( get_option('ac_lite_alter_table_queries') != 'yes') {     
+			        if( $wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "ac_email_templates'") === $wpdb->prefix . 'ac_email_templates') {
+			             $old_table_name = $wpdb->base_prefix . "ac_email_templates";
+			             $table_name = $wpdb->base_prefix . "ac_email_templates_lite";
+			        
+			             $alter_ac_email_table_query = "ALTER TABLE $old_table_name
+			             RENAME TO $table_name";
+			             $wpdb->get_results ( $alter_ac_email_table_query );
+			        
+			        }
+			        
+			        if($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "ac_sent_history'") === $wpdb->prefix . 'ac_sent_history') { 
+			             $old_sent_table_name = $wpdb->base_prefix . "ac_sent_history";
+			             $sent_table_name = $wpdb->base_prefix . "ac_sent_history_lite";
+			             $alter_ac_sent_history_table_query = "ALTER TABLE $old_sent_table_name
+			             RENAME TO $sent_table_name";
+			             $wpdb->get_results ( $alter_ac_sent_history_table_query );
+			        }
+			        
+			        if( $wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "ac_abandoned_cart_history'") === $wpdb->prefix . 'ac_abandoned_cart_history') {
+			             $old_ac_history_table_name = $wpdb->base_prefix . "ac_abandoned_cart_history";
+			             $ac_history_table_name = $wpdb->base_prefix . "ac_abandoned_cart_history_lite";
+			        
+			             $alter_ac_abandoned_cart_history_table_query = "ALTER TABLE $old_ac_history_table_name
+			             RENAME TO $ac_history_table_name";
+			             $wpdb->get_results ( $alter_ac_abandoned_cart_history_table_query );
+			        }
 			         
 			        update_option('ac_lite_alter_table_queries','yes');
 			    }
