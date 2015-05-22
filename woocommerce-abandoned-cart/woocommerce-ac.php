@@ -633,9 +633,13 @@ function woocommerce_ac_delete(){
 							<?php } ?>
 							
 							<?php
-								//$enable_email_sett = array();
-								$enable_email_sett = json_decode(get_option('woocommerce_ac_settings'));
-								?>
+								
+							     $enable_email_sett_arr = array();
+							     $enable_email_sett = get_option( 'woocommerce_ac_settings' );
+							         if ( $enable_email_sett != '' && $enable_email_sett != '{}' && $enable_email_sett != '[]' && $enable_email_sett != 'null' ) {
+							         $enable_email_sett_arr = json_decode( $enable_email_sett );
+							         }
+							?>
 							<div id="content">
 							  <form method="post" action="" id="ac_settings">
 								  <input type="hidden" name="ac_settings_frm" value="save">
@@ -651,11 +655,24 @@ function woocommerce_ac_delete(){
 				    								</th>
 				    								<td>
 														<?php
+														
 														$cart_time = "";
-														if ( $enable_email_sett[0]->cart_time != '' || $enable_email_sett[0]->cart_time != 'null')
-														{
-															$cart_time = $enable_email_sett[0]->cart_time;
+														
+														if ( count($enable_email_sett_arr) > 0 ) {
+														
+														    if ( $enable_email_sett_arr[0]->cart_time != '' || $enable_email_sett_arr[0]->cart_time != 'null'){
+														
+														        $cart_time = $enable_email_sett_arr[0]->cart_time;
+														    } else {
+														        
+														        $cart_time = 60;
+														    }
 														}
+														else {
+														    	
+														    $cart_time = 60;
+														}
+				    									
 				    									print'<input type="text" name="cart_abandonment_time" id="cart_abandonment_time" size="5" value="'.$cart_time.'"> minutes
 				    									';?>
 				    									<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Consider cart abandoned after X minutes of item being added to cart & order not placed', 'woocommerce') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
