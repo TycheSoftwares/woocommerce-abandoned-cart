@@ -257,7 +257,29 @@ function woocommerce_ac_delete(){
 				$user_id = get_current_user_id();
 				$current_time = current_time('timestamp');
 				$cut_off_time = json_decode(get_option('woocommerce_ac_settings'));
-				$cart_cut_off_time = $cut_off_time[0]->cart_time * 60;
+				//$cart_cut_off_time = $cut_off_time[0]->cart_time * 60;
+				$cart_cut_off_time_arr = array();
+				$cart_cut_off_time = get_option( 'woocommerce_ac_settings' );
+				if ( $cart_cut_off_time != '' && $cart_cut_off_time != '{}' && $cart_cut_off_time != '[]' && $cart_cut_off_time != 'null' ) {
+				    $cart_cut_off_time_arr = json_decode( $cart_cut_off_time );
+				}
+					
+				$cart_cut_off_time = "";
+				
+				if ( count($cart_cut_off_time_arr) > 0 ) {
+				
+				    if ( $cart_cut_off_time_arr[0]->cart_cut_off_time != '' || $cart_cut_off_time_arr[0]->cart_cut_off_time != 'null'){
+				
+				        $cart_cut_off_time = $cart_cut_off_time_arr[0]->cart_cut_off_time;
+				    } else {
+				
+				        $cart_cut_off_time = 60;
+				    }
+				}
+				else {
+				     
+				    $cart_cut_off_time = 60;
+				}
 				$compare_time = $current_time - $cart_cut_off_time;
 				$query = "SELECT * FROM `".$wpdb->base_prefix."ac_abandoned_cart_history_lite`
 				WHERE user_id = '".$user_id."'
