@@ -52,6 +52,10 @@ function woocommerce_ac_delete(){
 	$sql_ac_sent_history = "DROP TABLE " . $table_name_ac_sent_history ;
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	$wpdb->get_results($sql_ac_sent_history);
+	
+	delete_option ( 'woocommerce_ac_email_body' );
+	
+	delete_option ( 'woocommerce_ac_settings' );
 
 }
 //include_once("lang.php");
