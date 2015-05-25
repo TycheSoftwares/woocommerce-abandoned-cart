@@ -207,6 +207,12 @@ function woocommerce_ac_delete(){
 						 
 				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 				dbDelta($history_query);
+				
+				$ac_settings = new stdClass();
+				$ac_settings->cart_time = '60';
+				$woo_ac_settings[] = $ac_settings;
+				$woocommerce_ac_settings = $woo_ac_settings;
+				add_option  ( 'woocommerce_ac_settings', $woocommerce_ac_settings );
 			}
 			
 			function ac_lite_update_db_check() {
@@ -256,8 +262,14 @@ function woocommerce_ac_delete(){
 				global $wpdb;
 				$user_id = get_current_user_id();
 				$current_time = current_time('timestamp');
-				//$cut_off_time = json_decode(get_option('woocommerce_ac_settings'));
-				//$cart_cut_off_time = $cut_off_time[0]->cart_time * 60;
+				$cut_off_time = json_decode(get_option('woocommerce_ac_settings'));
+				if(isset($cut_off_time[0]->cart_time)) {
+				    $cart_cut_off_time = $cut_off_time[0]->cart_time * 60;
+				} else {
+				    $cart_cut_off_time = 60 * 60;
+				}
+				//
+				/*$cart_cut_off_time = $cut_off_time[0]->cart_time * 60;
 				$cart_cut_off_time_arr = array();
 				$cart_cut_off_time = get_option( 'woocommerce_ac_settings' );
 				if ( $cart_cut_off_time != '' && $cart_cut_off_time != '{}' && $cart_cut_off_time != '[]' && $cart_cut_off_time != 'null' ) {
@@ -280,6 +292,7 @@ function woocommerce_ac_delete(){
 				     
 				    $cart_cut_off_time = 60;
 				}
+				*/
 				$compare_time = $current_time - $cart_cut_off_time;
 				$query = "SELECT * FROM `".$wpdb->base_prefix."ac_abandoned_cart_history_lite`
 				WHERE user_id = '".$user_id."'
@@ -857,7 +870,11 @@ function woocommerce_ac_delete(){
 							}
 							
 							$ac_cutoff_time = json_decode(get_option('woocommerce_ac_settings'));
-							$cut_off_time = $ac_cutoff_time[0]->cart_time * 60;
+							if(isset($ac_cutoff_time[0]->cart_time)) {
+							    $cut_off_time = $ac_cutoff_time[0]->cart_time * 60;
+							} else {
+							    $cut_off_time = 60 * 60;
+							}
 							$current_time = current_time('timestamp');
 							
 							$compare_time = $current_time - $cart_update_time;
