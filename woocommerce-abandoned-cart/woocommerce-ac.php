@@ -256,7 +256,7 @@ function woocommerce_ac_delete(){
 				global $wpdb;
 				$user_id = get_current_user_id();
 				$current_time = current_time('timestamp');
-				$cut_off_time = json_decode(get_option('woocommerce_ac_settings'));
+				//$cut_off_time = json_decode(get_option('woocommerce_ac_settings'));
 				//$cart_cut_off_time = $cut_off_time[0]->cart_time * 60;
 				$cart_cut_off_time_arr = array();
 				$cart_cut_off_time = get_option( 'woocommerce_ac_settings' );
@@ -268,9 +268,9 @@ function woocommerce_ac_delete(){
 				
 				if ( count($cart_cut_off_time_arr) > 0 ) {
 				
-				    if ( $cart_cut_off_time_arr[0]->cart_cut_off_time != '' || $cart_cut_off_time_arr[0]->cart_cut_off_time != 'null'){
+				    if ( $cart_cut_off_time_arr[0]->cart_time != '' || $cart_cut_off_time_arr[0]->cart_time != 'null'){
 				
-				        $cart_cut_off_time = $cart_cut_off_time_arr[0]->cart_cut_off_time;
+				        $cart_cut_off_time = $cart_cut_off_time_arr[0]->cart_time;
 				    } else {
 				
 				        $cart_cut_off_time = 60;
