@@ -211,7 +211,7 @@ function woocommerce_ac_delete(){
 				$ac_settings = new stdClass();
 				$ac_settings->cart_time = '60';
 				$woo_ac_settings[] = $ac_settings;
-				$woocommerce_ac_settings = $woo_ac_settings;
+				$woocommerce_ac_settings = json_encode($woo_ac_settings);
 				add_option  ( 'woocommerce_ac_settings', $woocommerce_ac_settings );
 			}
 			
