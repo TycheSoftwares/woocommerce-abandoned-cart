@@ -65,7 +65,7 @@ function woocommerce_ac_delete(){
 	/**
 	 * Localisation
 	 **/
-	load_plugin_textdomain('woocommerce-ac', false, dirname( plugin_basename( __FILE__ ) ) . '/');
+	//load_plugin_textdomain('woocommerce-ac', false, dirname( plugin_basename( __FILE__ ) ) . '/');
 
 	/**
 	 * woocommerce_abandon_cart class
@@ -132,6 +132,9 @@ function woocommerce_ac_delete(){
 				add_action( 'admin_init', array(&$this, 'action_admin_init' ));
 				add_action( 'admin_init', array(&$this, 'ac_lite_update_db_check' ));
 				
+				// Language translation
+				add_action( 'init', array(&$this, 'update_po_file' ));
+				
 				add_action( 'admin_enqueue_scripts', array(&$this, 'my_enqueue_scripts_js' ));
 				add_action( 'admin_enqueue_scripts', array(&$this, 'my_enqueue_scripts_css' ));
 				
@@ -152,7 +155,17 @@ function woocommerce_ac_delete(){
 				}
 				
 			}
+			// Language Translation
+			function  update_po_file(){
+			    $domain = 'woocommerce-ac';
+			    $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+			    if ( $loaded = load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . $domain . '-' . $locale . '.mo' ) ) {
+			        return $loaded;
+			    } else {
 			
+			        load_plugin_textdomain( $domain, FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+			    }
+			}
 			/*-----------------------------------------------------------------------------------*/
 			/* Class Functions */
 			/*-----------------------------------------------------------------------------------*/
@@ -684,11 +697,10 @@ function woocommerce_ac_delete(){
 														    $cart_time = 60;
 														}
 				    									
-				    									print'<input type="text" name="cart_abandonment_time" id="cart_abandonment_time" size="5" value="'.$cart_time.'"> minutes
-				    									';?>
-				    									<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Consider cart abandoned after X minutes of item being added to cart & order not placed', 'woocommerce') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
-				    									<!-- <span class="description"><?php
-				    										_e( 'Consider cart abandoned after X minutes of item being added to cart & order not placed', 'woocommerce-ac' );
+														?>
+				    									<input type="text" name="cart_abandonment_time" id="cart_abandonment_time" size="5" value="<?php echo $cart_time; ?> "> <?php _e( 'minutes', 'woocommerce-ac' );?>
+				    									<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Consider cart abandoned after X minutes of item being added to cart & order not placed', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
+				    									<!-- <span class="description"><?php _e( 'Consider cart abandoned after X minutes of item being added to cart & order not placed', 'woocommerce-ac' );
 				    									?></span> -->
 				    								</td>
 				    							</tr>
@@ -1238,8 +1250,9 @@ function woocommerce_ac_delete(){
 						if ($duration_range == "") $duration_range = "last_seven";
 						//global $this->duration_range_select,$this->start_end_dates;
 						
+
+						_e( 'The Report below shows how many Abandoned Carts we were able to recover for you by sending automatic emails to encourage shoppers.', 'woocommerce-ac');
 						?>
-						<p> The Report below shows how many Abandoned Carts we were able to recover for you by sending automatic emails to encourage shoppers.</p>
 						<div id="recovered_stats" class="postbox" style="display:block">
 						
 							<div class="inside">
@@ -1465,7 +1478,7 @@ function woocommerce_ac_delete(){
 						?>
 						<div id="recovered_stats" class="postbox" style="display:block">
 						<div class="inside" >
-						<p style="font-size: 15px"> During the selected range <strong><?php echo $count_carts; ?> </strong> carts totaling <strong><?php echo get_woocommerce_currency_symbol()." ".$total_value; ?></strong> were abandoned. We were able to recover <strong><?php echo $recovered_item; ?></strong> of them, which led to an extra <strong><?php echo get_woocommerce_currency_symbol()." ".$recovered_total; ?></strong> in sales</p>
+						<p style="font-size: 15px"> <?php _e('During the selected range', 'woocommerce-ac');?> <strong> <?php echo $count_carts; ?> </strong> <?php _e('carts totaling', 'woocommerce-ac');?> <strong> <?php echo get_woocommerce_currency_symbol()." ".$total_value; ?> </strong> <?php _e('were abandoned. We were able to recover', 'woocommerce-ac');?> <strong> <?php echo $recovered_item; ?> </strong> <?php _e('of them, which led to an extra', 'woocommerce-ac');?> <strong> <?php echo get_woocommerce_currency_symbol()." ".$recovered_total; ?> </strong> <?php _e('in sales', 'woocommerce-ac');?></p>
 						</div>
 						</div>
 						
@@ -1531,7 +1544,7 @@ function woocommerce_ac_delete(){
 												
 												<tr>
 													<th>
-														<label for="woocommerce_ac_template_name"><b><?php _e( 'Template Name:', 'woocommerce-ac ');?></b></label>
+														<label for="woocommerce_ac_template_name"><b><?php _e( 'Template Name:', 'woocommerce-ac');?></b></label>
 													</th>
 													<td>
 													<?php
@@ -1542,7 +1555,7 @@ function woocommerce_ac_delete(){
 													}
 													
 													print'<input type="text" name="woocommerce_ac_template_name" id="woocommerce_ac_template_name" class="regular-text" value="'.$template_name.'">';?>
-													<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter a template name for reference', 'woocommerce') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
+													<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter a template name for reference', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
 												</tr>
 												
 											    <tr>
@@ -1558,7 +1571,7 @@ function woocommerce_ac_delete(){
 													}
 													
 													print'<input type="text" name="woocommerce_ac_from_name" id="woocommerce_ac_from_name" class="regular-text" value="'.$from_name.'">';?>
-													<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the name that should appear in the email sent', 'woocommerce') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
+													<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the name that should appear in the email sent', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
 													<?php //echo stripslashes(get_option( 'woocommerce_ac_email_body' )); ?></textarea>
 												</tr>
 												
@@ -1575,7 +1588,7 @@ function woocommerce_ac_delete(){
 													}
 													
 													print'<input type="text" name="woocommerce_ac_email_subject" id="woocommerce_ac_email_subject" class="regular-text" value="'.$subject_edit.'">';?>
-													<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the subject that should appear in the email sent', 'woocommerce') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
+													<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the subject that should appear in the email sent', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
 													<?php //echo stripslashes(get_option( 'woocommerce_ac_email_body' )); ?></textarea>
 												</tr>
 			
@@ -1680,7 +1693,7 @@ function woocommerce_ac_delete(){
 				    							
 				    							<input type="text" id="send_test_email" name="send_test_email" class="regular-text" >
 				    							<input type="button" value="Send a test email" id="preview_email" onclick="javascript:void(0);">
-				    							<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the email id to which the test email needs to be sent.', 'woocommerce') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
+				    							<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the email id to which the test email needs to be sent.', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
 				    							<div id="preview_email_sent_msg" style="display:none;"></div>
 				    							</p>
 				    							
