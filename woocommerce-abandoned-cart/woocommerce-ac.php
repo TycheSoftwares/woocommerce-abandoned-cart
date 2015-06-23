@@ -135,10 +135,8 @@ function woocommerce_ac_delete(){
 				// Language Translation
 				add_action( 'init', array(&$this, 'update_po_file' ));
 				
-				// Discount Coupon Notice
-				if (isset($_GET['page']) && $_GET['page'] == "woocommerce_ac_page") {
-				    add_action( 'admin_notices', array(&$this, 'ac_lite_coupon_notice' ));
-				}
+				//Discount Coupon Notice
+				add_action( 'admin_notices', array(&$this, 'ac_lite_coupon_notice' ));
 				
 				add_action( 'admin_enqueue_scripts', array(&$this, 'my_enqueue_scripts_js' ));
 				add_action( 'admin_enqueue_scripts', array(&$this, 'my_enqueue_scripts_css' ));
@@ -172,13 +170,16 @@ function woocommerce_ac_delete(){
 			    }
 			}
 			
-			function ac_lite_coupon_notice() {
-			         ?>
-				     <div class="updated">
-						  <p><?php _e( 'You can upgrade to the <a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/">PRO version of Abandoned Cart for WooCommerce Plugin</a> at a <b>20% discount</b>. Use the coupon code: <b>ACPRO20</b>.<a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/"> Purchase now </a> & save $24!', 'woocommerce-ac' ); ?></p>
-				     </div>   
-				     <?php
-			}
+		    function ac_lite_coupon_notice() {
+			     
+			         if (isset($_GET['page']) && $_GET['page'] == "woocommerce_ac_page") {
+					 ?> 
+			         <div class="updated">
+			             <p><?php _e( 'You can upgrade to the <a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/">PRO version of Abandoned Cart for WooCommerce Plugin</a> at a <b>20% discount</b>. Use the coupon code: <b>ACPRO20</b>.<a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/"> Purchase now </a> & save $24!', 'woocommerce-ac' ); ?></p>
+			         </div>   
+			         <?php
+			         }
+			 }
 			/*-----------------------------------------------------------------------------------*/
 			/* Class Functions */
 			/*-----------------------------------------------------------------------------------*/
