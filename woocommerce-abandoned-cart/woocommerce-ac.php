@@ -3,8 +3,8 @@
 Plugin Name: WooCommerce Abandon Cart Lite Plugin
 Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
 Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
-Version: 1.5
-Author: Ashok Rane
+Version: 1.6
+Author: Tyche Softwares
 Author URI: http://www.tychesoftwares.com/
 */
 
