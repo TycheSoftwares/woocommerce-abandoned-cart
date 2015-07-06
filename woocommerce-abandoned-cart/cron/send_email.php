@@ -195,7 +195,7 @@ require_once( ABSPATH . 'wp-load.php' );
 			
 				$query = "SELECT wpac . * , wpu.user_login, wpu.user_email
 				FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
-				LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
+				LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
 				WHERE cart_ignored = '0'
 				AND abandoned_cart_time < $cart_time
 				ORDER BY `id` ASC ";
