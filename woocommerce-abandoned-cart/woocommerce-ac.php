@@ -79,9 +79,15 @@ function woocommerce_ac_delete(){
 	delete_option ( 'woocommerce_ac_settings' );
 
 }
+//include_once("lang.php");
 
+//if (is_woocommerce_active())
 {
-	
+	/**
+	 * Localisation
+	 **/
+//	load_plugin_textdomain('woocommerce-ac', false, dirname( plugin_basename( __FILE__ ) ) . '/');
+
 	/**
 	 * woocommerce_abandon_cart class
 	 **/
@@ -173,6 +179,11 @@ function woocommerce_ac_delete(){
 				}
 				
 			}
+			
+			/*-----------------------------------------------------------------------------------*/
+			/* Class Functions */
+			/*-----------------------------------------------------------------------------------*/
+			
 			// Language Translation
 			function  update_po_file(){
 			    $domain = 'woocommerce-ac';
