@@ -1450,13 +1450,14 @@ function woocommerce_ac_delete(){
 								$recovered_date = strtotime($woo_order->order_date);
 								$recovered_date_new = date('d M, Y h:i A', $recovered_date);
 								$recovered_item += 1;
-															
+								if (isset($rec_order['_order_total'][0])) {							
 								$recovered_total += $rec_order['_order_total'][0];
+								}
 								$abandoned_date = date('d M, Y h:i A', $value->abandoned_cart_time);
 								
 								$abandoned_order_id = $value->id;
                                                                 
-                                                                $billing_first_name = $billing_last_name = $billing_email = ''; 
+                                $billing_first_name = $billing_last_name = $billing_email = ''; 
 								$recovered_order_total = 0;
 								if (isset($rec_order['_billing_first_name'][0])) {
 									$billing_first_name = $rec_order['_billing_first_name'][0];
