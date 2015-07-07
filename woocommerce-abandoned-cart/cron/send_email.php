@@ -31,10 +31,7 @@ require_once( ABSPATH . 'wp-load.php' );
 			 */
 			function woocommerce_ac_send_email() {
 				
-				//$cart_settings = json_decode(get_option('woocommerce_ac_settings'));
-				
-				//$cart_abandon_cut_off_time_cron = ($cart_settings[0]->cart_time) * 60;
-				
+								
 				{
 				
 				global $wpdb, $woocommerce;
@@ -144,8 +141,9 @@ require_once( ABSPATH . 'wp-load.php' );
 								        $item_subtotal	= number_format( $item_subtotal, 2 );
 								        $product = get_product( $product_id );
 								        $prod_image = $product->get_image();
+								        $image_url =  wp_get_attachment_url( get_post_thumbnail_id($product_id) );
 								        $var .='<tr>
-                                                                        <td> <a href="'.$product_link_track.'">'.$prod_image.'</a></td>
+                                                                        <td> <a href="'.$product_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
                                                                         <td> <a href="'.$product_link_track.'">'.$product_name.'</a></td>
                                                                         <td> '.$quantity_total.'</td>
                                                                         <td> '.get_woocommerce_currency_symbol()." ".$item_subtotal.'</td>
