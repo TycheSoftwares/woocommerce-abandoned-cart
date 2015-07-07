@@ -58,15 +58,9 @@ function woocommerce_ac_delete(){
 	delete_option ( 'woocommerce_ac_settings' );
 
 }
-//include_once("lang.php");
 
-//if (is_woocommerce_active())
 {
-	/**
-	 * Localisation
-	 **/
-	//load_plugin_textdomain('woocommerce-ac', false, dirname( plugin_basename( __FILE__ ) ) . '/');
-
+	
 	/**
 	 * woocommerce_abandon_cart class
 	 **/
@@ -183,6 +177,8 @@ function woocommerce_ac_delete(){
 			/*-----------------------------------------------------------------------------------*/
 			/* Class Functions */
 			/*-----------------------------------------------------------------------------------*/
+			
+			
 			
 			
 			function woocommerce_ac_activate() {
@@ -313,8 +309,7 @@ function woocommerce_ac_delete(){
 					$insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
 					(user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored)
 					VALUES ('".$user_id."', '".$cart_info."', '".$current_time."', '0')";
-					//mysql_query($insert_query);
-                                        $wpdb->query($insert_query);
+					$wpdb->query($insert_query);
 				}
 				elseif ( $compare_time > $results[0]->abandoned_cart_time )
 				{
@@ -324,13 +319,11 @@ function woocommerce_ac_delete(){
 						$query_ignored = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
 						SET cart_ignored = '1'
 						WHERE user_id='".$user_id."'";
-						//mysql_query($query_ignored);
-                                                $wpdb->query($query_ignored);
+						$wpdb->query($query_ignored);
 						$query_update = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
 						(user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored)
 						VALUES ('".$user_id."', '".$updated_cart_info."', '".$current_time."', '0')";
-						//mysql_query($query_update);
-                                                $wpdb->query($query_update);
+						$wpdb->query($query_update);
 						update_user_meta($user_id, '_woocommerce_ac_modified_cart', md5("yes"));
 					}
 					else
@@ -345,8 +338,7 @@ function woocommerce_ac_delete(){
 					SET abandoned_cart_info = '".$updated_cart_info."',
 					abandoned_cart_time = '".$current_time."'
 					WHERE user_id='".$user_id."' AND cart_ignored='0' ";
-					//mysql_query($query_update);
-                                        $wpdb->query($query_update);
+					$wpdb->query($query_update);
 				}
 				}
 			}
@@ -418,8 +410,7 @@ function woocommerce_ac_delete(){
 					SET recovered_cart= '".$order_id."',
 					cart_ignored = '1'
 					WHERE id='".$results[0]->id."' ";
-					//mysql_query($query_order);
-                                        $wpdb->query($query_order);
+					$wpdb->query($query_order);
 					delete_user_meta($user_id, '_woocommerce_ac_modified_cart');
 				}
 				else
@@ -427,8 +418,7 @@ function woocommerce_ac_delete(){
 					$delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
 					WHERE
 					id='".$results[0]->id."' ";
-					//mysql_query( $delete_query );
-                                        $wpdb->query( $delete_query );
+					$wpdb->query( $delete_query );
 				}
 			
 				
@@ -758,7 +748,7 @@ function woocommerce_ac_delete(){
 				$p->items($count);
 				$p->limit(10); // Limit entries per page
 				$p->target("admin.php?page=woocommerce_ac_page&action=listcart");
-				//$p->currentPage($_GET[$p->paging]); // Gets and validates the current page
+				
                 if (isset($p->paging)) {
                     if (isset($_GET[$p->paging])) $p->currentPage($_GET[$p->paging]); // Gets and validates the current page
                 }
@@ -823,12 +813,7 @@ function woocommerce_ac_delete(){
 					  ORDER BY `$order_by` $order 
 					  $limit";
 					  //echo $query;
-					  $results = $wpdb->get_results( $query );
-			
-			/* echo "<pre>";
-			print_r($results);
-			echo "</pre>"; */
-			//exit;
+					  $results = $wpdb->get_results( $query );						
 			 
 			/* From here you can do whatever you want with the data from the $result link. */
 			
@@ -959,9 +944,7 @@ function woocommerce_ac_delete(){
 												'".$_POST['day_or_hour']."', 
 												'".$_POST['woocommerce_ac_template_name']."',
 												'".$_POST['woocommerce_ac_from_name']."' )";
-										//echo $query;
-										//mysql_query($query);
-                                                                                $wpdb->query($query);
+										        $wpdb->query($query);
 									}
 									else 
 									{
@@ -969,9 +952,7 @@ function woocommerce_ac_delete(){
 										SET
 										is_active='0'
 										WHERE frequency='".$_POST['email_frequency']."' AND day_or_hour='".$_POST['day_or_hour']."' ";
-										//echo $query_update;
-										//mysql_query($query_update);
-                                                                                $wpdb->query($query_update);
+										$wpdb->query($query_update);
 										
 										$query_insert_new = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite` 
 										( subject, body, is_active, frequency, day_or_hour, template_name, from_name)
@@ -982,9 +963,7 @@ function woocommerce_ac_delete(){
 												'".$_POST['day_or_hour']."', 
 												'".$_POST['woocommerce_ac_template_name']."',
 												'".$_POST['woocommerce_ac_from_name']."' )";
-										//echo $query;
-										//mysql_query($query_insert_new);
-                                                                                $wpdb->query($query_insert_new);
+										$wpdb->query($query_insert_new);
 									}
 								}
 							}
@@ -1009,8 +988,7 @@ function woocommerce_ac_delete(){
 										template_name='".$_POST['woocommerce_ac_template_name']."',
 										from_name='".$_POST['woocommerce_ac_from_name']."'
 										WHERE id='".$_POST['id']."' ";
-										//mysql_query($query_update);
-                                                                                $wpdb->query($query_update);
+										$wpdb->query($query_update);
 									}
 									else 
 									{
@@ -1018,8 +996,7 @@ function woocommerce_ac_delete(){
 										SET
 										is_active='0'
 										WHERE frequency='".$_POST['email_frequency']."' AND day_or_hour='".$_POST['day_or_hour']."' ";
-										//mysql_query($query_update_new);
-                                                                                $wpdb->query($query_update_new);
+										$wpdb->query($query_update_new);
 										
 										$query_update_latest = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
 										SET
@@ -1030,8 +1007,7 @@ function woocommerce_ac_delete(){
 										template_name='".$_POST['woocommerce_ac_template_name']."',
 										from_name='".$_POST['woocommerce_ac_from_name']."'
 										WHERE id='".$_POST['id']."' ";
-										//mysql_query($query_update_latest);
-                                                                                $wpdb->query($query_update_latest);
+										$wpdb->query($query_update_latest);
 									}
 								}
 							}
@@ -1040,8 +1016,7 @@ function woocommerce_ac_delete(){
 							{
 								$id_remove = $_GET['id'];
 								$query_remove = "DELETE FROM `".$wpdb->prefix."ac_email_templates_lite` WHERE id='".$id_remove."' ";
-								//mysql_mysql_query($query_remove);
-                                                                $wpdb->query($query_remove);
+								$wpdb->query($query_remove);
 							}
 							
 							if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'save' ) { ?>
@@ -1343,11 +1318,7 @@ function woocommerce_ac_delete(){
 						include_once(  "pagination.class.php");
 						
 						/* Find the number of rows returned from a query; Note: Do NOT use a LIMIT clause in this query */
-//						$wpdb->get_results($wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "ac_abandoned_cart_history_lite
-//								 WHERE abandoned_cart_time >= " . $start_date . "
-//								 AND abandoned_cart_time <= " . $end_date . "
-//								 AND recovered_cart > '0' 
-//								 "));
+//					
                                  $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite
 								 WHERE abandoned_cart_time >= %d
 								 AND abandoned_cart_time <= %d
@@ -1360,7 +1331,7 @@ function woocommerce_ac_delete(){
 							$p->items($count);
 							$p->limit(10); // Limit entries per page
 							$p->target("admin.php?page=woocommerce_ac_page&action=stats&duration_select=$duration_range");
-							//$p->currentPage($_GET[$p->paging]); // Gets and validates the current page
+							
                                                         if (isset($p->paging))
                                                         {
                                                                 if (isset($_GET[$p->paging])) $p->currentPage($_GET[$p->paging]); // Gets and validates the current page
@@ -1430,7 +1401,7 @@ function woocommerce_ac_delete(){
 						$recovered_item = $recovered_total = $count_carts = $total_value = $order_total = 0;
 						foreach ( $ac_carts_results as $key => $value)
 						{
-							// 
+							 
 							//if( $value->recovered_cart == 0 )
 							{
 								$count_carts += 1;
@@ -1458,12 +1429,7 @@ function woocommerce_ac_delete(){
 								$recovered_date = strtotime($woo_order->order_date);
 								$recovered_date_new = date('d M, Y h:i A', $recovered_date);
 								$recovered_item += 1;
-								
-							/*	$order_items = unserialize($rec_order['_order_items'][0]);
-								foreach ( $order_items as $order_key => $order_value)
-								{
-									$order_total += $order_items[$order_key]['line_total'];
-								}*/
+															
 								$recovered_total += $rec_order['_order_total'][0];
 								$abandoned_date = date('d M, Y h:i A', $value->abandoned_cart_time);
 								
@@ -1622,18 +1588,7 @@ function woocommerce_ac_delete(){
 													{
 														$initial_data = $results[0]->body;
 													}
-													
-													/* $settings = array(
-													'quicktags' => array('buttons' => 'em,strong,link',),
-													'text_area_name'=>'woocommerce_ac_email_body',//name you want for the textarea
-													'quicktags' => true,
-													'class' => 'tinymce',
-													'tinymce' => true
-													);
-													//echo "<textarea id='editortest'> </textarea>";
-													$id = 'woocommerce_ac_email_body';//has to be lower case
-													wp_editor($initial_data,$id,$settings); */
-													
+																										
 													echo "<textarea id='woocommerce_ac_email_body' name='woocommerce_ac_email_body' rows='15'' cols='80'>".$initial_data."</textarea>";
 													?>
 				    								
@@ -1814,9 +1769,7 @@ function woocommerce_ac_delete(){
 									var from_name_preview = $('#woocommerce_ac_from_name').val();
 									var subject_email_preview = $('#woocommerce_ac_email_subject').val();
 									var body_email_preview = tinyMCE.activeEditor.getContent();
-									var send_email_id = $('#send_test_email').val();
-									
-									//alert(tinyMCE.activeEditor.getContent());
+									var send_email_id = $('#send_test_email').val();																		
 									var data = {
 										from_name_preview: from_name_preview,
 										subject_email_preview: subject_email_preview,
@@ -1824,7 +1777,7 @@ function woocommerce_ac_delete(){
 										send_email_id: send_email_id,
 										action: 'preview_email_sent'
 									};
-									//var data = $('#ac_settings').serialize();
+									
 									
 									// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
 									$.post(ajaxurl, data, function(response)
@@ -1843,18 +1796,50 @@ function woocommerce_ac_delete(){
 					function preview_email_sent() {
 						
 						$from_email_name = $_POST['from_name_preview'];
-						$subject_email_preview = $_POST['subject_email_preview'];
+						$subject_email_preview = $_POST['subject_email_preview'];						
 						$body_email_preview = $_POST['body_email_preview'];
-						$to_email_preview = $_POST['send_email_id'];
+						$body_email_preview = str_replace('{{customer.firstname}}', 'John', $body_email_preview);
+						$body_email_preview = str_replace('{{customer.lastname}}', 'Doe', $body_email_preview);
+						$body_email_preview = str_replace('{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview);
 						
+						$var =  '<h3> Your Shopping Cart </h3>
+                                 <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
+                                    <tr>
+                                       <th> Item </th>
+                                       <th> Name </th>
+                                       <th> Quantity </th>
+                                       <th> Price </th>
+                                       <th> Line Subtotal </th>
+                                    </tr>
+						            <tr>
+                                       <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/shoes.jpg"/></td>                                                                  
+                                       <td>Men Formal Shoes</td>
+                                       <td>1</td>
+                                       <td>$100</td>
+                                       <td>$100</td>
+                                    </tr>
+                                    <tr>
+                                       <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/handbag.jpg"/></td>                                                                  
+                                       <td>Woman Hand Bags</td>
+                                       <td>1</td>
+                                       <td>$100</td>
+                                       <td>$100</td>
+                                    </tr>
+	                                <tr>
+	                                   <td></td>
+	                                   <td></td>
+	                                   <td></td>
+	                                   <td>Cart Total:</td>
+	                                   <td>$200</td>
+                                 </table>';
+						                
+						$body_email_preview = str_replace('{{products.cart}}', $var, $body_email_preview);
+						$to_email_preview = $_POST['send_email_id'];
 						$user_email_from = get_option('admin_email');
 						$headers[] = "From: ".$from_email_name." <".$user_email_from.">"."\r\n";
-						$headers[] = "Content-Type: text/html"."\r\n";
+						$headers[] = "Content-Type: text/html"."\r\n";                                                                                               
+				                        
                                                 
-//                                                $headers = "From: ".$from_email_name." <".$from_email_preview.">"."\r\n";
-//                                                $headers .= "Content-Type: text/html"."\r\n";
-                                               // $headers .= "Reply-To: <".$reply_name_preview.">"."\r\n";
-						
 						wp_mail( $to_email_preview, $subject_email_preview, stripslashes($body_email_preview), $headers );
 				
 						echo "email sent";
