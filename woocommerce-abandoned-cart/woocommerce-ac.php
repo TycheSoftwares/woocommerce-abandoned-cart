@@ -332,7 +332,7 @@ function woocommerce_ac_delete(){
 					VALUES ('".$user_id."', '".$cart_info."', '".$current_time."', '0')";
 					$wpdb->query($insert_query);
 				}
-				elseif ( $compare_time > $results[0]->abandoned_cart_time )
+				elseif ( isset($results[0]->abandoned_cart_time) && $compare_time > $results[0]->abandoned_cart_time )
 				{
 					$updated_cart_info = json_encode(get_user_meta($user_id, '_woocommerce_persistent_cart', true));
 					if (! $this->compare_carts( $user_id, $results[0]->abandoned_cart_info) )
@@ -421,29 +421,28 @@ function woocommerce_ac_delete(){
 				ORDER BY id DESC
 				LIMIT 1";
 				$results = $wpdb->get_results( $query );
-			
-				if ( get_user_meta($user_id, '_woocommerce_ac_modified_cart', true) == md5("yes") || 
+				if (count($results) > 0){
+				    if ( get_user_meta($user_id, '_woocommerce_ac_modified_cart', true) == md5("yes") || 
 						get_user_meta($user_id, '_woocommerce_ac_modified_cart', true) == md5("no") )
-				{
+				        {
 					
-					$order_id = $order->id;
-					$query_order = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-					SET recovered_cart= '".$order_id."',
-					cart_ignored = '1'
-					WHERE id='".$results[0]->id."' ";
-					$wpdb->query($query_order);
-					delete_user_meta($user_id, '_woocommerce_ac_modified_cart');
-				}
-				else
-				{
-					$delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-					WHERE
-					id='".$results[0]->id."' ";
-					$wpdb->query( $delete_query );
-				}
-			
-				
-			}
+        					$order_id = $order->id;
+        					$query_order = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+        					SET recovered_cart= '".$order_id."',
+        					cart_ignored = '1'
+        					WHERE id='".$results[0]->id."' ";
+        					$wpdb->query($query_order);
+        					delete_user_meta($user_id, '_woocommerce_ac_modified_cart');
+        				}
+				    else
+				        {
+        					$delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+        					WHERE
+        					id='".$results[0]->id."' ";
+        					$wpdb->query( $delete_query );
+        				}
+ 			       }
+               }
 			
 			function action_admin_init() {
 				// only hook up these filters if we're in the admin panel, and the current user has permission
@@ -714,7 +713,7 @@ function woocommerce_ac_delete(){
 														
 														if ( count($enable_email_sett_arr) > 0 ) {
 														
-														    if ( $enable_email_sett_arr[0]->cart_time != '' || $enable_email_sett_arr[0]->cart_time != 'null'){
+														    if ( ( isset($enable_email_sett_arr[0]->cart_time) ) && ($enable_email_sett_arr[0]->cart_time != '' || $enable_email_sett_arr[0]->cart_time != 'null' )) {
 														
 														        $cart_time = $enable_email_sett_arr[0]->cart_time;
 														    } else {
@@ -1857,7 +1856,11 @@ function woocommerce_ac_delete(){
                                  </table>';
 						                
 						$body_email_preview = str_replace('{{products.cart}}', $var, $body_email_preview);
-						$to_email_preview = $_POST['send_email_id'];
+					    if (isset($_POST['send_email_id'])) {
+						      $to_email_preview = $_POST['send_email_id'];
+						} else {
+						      $to_email_preview = "";
+						       }
 						$user_email_from = get_option('admin_email');
 						$headers[] = "From: ".$from_email_name." <".$user_email_from.">"."\r\n";
 						$headers[] = "Content-Type: text/html"."\r\n";                                                                                               
