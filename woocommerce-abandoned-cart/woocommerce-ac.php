@@ -1804,33 +1804,34 @@ function woocommerce_ac_delete(){
 						
 						$var =  '<h3> Your Shopping Cart </h3>
                                  <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
-                                    <tr>
+                                    <tr align="center">
                                        <th> Item </th>
                                        <th> Name </th>
                                        <th> Quantity </th>
                                        <th> Price </th>
                                        <th> Line Subtotal </th>
                                     </tr>
-						            <tr>
+						            <tr align="center">
                                        <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/shoes.jpg"/></td>                                                                  
-                                       <td>Men Formal Shoes</td>
+                                       <td>Men\'\s Formal Shoes</td>
                                        <td>1</td>
                                        <td>$100</td>
                                        <td>$100</td>
                                     </tr>
-                                    <tr>
+                                    <tr align="center">
                                        <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/handbag.jpg"/></td>                                                                  
-                                       <td>Woman Hand Bags</td>
+                                       <td>Woman\'\s Hand Bags</td>
                                        <td>1</td>
                                        <td>$100</td>
                                        <td>$100</td>
                                     </tr>
-	                                <tr>
+	                                <tr align="center">
 	                                   <td></td>
 	                                   <td></td>
 	                                   <td></td>
 	                                   <td>Cart Total:</td>
 	                                   <td>$200</td>
+	                                </tr>
                                  </table>';
 						                
 						$body_email_preview = str_replace('{{products.cart}}', $var, $body_email_preview);

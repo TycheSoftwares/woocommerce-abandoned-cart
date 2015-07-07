@@ -142,23 +142,23 @@ require_once( ABSPATH . 'wp-load.php' );
 								        $product = get_product( $product_id );
 								        $prod_image = $product->get_image();
 								        $image_url =  wp_get_attachment_url( get_post_thumbnail_id($product_id) );
-								        $var .='<tr>
+								        $var .='<tr align="center">
                                                                         <td> <a href="'.$product_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
                                                                         <td> <a href="'.$product_link_track.'">'.$product_name.'</a></td>
                                                                         <td> '.$quantity_total.'</td>
-                                                                        <td> '.get_woocommerce_currency_symbol()." ".$item_subtotal.'</td>
-                                                                        <td> '.get_woocommerce_currency_symbol()." ".$item_total_display.'</td>
+                                                                        <td> '.get_woocommerce_currency_symbol()."".$item_subtotal.'</td>
+                                                                        <td> '.get_woocommerce_currency_symbol()."".$item_total_display.'</td>
                                                                         </tr>';
 								        $cart_total += $item_total;
 								        $item_subtotal = $item_total = 0;
 								    }
 								    $cart_total = number_format( $cart_total, 2 );
-								    $var .= '<tr>
+								    $var .= '<tr align="center">
                                                                 <td> </td>
                                                                 <td> </td>
                                                                 <td> </td>
                                                                 <td> Cart Total : </td>
-                                                                <td> '.get_woocommerce_currency_symbol()." ".$cart_total.'</td>
+                                                                <td> '.get_woocommerce_currency_symbol()."".$cart_total.'</td>
                                                                 </tr>';
 								    $var .= '</table>
                                                                 ';
