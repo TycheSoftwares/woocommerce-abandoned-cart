@@ -105,14 +105,14 @@ require_once( ABSPATH . 'wp-load.php' );
 								
 								$var = '';
 								if( preg_match( "{{products.cart}}", $email_body, $matched ) ) {
-								    $var = '<h3>'.__("Your Shopping Cart", "woocommerce-ac").'</h3>
+								    $var = '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
                                             <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
                                                                 <tr>
-                                                                <th>'.__("Item", "woocommerce-ac").'</th>
-                                                                <th>'.__("Name", "woocommerce-ac").'</th>
-                                                                <th>'.__("Quantity", "woocommerce-ac").'</th>
-                                                                <th>'.__("Price", "woocommerce-ac").'</th>
-                                                                <th>'.__("Line Subtotal", "woocommerce-ac").'</th>
+                                                                <th>'.__( "Item", "woocommerce-ac" ).'</th>
+                                                                <th>'.__( "Name", "woocommerce-ac" ).'</th>
+                                                                <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
+                                                                <th>'.__( "Price", "woocommerce-ac" ).'</th>
+                                                                <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
                                                                 </tr>';                    
 								    
 								    $cart_details = $cart_info_db_field->cart;
@@ -157,20 +157,20 @@ require_once( ABSPATH . 'wp-load.php' );
                                                                 <td> </td>
                                                                 <td> </td>
                                                                 <td> </td>
-                                                                <td>'.__("Cart Total:", "woocommerce-ac").'</td>
+                                                                <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
                                                                 <td> '.get_woocommerce_currency_symbol()."".$cart_total.'</td>
                                                                 </tr>';
 								    $var .= '</table>
                                                                 ';
 								    $email_body = str_replace( "{{products.cart}}", $var, $email_body );
-								    $email_subject = str_replace( "{{product.name}}", __($sub_line_prod_name, "woocommerce-ac"), $email_subject );
+								    $email_subject = str_replace( "{{product.name}}", __( $sub_line_prod_name, "woocommerce-ac" ), $email_subject );
 								}
 								
 								$user_email = $value->user_email;
 			
 								//echo $email_body."<hr>";
 								
-								wp_mail( $user_email, $email_subject, __($email_body, 'woocommerce-ac'), $headers );
+								wp_mail( $user_email, $email_subject, __( $email_body, 'woocommerce-ac' ), $headers );
 			
 							}
 			
