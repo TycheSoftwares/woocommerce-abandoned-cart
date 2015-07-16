@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: woocommerce-ac\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-07-08 16:30+0530\n"
-"PO-Revision-Date: 2015-07-08 16:32+0530\n"
+"PO-Revision-Date: 2015-07-16 11:02+0530\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -267,10 +267,3 @@ msgstr ""
 #: woocommerce-ac.php:1862 send_email.php:160
 msgid "Cart Total:"
 msgstr ""
-
-msgid "Chocolate box"
-msgstr ""
-
-msgid "Blue Battery Scooter"
-msgstr ""
-
