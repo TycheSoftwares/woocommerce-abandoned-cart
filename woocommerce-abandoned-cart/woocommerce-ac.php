@@ -1876,8 +1876,8 @@ function woocommerce_ac_delete(){
 						$headers[] = "From: ".$from_email_name." <".$user_email_from.">"."\r\n";
 						$headers[] = "Content-Type: text/html"."\r\n";                                                                                               
 				                        
-                                                
-						wp_mail( $to_email_preview, $subject_email_preview, __( $body_email_preview, 'woocommerce-ac' ), $headers );
+						$body_email_final_preview = stripslashes($body_email_preview);
+						wp_mail( $to_email_preview, $subject_email_preview, __( $body_email_final_preview, 'woocommerce-ac' ), $headers );	
 				
 						echo "email sent";
 						

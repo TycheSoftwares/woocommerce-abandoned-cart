@@ -169,8 +169,10 @@ require_once( ABSPATH . 'wp-load.php' );
 								$user_email = $value->user_email;
 			
 								//echo $email_body."<hr>";
+								$email_body_final = stripslashes($email_body);
+								wp_mail( $user_email, $email_subject, __( $email_body_final, 'woocommerce-ac' ), $headers );
 								
-								wp_mail( $user_email, $email_subject, __( $email_body, 'woocommerce-ac' ), $headers );
+								
 			
 							}
 			
