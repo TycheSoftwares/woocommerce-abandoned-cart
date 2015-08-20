@@ -1618,11 +1618,7 @@ function woocommerce_ac_delete(){
 													$initial_data = "";//stripslashes(get_option( 'woocommerce_ac_email_body' ));
 													if ( $mode == 'edittemplate')
 													{
-													if ( get_magic_quotes_gpc() ) { // Image url fix
-													        $initial_data = stripslashes($results[0]->body);
-													    } else {
-													        $initial_data = $results[0]->body;
-													    }
+													    $initial_data = stripslashes($results[0]->body);
 													}
 																										
 													echo "<textarea id='woocommerce_ac_email_body' name='woocommerce_ac_email_body' rows='15'' cols='80'>".$initial_data."</textarea>";
