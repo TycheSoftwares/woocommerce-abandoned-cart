@@ -3,14 +3,13 @@
 Plugin Name: WooCommerce Abandon Cart Lite Plugin
 Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
 Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
-Version: 2.0
+Version: 2.1
 Author: Tyche Softwares
 Author URI: http://www.tychesoftwares.com/
 */
 
-
 // Deletion Settings
-register_uninstall_hook( __FILE__, 'woocommerce_ac_delete');
+register_uninstall_hook( __FILE__, 'woocommerce_ac_delete' );
 
 // Add a new interval of 5 minutes
 add_filter( 'cron_schedules', 'woocommerce_ac_add_cron_schedule' );
@@ -18,8 +17,8 @@ add_filter( 'cron_schedules', 'woocommerce_ac_add_cron_schedule' );
 function woocommerce_ac_add_cron_schedule( $schedules ) {
 	
     $schedules['5_minutes'] = array(
-                'interval' => 300 , // 5 minutes in seconds
-                'display'  => __( 'Once Every Five Minutes' ),
+                'interval'  => 300 , // 5 minutes in seconds
+                'display'   => __( 'Once Every Five Minutes' ),
     );
     return $schedules;
 }
@@ -40,38 +39,38 @@ function woocommerce_ac_delete(){
 	global $wpdb;
 	$table_name_ac_abandoned_cart_history = $wpdb->prefix . "ac_abandoned_cart_history_lite";
 	$sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_abandoned_cart_history ;
-	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	$wpdb->get_results($sql_ac_abandoned_cart_history);
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	$wpdb->get_results( $sql_ac_abandoned_cart_history );
 
 	$table_name_ac_email_templates = $wpdb->prefix . "ac_email_templates_lite";
 	$sql_ac_email_templates = "DROP TABLE " . $table_name_ac_email_templates ;
-	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	$wpdb->get_results($sql_ac_email_templates);
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	$wpdb->get_results( $sql_ac_email_templates );
 
 	$table_name_ac_sent_history = $wpdb->prefix . "ac_sent_history_lite";
 	$sql_ac_sent_history = "DROP TABLE " . $table_name_ac_sent_history ;
-	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	$wpdb->get_results($sql_ac_sent_history);
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	$wpdb->get_results( $sql_ac_sent_history );
 	
-	$query = "SELECT blog_id FROM `".$wpdb->prefix."blogs`";
+	$query   = "SELECT blog_id FROM `".$wpdb->prefix."blogs`";
 	$results = $wpdb->get_results( $query );
 	
 	foreach( $results as $key => $value ) {
 	     
 	    $table_name_ac_abandoned_cart_history = $wpdb->prefix .$value->blog_id."_"."ac_abandoned_cart_history_lite";
 	    $sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_abandoned_cart_history ;
-	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	    $wpdb->get_results($sql_ac_abandoned_cart_history);
+	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	    $wpdb->get_results( $sql_ac_abandoned_cart_history );
 	     
 	    $table_name_ac_email_templates = $wpdb->prefix .$value->blog_id."_"."ac_email_templates_lite";
 	    $sql_ac_email_templates = "DROP TABLE " . $table_name_ac_email_templates ;
-	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	    $wpdb->get_results($sql_ac_email_templates);
+	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	    $wpdb->get_results( $sql_ac_email_templates );
 	     
 	    $table_name_ac_sent_history = $wpdb->prefix .$value->blog_id."_"."ac_sent_history_lite";
 	    $sql_ac_sent_history = "DROP TABLE " . $table_name_ac_sent_history ;
-	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	    $wpdb->get_results($sql_ac_sent_history);
+	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	    $wpdb->get_results( $sql_ac_sent_history );
 	     
 	}
 	
@@ -79,19 +78,10 @@ function woocommerce_ac_delete(){
 	delete_option ( 'woocommerce_ac_settings' );
 
 }
-//include_once("lang.php");
-
-//if (is_woocommerce_active())
-{
-	/**
-	 * Localisation
-	 **/
-//	load_plugin_textdomain('woocommerce-ac', false, dirname( plugin_basename( __FILE__ ) ) . '/');
-
 	/**
 	 * woocommerce_abandon_cart class
 	 **/
-	if (!class_exists('woocommerce_abandon_cart')) {
+	if ( !class_exists( 'woocommerce_abandon_cart' ) ) {
 	
 		class woocommerce_abandon_cart {
 			
@@ -103,78 +93,78 @@ function woocommerce_ac_delete(){
 			var $one_week;
 			
 			var $duration_range_select = array();
-			var $start_end_dates = array();
+			var $start_end_dates       = array();
 			
 			public function __construct() {
 				
-				$this->one_hour = 60 * 60;
-				$this->three_hours = 3 * $this->one_hour;
-				$this->six_hours = 6 * $this->one_hour;
+				$this->one_hour     = 60 * 60;
+				$this->three_hours  = 3 * $this->one_hour;
+				$this->six_hours    = 6 * $this->one_hour;
 				$this->twelve_hours = 12 * $this->one_hour;
-				$this->one_day = 24 * $this->one_hour;
-				$this->one_week = 7 * $this->one_day;
+				$this->one_day      = 24 * $this->one_hour;
+				$this->one_week     = 7 * $this->one_day;
 				
-				$this->duration_range_select = array('yesterday' => 'Yesterday',
-						'today' => 'Today',
-						'last_seven' => 'Last 7 days',
-						'last_fifteen' => 'Last 15 days',
-						'last_thirty' => 'Last 30 days',
-						'last_ninety' => 'Last 90 days',
-						'last_year_days' => 'Last 365');
+				$this->duration_range_select = array( 'yesterday'      => 'Yesterday',
+						                              'today'          => 'Today',
+                                					  'last_seven'     => 'Last 7 days',
+                                					  'last_fifteen'   => 'Last 15 days',
+                                					  'last_thirty'    => 'Last 30 days',
+                                					  'last_ninety'    => 'Last 90 days',
+                                					  'last_year_days' => 'Last 365'    
+				                                     );
 				
-				$this->start_end_dates = array('yesterday' => array( 'start_date' => date("d M Y", (current_time('timestamp') - 24*60*60)),
-						'end_date' => date("d M Y", (current_time('timestamp') - 7*24*60*60))),
-						'today' => array( 'start_date' => date("d M Y", (current_time('timestamp'))),
-								'end_date' => date("d M Y", (current_time('timestamp')))),
-						'last_seven' => array( 'start_date' => date("d M Y", (current_time('timestamp') - 7*24*60*60)),
-								'end_date' => date("d M Y", (current_time('timestamp')))),
-						'last_fifteen' => array( 'start_date' => date("d M Y", (current_time('timestamp') - 15*24*60*60)),
-								'end_date' => date("d M Y", (current_time('timestamp')))),
-						'last_thirty' => array( 'start_date' => date("d M Y", (current_time('timestamp') - 30*24*60*60)),
-								'end_date' => date("d M Y", (current_time('timestamp')))),
-						'last_ninety' => array( 'start_date' => date("d M Y", (current_time('timestamp') - 90*24*60*60)),
-								'end_date' => date("d M Y", (current_time('timestamp')))),
-						'last_year_days' => array( 'start_date' => date("d M Y", (current_time('timestamp') - 365*24*60*60)),
-								'end_date' => date("d M Y", (current_time('timestamp')))));
+				$this->start_end_dates = array( 'yesterday'      => array( 'start_date' => date( "d M Y", ( current_time( 'timestamp' ) - 24*60*60 ) ),
+						                        'end_date'       => date( "d M Y", ( current_time( 'timestamp' ) - 7*24*60*60 ) ) ),
+						                        'today'          => array( 'start_date' => date( "d M Y", ( current_time( 'timestamp' ) ) ),
+								                'end_date'       => date( "d M Y", ( current_time( 'timestamp' ) ) ) ),
+						                        'last_seven'     => array( 'start_date' => date( "d M Y", ( current_time( 'timestamp' ) - 7*24*60*60 ) ),
+								                'end_date'       => date( "d M Y", ( current_time( 'timestamp' ) ) ) ),
+						                        'last_fifteen'   => array( 'start_date' => date( "d M Y", ( current_time( 'timestamp' ) - 15*24*60*60 ) ),
+								                'end_date'       => date( "d M Y", ( current_time( 'timestamp' ) ) ) ),
+						                        'last_thirty'    => array( 'start_date' => date( "d M Y", ( current_time( 'timestamp' ) - 30*24*60*60 ) ),
+								                'end_date'       => date( "d M Y", ( current_time( 'timestamp' ) ) ) ),
+						                        'last_ninety'    => array( 'start_date' => date( "d M Y", ( current_time( 'timestamp' ) - 90*24*60*60 ) ),
+								                'end_date'       => date( "d M Y", ( current_time( 'timestamp' ) ) ) ),
+						                        'last_year_days' => array( 'start_date' => date( "d M Y", ( current_time( 'timestamp' ) - 365*24*60*60 ) ),
+								                'end_date'       => date( "d M Y", ( current_time( 'timestamp' ) ) ) ) 				    
+				                               );
 				
 				
 				// Initialize settings
-				register_activation_hook( __FILE__, array(&$this, 'woocommerce_ac_activate'));
+				register_activation_hook ( __FILE__, array( &$this, 'woocommerce_ac_activate' ) );
 				
 				// WordPress Administration Menu 
-				add_action('admin_menu', array(&$this, 'woocommerce_ac_admin_menu'));
+				add_action ( 'admin_menu', array( &$this, 'woocommerce_ac_admin_menu' ) );
 				
 				// Actions to be done on cart update
-				add_action('woocommerce_cart_updated', array(&$this, 'woocommerce_ac_store_cart_timestamp'));
+				add_action ( 'woocommerce_cart_updated', array( &$this, 'woocommerce_ac_store_cart_timestamp' ) );
 				
 				// delete added temp fields after order is placed 
-				add_filter('woocommerce_order_details_after_order_table', array(&$this, 'action_after_delivery_session'));
+				add_filter ( 'woocommerce_order_details_after_order_table', array( &$this, 'action_after_delivery_session' ) );
 				
-				add_action( 'admin_init', array(&$this, 'action_admin_init' ));
-				add_action( 'admin_init', array(&$this, 'ac_lite_update_db_check' ));
+				add_action ( 'admin_init', array( &$this, 'action_admin_init' ) );
+				add_action ( 'admin_init', array( &$this, 'ac_lite_update_db_check' ) );
 				
 				// Language Translation
-				add_action( 'init', array(&$this, 'update_po_file' ));
+				add_action ( 'init', array( &$this, 'update_po_file' ) );
 				
 				//Discount Coupon Notice
-				add_action( 'admin_notices', array(&$this, 'ac_lite_coupon_notice' ));
+				add_action ( 'admin_notices', array( &$this, 'ac_lite_coupon_notice' ) );
 				
-				add_action( 'admin_enqueue_scripts', array(&$this, 'my_enqueue_scripts_js' ));
-				add_action( 'admin_enqueue_scripts', array(&$this, 'my_enqueue_scripts_css' ));
+				add_action ( 'admin_enqueue_scripts', array( &$this, 'my_enqueue_scripts_js' ) );
+				add_action ( 'admin_enqueue_scripts', array( &$this, 'my_enqueue_scripts_css' ) );
 				
-				if( is_admin() )
-				{
-					if (isset($_GET['page']) && $_GET['page'] == "woocommerce_ac_page")
-					{
-						add_action('admin_head', array(&$this, 'tinyMCE_ac'));
+				if ( is_admin() ) {
+					if ( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == "woocommerce_ac_page" )	{
+						add_action ( 'admin_head', array( &$this, 'tinyMCE_ac' ) );
 					}
 					
 					// Load "admin-only" scripts here
-					add_action('admin_head', array(&$this, 'my_action_javascript'));
-					add_action('wp_ajax_remove_cart_data', array(&$this, 'remove_cart_data'));
+					add_action ( 'admin_head', array( &$this, 'my_action_javascript' ) );
+					add_action ( 'wp_ajax_remove_cart_data', array( &$this, 'remove_cart_data' ) );
 					
-					add_action('admin_head', array(&$this, 'my_action_send_preview'));
-					add_action('wp_ajax_preview_email_sent', array(&$this, 'preview_email_sent'));
+					add_action ( 'admin_head', array( &$this, 'my_action_send_preview' ) );
+					add_action ( 'wp_ajax_preview_email_sent', array( &$this, 'preview_email_sent' ) );
 					
 				}
 				
@@ -185,34 +175,30 @@ function woocommerce_ac_delete(){
 			/*-----------------------------------------------------------------------------------*/
 			
 			// Language Translation
-			function  update_po_file(){
+			function  update_po_file() {
 			    $domain = 'woocommerce-ac';
 			    $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 			    if ( $loaded = load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . $domain . '-' . $locale . '.mo' ) ) {
 			        return $loaded;
 			    } else {
-			
-			        load_plugin_textdomain( $domain, FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
-			    }
+				    load_plugin_textdomain( $domain, FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+			           }
 			}
 			
 		    function ac_lite_coupon_notice() {
 			     
-			         if (isset($_GET['page']) && $_GET['page'] == "woocommerce_ac_page") {
-					 ?> 
-			         <div class="updated">
-			             <p><?php _e( 'You can upgrade to the <a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/">PRO version of WooCommerce Abandoned Cart plugin</a> at a <b>20% discount</b>. Use the coupon code: <b>ACPRO20</b>.<a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/"> Purchase now </a> & save $24!', 'woocommerce-ac' ); ?></p>
-			         </div>   
-			         <?php
-			         }
+			     if ( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == "woocommerce_ac_page" ) {
+?> 
+			     <div class = "updated">
+			         <p><?php _e( 'You can upgrade to the <a href = "https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/">PRO version of WooCommerce Abandoned Cart plugin</a> at a <b>20% discount</b>. Use the coupon code: <b>ACPRO20</b>.<a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/"> Purchase now </a> & save $24!', 'woocommerce-ac' ); ?></p>
+			     </div>   
+			     <?php
+			     }
 			 }
 			/*-----------------------------------------------------------------------------------*/
 			/* Class Functions */
-			/*-----------------------------------------------------------------------------------*/
-			
-			
-			
-			
+			/*-----------------------------------------------------------------------------------*/					
+						
 			function woocommerce_ac_activate() {
 			
 				global $wpdb;
@@ -220,98 +206,98 @@ function woocommerce_ac_delete(){
 				$table_name = $wpdb->prefix . "ac_email_templates_lite";
 			
 				$sql = "CREATE TABLE IF NOT EXISTS $table_name (
-				`id` int(11) NOT NULL AUTO_INCREMENT,
-				`subject` text COLLATE utf8_unicode_ci NOT NULL,
-				`body` mediumtext COLLATE utf8_unicode_ci NOT NULL,
-				`is_active` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
-				`frequency` int(11) NOT NULL,
-				`day_or_hour` enum('Days','Hours') COLLATE utf8_unicode_ci NOT NULL,
-				`template_name` text COLLATE utf8_unicode_ci NOT NULL,
-				`from_name` text COLLATE utf8_unicode_ci NOT NULL,
-  				PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ";
+        				`id` int(11) NOT NULL AUTO_INCREMENT,
+        				`subject` text COLLATE utf8_unicode_ci NOT NULL,
+        				`body` mediumtext COLLATE utf8_unicode_ci NOT NULL,
+        				`is_active` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
+        				`frequency` int(11) NOT NULL,
+        				`day_or_hour` enum('Days','Hours') COLLATE utf8_unicode_ci NOT NULL,
+        				`template_name` text COLLATE utf8_unicode_ci NOT NULL,
+        				`from_name` text COLLATE utf8_unicode_ci NOT NULL,
+          				PRIMARY KEY (`id`)
+				        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ";
 			
-				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-				dbDelta($sql);
+				require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
+				dbDelta( $sql );
 			
 				$sent_table_name = $wpdb->prefix . "ac_sent_history_lite";
 			
 				$sql_query = "CREATE TABLE IF NOT EXISTS $sent_table_name (
-				`id` int(11) NOT NULL auto_increment,
-				`template_id` varchar(40) collate utf8_unicode_ci NOT NULL,
-				`abandoned_order_id` int(11) NOT NULL,
-				`sent_time` datetime NOT NULL,
-				`sent_email_id` text COLLATE utf8_unicode_ci NOT NULL,
-				PRIMARY KEY  (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ";
+            				`id` int(11) NOT NULL auto_increment,
+            				`template_id` varchar(40) collate utf8_unicode_ci NOT NULL,
+            				`abandoned_order_id` int(11) NOT NULL,
+            				`sent_time` datetime NOT NULL,
+            				`sent_email_id` text COLLATE utf8_unicode_ci NOT NULL,
+            				PRIMARY KEY  (`id`)
+				            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ";
 				 
-				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-				dbDelta($sql_query);
+				require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
+				dbDelta ( $sql_query );
 						 
 				$ac_history_table_name = $wpdb->prefix . "ac_abandoned_cart_history_lite";
 				 
 				$history_query = "CREATE TABLE IF NOT EXISTS $ac_history_table_name (
-				`id` int(11) NOT NULL AUTO_INCREMENT,
-				`user_id` int(11) NOT NULL,
-				`abandoned_cart_info` text COLLATE utf8_unicode_ci NOT NULL,
-				`abandoned_cart_time` int(11) NOT NULL,
-				`cart_ignored` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
-				`recovered_cart` int(11) NOT NULL,
-				PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+                				 `id` int(11) NOT NULL AUTO_INCREMENT,
+                				 `user_id` int(11) NOT NULL,
+                				 `abandoned_cart_info` text COLLATE utf8_unicode_ci NOT NULL,
+                				 `abandoned_cart_time` int(11) NOT NULL,
+                				 `cart_ignored` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
+                				 `recovered_cart` int(11) NOT NULL,
+                				 PRIMARY KEY (`id`)
+				                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
 						 
-				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-				dbDelta($history_query);
+				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+				dbDelta( $history_query );
 				
-				$ac_settings = new stdClass();
-				$ac_settings->cart_time = '60';
-				$woo_ac_settings[] = $ac_settings;
-				$woocommerce_ac_settings = json_encode($woo_ac_settings);
+				$ac_settings             = new stdClass();
+				$ac_settings->cart_time  = '60';
+				$woo_ac_settings[]       = $ac_settings;
+				$woocommerce_ac_settings = json_encode( $woo_ac_settings );
 				add_option  ( 'woocommerce_ac_settings', $woocommerce_ac_settings );
 			}
 			
 			function ac_lite_update_db_check() {
 			    global $wpdb;
 			    
-			    if(get_option('ac_lite_delete_alter_table_queries') != 'yes') {
-			        update_option( 'ac_lite_alter_table_queries', '');
+			    if( get_option( 'ac_lite_delete_alter_table_queries' ) != 'yes' ) {
+			        update_option( 'ac_lite_alter_table_queries', '' );
 			        update_option( 'ac_lite_delete_alter_table_queries', 'yes' );
 			    }
-			    if( get_option('ac_lite_alter_table_queries') != 'yes') {     
-			        if( $wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "ac_email_templates'") === $wpdb->prefix . 'ac_email_templates') {
+			    if( get_option( 'ac_lite_alter_table_queries' ) != 'yes' ) {     
+			        if( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . "ac_email_templates'" ) === $wpdb->prefix . 'ac_email_templates' ) {
 			             $old_table_name = $wpdb->prefix . "ac_email_templates";
-			             $table_name = $wpdb->prefix . "ac_email_templates_lite";
+			             $table_name     = $wpdb->prefix . "ac_email_templates_lite";
 			        
 			             $alter_ac_email_table_query = "ALTER TABLE $old_table_name
-			             RENAME TO $table_name";
+			                                            RENAME TO $table_name";
 			             $wpdb->get_results ( $alter_ac_email_table_query );
 			        
 			        }
 			        
-			        if($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "ac_sent_history'") === $wpdb->prefix . 'ac_sent_history') { 
+			        if( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . "ac_sent_history'" ) === $wpdb->prefix . 'ac_sent_history' ) { 
 			             $old_sent_table_name = $wpdb->prefix . "ac_sent_history";
-			             $sent_table_name = $wpdb->prefix . "ac_sent_history_lite";
+			             $sent_table_name     = $wpdb->prefix . "ac_sent_history_lite";
 			             $alter_ac_sent_history_table_query = "ALTER TABLE $old_sent_table_name
-			             RENAME TO $sent_table_name";
+			                                                   RENAME TO $sent_table_name";
 			             $wpdb->get_results ( $alter_ac_sent_history_table_query );
 			        }
 			        
-			        if( $wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "ac_abandoned_cart_history'") === $wpdb->prefix . 'ac_abandoned_cart_history') {
+			        if( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . "ac_abandoned_cart_history'" ) === $wpdb->prefix . 'ac_abandoned_cart_history' ) {
 			             $old_ac_history_table_name = $wpdb->prefix . "ac_abandoned_cart_history";
-			             $ac_history_table_name = $wpdb->prefix . "ac_abandoned_cart_history_lite";
+			             $ac_history_table_name     = $wpdb->prefix . "ac_abandoned_cart_history_lite";
 			        
 			             $alter_ac_abandoned_cart_history_table_query = "ALTER TABLE $old_ac_history_table_name
-			             RENAME TO $ac_history_table_name";
+			                                                             RENAME TO $ac_history_table_name";
 			             $wpdb->get_results ( $alter_ac_abandoned_cart_history_table_query );
 			        }
 			         
-			        update_option('ac_lite_alter_table_queries','yes');
+			        update_option( 'ac_lite_alter_table_queries', 'yes' );
 			    }
 			}
 			
-			function woocommerce_ac_admin_menu(){
+			function woocommerce_ac_admin_menu() {
 			
-				$page = add_submenu_page('woocommerce', __( 'Abandoned Carts', 'woocommerce-ac' ), __( 'Abandoned Carts', 'woocommerce-ac' ), 'manage_woocommerce', 'woocommerce_ac_page', array(&$this, 'woocommerce_ac_page' ));
+				$page = add_submenu_page ( 'woocommerce', __( 'Abandoned Carts', 'woocommerce-ac' ), __( 'Abandoned Carts', 'woocommerce-ac' ), 'manage_woocommerce', 'woocommerce_ac_page', array( &$this, 'woocommerce_ac_page' ) );
 			
 			}
 			
@@ -320,95 +306,107 @@ function woocommerce_ac_delete(){
 				if ( is_user_logged_in() )
 				{
 				global $wpdb;
-				$user_id = get_current_user_id();
-				$current_time = current_time('timestamp');
-				$cut_off_time = json_decode(get_option('woocommerce_ac_settings'));
-				if(isset($cut_off_time[0]->cart_time)) {
+				$user_id      = get_current_user_id();
+				$current_time = current_time( 'timestamp' );
+				$cut_off_time = json_decode( get_option( 'woocommerce_ac_settings' ) );
+				if( isset( $cut_off_time[0]->cart_time ) ) {
 				    $cart_cut_off_time = $cut_off_time[0]->cart_time * 60;
 				} else {
 				    $cart_cut_off_time = 60 * 60;
 				}
 				
 				$compare_time = $current_time - $cart_cut_off_time;
+				
+				$cart_ignored   = 0;
+				$recovered_cart = 0;
 				$query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-				WHERE user_id = '".$user_id."'
-				AND cart_ignored = '0'
-				AND recovered_cart = '0'";
-				$results = $wpdb->get_results( $query );
-				if ( count($results) == 0 )
-				{
-					$cart_info = json_encode(get_user_meta($user_id, '_woocommerce_persistent_cart', true));
+							WHERE user_id      = %d
+							AND cart_ignored   = %s
+							AND recovered_cart = %d ";
+				$results = $wpdb->get_results($wpdb->prepare( $query, $user_id, $cart_ignored, $recovered_cart ) );
+				
+				if ( count($results) == 0 ) {
+				    
+					$cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
+					
 					$insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-					(user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored)
-					VALUES ('".$user_id."', '".$cart_info."', '".$current_time."', '0')";
-					$wpdb->query($insert_query);
+					                 ( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored )
+					                 VALUES ( %d, %s, %d, %s )";
+					$wpdb->query( $wpdb->prepare( $insert_query, $user_id, $cart_info,$current_time, $cart_ignored ) );
 				}
-				elseif ( isset($results[0]->abandoned_cart_time) && $compare_time > $results[0]->abandoned_cart_time )
-				{
-					$updated_cart_info = json_encode(get_user_meta($user_id, '_woocommerce_persistent_cart', true));
-					if (! $this->compare_carts( $user_id, $results[0]->abandoned_cart_info) )
-					{
-						$query_ignored = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-						SET cart_ignored = '1'
-						WHERE user_id='".$user_id."'";
-						$wpdb->query($query_ignored);
-						$query_update = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-						(user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored)
-						VALUES ('".$user_id."', '".$updated_cart_info."', '".$current_time."', '0')";
-						$wpdb->query($query_update);
-						update_user_meta($user_id, '_woocommerce_ac_modified_cart', md5("yes"));
-					}
-					else
-					{
-						update_user_meta($user_id, '_woocommerce_ac_modified_cart', md5("no"));
-					}
-				}
-				else
-				{
-					$updated_cart_info = json_encode(get_user_meta($user_id, '_woocommerce_persistent_cart', true));
+				elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {
+					
+				    $updated_cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
+					
+					if ( ! $this->compare_carts( $user_id, $results[0]->abandoned_cart_info ) ) {  
+					    
+					    $updated_cart_ignored = 1;
+					    $query_ignored = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+                						  SET cart_ignored = %s
+                						  WHERE user_id    = %d ";
+					    $wpdb->query( $wpdb->prepare( $query_ignored, $updated_cart_ignored, $user_id ) );
+					    
+					    $query_update = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+						                 (user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored)
+						                 VALUES (%d, %s, %d, %s)";
+					    $wpdb->query( $wpdb->prepare( $query_update, $user_id, $updated_cart_info, $current_time, $cart_ignored ) );
+					    
+						update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "yes" ) );
+					} else {
+						update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "no" ) );
+					       }
+				} else {
+					$updated_cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
+					
 					$query_update = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-					SET abandoned_cart_info = '".$updated_cart_info."',
-					abandoned_cart_time = '".$current_time."'
-					WHERE user_id='".$user_id."' AND cart_ignored='0' ";
-					$wpdb->query($query_update);
-				}
+                					 SET abandoned_cart_info = %s,
+                					     abandoned_cart_time = %d
+                					 WHERE user_id      = %d 
+			                         AND   cart_ignored = %s ";
+					$wpdb->query( $wpdb->prepare( $query_update, $updated_cart_info, $current_time, $user_id, $cart_ignored ) );
+				       }
 				}
 			}
 			
-			function compare_carts($user_id, $last_abandoned_cart)
+			function compare_carts( $user_id, $last_abandoned_cart )
 			{
-				$current_woo_cart = get_user_meta($user_id, '_woocommerce_persistent_cart', true);
-				$abandoned_cart_arr = json_decode($last_abandoned_cart,true);
+				$current_woo_cart   = get_user_meta( $user_id, '_woocommerce_persistent_cart', true );
+				$abandoned_cart_arr = json_decode( $last_abandoned_cart, true );
 			
 				$temp_variable = "";
-				if ( count($current_woo_cart['cart']) >= count($abandoned_cart_arr['cart']) )
-				{
+				if ( count( $current_woo_cart['cart'] ) >= count( $abandoned_cart_arr['cart'] ) ) {
 					//do nothing
-				}
-				else
-				{
-					$temp_variable = $current_woo_cart;
-					$current_woo_cart = $abandoned_cart_arr;
+				} else {
+					$temp_variable      = $current_woo_cart;
+					$current_woo_cart   = $abandoned_cart_arr;
 					$abandoned_cart_arr = $temp_variable;
 				}
-				foreach ($current_woo_cart as $key => $value)
+				foreach ( $current_woo_cart as $key => $value )
 				{
-					foreach ($value as $item_key => $item_value)
+					foreach ( $value as $item_key => $item_value )
 					{
-						$current_cart_product_id = $item_value['product_id'];
+						$current_cart_product_id   = $item_value['product_id'];
 						$current_cart_variation_id = $item_value['variation_id'];
-						$current_cart_quantity = $item_value['quantity'];
-			
-						if (isset($abandoned_cart_arr[$key][$item_key]['product_id'])) $abandoned_cart_product_id = $abandoned_cart_arr[$key][$item_key]['product_id'];
-                                                else $abandoned_cart_product_id = "";
-						if (isset($abandoned_cart_arr[$key][$item_key]['variation_id'])) $abandoned_cart_variation_id = $abandoned_cart_arr[$key][$item_key]['variation_id'];
-                                                else $abandoned_cart_variation_id = "";
-						if (isset($abandoned_cart_arr[$key][$item_key]['quantity'])) $abandoned_cart_quantity = $abandoned_cart_arr[$key][$item_key]['quantity'];
-                                                else $abandoned_cart_quantity = "";
-			
-						if (($current_cart_product_id != $abandoned_cart_product_id) ||
-								($current_cart_variation_id != $abandoned_cart_variation_id) ||
-								($current_cart_quantity != $abandoned_cart_quantity) )
+						$current_cart_quantity     = $item_value['quantity'];
+
+						if ( isset( $abandoned_cart_arr[ $key ][ $item_key ][ 'product_id' ] ) ) {
+							$abandoned_cart_product_id = $abandoned_cart_arr[$key][$item_key]['product_id'];
+						} else {
+							$abandoned_cart_product_id = "";
+						}
+						if ( isset( $abandoned_cart_arr[$key][$item_key]['variation_id'] ) ) {
+						     $abandoned_cart_variation_id = $abandoned_cart_arr[$key][$item_key]['variation_id']; 
+						} else {
+						    $abandoned_cart_variation_id = "";
+						}
+						if ( isset( $abandoned_cart_arr[$key][$item_key]['quantity'] ) ) {
+						     $abandoned_cart_quantity = $abandoned_cart_arr[$key][$item_key]['quantity'];
+						} else {
+						     $abandoned_cart_quantity = "";
+						}
+						if ( ( $current_cart_product_id != $abandoned_cart_product_id ) ||
+							 ( $current_cart_variation_id != $abandoned_cart_variation_id ) ||
+							 ( $current_cart_quantity != $abandoned_cart_quantity ) )
 						{
 							return false;
 						}
@@ -421,47 +419,48 @@ function woocommerce_ac_delete(){
 				
 				global $wpdb;
 				$user_id = get_current_user_id();
-				delete_user_meta($user_id, '_woocommerce_ac_persistent_cart_time');
-				delete_user_meta($user_id, '_woocommerce_ac_persistent_cart_temp_time');
+				delete_user_meta( $user_id, '_woocommerce_ac_persistent_cart_time' );
+				delete_user_meta( $user_id, '_woocommerce_ac_persistent_cart_temp_time' );
 			
 				// get all latest abandoned carts that were modified
+				
+				$cart_ignored   = 0;
+				$recovered_cart = 0;
 				$query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-				WHERE user_id = '".$user_id."'
-				AND cart_ignored = '0'
-				AND recovered_cart = '0'
-				ORDER BY id DESC
-				LIMIT 1";
-				$results = $wpdb->get_results( $query );
-				if (count($results) > 0){
-				    if ( get_user_meta($user_id, '_woocommerce_ac_modified_cart', true) == md5("yes") || 
-						get_user_meta($user_id, '_woocommerce_ac_modified_cart', true) == md5("no") )
+            			  WHERE user_id      = %d
+            		      AND cart_ignored   = %s
+            			  AND recovered_cart = %d
+            			  ORDER BY id DESC
+            			  LIMIT 1";
+				$results = $wpdb->get_results( $wpdb->prepare( $query, $user_id, $cart_ignored, $recovered_cart ) );
+				if ( count( $results ) > 0 ) {
+				    if ( get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "yes" ) || 
+						 get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "no" ) )
 				        {
-					
-        					$order_id = $order->id;
+					        $order_id = $order->id;
+        					
+					        $updated_cart_ignored = 1;
         					$query_order = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-        					SET recovered_cart= '".$order_id."',
-        					cart_ignored = '1'
-        					WHERE id='".$results[0]->id."' ";
-        					$wpdb->query($query_order);
-        					delete_user_meta($user_id, '_woocommerce_ac_modified_cart');
-        				}
-				    else
-				        {
-        					$delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-        					WHERE
-        					id='".$results[0]->id."' ";
-        					$wpdb->query( $delete_query );
+                        					SET recovered_cart = %d,
+                        					    cart_ignored   = %s
+                        					WHERE id = %d ";
+        					$wpdb->query( $wpdb->prepare( $query_order, $order_id, $updated_cart_ignored, $results[0]->id ) );
+        					delete_user_meta( $user_id, '_woocommerce_ac_modified_cart' );
+        				} else { 
+				            $delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+					        				 WHERE
+					        				 id= %d ";
+				            $wpdb->query( $wpdb->prepare( $delete_query, $results[0]->id ) );
         				}
  			       }
                }
 			
 			function action_admin_init() {
 				// only hook up these filters if we're in the admin panel, and the current user has permission
-				// to edit posts and pages
-				//echo "hii";
+				// to edit posts and pages				
 				if ( current_user_can( 'edit_posts' ) && current_user_can( 'edit_pages' ) ) {
-					add_filter( 'mce_buttons', array(&$this, 'filter_mce_button' ));
-					add_filter( 'mce_external_plugins', array(&$this, 'filter_mce_plugin' ));
+					add_filter( 'mce_buttons', array( &$this, 'filter_mce_button' ) );
+					add_filter( 'mce_external_plugins', array( &$this, 'filter_mce_plugin' ) );
 				}
 			}
 			
@@ -479,38 +478,31 @@ function woocommerce_ac_delete(){
 			
 			function display_tabs() {
 			
-				if (isset($_GET['action'])) $action = $_GET['action'];
-                                else $action = "";
-			
-				$active_listcart = "";
-				$active_emailtemplates = "";
-				$active_settings = "";
-				$active_stats = "";
-			
-				if (($action == 'listcart' || $action == 'orderdetails') || $action == '')
-				{
+				if ( isset( $_GET[ 'action' ] ) ) {
+				    $action = $_GET[ 'action' ];
+				} else {
+				    $action                = "";			
+				    $active_listcart       = "";
+				    $active_emailtemplates = "";
+				    $active_settings       = "";
+				    $active_stats          = "";
+				}			
+				if ( ( $action == 'listcart' || $action == 'orderdetails' ) || $action == '' ) {
 					$active_listcart = "nav-tab-active";
-				}
-			
-				if ($action == 'emailtemplates')
-				{
+				}			
+				if ( $action == 'emailtemplates' ) {
 					$active_emailtemplates = "nav-tab-active";
 				}
-			
-				if ($action == 'emailsettings')
-				{
+			    if ( $action == 'emailsettings' ) {
 					$active_settings = "nav-tab-active";
 				}
-			
-				if ($action == 'stats')
-				{
+			    if ( $action == 'stats' ) {
 					$active_stats = "nav-tab-active";
 				}
 			
 				?>
 				
-				<div style="background-image: url('<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/ac_tab_icon.png') !important;" class="icon32"><br></div>
-				<!--<span class="mce_abandoncart_email_variables"><br></span>-->
+				<div style="background-image: url('<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/ac_tab_icon.png') !important;" class="icon32"><br></div>				
 				
 				<h2 class="nav-tab-wrapper woo-nav-tab-wrapper">
 				<a href="admin.php?page=woocommerce_ac_page&action=listcart" class="nav-tab <?php echo $active_listcart; ?>"> <?php _e( 'Abandoned Orders', 'woocommerce-ac' );?> </a>
@@ -524,52 +516,43 @@ function woocommerce_ac_delete(){
 			
 			function my_enqueue_scripts_js( $hook ) {
 				
-				if ( $hook != 'woocommerce_page_woocommerce_ac_page' )
-				{
+				if ( $hook != 'woocommerce_page_woocommerce_ac_page' ) {
 					return;
-				}
-				else
-				{
-				
+				} else {				
 					wp_enqueue_script( 'jquery' );
-                                        wp_enqueue_script(
-							'jquery-ui-min',
-							'//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js',
-							'',
-							'',
-							false
+                    wp_enqueue_script( 
+                                       'jquery-ui-min',
+            						   '//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js',
+            						   '',
+            						   '',
+            					       false
 					);
 					wp_enqueue_script( 'jquery-ui-datepicker' );
 					
-					//wp_enqueue_script('suggest');
 					wp_enqueue_script(
-							'jquery-tip',
-							plugins_url('/js/jquery.tipTip.minified.js', __FILE__),
-							'',
-							'',
-							false
+            						   'jquery-tip',
+            						   plugins_url( '/js/jquery.tipTip.minified.js', __FILE__ ),
+            						   '',
+            						   '',
+            						   false
 					);
-					wp_register_script( 'woocommerce_admin', plugins_url() . '/woocommerce/assets/js/admin/woocommerce_admin.js', array('jquery', 'jquery-ui-widget', 'jquery-ui-core'));
+					wp_register_script( 'woocommerce_admin', plugins_url() . '/woocommerce/assets/js/admin/woocommerce_admin.js', array( 'jquery', 'jquery-ui-widget', 'jquery-ui-core' ) );
 					wp_enqueue_script( 'woocommerce_admin' );
-					
-					////////////////////////////////////////////////////////////////
 					
 					?>
 					<script type="text/javascript" >
 					function delete_email_template( id )
 					{
-						var y=confirm('Are you sure you want to delete this Email Template');
-						if(y==true)
-						{
+						var y=confirm( 'Are you sure you want to delete this Email Template' );
+						if( y==true ) {
 							location.href='admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=removetemplate&id='+id;
 					    }
 					}
 				    </script>
-				    <!-- /////////////////////////////////////////////////////////////// -->
 				    
 				    <?php
-				    wp_enqueue_script('tinyMCE_ac', plugins_url() . '/woocommerce-abandoned-cart/js/tinymce/jscripts/tiny_mce/tiny_mce.js');
-				    wp_enqueue_script('ac_email_variables', plugins_url() . '/woocommerce-abandoned-cart/js/abandoncart_plugin_button.js');
+				    wp_enqueue_script( 'tinyMCE_ac', plugins_url() . '/woocommerce-abandoned-cart/js/tinymce/jscripts/tiny_mce/tiny_mce.js' );
+				    wp_enqueue_script( 'ac_email_variables', plugins_url() . '/woocommerce-abandoned-cart/js/abandoncart_plugin_button.js' );
 				    ?>
 				    
 				    <?php
@@ -611,7 +594,7 @@ function woocommerce_ac_delete(){
 			        table_cell_limit : 100,
 			        table_row_limit : 5,
 			        table_col_limit : 5,
-                                convert_urls : false
+                    convert_urls : false
 				});
 					
 				</script>
@@ -620,18 +603,14 @@ function woocommerce_ac_delete(){
 			
 			function my_enqueue_scripts_css( $hook ) {
 				
-				if ( $hook != 'woocommerce_page_woocommerce_ac_page' )
-				{
+				if ( $hook != 'woocommerce_page_woocommerce_ac_page' ) {
 					return;
-				}
-				else
-				{
-					wp_enqueue_style( 'jquery-ui', "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" , '', '', false);
-					
+				} else {
+					wp_enqueue_style( 'jquery-ui', "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" , '', '', false );					
 					wp_enqueue_style( 'woocommerce_admin_styles', plugins_url() . '/woocommerce/assets/css/admin.css' );
 					wp_enqueue_style( 'jquery-ui-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
 					
-					?>
+				 ?>
 						
 					<style>
 					span.mce_abandoncart_email_variables 
@@ -651,16 +630,13 @@ function woocommerce_ac_delete(){
 			 */
 			function woocommerce_ac_page()
 			{
-				if ( is_user_logged_in() )
-				{
+				if ( is_user_logged_in() ) {
 				global $wpdb;
 					
 				// Check the user capabilities
-				if ( !current_user_can( 'manage_woocommerce' ) )
-				{
+				if ( !current_user_can( 'manage_woocommerce' ) ) {
 					wp_die( __( 'You do not have sufficient permissions to access this page.', 'woocommerce-ac' ) );
-				}
-			
+				}			
 				?>
 			
 					<div class="wrap">
@@ -670,39 +646,44 @@ function woocommerce_ac_delete(){
 							<h2><?php _e( 'WooCommerce - Abandon Cart Lite', 'woocommerce-ac' ); ?></h2>
 					<?php 
 					
-                                        if (isset($_GET['action'])) $action = $_GET['action'];
-					else $action = "";
+                 if ( isset( $_GET[ 'action' ] ) ) {
+                     $action = $_GET[ 'action' ];
+                 } else {
+                     $action = "";
+                 }
+				 if ( isset( $_GET[ 'mode' ] ) ) {
+					 $mode = $_GET[ 'mode' ];
+				 } else {
+				     $mode = "";
+				 }                       
 					
-					if (isset($_GET['mode'])) $mode = $_GET['mode'];
-					else $mode = "";
-                                        
-					$this->display_tabs();
+				 $this->display_tabs();
 					
-					if ($action == 'emailsettings')
-					{
+					if ( $action == 'emailsettings' ) {
 						// Save the field values
-						if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'save' )
-						{
-							$ac_settings = new stdClass();
-							$ac_settings->cart_time = $_POST['cart_abandonment_time'];
-							$woo_ac_settings[] = $ac_settings;
-							$woocommerce_ac_settings = json_encode($woo_ac_settings);
+						if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' ) {
 							
-							update_option('woocommerce_ac_settings',$woocommerce_ac_settings);
+						    $ac_settings             = new stdClass();
+							$ac_settings->cart_time  = $_POST[ 'cart_abandonment_time' ];
+							$woo_ac_settings[]       = $ac_settings;
+							$woocommerce_ac_settings = json_encode( $woo_ac_settings );
+							
+							update_option( 'woocommerce_ac_settings', $woocommerce_ac_settings );
 						}
 						?>
 			
-							<?php if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'save' ) { ?>
+							<?php if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' ) { ?>
 							<div id="message" class="updated fade"><p><strong><?php _e( 'Your settings have been saved.', 'woocommerce-ac' ); ?></strong></p></div>
 							<?php } ?>
 							
 							<?php
 								
 							     $enable_email_sett_arr = array();
-							     $enable_email_sett = get_option( 'woocommerce_ac_settings' );
-							         if ( $enable_email_sett != '' && $enable_email_sett != '{}' && $enable_email_sett != '[]' && $enable_email_sett != 'null' ) {
+							     $enable_email_sett     = get_option( 'woocommerce_ac_settings' );
+							     if ( $enable_email_sett != '' && $enable_email_sett != '{}' && $enable_email_sett != '[]' && $enable_email_sett != 'null' ) {
 							         $enable_email_sett_arr = json_decode( $enable_email_sett );
-							         }
+							     }
+							         
 							?>
 							<div id="content">
 							  <form method="post" action="" id="ac_settings">
@@ -722,26 +703,23 @@ function woocommerce_ac_delete(){
 														
 														$cart_time = "";
 														
-														if ( count($enable_email_sett_arr) > 0 ) {
+														if ( count( $enable_email_sett_arr ) > 0 ) {
 														
-														    if ( ( isset($enable_email_sett_arr[0]->cart_time) ) && ($enable_email_sett_arr[0]->cart_time != '' || $enable_email_sett_arr[0]->cart_time != 'null' )) {
+														    if ( ( isset( $enable_email_sett_arr[0]->cart_time ) ) && ( $enable_email_sett_arr[0]->cart_time != '' || $enable_email_sett_arr[0]->cart_time != 'null' ) ) {
 														
 														        $cart_time = $enable_email_sett_arr[0]->cart_time;
+														    
 														    } else {
 														        
 														        $cart_time = 60;
 														    }
-														}
-														else {
-														    	
+														} else {														    	
 														    $cart_time = 60;
 														}
 				    									
 														?>
 				    									<input type="text" name="cart_abandonment_time" id="cart_abandonment_time" size="5" value="<?php echo $cart_time; ?> "> <?php _e( 'minutes', 'woocommerce-ac' );?>
-				    									<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Consider cart abandoned after X minutes of item being added to cart & order not placed', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
-				    									<!-- <span class="description"><?php _e( 'Consider cart abandoned after X minutes of item being added to cart & order not placed', 'woocommerce-ac' );
-				    									?></span> -->
+				    									<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Consider cart abandoned after X minutes of item being added to cart & order not placed', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>				    									
 				    								</td>
 				    							</tr>
 				    							
@@ -749,188 +727,174 @@ function woocommerce_ac_delete(){
 											</div>
 										</div>
 									</div>
-							  <p class="submit">
+							   <p class="submit">
 								<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes', 'woocommerce-ac' ); ?>" />
-							  </p>
+							   </p>
 						    </form>
 						  </div>
 						<?php 
-					}
-					elseif ($action == 'listcart' || $action == '')
-					{
-						?>
+			      } elseif ( $action == 'listcart' || $action == '' ) {
+			?>
 						
-			<p> <?php _e('The list below shows all Abandoned Carts which have remained in cart for a time higher than the "Cart abandoned cut-off time" setting.', 'woocommerce-ac');?> </p>
+			<p> <?php _e( 'The list below shows all Abandoned Carts which have remained in cart for a time higher than the "Cart abandoned cut-off time" setting.', 'woocommerce-ac' );?> </p>
 			
 			<?php
-			//echo plugins_url();
+
 			include_once(  "pagination.class.php");
 			 
 			/* Find the number of rows returned from a query; Note: Do NOT use a LIMIT clause in this query */
-			$wpdb->get_results("SELECT wpac . * , wpu.user_login, wpu.user_email 
-					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac 
+			
+			$recoverd_cart = 0;
+			$query = "SELECT wpac . * , wpu.user_login, wpu.user_email
+					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
 					  LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
-					  WHERE recovered_cart='0'  ");
-                        
-                        $count = $wpdb->num_rows;
-
-			if($count > 0) {
+					  WHERE recovered_cart= %d ";
+			$results = $wpdb->get_results( $wpdb->prepare( $query, $recoverd_cart ) );
+			
+            $count = $wpdb->num_rows;
+            			
+			if( $count > 0 ) {
 				$p = new pagination;
-				$p->items($count);
-				$p->limit(10); // Limit entries per page
-				$p->target("admin.php?page=woocommerce_ac_page&action=listcart");
+				$p->items( $count );
+				$p->limit( 10 ); // Limit entries per page
+				$p->target( "admin.php?page=woocommerce_ac_page&action=listcart" );
 				
-                if (isset($p->paging)) {
-                    if (isset($_GET[$p->paging])) $p->currentPage($_GET[$p->paging]); // Gets and validates the current page
+                if ( isset( $p->paging ) ) {
+                      if ( isset( $_GET[ $p->paging ] ) ) $p->currentPage( $_GET[ $p->paging ] ); // Gets and validates the current page
                 }
 				$p->calculate(); // Calculates what to show
-				$p->parameterName('paging');
-				$p->adjacents(1); //No. of page away from the current page
-				$p->showCounter(true);
+				$p->parameterName( 'paging' );
+				$p->adjacents( 1 ); //No. of page away from the current page
+				$p->showCounter( true );
 				 
-				if(!isset($_GET['paging'])) {
+				if( !isset( $_GET[ 'paging' ] ) ) {
 					$p->page = 1;
 				} else {
-					$p->page = $_GET['paging'];
+					$p->page = $_GET[ 'paging' ];
 				}
 				 
 				//Query for limit paging
 				$limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
 				 
-			}
-            else $limit = "";
+			} else 
+			    $limit = "";
 			
 			?>
 			  
 			<div class="tablenav">
 			    <div class='tablenav-pages'>
-			    	<?php if ($count > 0) echo $p->show();  // Echo out the list of paging. ?>
+			    	<?php if ( $count > 0 ) echo $p->show();  // Echo out the list of paging. ?>
 			    </div>
 			</div>
 			
 			<?php 
 			
 			$order = "";
-                        if(isset($_GET['order'])){
-			$order = $_GET['order'];
-                        }
-			if ( $order == "" )
-			{
-				$order = "desc";
-				$order_next = "asc";
+            if( isset( $_GET[ 'order' ] ) ){
+			      $order = $_GET[ 'order' ];
+            }
+			if ( $order == "" ) {
+				 $order      = "desc";
+				 $order_next = "asc";
 			}
-			elseif ( $order == "asc" )
-			{
+			elseif ( $order == "asc" ) {
 				$order_next = "desc";
-			}
-			elseif ( $order == "desc" )
-			{
+			} elseif ( $order == "desc" ) {
 				$order_next = "asc";
 			}
 			
 			$order_by = "";
-                        if(isset($_GET['orderby'])){
-			$order_by = $_GET['orderby'];
-                        }
-			if ( $order_by == "" )
-			{
-				$order_by = "abandoned_cart_time";
+            if( isset( $_GET[ 'orderby' ] ) ){
+			      $order_by = $_GET[ 'orderby' ];
+            }
+            if ( $order_by == "" ) {
+				 $order_by = "abandoned_cart_time";
 			}
 			/* Now we use the LIMIT clause to grab a range of rows */
-			$query = "SELECT wpac . * , wpu.user_login, wpu.user_email 
-					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac 
+			
+		    $query = "SELECT wpac . * , wpu.user_login, wpu.user_email
+					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
 					  LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
-					  WHERE recovered_cart='0' 
-					  ORDER BY `$order_by` $order 
+					  WHERE recovered_cart = %d
+					  ORDER BY %s %s
 					  $limit";
-					  //echo $query;
-					  $results = $wpdb->get_results( $query );						
-			 
+					   
+				      $results = $wpdb->get_results( $wpdb->prepare( $query, $recoverd_cart, $order_by, $order ) );
+			
 			/* From here you can do whatever you want with the data from the $result link. */
 			
 			$ac_cutoff_time = json_decode(get_option('woocommerce_ac_settings'));
 			
-			?> 
-			
-			
-			            <table class='wp-list-table widefat fixed posts' cellspacing='0' id='cart_data'>
-						<tr>
-							<th> <?php _e( 'Customer', 'woocommerce-ac' ); ?> </th>
-							<th> <?php _e( 'Order Total', 'woocommerce-ac' ); ?> </th>
-							<th scope="col" id="date_ac" class="manage-column column-date_ac sorted <?php echo $order;?>" style="">
-								<a href="admin.php?page=woocommerce_ac_page&action=listcart&orderby=abandoned_cart_time&order=<?php echo $order_next;?>">
-									<span> <?php _e( 'Date', 'woocommerce-ac' ); ?> </span>
-									<span class="sorting-indicator"></span>
-								</a>
-							</th>
-							<th scope="col" id="status_ac" class="manage-column column-status_ac sorted <?php echo $order;?>" style="">
-								<a href="admin.php?page=woocommerce_ac_page&action=listcart&orderby=cart_ignored&order=<?php echo $order_next;?>">
-									<span> <?php _e( 'Status', 'woocommerce-ac' ); ?> </span>
-									<span class="sorting-indicator"></span>
-								</a>
-							</th>
-							<th> <?php _e( 'Actions', 'woocommerce-ac' ); ?> </th>
-						</tr>
+			?> 						
+            <table class='wp-list-table widefat fixed posts' cellspacing='0' id='cart_data'>
+            	<tr>
+            	   <th> <?php _e( 'Customer', 'woocommerce-ac' ); ?> </th>
+            	   <th> <?php _e( 'Order Total', 'woocommerce-ac' ); ?> </th>
+            	   <th scope="col" id="date_ac" class="manage-column column-date_ac sorted <?php echo $order;?>" style="">
+            		<a href="admin.php?page=woocommerce_ac_page&action=listcart&orderby=abandoned_cart_time&order=<?php echo $order_next;?>">
+            		   <span> <?php _e( 'Date', 'woocommerce-ac' ); ?> </span>
+            		   <span class="sorting-indicator"></span>
+            		</a>
+            	   </th>
+            	   <th scope="col" id="status_ac" class="manage-column column-status_ac sorted <?php echo $order;?>" style="">
+            		 <a href="admin.php?page=woocommerce_ac_page&action=listcart&orderby=cart_ignored&order=<?php echo $order_next;?>">
+            			<span> <?php _e( 'Status', 'woocommerce-ac' ); ?> </span>
+            			<span class="sorting-indicator"></span>
+            		 </a>
+            	   </th>
+            	   <th> <?php _e( 'Actions', 'woocommerce-ac' ); ?> </th>
+            	</tr>
 			
 				<?php 
-						foreach ($results as $key => $value)
+						foreach ( $results as $key => $value )
 						{
 							$abandoned_order_id = $value->id;
-							$user_id = $value->user_id;
-							$user_login = $value->user_login;
-							$user_email = $value->user_email;
-							$user_first_name = get_user_meta($value->user_id, 'first_name');
-							$user_last_name = get_user_meta($value->user_id, 'last_name');
-							
-							$cart_info = json_decode($value->abandoned_cart_info);
+							$user_id            = $value->user_id;
+							$user_login         = $value->user_login;
+							$user_email         = $value->user_email;
+							$user_first_name    = get_user_meta( $value->user_id, 'first_name' );
+							$user_last_name     = get_user_meta( $value->user_id, 'last_name' );							
+							$cart_info          = json_decode( $value->abandoned_cart_info );
 							
 							$order_date = "";
 							$cart_update_time = $value->abandoned_cart_time;
-							if ($cart_update_time != "" && $cart_update_time != 0)
-							{
-								$order_date = date('d M, Y h:i A', $cart_update_time);
+							if ( $cart_update_time != "" && $cart_update_time != 0 ) {
+								 $order_date = date( 'd M, Y h:i A', $cart_update_time );
 							}
 							
-							$ac_cutoff_time = json_decode(get_option('woocommerce_ac_settings'));
-							if(isset($ac_cutoff_time[0]->cart_time)) {
-							    $cut_off_time = $ac_cutoff_time[0]->cart_time * 60;
+							$ac_cutoff_time = json_decode( get_option( 'woocommerce_ac_settings' ) );
+							if ( isset( $ac_cutoff_time[0]->cart_time ) ) {
+							     $cut_off_time = $ac_cutoff_time[0]->cart_time * 60;
 							} else {
-							    $cut_off_time = 60 * 60;
+							     $cut_off_time = 60 * 60;
 							}
-							$current_time = current_time('timestamp');
-							
-							$compare_time = $current_time - $cart_update_time;
-							
-							$cart_details = $cart_info->cart;
+							$current_time = current_time( 'timestamp' );							
+							$compare_time = $current_time - $cart_update_time;							
+							$cart_details = $cart_info->cart;							
 							
 							$line_total = 0;
-							foreach ($cart_details as $k => $v)
+							foreach ( $cart_details as $k => $v )
 							{
 								$line_total = $line_total + $v->line_total;
 							}
 							
-							if( $value->cart_ignored == 0 && $value->recovered_cart == 0 )
-							{
+							if( $value->cart_ignored == 0 && $value->recovered_cart == 0 ) {
 								$ac_status = "Abandoned";
 							}
-							elseif( $value->cart_ignored == 1 && $value->recovered_cart == 0 )
-							{
+							elseif( $value->cart_ignored == 1 && $value->recovered_cart == 0 ) {
 								$ac_status = "Abandoned but new </br>cart created after this";
-							}
-							else
-							{
+							} else {
 								$ac_status = "";
 							}
 							
 							?>
 							
 							<?php 
-							if ($compare_time > $cut_off_time && $ac_status != "" )
+							if ( $compare_time > $cut_off_time && $ac_status != "" )
 							{
-								{
 							?>
 							<tr id="row_<?php echo $abandoned_order_id; ?>">
-								<td><strong><?php echo "Abandoned Order #".$abandoned_order_id;?></strong><?php echo "</br>Name: ".$user_first_name[0]." ".$user_last_name[0]."<br><a href='mailto:$user_email'>".$user_email."</a>"; ?></td>
+								<td><strong> <a href="admin.php?page=woocommerce_ac_page&action=orderdetails&id=<?php echo $value->id;?>"><?php echo "Abandoned Order #".$abandoned_order_id;?></a></strong><?php  if( isset( $user_first_name[0] ) && isset( $user_last_name[0] ) ) { $user_name =  $user_first_name[0]." ".$user_last_name[0]; } echo "</br>Name: ".$user_name." <br><a href='mailto:$user_email'>".$user_email."</a>"; ?></td>
 								<td><?php echo get_woocommerce_currency_symbol()." ".$line_total; ?></td>
 								<td><?php echo $order_date; ?></td>
 								<td><?php echo $ac_status; ?>
@@ -940,203 +904,266 @@ function woocommerce_ac_delete(){
 								
 							</tr>
 							
-							<?php
-								} 
+							<?php 
 							}
 						}
 						echo "</table>";
-					}
-					elseif ($action == 'emailtemplates' && ($mode != 'edittemplate' && $mode != 'addnewtemplate' ) )
-					{
-							?>
-													
-							<p> <?php _e('Add email templates at different intervals to maximize the possibility of recovering your abandoned carts.', 'woocommerce-ac');?> </p>
-							
+					} elseif ( $action == 'emailtemplates' && ( $mode != 'edittemplate' && $mode != 'addnewtemplate' ) ) {
+							?>													
+							<p> <?php _e( 'Add email templates at different intervals to maximize the possibility of recovering your abandoned carts.', 'woocommerce-ac' );?> </p>
 							<?php
+							
 							// Save the field values
-							if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'save' )
-							{
-								
-								//$active_post = (empty($_POST['is_active'])) ? '0' : '1';
-								$active_post = 1;
-								if ( $active_post == 1 )
-								{
-									$check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite` 
-													WHERE is_active='1' AND frequency='".$_POST['email_frequency']."' AND day_or_hour='".$_POST['day_or_hour']."' ";
-									$check_results = $wpdb->get_results($check_query);
-									if (count($check_results) == 0 )
-									{
-										$query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite` 
-										(subject, body, is_active, frequency, day_or_hour, template_name, from_name)
-										VALUES ('".$_POST['woocommerce_ac_email_subject']."', 
-												'".$_POST['woocommerce_ac_email_body']."', 
-												'".$active_post."', 
-												'".$_POST['email_frequency']."', 
-												'".$_POST['day_or_hour']."', 
-												'".$_POST['woocommerce_ac_template_name']."',
-												'".$_POST['woocommerce_ac_from_name']."' )";
-										        $wpdb->query($query);
+							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' ) {	
+							    						
+								   $active_post = 1;
+								   
+								   
+								if ( $active_post == 1 ) { 								    
+								    								
+									$is_active       = 1;
+									$email_frequency = trim( $_POST[ 'email_frequency' ] );
+									$day_or_hour     = trim( $_POST[ 'day_or_hour' ] );
+									
+								    $check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
+													WHERE is_active = %s 
+	                                                AND frequency   = %d 
+	                                                AND day_or_hour = %s ";
+								    $check_results = $wpdb->get_results( $wpdb->prepare( $check_query, $is_active, $email_frequency, $day_or_hour ) );
+								    
+									
+									if ( count( $check_results ) == 0 ) {
+									    
+									     $active_post = 1;
+									     $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
+									     $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
+									     $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
+									     $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+									     
+									     $query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
+										           (subject, body, is_active, frequency, day_or_hour, template_name, from_name)
+										           VALUES ( %s, %s, %s, %d, %s, %s, %s )";
+    												
+									    $wpdb->query( $wpdb->prepare( $query, 
+									                                  $woocommerce_ac_email_subject,
+									                                  $woocommerce_ac_email_body, 
+									                                  $active_post, 
+									                                  $email_frequency, 
+									                                  $day_or_hour, 
+									                                  $woocommerce_ac_template_name, 
+									                                  $woocommerce_ac_from_name )
+									     );
+									      
 									}
-									else 
-									{
-										$query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
-										SET
-										is_active='0'
-										WHERE frequency='".$_POST['email_frequency']."' AND day_or_hour='".$_POST['day_or_hour']."' ";
-										$wpdb->query($query_update);
-										
-										$query_insert_new = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite` 
-										( subject, body, is_active, frequency, day_or_hour, template_name, from_name)
-										VALUES ('".$_POST['woocommerce_ac_email_subject']."', 
-												'".$_POST['woocommerce_ac_email_body']."', 
-												'".$active_post."', 
-												'".$_POST['email_frequency']."', 
-												'".$_POST['day_or_hour']."', 
-												'".$_POST['woocommerce_ac_template_name']."',
-												'".$_POST['woocommerce_ac_from_name']."' )";
-										$wpdb->query($query_insert_new);
+									else {
+									    
+									    $update_is_active = 0;
+									    $query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
+										                 SET
+										                 is_active       = %s
+										                 WHERE frequency = %d
+	                                                     AND day_or_hour = %s ";
+									    $wpdb->query($wpdb->prepare( $query_update, $update_is_active, $email_frequency, $day_or_hour ) );
+									    
+									    $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
+									    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
+									    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
+									    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+									    
+									    $query_insert_new = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
+										                    (subject, body, is_active, frequency, day_or_hour, template_name, from_name)
+										                    VALUES ( %s, %s, %s, %d, %s, %s, %s )";
+    												
+									    $wpdb->query( $wpdb->prepare( $query_insert_new, 
+									                                  $woocommerce_ac_email_subject,
+									                                  $woocommerce_ac_email_body, 
+									                                  $active_post, 
+									                                  $email_frequency, 
+									                                  $day_or_hour, 
+									                                  $woocommerce_ac_template_name, 
+									                                  $woocommerce_ac_from_name )
+									     );
 									}
 								}
 							}
 							
-							if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'update' )
+							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'update' )
 							{
-								//$active = (empty($_POST['is_active'])) ? '0' : '1';
 								$active = 1;
 								if ( $active == 1 )
-								{
-									$check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
-									WHERE is_active='1' AND frequency='".$_POST['email_frequency']."' AND day_or_hour='".$_POST['day_or_hour']."' ";
-									$check_results = $wpdb->get_results($check_query);
+								{   
+								    $is_active       = 1;
+								    $email_frequency = trim( $_POST[ 'email_frequency' ] );
+								    $day_or_hour     = trim( $_POST[ 'day_or_hour' ] );
+								    $check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
+									                WHERE is_active= %s 
+						                            AND frequency  = %d 
+						                            AND day_or_hour= %s ";
+								    $check_results = $wpdb->get_results( $wpdb->prepare( $check_query, $is_active, $email_frequency, $day_or_hour ) );
+								    
 									if (count($check_results) == 0 )
 									{
-										$query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
-										SET
-										subject='".$_POST['woocommerce_ac_email_subject']."',
-										body='".$_POST['woocommerce_ac_email_body']."',
-										is_active='".$active."', frequency='".$_POST['email_frequency']."',
-										day_or_hour='".$_POST['day_or_hour']."',
-										template_name='".$_POST['woocommerce_ac_template_name']."',
-										from_name='".$_POST['woocommerce_ac_from_name']."'
-										WHERE id='".$_POST['id']."' ";
-										$wpdb->query($query_update);
+                                        
+									    $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
+									    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );									    
+									    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
+									    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+									    $id                           = trim( $_POST[ 'id' ] );
+									    
+									    $query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
+										                SET
+                										subject       = %s,
+                										body          = %s,
+                										is_active     = %s, 
+				                                        frequency     = %d,
+                										day_or_hour   = %s,
+                										template_name = %s,
+                										from_name     = %s
+                										WHERE id      = %d ";
+									    $wpdb->query($wpdb->prepare( $query_update,
+									                                 $woocommerce_ac_email_subject,
+									                                 $woocommerce_ac_email_body,
+									                                 $active,
+                        									         $email_frequency,
+                        									         $day_or_hour,
+                        									         $woocommerce_ac_template_name,
+                        									         $woocommerce_ac_from_name,
+                        									         $id )
+									        
+									     );
 									}
-									else 
-									{
-										$query_update_new = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
-										SET
-										is_active='0'
-										WHERE frequency='".$_POST['email_frequency']."' AND day_or_hour='".$_POST['day_or_hour']."' ";
-										$wpdb->query($query_update_new);
-										
-										$query_update_latest = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
-										SET
-										subject='".$_POST['woocommerce_ac_email_subject']."',
-										body='".$_POST['woocommerce_ac_email_body']."',
-										is_active='".$active."', frequency='".$_POST['email_frequency']."',
-										day_or_hour='".$_POST['day_or_hour']."',
-										template_name='".$_POST['woocommerce_ac_template_name']."',
-										from_name='".$_POST['woocommerce_ac_from_name']."'
-										WHERE id='".$_POST['id']."' ";
-										$wpdb->query($query_update_latest);
+									else {
+									    
+									    $updated_is_active = 0;
+									    $query_update_new = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
+										                     SET is_active   = %s
+										                     WHERE frequency = %d
+			                                                 AND day_or_hour = %s ";
+									    $wpdb->query( $wpdb->prepare( $query_update_new, $updated_is_active, $email_frequency, $day_or_hour ) );
+									    
+									    $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
+									    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );									    
+									    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
+									    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+									    $id                           = trim( $_POST[ 'id' ] );
+									    
+									    $query_update_latest = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
+										                SET
+                										subject       = %s,
+                										body          = %s,
+                										is_active     = %s, 
+				                                        frequency     = %d,
+                										day_or_hour   = %s,
+                										template_name = %s,
+                										from_name     = %s
+                										WHERE id      = %d ";
+									    $wpdb->query($wpdb->prepare( $query_update_latest,
+									                                 $woocommerce_ac_email_subject,
+									                                 $woocommerce_ac_email_body,
+									                                 $active,
+                        									         $email_frequency,
+                        									         $day_or_hour,
+                        									         $woocommerce_ac_template_name,
+                        									         $woocommerce_ac_from_name,
+                        									         $id )
+									        
+									     );
+									    
 									}
 								}
 							}
 							
-							if ( $action == 'emailtemplates' && $mode == 'removetemplate' )
-							{
-								$id_remove = $_GET['id'];
-								$query_remove = "DELETE FROM `".$wpdb->prefix."ac_email_templates_lite` WHERE id='".$id_remove."' ";
-								$wpdb->query($query_remove);
+							if ( $action == 'emailtemplates' && $mode == 'removetemplate' ){
+								$id_remove = $_GET[ 'id' ];
+								
+								$query_remove = "DELETE FROM `".$wpdb->prefix."ac_email_templates_lite` WHERE id= %d ";
+								$wpdb->query( $wpdb->prepare( $query_remove, $id_remove ) );
 							}
 							
-							if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'save' ) { ?>
+							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' ) { ?>
 							<div id="message" class="updated fade"><p><strong><?php _e( 'The Email Template has been successfully added.', 'woocommerce-ac' ); ?></strong></p></div>
 							<?php } 
-							if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'update' ) { ?>
+							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'update' ) { ?>
 							<div id="message" class="updated fade"><p><strong><?php _e( 'The Email Template has been successfully updated.', 'woocommerce-ac' ); ?></strong></p></div>
 							<?php }?>
 							
 							<div class="tablenav">
 							<p style="float:left;">
-							<input type="button" value="+ Add New Template" id="add_new_template" onclick="location.href='admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=addnewtemplate';" style="font-weight: bold; color: green; font-size: 18px; cursor: pointer;">
-							<!--<a href="admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=addnewtemplate">Add New Template</a>-->
+							<input type="button" value="+ Add New Template" id="add_new_template" onclick="location.href='admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=addnewtemplate';" style="font-weight: bold; color: green; font-size: 18px; cursor: pointer;">							
 							</p>
 							
 				<?php
-				include_once(  "pagination.class.php"); 
+				include_once( "pagination.class.php" ); 
 				 
 				/* Find the number of rows returned from a query; Note: Do NOT use a LIMIT clause in this query */
-				$wpdb->get_results("SELECT wpet . *   
-										FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet  
-										"); 
+				$wpdb->get_results( "SELECT wpet . *   
+									 FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet  
+								   "); 
                                 
-                                $count = $wpdb->num_rows;
+                $count = $wpdb->num_rows;
 
-				if($count > 0) {
+				if( $count > 0 ) {
 					$p = new pagination;
-					$p->items($count);
-					$p->limit(10); // Limit entries per page
-					$p->target("admin.php?page=woocommerce_ac_page&action=emailtemplates");
-					if (isset($p->paging))
-					{
-						if (isset($_GET[$p->paging])) $p->currentPage($_GET[$p->paging]); // Gets and validates the current page
-					}
+					$p->items( $count );
+					$p->limit( 10 ); // Limit entries per page
+					$p->target( "admin.php?page=woocommerce_ac_page&action=emailtemplates" );
+					if ( isset( $p->paging ) ) {
+						if ( isset( $_GET[ $p->paging ] ) ){
+						    $p->currentPage( $_GET[ $p->paging ] ); // Gets and validates the current page
+					    }
+					}    
 					$p->calculate(); // Calculates what to show
-					$p->parameterName('paging');
-					$p->adjacents(1); //No. of page away from the current page
-					$p->showCounter(true);
+					$p->parameterName( 'paging' );
+					$p->adjacents( 1 ); //No. of page away from the current page
+					$p->showCounter( true );
 						
-					if(!isset($_GET['paging'])) {
+					if( !isset( $_GET[ 'paging' ] ) ) {
 						$p->page = 1;
 					} else {
-						$p->page = $_GET['paging'];
+						$p->page = $_GET[ 'paging' ];
 					}
 						
 					//Query for limit paging
-					$limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
+					$limit = "LIMIT " . ( $p->page - 1 ) * $p->limit  . ", " . $p->limit;
 						
 				} 
-                                else $limit = "";
+                else $limit = "";
 					
 				?>
 							  
 				    <div class='tablenav-pages'>
-				    	<?php if ($count>0) echo $p->show();  // Echo out the list of paging. ?>
+				    	<?php if ( $count>0 ) echo $p->show();  // Echo out the list of paging. ?>
 				    </div>
 				</div>
 				
 				<?php 
 
 				$order = "";
-				if (isset($_GET['order'])) $order = $_GET['order'];
-				if ( $order == "" )
-				{
-					$order = "asc";
+				if ( isset( $_GET[ 'order' ] ) ) {
+				    $order = $_GET[ 'order' ];
+				}    
+				if ( $order == "" ) {
+					$order      = "asc";
 					$order_next = "desc";
-				}
-				elseif ( $order == "asc" )
-				{
+				} elseif ( $order == "asc" ) {
 					$order_next = "desc";
-				}
-				elseif ( $order == "desc" )
-				{
+				} elseif ( $order == "desc" ) {
 					$order_next = "asc";
 				}
 					
 				$order_by = "";
-				if (isset($_GET['orderby'])) $order_by = $_GET['orderby'];
-				if ( $order_by == "" )
-				{
-					$order_by = "frequency";
+				if ( isset($_GET[ 'orderby' ] ) ) {
+				     $order_by = $_GET[ 'orderby' ];
+				}     
+				if ( $order_by == "" ) {
+					 $order_by = "frequency";
 				}
 				
-				$query = "SELECT wpet . *   
-						  FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet 
-						  ORDER BY $order_by $order 
+				$query = "SELECT wpet . *
+						  FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet
+						  ORDER BY %s %s
 						  $limit";
-				$results = $wpdb->get_results( $query );
-				 
+				$results = $wpdb->get_results($wpdb->prepare( $query, $order_by, $order ) );
 				/* From here you can do whatever you want with the data from the $result link. */
 				?> 
 		
@@ -1160,10 +1187,13 @@ function woocommerce_ac_delete(){
 						</tr>
 							
 							<?php 
-							if (isset($_GET['pageno'])) $add_var = ($_GET['pageno'] - 1) * $limit; 
-                                                        else $add_var = "";
-							$i = 1 + $add_var;
-						foreach ($results as $key => $value)
+						if ( isset( $_GET[ 'pageno' ] ) ){
+						     $add_var = ($_GET['pageno'] - 1) * $limit; 
+						} else {
+						     $add_var = "";
+						}    
+						$i = 1 + $add_var;
+						foreach ( $results as $key => $value )
 						{
 								$id = $value->id;
 								
@@ -1176,105 +1206,103 @@ function woocommerce_ac_delete(){
 								{
 									$active = "No";
 								}
-								$frequency = $value->frequency;
+								$frequency   = $value->frequency;
 								$day_or_hour = $value->day_or_hour;
 								?>
 			
 								<tr id="row_<?php echo $id; ?>">
-								<td><?php echo $i; ?></td>
-								<td><?php echo $value->template_name; ?></td>
-								<td><?php echo $frequency." ".$day_or_hour." After Abandonment";?></td>
-								<td><?php echo $active; ?></td>
-								
-								<td>
+								   <td><?php echo $i; ?></td>
+								   <td><?php echo $value->template_name; ?></td>
+								   <td><?php echo $frequency." ".$day_or_hour." After Abandonment";?></td>
+								   <td><?php echo $active; ?></td>
+								   <td>
 									<a href="admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=edittemplate&id=<?php echo $id; ?>"> <img src="<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/edit.png" alt="Edit" title="Edit" width="20" height="20"> </a>&nbsp;
 									<a href="#" onclick="delete_email_template( <?php echo $id; ?> )" > <img src="<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/delete.png" alt="Delete" title="Delete" width="20" height="20"> </a>&nbsp;
-								</td>
-			
-								
-							</tr>
+								   </td>											
+							    </tr>
 			
 							<?php 
 							$i++;
 						}
 						echo "</table>";
-						//echo "</p>";
 			
 					}
 					elseif ($action == 'stats' || $action == '')
-					{
-						
+					{						
 						?>
 						<p>
 						<script language='javascript'>
-						jQuery(document).ready(function()
+						jQuery( document ).ready( function()
 						{
-						jQuery('#duration_select').change(function()
-						{
-						var group_name = jQuery('#duration_select').val();
-						var today = new Date();
-						var start_date = "";
-						var end_date = "";
-						if ( group_name == "yesterday")
-						{
-							start_date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
-							end_date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
-						}
-						else if ( group_name == "today")
-						{
-							start_date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-							end_date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-						}
-						else if ( group_name == "last_seven")
-						{
-							start_date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-							end_date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-						}
-						else if ( group_name == "last_fifteen")
-						{
-							start_date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 15);
-							end_date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-						}
-						else if ( group_name == "last_thirty")
-						{
-							start_date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 30);
-							end_date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-						}
-						else if ( group_name == "last_ninety")
-						{
-							start_date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 90);
-							end_date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-						}
-						else if ( group_name == "last_year_days")
-						{
-							start_date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 365);
-							end_date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-						}
-
-						var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-						                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-						               
-						var start_date_value = start_date.getDate() + " " + monthNames[start_date.getMonth()] + " " + start_date.getFullYear();
-						var end_date_value = end_date.getDate() + " " + monthNames[end_date.getMonth()] + " " + end_date.getFullYear();
-
-						jQuery('#start_date').val(start_date_value);
-						jQuery('#end_date').val(end_date_value);
-						//location.href= 'admin.php?page=woocommerce_ac_page&action=stats&durationselect='+group_name;
-						});
+							jQuery( '#duration_select' ).change( function()
+							{
+								var group_name = jQuery( '#duration_select' ).val();
+								var today      = new Date();
+								var start_date = "";
+								var end_date   = "";
+								if ( group_name == "yesterday" )
+								{
+									start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 1 );
+									end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 1 );
+								}
+								else if ( group_name == "today")
+								{
+									start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
+									end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
+								}
+								else if ( group_name == "last_seven" )
+								{
+									start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 7 );
+									end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
+								}
+								else if ( group_name == "last_fifteen" )
+								{
+									start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 15 );
+									end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
+								}
+								else if ( group_name == "last_thirty" )
+								{
+									start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 30 );
+									end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
+								}
+								else if ( group_name == "last_ninety" )
+								{
+									start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 90 );
+									end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
+								}
+								else if ( group_name == "last_year_days" )
+								{
+									start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 365 );
+									end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
+								}
+		
+								var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+								                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+								               
+								var start_date_value = start_date.getDate() + " " + monthNames[start_date.getMonth()] + " " + start_date.getFullYear();
+								var end_date_value   = end_date.getDate() + " " + monthNames[end_date.getMonth()] + " " + end_date.getFullYear();
+		
+								jQuery( '#start_date' ).val( start_date_value );
+								jQuery( '#end_date' ).val( end_date_value );
+								
+							});
 						});
 						</script>
 						<?php
 						
-						if (isset($_POST['duration_select'])) $duration_range = $_POST['duration_select'];
-                                                else $duration_range = "";
-						if ($duration_range == "")
-						{
-							if (isset($_GET['duration_select'])) $duration_range = $_GET['duration_select'];
+						if ( isset( $_POST[ 'duration_select' ] ) ){
+						       $duration_range = $_POST['duration_select'];
+						} else {
+						       $duration_range = "";
+						}       
+						if ( $duration_range == "" ) {
+							if ( isset( $_GET[ 'duration_select' ] ) ){
+							    $duration_range = $_GET[ 'duration_select' ];
+							}    
 						}
 						if ($duration_range == "") $duration_range = "last_seven";
-						//global $this->duration_range_select,$this->start_end_dates;
 						
-
+						
 						_e( 'The Report below shows how many Abandoned Carts we were able to recover for you by sending automatic emails to encourage shoppers.', 'woocommerce-ac');
 						?>
 						<div id="recovered_stats" class="postbox" style="display:block">
@@ -1286,46 +1314,48 @@ function woocommerce_ac_delete(){
 							foreach ( $this->duration_range_select as $key => $value )
 							{
 								$sel = "";
-								if ($key == $duration_range)
-								{
+								if ($key == $duration_range) {
 									$sel = " selected ";
 								} 
 								echo"<option value='$key' $sel> $value </option>";
 							}
 							
-							$date_sett = $this->start_end_dates[$duration_range];
+							$date_sett = $this->start_end_dates[ $duration_range ];
 							
 							?>
 							</select>
 							
 							<script type="text/javascript">
-							jQuery(document).ready(function()
+							jQuery( document ).ready( function()
 							{
-							var formats = ["d.m.y", "d M yy","MM d, yy"];
-							jQuery("#start_date").datepicker({dateFormat: formats[1]});
+    							var formats = [ "d.m.y", "d M yy","MM d, yy" ];
+    							jQuery( "#start_date" ).datepicker( { dateFormat: formats[ 1 ] } );
 							});
 			
-							jQuery(document).ready(function()
+							jQuery( document ).ready( function()
 							{
-							var formats = ["d.m.y", "d M yy","MM d, yy"];
-							jQuery("#end_date").datepicker({dateFormat: formats[1]});
+    							var formats = [ "d.m.y", "d M yy","MM d, yy" ];
+    							jQuery( "#end_date" ).datepicker( { dateFormat: formats[ 1 ] } );
 							});
 							</script>
-							
-							
+														
 							<?php 
 			
-							if (isset($_POST['start_date'])) $start_date_range = $_POST['start_date'];
-                                                        else $start_date_range = "";
-							if ($start_date_range == "")
-							{
-								$start_date_range = $date_sett['start_date'];
+							if ( isset( $_POST[ 'start_date' ] ) ){
+							       $start_date_range = $_POST[ 'start_date' ];
+							} else {
+							       $start_date_range = "";
+							}       
+							if ( $start_date_range == "" ){
+								 $start_date_range = $date_sett[ 'start_date' ];
 							}
-							if (isset($_POST['end_date'])) $end_date_range = $_POST['end_date'];
-                                                        else $end_date_range = "";
-							if ($end_date_range == "")
-							{
-								$end_date_range = $date_sett['end_date'];
+							if ( isset( $_POST[ 'end_date' ] ) ){
+							       $end_date_range = $_POST[ 'end_date' ];
+							} else {
+							       $end_date_range = "";
+							}       
+							if ( $end_date_range == "" ){
+								 $end_date_range = $date_sett[ 'end_date' ];
 							}
 							
 							?>
@@ -1343,44 +1373,41 @@ function woocommerce_ac_delete(){
 						<?php 
 						
 						global $wpdb;
-						$start_date = strtotime($start_date_range." 00:01:01");
-						$end_date = strtotime($end_date_range." 23:59:59");
+						$start_date = strtotime( $start_date_range." 00:01:01" );
+						$end_date   = strtotime( $end_date_range." 23:59:59" );
 						
-						include_once(  "pagination.class.php");
+						include_once( "pagination.class.php" );
 						
 						/* Find the number of rows returned from a query; Note: Do NOT use a LIMIT clause in this query */
-//					
-                                 $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite
-								 WHERE abandoned_cart_time >= %d
-								 AND abandoned_cart_time <= %d
-								 AND recovered_cart > '0' 
-								 ",$start_date,$end_date));
-                                                $count = $wpdb->num_rows;
+					             $recoverd_cart = 0;      
+                                 $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite
+								                                      WHERE abandoned_cart_time >= %d
+								                                      AND abandoned_cart_time <= %d
+								                                      AND recovered_cart > %d 
+								                                    ",$start_date,$end_date,$recoverd_cart ) );
+                                 $count = $wpdb->num_rows;
 						
-						if($count > 0) {
+						if ( $count > 0 ) {
 							$p = new pagination;
-							$p->items($count);
-							$p->limit(10); // Limit entries per page
-							$p->target("admin.php?page=woocommerce_ac_page&action=stats&duration_select=$duration_range");
+							$p->items( $count );
+							$p->limit( 10 ); // Limit entries per page
+							$p->target( "admin.php?page=woocommerce_ac_page&action=stats&duration_select=$duration_range" );
 							
-                                                        if (isset($p->paging))
-                                                        {
-                                                                if (isset($_GET[$p->paging])) $p->currentPage($_GET[$p->paging]); // Gets and validates the current page
-                                                        }
+                            if ( isset( $p->paging ) ) {
+                                if ( isset( $_GET[ $p->paging ] ) ) $p->currentPage( $_GET[$p->paging ] ); // Gets and validates the current page
+                            }
 							$p->calculate(); // Calculates what to show
-							$p->parameterName('paging');
-							$p->adjacents(1); //No. of page away from the current page
-							$p->showCounter(true);
+							$p->parameterName( 'paging' );
+							$p->adjacents( 1 ); //No. of page away from the current page
+							$p->showCounter( true );
 						
-							if(!isset($_GET['paging'])) {
+							if ( !isset( $_GET[ 'paging' ] ) ) {
 								$p->page = 1;
 							} else {
-								$p->page = $_GET['paging'];
+								$p->page = $_GET[ 'paging' ];
 							}
-						
-							//Query for limit paging
-							$limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
-						
+						    //Query for limit paging
+							$limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;						
 						}
 						else
 							$limit = "";	
@@ -1388,60 +1415,59 @@ function woocommerce_ac_delete(){
 															  
 						<div class="tablenav">
 						    <div class='tablenav-pages'>
-						    	<?php if ($count>0) echo $p->show();  // Echo out the list of paging. ?>
+						    	<?php if ( $count>0 ) echo $p->show();  // Echo out the list of paging. ?>
 						    </div>
 						</div>
 						
 						<?php 
 						
 						$order = "";
-						if (isset($_GET['order'])) $order = $_GET['order'];
-						if ( $order == "" )
+						if ( isset( $_GET[ 'order' ] ) ){
+						       $order = $_GET[ 'order' ];
+						}       
+						if ( $order == "" ){
+							 $order      = "desc";
+							 $order_next = "asc";
+						} elseif ( $order == "asc" ){
+							 $order_next = "desc";
+						} elseif ( $order == "desc" )
 						{
-							$order = "desc";
-							$order_next = "asc";
-						}
-						elseif ( $order == "asc" )
-						{
-							$order_next = "desc";
-						}
-						elseif ( $order == "desc" )
-						{
-							$order_next = "asc";
+							 $order_next = "asc";
 						}
 						
 						$order_by = "";
-						if (isset($_GET['orderby'])) $order_by = $_GET['orderby'];
-						if ( $order_by == "" )
-						{
-							$order_by = "recovered_cart";
+						if ( isset( $_GET[ 'orderby' ] ) ){
+						       $order_by = $_GET[ 'orderby' ];
+						}       
+						if ( $order_by == "" ){
+							   $order_by = "recovered_cart";
 						}
 						
-						$query_ac = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite  
-									 WHERE abandoned_cart_time >= " . $start_date . "
-									 AND abandoned_cart_time <= " . $end_date . "
-									 AND recovered_cart > 0 
-									 ORDER BY $order_by $order $limit";
-						$ac_results = $wpdb->get_results( $query_ac );
-						
+						$recoverd_cart = 0;
+						$query_ac = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite
+									 WHERE abandoned_cart_time >= %d
+									 AND abandoned_cart_time <= %d
+									 AND recovered_cart > %d
+								     ORDER BY  %s %s $limit";
+						$ac_results = $wpdb->get_results( $wpdb->prepare( $query_ac, $start_date, $end_date, $recoverd_cart, $order_by,$order ) );						
+												
 						$query_ac_carts = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite
-										   WHERE abandoned_cart_time >= " . $start_date . "
-									 	   AND abandoned_cart_time <= " . $end_date;
-						$ac_carts_results = $wpdb->get_results( $query_ac_carts );
+										   WHERE abandoned_cart_time >= %d
+									 	   AND abandoned_cart_time <= %d ";
+						$ac_carts_results = $wpdb->get_results($wpdb->prepare($query_ac_carts, $start_date, $end_date) );												
 						
 						$recovered_item = $recovered_total = $count_carts = $total_value = $order_total = 0;
-						foreach ( $ac_carts_results as $key => $value)
+						foreach ( $ac_carts_results as $key => $value )
 						{
-							 
-							//if( $value->recovered_cart == 0 )
+							 							
 							{
 								$count_carts += 1;
 									
-								$cart_detail = json_decode($value->abandoned_cart_info);
+								$cart_detail     = json_decode( $value->abandoned_cart_info );
 								$product_details = $cart_detail->cart;
 								
 								$line_total = 0;
-								foreach ($product_details as $k => $v)
+								foreach ( $product_details as $k => $v )
 								{
 									$line_total = $line_total + $v->line_total;
 								}
@@ -1450,36 +1476,35 @@ function woocommerce_ac_delete(){
 							}
 						}
 						$table_data = "";
-						foreach ( $ac_results as $key => $value)
+						foreach ( $ac_results as $key => $value )
 						{	
 							if( $value->recovered_cart != 0 )
 							{
-								$recovered_id = $value->recovered_cart;
-								$rec_order = get_post_meta( $recovered_id );
-								$woo_order = new WC_Order($recovered_id);
-								$recovered_date = strtotime($woo_order->order_date);
-								$recovered_date_new = date('d M, Y h:i A', $recovered_date);
-								$recovered_item += 1;
-								if (isset($rec_order['_order_total'][0])) {							
-								$recovered_total += $rec_order['_order_total'][0];
+								$recovered_id       = $value->recovered_cart;
+								$rec_order          = get_post_meta( $recovered_id );
+								$woo_order          = new WC_Order( $recovered_id );
+								$recovered_date     = strtotime( $woo_order->order_date );
+								$recovered_date_new = date( 'd M, Y h:i A', $recovered_date );
+								$recovered_item     += 1;
+								if ( isset( $rec_order[ '_order_total' ][ 0 ] ) ) {							
+								$recovered_total    += $rec_order[ '_order_total' ][ 0 ];
 								}
-								$abandoned_date = date('d M, Y h:i A', $value->abandoned_cart_time);
 								
-								$abandoned_order_id = $value->id;
-                                                                
-                                $billing_first_name = $billing_last_name = $billing_email = ''; 
-								$recovered_order_total = 0;
-								if (isset($rec_order['_billing_first_name'][0])) {
-									$billing_first_name = $rec_order['_billing_first_name'][0];
+								$abandoned_date            = date( 'd M, Y h:i A', $value->abandoned_cart_time );								
+								$abandoned_order_id        = $value->id;                                                                
+                                $billing_first_name        = $billing_last_name = $billing_email = ''; 
+								$recovered_order_total     = 0;
+								if ( isset( $rec_order[ '_billing_first_name' ][ 0 ] ) ) {
+									$billing_first_name    = $rec_order[ '_billing_first_name' ][ 0 ];
 								}
-								if (isset($rec_order['_billing_last_name'][0])) {
-									$billing_last_name = $rec_order['_billing_last_name'][0];
+								if ( isset( $rec_order[ '_billing_last_name' ][ 0 ] ) ) {
+									$billing_last_name     = $rec_order[ '_billing_last_name' ][ 0 ];
 								}
-								if (isset($rec_order['_billing_email'][0])) {
-									$billing_email = $rec_order['_billing_email'][0];
+								if ( isset( $rec_order[ '_billing_email' ][ 0 ] ) ) {
+									$billing_email         = $rec_order[ '_billing_email' ][ 0 ];
 								}
-								if (isset($rec_order['_order_total'][0])) {
-									$recovered_order_total = $rec_order['_order_total'][0];
+								if ( isset( $rec_order[ '_order_total' ][ 0 ] ) ) {
+									$recovered_order_total = $rec_order[ '_order_total' ][ 0 ];
 								}
 								
 								$table_data .="<tr>
@@ -1494,7 +1519,7 @@ function woocommerce_ac_delete(){
 						?>
 						<div id="recovered_stats" class="postbox" style="display:block">
 						<div class="inside" >
-						<p style="font-size: 15px"> <?php _e('During the selected range', 'woocommerce-ac');?> <strong> <?php echo $count_carts; ?> </strong> <?php _e('carts totaling', 'woocommerce-ac');?> <strong> <?php echo get_woocommerce_currency_symbol()." ".$total_value; ?> </strong> <?php _e('were abandoned. We were able to recover', 'woocommerce-ac');?> <strong> <?php echo $recovered_item; ?> </strong> <?php _e('of them, which led to an extra', 'woocommerce-ac');?> <strong> <?php echo get_woocommerce_currency_symbol()." ".$recovered_total; ?> </strong> <?php _e('in sales', 'woocommerce-ac');?></p>
+						  <p style="font-size: 15px"> <?php _e('During the selected range', 'woocommerce-ac');?> <strong> <?php echo $count_carts; ?> </strong> <?php _e('carts totaling', 'woocommerce-ac');?> <strong> <?php echo get_woocommerce_currency_symbol()." ".$total_value; ?> </strong> <?php _e('were abandoned. We were able to recover', 'woocommerce-ac');?> <strong> <?php echo $recovered_item; ?> </strong> <?php _e('of them, which led to an extra', 'woocommerce-ac');?> <strong> <?php echo get_woocommerce_currency_symbol()." ".$recovered_total; ?> </strong> <?php _e('in sales', 'woocommerce-ac');?></p>
 						</div>
 						</div>
 						
@@ -1518,37 +1543,245 @@ function woocommerce_ac_delete(){
 												</tr>
 						<?php
 						echo $table_data;
-						print('</table>');
-					}
+						print ('</table>');
+					}elseif ( $action == 'orderdetails' ) {
+                            $ac_order_id = $_GET['id'];
+                            ?>
+                            <p> </p>
+                            <div id="ac_order_details" class="postbox" style="display:block">
+                            <h3> <p> <?php _e( "Abandoned Order #$ac_order_id Details", "woocommerce-ac" ); ?> </p> </h3>
+                                <div class="inside">
+                                    <table cellpadding="0" cellspacing="0" class="wp-list-table widefat fixed posts">
+                                    <tr>
+                                    <th> <?php _e( 'Item', 'woocommerce-ac' ); ?> </th>
+                                    <th> <?php _e( 'Id', 'woocommerce-ac' ); ?> </th>
+                                    <th> <?php _e( 'Name', 'woocommerce-ac' ); ?> </th>
+                                    <th> <?php _e( 'Quantity', 'woocommerce-ac' ); ?> </th>
+                                    <th> <?php _e( 'Line Subtotal', 'woocommerce-ac' ); ?> </th>
+                                    <th> <?php _e( 'Line Total', 'woocommerce-ac' ); ?> </th>
+                                    </tr>                                           
+                    <?php 
+                    $query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE id = %d ";
+                    $results = $wpdb->get_results( $wpdb->prepare( $query,$_GET['id'] ) );                         
+                    $shipping_charges = 0;
+                    $currency_symbol = get_woocommerce_currency_symbol();
+
+                    
+                    $user_id = $results[0]->user_id;                                
+                    if ( isset( $results[0]->user_login ) ) $user_login = $results[0]->user_login;
+                    $user_email = get_user_meta( $results[0]->user_id, 'billing_email', true );
+                    
+                    $user_first_name_temp = get_user_meta( $results[0]->user_id, 'first_name');
+                    if ( isset( $user_first_name_temp[0] ) ) $user_first_name = $user_first_name_temp[0];
+                    else $user_first_name = "";
+                    
+                    $user_last_name_temp = get_user_meta($results[0]->user_id, 'last_name');
+                    if ( isset( $user_last_name_temp[0] ) ) $user_last_name = $user_last_name_temp[0];
+                    else $user_last_name = "";
+                    
+                    $user_billing_first_name = get_user_meta( $results[0]->user_id, 'billing_first_name' );
+                    $user_billing_last_name = get_user_meta( $results[0]->user_id, 'billing_last_name' );
+                    
+                    $user_billing_company_temp = get_user_meta( $results[0]->user_id, 'billing_company' );
+                    if ( isset( $user_billing_company_temp[0] ) ) $user_billing_company = $user_billing_company_temp[0];
+                    else $user_billing_company = "";
+                    
+                    $user_billing_address_1_temp = get_user_meta( $results[0]->user_id, 'billing_address_1' );
+                    if ( isset( $user_billing_address_1_temp[0] ) ) $user_billing_address_1 = $user_billing_address_1_temp[0];
+                    else $user_billing_address_1 = "";
+                    
+                    $user_billing_address_2_temp = get_user_meta( $results[0]->user_id, 'billing_address_2' );
+                    if ( isset( $user_billing_address_2_temp[0] ) ) $user_billing_address_2 = $user_billing_address_2_temp[0];
+                    else $user_billing_address_2 = "";
+                    
+                    $user_billing_city_temp = get_user_meta( $results[0]->user_id, 'billing_city' );
+                    if ( isset( $user_billing_city_temp[0] ) ) $user_billing_city = $user_billing_city_temp[0];
+                    else $user_billing_city = "";
+                    
+                    $user_billing_postcode_temp = get_user_meta( $results[0]->user_id, 'billing_postcode' );
+                    if ( isset( $user_billing_postcode_temp[0] ) ) $user_billing_postcode = $user_billing_postcode_temp[0];
+                    else $user_billing_postcode = "";
+                    
+                    $user_billing_state_temp = get_user_meta( $results[0]->user_id, 'billing_state' );
+                    if ( isset( $user_billing_state_temp[0] ) ) $user_billing_state = $user_billing_state_temp[0];
+                    else $user_billing_state = "";
+                    
+                    $user_billing_country_temp = get_user_meta( $results[0]->user_id, 'billing_country' );
+                    if ( isset( $user_billing_country_temp[0] ) ) $user_billing_country = $user_billing_country_temp[0];
+                    else $user_billing_country = "";
+                    
+                    $user_billing_phone_temp = get_user_meta( $results[0]->user_id, 'billing_phone' );
+                    if ( isset( $user_billing_phone_temp[0] ) ) $user_billing_phone = $user_billing_phone_temp[0];
+                    else $user_billing_phone = "";
+                    
+                    $user_shipping_first_name = get_user_meta( $results[0]->user_id, 'shipping_first_name' );
+                    $user_shipping_last_name = get_user_meta( $results[0]->user_id, 'shipping_last_name' );
+                    
+                    $user_shipping_company_temp = get_user_meta( $results[0]->user_id, 'shipping_company' );
+                    if ( isset( $user_shipping_company_temp[0] ) ) $user_shipping_company = $user_shipping_company_temp[0];
+                    else $user_shipping_company = "";
+                    
+                    $user_shipping_address_1_temp = get_user_meta( $results[0]->user_id, 'shipping_address_1' );
+                    if ( isset( $user_shipping_address_1_temp[0] ) ) $user_shipping_address_1 = $user_shipping_address_1_temp[0];
+                    else $user_shipping_address_1 = "";
+                    
+                    $user_shipping_address_2_temp = get_user_meta( $results[0]->user_id, 'shipping_address_2' );
+                    if ( isset( $user_shipping_address_2_temp[0] ) ) $user_shipping_address_2 = $user_shipping_address_2_temp[0];
+                    else $user_shipping_address_2 = "";
+                    
+                    $user_shipping_city_temp = get_user_meta( $results[0]->user_id, 'shipping_city' );
+                    if ( isset( $user_shipping_city_temp[0] ) ) $user_shipping_city = $user_shipping_city_temp[0];
+                    else $user_shipping_city = "";
+                    
+                    $user_shipping_postcode_temp = get_user_meta( $results[0]->user_id, 'shipping_postcode' );
+                    if ( isset( $user_shipping_postcode_temp[0] ) ) $user_shipping_postcode = $user_shipping_postcode_temp[0];
+                    else $user_shipping_postcode = "";
+                    
+                    $user_shipping_state_temp = get_user_meta( $results[0]->user_id, 'shipping_state' );
+                    if ( isset( $user_shipping_state_temp[0] ) ) $user_shipping_state = $user_shipping_state_temp[0];
+                    else $user_shipping_state = "";
+                    
+                    $user_shipping_country_temp = get_user_meta( $results[0]->user_id, 'shipping_country' );
+                    if ( isset( $user_shipping_country_temp[0] ) ) $user_shipping_country = $user_shipping_country_temp[0];
+                    else $user_shipping_country = "";
+                                                
+                    $cart_info      = json_decode( $results[0]->abandoned_cart_info );
+                    $cart_details   = $cart_info->cart;
+                    $item_subtotal  = $item_total = 0;
+                    
+                    foreach ( $cart_details as $k => $v ) {
+                        $quantity_total = $v->quantity;
+                        $product_id     = $v->product_id;
+                        $prod_name      = get_post($product_id);
+                        $product_name   = $prod_name->post_title;
+                        
+                        // Item subtotal is calculated as product total including taxes
+                        if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
+                            $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
+                        } else {
+                            $item_subtotal = $item_subtotal + $v->line_total;
+                        }
+
+                        //  Line total
+                        $item_total = $item_subtotal;
+                        $item_subtotal = $item_subtotal / $quantity_total;
+                        $item_total = number_format( $item_total, 2 );
+                        $item_subtotal = number_format( $item_subtotal, 2 );                               
+                        $product = get_product( $product_id );
+                        $prod_image = $product->get_image();
+                    ?>                   
+                        <tr>
+                        <td> <?php echo $prod_image; ?></td>
+                        <td> <?php echo $product->id; ?> </td>
+                        <td> <?php echo $product_name; ?></td>
+                        <td> <?php echo $quantity_total; ?></td>
+                        <td> <?php echo get_woocommerce_currency_symbol()." ".$item_subtotal; ?></td>
+                        <td> <?php echo get_woocommerce_currency_symbol()." ".$item_total; ?></td>
+                        </tr>
+                            
+                <?php 
+                $item_subtotal = $item_total = 0;
+                    }
+                      ?>
+                    </table>
+                        </div>  
+                            </div>
+                            <div id="ac_order_customer_details" class="postbox" style="display:block">
+                            <h3> <p> <?php _e( 'Customer Details' , 'woocommerce-ac' ); ?> </p> </h3>
+                            <div class="inside" style="height: 300px;" >                                       
+                            <div id="order_data" class="panel">
+                            <div style="width:500px;float:left">
+                            <h3> <p> <?php _e( 'Billing Details' , 'woocommerce-ac' ); ?> </p> </h3>
+                                <p> <strong> <?php _e( 'Name:' , 'woocommerce-ac' ); ?> </strong>
+                                <?php echo $user_first_name." ".$user_last_name;?>
+                                </p>                                    
+                                    <p> <strong> <?php _e( 'Address:' , 'woocommerce-ac' ); ?> </strong>
+                                    <?php echo $user_billing_company."</br>".
+                                               $user_billing_address_1."</br>".
+                                               $user_billing_address_2."</br>".
+                                               $user_billing_city."</br>".
+                                               $user_billing_postcode."</br>".
+                                               $user_billing_state."</br>".
+                                               $user_billing_country."</br>";
+                                               ?> 
+                                    </p>                                        
+                                    <p> <strong> <?php _e( 'Email:', 'woocommerce-ac' ); ?> </strong>
+                                    <a href='mailto:$user_email'><?php echo $user_email;?> </a>
+                                    </p>                                            
+                                    <p> <strong> <?php _e( 'Phone:', 'woocommerce-ac' ); ?> </strong>
+                                    <?php echo $user_billing_phone;?>
+                                    </p>
+                                        </div>                                                                                   
+                                        <div style="width:500px;float:right">
+                                        <h3> <p> <?php _e( 'Shipping Details', 'woocommerce-ac' ); ?> </p> </h3>                                       
+                                    <p> <strong> <?php _e( 'Address:', 'woocommerce-ac' ); ?> </strong>
+                                    
+                                    <?php 
+                                        if ( $user_shipping_company     == '' &&
+                                             $user_shipping_address_1   == '' &&
+                                             $user_shipping_address_2   == '' &&
+                                             $user_shipping_city        == '' &&
+                                             $user_shipping_postcode    == '' &&
+                                             $user_shipping_state       == '' &&
+                                             $user_shipping_country     == '') {
+                                            echo "Shipping Address same as Billing Address";
+                                            } else { ?>                                
+                                        <?php echo $user_shipping_company."</br>".
+                                               $user_shipping_address_1."</br>".
+                                               $user_shipping_address_2."</br>".
+                                               $user_shipping_city."</br>".
+                                               $user_shipping_postcode."</br>".
+                                               $user_shipping_state."</br>".
+                                               $user_shipping_country."</br>";
+                                               ?> 
+                                               <br><br>
+                                               <strong> Shipping Charges: </strong>
+                                               <?php if ( $shipping_charges != 0 ) echo $currency_symbol . $shipping_charges;?>
+                                    </p>
+                                    <?php }?>                            
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>                
+                            <?php }
 							
-				if (isset($_GET['action'])) $action = $_GET['action'];
-				if (isset($_GET['mode'])) $mode = $_GET['mode'];
-				
-				if ( $action == 'emailtemplates' && ($mode == 'addnewtemplate' || $mode == 'edittemplate' ))
+				if ( isset( $_GET[ 'action' ] ) ){
+				       $action = $_GET[ 'action' ];
+				}       
+				if ( isset( $_GET[ 'mode' ] ) ){
+				       $mode = $_GET[ 'mode' ];
+				}
+				if ( $action == 'emailtemplates' && ( $mode == 'addnewtemplate' || $mode == 'edittemplate' ) )
 				{
-					if($mode=='edittemplate')
-					{
-					$edit_id=$_GET['id'];
-					$query="SELECT wpet . *  FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet WHERE id='".$edit_id."'";
-					$results = $wpdb->get_results( $query );
+					if( $mode=='edittemplate' )
+					{ 
+					$edit_id = $_GET[ 'id' ];
+					
+					$query="SELECT wpet . *  FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet WHERE id = %d ";
+					$results = $wpdb->get_results( $wpdb->prepare( $query, $edit_id ) );
 					}
 					
-					$active_post = (empty($_POST['is_active'])) ? '0' : '1';
+					$active_post = ( empty( $_POST[ 'is_active' ] ) ) ? '0' : '1';
 						
 						?>
 			
 							<div id="content">
 							  <form method="post" action="admin.php?page=woocommerce_ac_page&action=emailtemplates" id="ac_settings">
-							  
-							  <input type="hidden" name="mode" value="<?php echo $mode;?>" />
-							  <input type="hidden" name="id" value="<?php echo $_GET['id'];?>" />
+							     <input type="hidden" name="mode" value="<?php echo $mode;?>" />
+							  <?php
+							  $id_by = "";
+							  if ( isset( $_GET[ 'id' ] ) ){
+							        $id_by = $_GET[ 'id' ];
+							  }       
+							  ?>							  
+							  <input type="hidden" name="id" value="<?php echo $id_by ;?>" />
 							  
 							  <?php
-								$button_mode = "save";
+								$button_mode     = "save";
 								$display_message = "Add Email Template";
 								if ( $mode == 'edittemplate' )
 								{
-									$button_mode = "update";
+									$button_mode     = "update";
 									$display_message = "Edit Email Template";
 								}
 								  print'<input type="hidden" name="ac_settings_frm" value="'.$button_mode.'">';?>
@@ -1580,15 +1813,15 @@ function woocommerce_ac_delete(){
 				    								</th>
 				    								<td>
 													<?php
-													$from_name="Admin";
-													if ( $mode == 'edittemplate')
+													$from_name = "Admin";
+													if ( $mode == 'edittemplate' )
 													{
 														$from_name=$results[0]->from_name;
 													}
 													
 													print'<input type="text" name="woocommerce_ac_from_name" id="woocommerce_ac_from_name" class="regular-text" value="'.$from_name.'">';?>
 													<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the name that should appear in the email sent', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
-													<?php //echo stripslashes(get_option( 'woocommerce_ac_email_body' )); ?></textarea>
+													
 												</tr>
 												
 												<tr>
@@ -1597,15 +1830,15 @@ function woocommerce_ac_delete(){
 				    								</th>
 				    								<td>
 													<?php
-													$subject_edit="";
-													if ( $mode == 'edittemplate')
+													$subject_edit = "";
+													if ( $mode == 'edittemplate' )
 													{
 														$subject_edit=$results[0]->subject;
 													}
 													
 													print'<input type="text" name="woocommerce_ac_email_subject" id="woocommerce_ac_email_subject" class="regular-text" value="'.$subject_edit.'">';?>
 													<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the subject that should appear in the email sent', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
-													<?php //echo stripslashes(get_option( 'woocommerce_ac_email_body' )); ?></textarea>
+													
 												</tr>
 			
 				    							<tr>
@@ -1615,16 +1848,16 @@ function woocommerce_ac_delete(){
 				    								<td>
 			
 													<?php
-													$initial_data = "";//stripslashes(get_option( 'woocommerce_ac_email_body' ));
-													if ( $mode == 'edittemplate')
+													$initial_data = "";
+													if ( $mode == 'edittemplate' )
 													{
-													    $initial_data = stripslashes($results[0]->body);
+														$initial_data = stripslashes( $results[0]->body );
 													}
 																										
 													echo "<textarea id='woocommerce_ac_email_body' name='woocommerce_ac_email_body' rows='15'' cols='80'>".$initial_data."</textarea>";
 													?>
 				    								
-				    									<!--<textarea name="woocommerce_ac_email_body" cols="45" rows="3" class="regular-text"><?php echo stripslashes(get_option( 'woocommerce_ac_email_body' )); ?></textarea><br />-->
+				    									<?php echo stripslashes(get_option( 'woocommerce_ac_email_body' )); ?>
 				    									<span class="description"><?php
 				    										echo __( 'Message to be sent in the reminder email.', 'woocommerce-ac' );
 				    									?></span>
@@ -1640,13 +1873,13 @@ function woocommerce_ac_delete(){
 				    									<select name="email_frequency" id="email_frequency">
 				    									
 				    									<?php
-															$frequency_edit="";
+															$frequency_edit = "";
 															if(	$mode == 'edittemplate')
 															{
-																$frequency_edit=$results[0]->frequency;
+																$frequency_edit = $results[0]->frequency;
 															}
 															
-				    										for ($i=1;$i<4;$i++)
+				    										for ( $i = 1; $i < 4; $i++ )
 				    										{
 																printf( "<option %s value='%s'>%s</option>\n",
 																	selected( $i, $frequency_edit, false ),
@@ -1665,13 +1898,14 @@ function woocommerce_ac_delete(){
 														$days_or_hours_edit = "";
 														if ( $mode == 'edittemplate')
 														{
-															$days_or_hours_edit=$results[0]->day_or_hour;
+															$days_or_hours_edit = $results[0]->day_or_hour;
 														}
 														
-														$days_or_hours=array(
-																		   'Days' => 'Day(s)',
-																		   'Hours' => 'Hour(s)');
-														foreach($days_or_hours as $k => $v)
+														$days_or_hours = array(
+																		   'Days'  => 'Day(s)',
+																		   'Hours' => 'Hour(s)'														    
+														);
+														foreach( $days_or_hours as $k => $v )
 														{
 															printf( "<option %s value='%s'>%s</option>\n",
 																selected( $k, $days_or_hours_edit, false ),
@@ -1682,8 +1916,7 @@ function woocommerce_ac_delete(){
 														?>
 			
 														</select>
-			
-				    									
+							    									
 				    									<span class="description"><?php
 				    									echo __( 'after cart is abandoned.', 'woocommerce-ac' );
 				    									?></span>
@@ -1703,9 +1936,7 @@ function woocommerce_ac_delete(){
 				    							</p>
 				    							
 				    							</td>
-				    							</tr>
-
-				    							
+				    							</tr>				    							
 												</table>
 											</div>
 										</div>
@@ -1722,46 +1953,39 @@ function woocommerce_ac_delete(){
 						    </form>
 						  </div>
 						<?php 
-						}
-						
-						
-						
+						}																	
 				}
 				
-			}
-				
-				
-				////////////////////////////////////////////////////////////////
+			}				
 				
 				function my_action_javascript()
 				{
 					?>
 						<script type="text/javascript" >
-						jQuery(document).ready(function($)
+						jQuery( document ).ready( function($)
 						{
-							$("table#cart_data a.remove_cart").click(function()
+							$( "table#cart_data a.remove_cart" ).click( function()
 							{
-								//alert('hello there');
-								var y=confirm('Are you sure you want to delete this Abandoned Order');
-								if(y==true)
+								var y = confirm( 'Are you sure you want to delete this Abandoned Order' );
+								if( y == true )
 								{
-									var passed_id = this.id;
-									var arr = passed_id.split('-');
+									var passed_id          = this.id;
+									var arr                = passed_id.split('-');
 									var abandoned_order_id = arr[0];
-									var user_id = arr[1];
-									var data = {
-										abandoned_order_id: abandoned_order_id,
-										user_id: user_id,
-										action: 'remove_cart_data'
-										};
+									var user_id            = arr[1];
+									var data               = {
+                        										abandoned_order_id: abandoned_order_id,
+                        										user_id           : user_id,
+                        										action            : 'remove_cart_data'
+                      				};
 							
 								// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-								$.post(ajaxurl, data, function(response)
+								$.post( ajaxurl, data, function( response )
 								{
 									//alert('Got this from the server: ' + response);
-									$("#row_" + abandoned_order_id).hide();
+									$( "#row_" + abandoned_order_id ).hide();
 								});
-								}
+							    }
 							});
 						});
 						</script>
@@ -1773,50 +1997,46 @@ function woocommerce_ac_delete(){
 						
 						global $wpdb; // this is how you get access to the database
 					
-						$abandoned_order_id = $_POST['abandoned_order_id'];
-						$user_id = $_POST['user_id'];
-						$action = $_POST['action'];
+						$abandoned_order_id = $_POST[ 'abandoned_order_id' ];
+						$user_id            = $_POST[ 'user_id' ];
+						$action             = $_POST[ 'action' ];
 						
-						$query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
-									WHERE 
-									id = '$abandoned_order_id' ";
-						//echo $query;
-						$results = $wpdb->get_results( $query );
+						$query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+						          WHERE
+						          id = '%d' ";
 						
+						$results = $wpdb->get_results( $wpdb->prepare( $query, $abandoned_order_id ) );
 						die();
 					}
-					
-					//////////////////////////////////////////////////////////////
 					
 					function my_action_send_preview()
 					{
 						?>
 							<script type="text/javascript" >
 							
-							jQuery(document).ready(function($)
+							jQuery( document ).ready( function( $ )
 							{
-								$("table#addedit_template input#preview_email").click(function()
+								$( "table#addedit_template input#preview_email" ).click( function()
 								{
-									//alert('hello there');
-									var from_name_preview = $('#woocommerce_ac_from_name').val();
-									var subject_email_preview = $('#woocommerce_ac_email_subject').val();
-									var body_email_preview = tinyMCE.activeEditor.getContent();
-									var send_email_id = $('#send_test_email').val();																		
-									var data = {
-										from_name_preview: from_name_preview,
-										subject_email_preview: subject_email_preview,
-										body_email_preview: body_email_preview,
-										send_email_id: send_email_id,
-										action: 'preview_email_sent'
-									};
-									
+								
+									var from_name_preview     = $( '#woocommerce_ac_from_name' ).val();
+									var subject_email_preview = $( '#woocommerce_ac_email_subject' ).val();
+									var body_email_preview    = tinyMCE.activeEditor.getContent();
+									var send_email_id         = $( '#send_test_email' ).val();																		
+									var data                  = {
+                            										from_name_preview    : from_name_preview,
+                            										subject_email_preview: subject_email_preview,
+                            										body_email_preview   : body_email_preview,
+                            										send_email_id        : send_email_id,
+                            										action               : 'preview_email_sent'
+									};									
 									
 									// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-									$.post(ajaxurl, data, function(response)
+									$.post( ajaxurl, data, function( response )
 									{
-										$("#preview_email_sent_msg").html("<img src='<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/check.jpg'>&nbsp;Email has been sent successfully.");
-										$("#preview_email_sent_msg").fadeIn();
-										setTimeout(function(){$("#preview_email_sent_msg").fadeOut();},3000);
+										$( "#preview_email_sent_msg" ).html( "<img src='<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/check.jpg'>&nbsp;Email has been sent successfully." );
+										$( "#preview_email_sent_msg" ).fadeIn();
+										setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 3000 );
 										//alert('Got this from the server: ' + response);
 									});
 								});
@@ -1827,12 +2047,12 @@ function woocommerce_ac_delete(){
 					
 					function preview_email_sent() {
 						
-						$from_email_name = $_POST['from_name_preview'];
-						$subject_email_preview = $_POST['subject_email_preview'];						
-						$body_email_preview = $_POST['body_email_preview'];
-						$body_email_preview = str_replace('{{customer.firstname}}', 'John', $body_email_preview);
-						$body_email_preview = str_replace('{{customer.lastname}}', 'Doe', $body_email_preview);
-						$body_email_preview = str_replace('{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview);
+						$from_email_name       = $_POST[ 'from_name_preview' ];
+						$subject_email_preview = $_POST[ 'subject_email_preview' ];						
+						$body_email_preview    = $_POST[ 'body_email_preview' ];
+						$body_email_preview    = str_replace( '{{customer.firstname}}', 'John', $body_email_preview );
+						$body_email_preview    = str_replace( '{{customer.lastname}}', 'Doe', $body_email_preview );
+						$body_email_preview    = str_replace( '{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview );
 						
 						$var =  '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
                                  <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
@@ -1866,35 +2086,29 @@ function woocommerce_ac_delete(){
 	                                </tr>
                                  </table>';
 				                
-						$body_email_preview = str_replace('{{products.cart}}', $var, $body_email_preview);
-					    if (isset($_POST['send_email_id'])) {
-						      $to_email_preview = $_POST['send_email_id'];
+						$body_email_preview = str_replace( '{{products.cart}}', $var, $body_email_preview );
+					    if ( isset( $_POST[ 'send_email_id' ] ) ) {
+						      $to_email_preview = $_POST[ 'send_email_id' ];
 						} else {
 						      $to_email_preview = "";
-						       }
-						$user_email_from = get_option('admin_email');
+						}
+						$user_email_from = get_option( 'admin_email' );
 						$headers[] = "From: ".$from_email_name." <".$user_email_from.">"."\r\n";
 						$headers[] = "Content-Type: text/html"."\r\n";                                                                                               
 				                        
-						$body_email_final_preview = stripslashes($body_email_preview);
+						$body_email_final_preview = stripslashes( $body_email_preview );
 						wp_mail( $to_email_preview, $subject_email_preview, __( $body_email_final_preview, 'woocommerce-ac' ), $headers );	
 				
 						echo "email sent";
 						
 						die();
-					}
-					
-					/////////////////////////////////////////////////////////////////////////////////
-					
-					
-					
-					
+					}					
 		}
 			
 		}
 		
 		$woocommerce_abandon_cart = new woocommerce_abandon_cart();
 		
-}
+
 
 ?>
