@@ -505,10 +505,10 @@ function woocommerce_ac_delete(){
 				<div style="background-image: url('<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/ac_tab_icon.png') !important;" class="icon32"><br></div>				
 				
 				<h2 class="nav-tab-wrapper woo-nav-tab-wrapper">
-				<a href="admin.php?page=woocommerce_ac_page&action=listcart" class="nav-tab <?php echo $active_listcart; ?>"> <?php _e( 'Abandoned Orders', 'woocommerce-ac' );?> </a>
-				<a href="admin.php?page=woocommerce_ac_page&action=emailtemplates" class="nav-tab <?php echo $active_emailtemplates; ?>"> <?php _e( 'Email Templates', 'woocommerce-ac' );?> </a>
-				<a href="admin.php?page=woocommerce_ac_page&action=emailsettings" class="nav-tab <?php echo $active_settings; ?>"> <?php _e( 'Settings', 'woocommerce-ac' );?> </a>
-				<a href="admin.php?page=woocommerce_ac_page&action=stats" class="nav-tab <?php echo $active_stats; ?>"> <?php _e( 'Recovered Orders', 'woocommerce-ac' );?> </a>
+				<a href="admin.php?page=woocommerce_ac_page&action=listcart" class="nav-tab <?php if (isset($active_listcart)) echo $active_listcart; ?>"> <?php _e( 'Abandoned Orders', 'woocommerce-ac' );?> </a>
+				<a href="admin.php?page=woocommerce_ac_page&action=emailtemplates" class="nav-tab <?php if (isset($active_emailtemplates)) echo $active_emailtemplates; ?>"> <?php _e( 'Email Templates', 'woocommerce-ac' );?> </a>
+				<a href="admin.php?page=woocommerce_ac_page&action=emailsettings" class="nav-tab <?php if (isset($active_settings)) echo $active_settings; ?>"> <?php _e( 'Settings', 'woocommerce-ac' );?> </a>
+				<a href="admin.php?page=woocommerce_ac_page&action=stats" class="nav-tab <?php if (isset($active_stats)) echo $active_stats; ?>"> <?php _e( 'Recovered Orders', 'woocommerce-ac' );?> </a>
 				</h2>
 				
 				<?php
