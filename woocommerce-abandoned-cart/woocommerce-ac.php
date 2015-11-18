@@ -3,13 +3,19 @@
 Plugin Name: WooCommerce Abandon Cart Lite Plugin
 Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
 Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
-Version: 2.1
+Version: 2.2
 Author: Tyche Softwares
 Author URI: http://www.tychesoftwares.com/
 */
 
+if( session_id() === '' ){
+    //session has not started
+    session_start();
+}
 // Deletion Settings
 register_uninstall_hook( __FILE__, 'woocommerce_ac_delete' );
+
+include_once( "woocommerce_guest_ac.class.php" );
 
 // Add a new interval of 5 minutes
 add_filter( 'cron_schedules', 'woocommerce_ac_add_cron_schedule' );
@@ -52,6 +58,11 @@ function woocommerce_ac_delete(){
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	$wpdb->get_results( $sql_ac_sent_history );
 	
+	$table_name_ac_guest_abandoned_cart_history = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
+	$sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_guest_abandoned_cart_history ;
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	$wpdb->get_results( $sql_ac_abandoned_cart_history );
+	
 	$query   = "SELECT blog_id FROM `".$wpdb->prefix."blogs`";
 	$results = $wpdb->get_results( $query );
 	
@@ -71,6 +82,11 @@ function woocommerce_ac_delete(){
 	    $sql_ac_sent_history = "DROP TABLE " . $table_name_ac_sent_history ;
 	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	    $wpdb->get_results( $sql_ac_sent_history );
+	    
+	    $table_name_ac_guest_abandoned_cart_history = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
+	    $sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_guest_abandoned_cart_history ;
+	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	    $wpdb->get_results( $sql_ac_abandoned_cart_history );
 	     
 	}
 	
@@ -147,6 +163,9 @@ function woocommerce_ac_delete(){
 				
 				// Language Translation
 				add_action ( 'init', array( &$this, 'update_po_file' ) );
+				
+				// track links
+				add_filter( 'template_include', array( &$this, 'email_track_links_lite' ), 99, 1 );
 				
 				//Discount Coupon Notice
 				add_action ( 'admin_notices', array( &$this, 'ac_lite_coupon_notice' ) );
@@ -293,6 +312,52 @@ function woocommerce_ac_delete(){
 			         
 			        update_option( 'ac_lite_alter_table_queries', 'yes' );
 			    }
+			    
+			    $ac_history_table_name = $wpdb->prefix."ac_abandoned_cart_history_lite";
+			    $check_table_query = "SHOW COLUMNS FROM $ac_history_table_name LIKE 'user_type'";
+			    $results = $wpdb->get_results( $check_table_query );
+			    
+			    if ( count( $results ) == 0 ) {
+			        $alter_table_query = "ALTER TABLE $ac_history_table_name ADD `user_type` text AFTER  `recovered_cart`";
+			        $wpdb->get_results( $alter_table_query );
+			    }
+			    
+			    $guest_table = $wpdb->prefix."ac_guest_abandoned_cart_history_lite" ;
+			    $query_guest_table = "SHOW TABLES LIKE '$guest_table' ";
+			    $result_guest_table = $wpdb->get_results( $query_guest_table );
+			    
+			    if ( count( $result_guest_table ) == 0 ) {
+			        
+    			    $ac_guest_history_table_name = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
+    			    $ac_guest_history_query = "CREATE TABLE IF NOT EXISTS $ac_guest_history_table_name (
+    			    `id` int(15) NOT NULL AUTO_INCREMENT,
+    			    `billing_first_name` text,
+    			    `billing_last_name` text,
+    			    `billing_company_name` text,
+    			    `billing_address_1` text,
+    			    `billing_address_2` text,
+    			    `billing_city` text,
+    			    `billing_county` text,
+    			    `billing_zipcode` text,
+    			    `email_id` text,
+    			    `phone` text,
+    			    `ship_to_billing` text,
+    			    `order_notes` text,
+    			    `shipping_first_name` text,
+    			    `shipping_last_name` text,
+    			    `shipping_company_name` text,
+    			    `shipping_address_1` text,
+    			    `shipping_address_2` text,
+    			    `shipping_city` text,
+    			    `shipping_county` text,
+    			    `shipping_zipcode` double,
+    			    `shipping_charges` double,
+    			    PRIMARY KEY (`id`)
+    			    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=63000000";
+    			    require_once( ABSPATH . 'wp-admin/includes/upgrade.php');
+    			    $wpdb->query( $ac_guest_history_query );
+			    }
+			     
 			}
 			
 			function woocommerce_ac_admin_menu() {
@@ -302,71 +367,276 @@ function woocommerce_ac_delete(){
 			}
 			
 			function woocommerce_ac_store_cart_timestamp() {
+			    
+			    global $wpdb,$woocommerce;
+			    
+			    $current_time = current_time( 'timestamp' );
+			    $cut_off_time = json_decode( get_option( 'woocommerce_ac_settings' ) );
+			    
+			    $cart_ignored   = 0;
+			    $recovered_cart = 0;
+			    
+			    if( isset( $cut_off_time[0]->cart_time ) ) {
+			        $cart_cut_off_time = $cut_off_time[0]->cart_time * 60;
+			    } else {
+			        $cart_cut_off_time = 60 * 60;
+			    }
+			    
+			    $compare_time = $current_time - $cart_cut_off_time;
 				
-				if ( is_user_logged_in() )
-				{
-				global $wpdb;
-				$user_id      = get_current_user_id();
-				$current_time = current_time( 'timestamp' );
-				$cut_off_time = json_decode( get_option( 'woocommerce_ac_settings' ) );
-				if( isset( $cut_off_time[0]->cart_time ) ) {
-				    $cart_cut_off_time = $cut_off_time[0]->cart_time * 60;
-				} else {
-				    $cart_cut_off_time = 60 * 60;
-				}
-				
-				$compare_time = $current_time - $cart_cut_off_time;
-				
-				$cart_ignored   = 0;
-				$recovered_cart = 0;
-				$query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-							WHERE user_id      = %d
-							AND cart_ignored   = %s
-							AND recovered_cart = %d ";
-				$results = $wpdb->get_results($wpdb->prepare( $query, $user_id, $cart_ignored, $recovered_cart ) );
-				
-				if ( count($results) == 0 ) {
+				if ( is_user_logged_in() ) {
 				    
-					$cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
-					
-					$insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-					                 ( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored )
-					                 VALUES ( %d, %s, %d, %s )";
-					$wpdb->query( $wpdb->prepare( $insert_query, $user_id, $cart_info,$current_time, $cart_ignored ) );
-				}
-				elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {
-					
-				    $updated_cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
-					
-					if ( ! $this->compare_carts( $user_id, $results[0]->abandoned_cart_info ) ) {  
-					    
-					    $updated_cart_ignored = 1;
-					    $query_ignored = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-                						  SET cart_ignored = %s
-                						  WHERE user_id    = %d ";
-					    $wpdb->query( $wpdb->prepare( $query_ignored, $updated_cart_ignored, $user_id ) );
-					    
-					    $query_update = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-						                 (user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored)
-						                 VALUES (%d, %s, %d, %s)";
-					    $wpdb->query( $wpdb->prepare( $query_update, $user_id, $updated_cart_info, $current_time, $cart_ignored ) );
-					    
-						update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "yes" ) );
-					} else {
-						update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "no" ) );
-					       }
-				} else {
-					$updated_cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
-					
-					$query_update = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-                					 SET abandoned_cart_info = %s,
-                					     abandoned_cart_time = %d
-                					 WHERE user_id      = %d 
-			                         AND   cart_ignored = %s ";
-					$wpdb->query( $wpdb->prepare( $query_update, $updated_cart_info, $current_time, $user_id, $cart_ignored ) );
+				    $user_id      = get_current_user_id();
+				    $query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+    							WHERE user_id      = %d
+    							AND cart_ignored   = %s
+    							AND recovered_cart = %d ";
+    				$results = $wpdb->get_results($wpdb->prepare( $query, $user_id, $cart_ignored, $recovered_cart ) );
+    				
+    				if ( count($results) == 0 ) {
+    				    
+    					$cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
+    					$user_type = "REGISTERED";
+    					$insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+    					                 ( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type )
+    					                 VALUES ( %d, %s, %d, %s, %s )";
+    					$wpdb->query( $wpdb->prepare( $insert_query, $user_id, $cart_info,$current_time, $cart_ignored, $user_type ) );
+    				}
+    				elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {
+    					
+    				    $updated_cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
+    					
+    					if ( ! $this->compare_carts( $user_id, $results[0]->abandoned_cart_info ) ) {  
+    					    
+    					    $updated_cart_ignored = 1;
+    					    $query_ignored = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+                    						  SET cart_ignored = %s
+                    						  WHERE user_id    = %d ";
+    					    $wpdb->query( $wpdb->prepare( $query_ignored, $updated_cart_ignored, $user_id ) );
+    					    
+    					    $user_type = "REGISTERED";
+    					    
+    					    $query_update = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+    						                 (user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type)
+    						                 VALUES (%d, %s, %d, %s, %s)";
+    					    $wpdb->query( $wpdb->prepare( $query_update, $user_id, $updated_cart_info, $current_time, $cart_ignored, $user_type ) );
+    					    
+    						update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "yes" ) );
+    					} else {
+    						update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "no" ) );
+    				  }
+    				} else {
+    					$updated_cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
+    					
+    					$query_update = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+                    					 SET abandoned_cart_info = %s,
+                    					     abandoned_cart_time = %d
+                    					 WHERE user_id      = %d 
+    			                         AND   cart_ignored = %s ";
+    					$wpdb->query( $wpdb->prepare( $query_update, $updated_cart_info, $current_time, $user_id, $cart_ignored ) );
 				       }
-				}
+				} else{ //start here guest user
+				    
+				    if ( isset( $_SESSION['user_id'] ) ) $user_id = $_SESSION['user_id'];
+				    else $user_id = "";
+				    
+				    $query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0'";
+				    $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id ) );
+				    $cart = array();
+				    
+				    foreach ( $woocommerce->cart->cart_contents as $cart_id => $value ) {
+				        $cart['cart'][$cart_id] = array();
+				    
+				        foreach ( $value as $k=>$v ) {
+				            $cart['cart'][$cart_id][$k] = $v;
+				    
+				            if ( $k == "quantity" ) {
+				                $price = get_post_meta( $cart['cart'][$cart_id]['product_id'], '_price', true );
+				                $cart['cart'][$cart_id]['line_total'] = $cart['cart'][$cart_id]['quantity'] * $price;
+				                $cart['cart'][$cart_id]['line_tax'] = '0';
+				                $cart['cart'][$cart_id]['line_subtotal'] = $cart['cart'][$cart_id]['line_total'];
+				                $cart['cart'][$cart_id]['line_subtotal_tax'] = $cart['cart'][$cart_id]['line_tax'];
+				                break;
+				            }
+				        }
+				    }
+				    $updated_cart_info = json_encode($cart);
+				    
+				    if ( $results ) {
+				        
+				            if ( $compare_time > $results[0]->abandoned_cart_time ) {
+				                	
+				                if ( $updated_cart_info != $results[0]->abandoned_cart_info ) {
+				                    $query_ignored = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE user_id ='".$user_id."'";
+				    
+				                    $wpdb->query( $query_ignored );
+				                    $user_type = 'GUEST';
+				                    
+				                    $query_update = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+    						                 (user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type)
+    						                 VALUES (%d, %s, %d, %s, %s)";
+				                    $wpdb->query( $wpdb->prepare( $query_update, $user_id, $updated_cart_info, $current_time, $cart_ignored, $user_type ) );
+				                    
+				                    
+				                    $wpdb->query( $query_update );
+				                    update_user_meta( $user_id, '_woocommerce_ac_modified_cart', md5("yes") );
+				                } else {
+				                    update_user_meta( $user_id, '_woocommerce_ac_modified_cart', md5("no") );
+				                }
+				            } else {
+				                $query_update = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite` SET abandoned_cart_info = '".$updated_cart_info."', abandoned_cart_time = '".$current_time."' WHERE user_id='".$user_id."' AND cart_ignored='0' ";
+				                $wpdb->query( $query_update );
+				            }
+				        }
+				    }
+				    
+				
 			}
+
+			function decrypt_validate( $validate ) {
+			    $cryptKey  = 'qJB0rGtIn5UB1xG03efyCp';
+			    $validate_decoded      = rtrim( mcrypt_decrypt( MCRYPT_RIJNDAEL_256, md5( $cryptKey ), base64_decode( $validate ), MCRYPT_MODE_CBC, md5( md5( $cryptKey ) ) ), "\0");
+			    return( $validate_decoded );
+			}
+			
+			function email_track_links_lite( $template ) {
+			    global $woocommerce;
+			    $track_link = '';
+			
+			    if ( isset( $_GET['wacp_action'] ) ) $track_link = $_GET['wacp_action'];
+			
+			    if ( $track_link == 'track_links' ) {
+			        global $wpdb;
+			
+			        $validate_server_string = $_SERVER["QUERY_STRING"];
+			        $validate_server_arr = explode("validate=", $validate_server_string);
+			        $validate_encoded_string = end($validate_server_arr);
+			
+			        $link_decode_test = base64_decode( $validate_encoded_string );
+			
+			        if ( preg_match( '/&url=/', $link_decode_test ) ){ // it will check if any old email have open the link
+			            $link_decode = $link_decode_test;
+			        }else{
+			            $link_decode = $this->decrypt_validate( $validate_encoded_string );
+			        }
+			        $sent_email_id_pos = strpos( $link_decode, '&' );
+			        $email_sent_id = substr( $link_decode , 0, $sent_email_id_pos );
+			        $_SESSION[ 'email_sent_id' ] = $email_sent_id;
+			        $url_pos = strpos( $link_decode, '=' );
+			        $url_pos = $url_pos + 1;
+			        $url = substr( $link_decode, $url_pos );
+			        $get_ac_id_query = "SELECT abandoned_order_id FROM `".$wpdb->prefix."ac_sent_history_lite` WHERE id = %d";
+			        $get_ac_id_results = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
+			        $get_user_id_query = "SELECT user_id FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE id = %d";
+			        $get_user_results = $wpdb->get_results( $wpdb->prepare( $get_user_id_query, $get_ac_id_results[0]->abandoned_order_id ) );
+			        $user_id = 0;
+			
+			        if ( isset( $get_user_results ) && count( $get_user_results ) > 0 ) {
+			            $user_id = $get_user_results[0]->user_id;
+			        }
+			
+			        if ( $user_id == 0 ) {
+			            echo "Link expired";
+			            exit;
+			        }
+			        $user = wp_set_current_user( $user_id );
+			
+			        if ( $user_id >= "63000000" ) {
+			            $query_guest = "SELECT * from `". $wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d";
+			            $results_guest = $wpdb->get_results( $wpdb->prepare( $query_guest, $user_id ) );
+			            $query_cart = "SELECT recovered_cart FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id = %d";
+			            $results = $wpdb->get_results( $wpdb->prepare( $query_cart, $user_id ) );
+			
+			            if ( $results_guest  && $results[0]->recovered_cart == '0' ) {
+			                $_SESSION[ 'guest_first_name' ] = $results_guest[0]->billing_first_name;
+			                $_SESSION[ 'guest_last_name' ] = $results_guest[0]->billing_last_name;
+			                $_SESSION[ 'guest_email' ] = $results_guest[0]->email_id;
+			                $_SESSION[ 'user_id' ] = $user_id;
+			            } else {
+			                wp_redirect( get_permalink( woocommerce_get_page_id( 'shop' ) ) );
+			            }
+			        }
+			
+			        if ( $user_id < "63000000" ) {
+			            $user_login = $user->data->user_login;
+			            wp_set_auth_cookie( $user_id );
+			            $my_temp = woocommerce_load_persistent_cart( $user_login, $user );
+			            do_action( 'wp_login', $user_login, $user );
+			
+			            if ( isset( $sign_in ) && is_wp_error( $sign_in ) ) {
+			                echo $sign_in->get_error_message();
+			                exit;
+			            }
+			        } else
+			            $my_temp = $this->woocommerce_load_guest_persistent_cart( $user_id );
+			
+			        if ( $email_sent_id > 0 && is_numeric( $email_sent_id ) ) {
+			            
+			            header( "Location: $url" );
+			        }
+			    } else
+			        return $template;
+			}
+			
+			function woocommerce_load_guest_persistent_cart() {
+			    global $woocommerce;
+			
+			    $saved_cart = json_decode( get_user_meta( $_SESSION['user_id'], '_woocommerce_persistent_cart', true ), true );
+			    $c = array();
+			    $cart_contents_total = $cart_contents_weight = $cart_contents_count = $cart_contents_tax = $total = $subtotal = $subtotal_ex_tax = $tax_total = 0;
+			
+			    foreach ( $saved_cart as $key => $value ) {
+			
+			        foreach ( $value as $a => $b ) {
+			            $c['product_id']        = $b['product_id'];
+			            $c['variation_id']      = $b['variation_id'];
+			            $c['variation']         = $b['variation'];
+			            $c['quantity']          = $b['quantity'];
+			            $product_id             = $b['product_id'];
+			            $c['data']              = get_product($product_id);
+			            $c['line_total']        = $b['line_total'];
+			            $c['line_tax']          = $cart_contents_tax;
+			            $c['line_subtotal']     = $b['line_subtotal'];
+			            $c['line_subtotal_tax'] = $cart_contents_tax;
+			            $value_new[$a]          = $c;
+			            $cart_contents_total    = $b['line_subtotal'] + $cart_contents_total;
+			            $cart_contents_count    = $cart_contents_count + $b['quantity'];
+			            $total                  = $total + $b['line_total'];
+			            $subtotal               = $subtotal + $b['line_subtotal'];
+			            $subtotal_ex_tax        = $subtotal_ex_tax + $b['line_subtotal'];
+			        }
+			        $saved_cart_data[$key]      = $value_new;
+			        $woocommerce_cart_hash      = $a;
+			    }
+			
+			    if ( $saved_cart ) {
+			
+			        if ( empty( $woocommerce->session->cart ) || ! is_array( $woocommerce->session->cart ) || sizeof( $woocommerce->session->cart ) == 0 ) {
+			            $woocommerce->session->cart                 = $saved_cart['cart'];
+			            $woocommerce->session->cart_contents_total  = $cart_contents_total;
+			            $woocommerce->session->cart_contents_weight = $cart_contents_weight;
+			            $woocommerce->session->cart_contents_count  = $cart_contents_count;
+			            $woocommerce->session->cart_contents_tax    = $cart_contents_tax;
+			            $woocommerce->session->total                = $total;
+			            $woocommerce->session->subtotal             = $subtotal;
+			            $woocommerce->session->subtotal_ex_tax      = $subtotal_ex_tax;
+			            $woocommerce->session->tax_total            = $tax_total;
+			            $woocommerce->session->shipping_taxes       = array();
+			            $woocommerce->session->taxes                = array();
+			            $woocommerce->session->ac_customer          = array();
+			            $woocommerce->cart->cart_contents           = $saved_cart_data['cart'];
+			            $woocommerce->cart->cart_contents_total     = $cart_contents_total;
+			            $woocommerce->cart->cart_contents_weight    = $cart_contents_weight;
+			            $woocommerce->cart->cart_contents_count     = $cart_contents_count;
+			            $woocommerce->cart->cart_contents_tax       = $cart_contents_tax;
+			            $woocommerce->cart->total                   = $total;
+			            $woocommerce->cart->subtotal                = $subtotal;
+			            $woocommerce->cart->subtotal_ex_tax         = $subtotal_ex_tax;
+			            $woocommerce->cart->tax_total               = $tax_total;
+			        }
+			    }
+			}
+			
 			
 			function compare_carts( $user_id, $last_abandoned_cart )
 			{
@@ -419,6 +689,15 @@ function woocommerce_ac_delete(){
 				
 				global $wpdb;
 				$user_id = get_current_user_id();
+				
+				$sent_email = $_SESSION[ 'email_sent_id' ];
+				
+				if ( $user_id == "" ) {
+				    $user_id = $_SESSION['user_id'];
+				    //  Set the session variables to blanks
+				    $_SESSION['guest_first_name'] = $_SESSION['guest_last_name'] = $_SESSION['guest_email'] = $_SESSION['user_id'] = "";
+				}
+				
 				delete_user_meta( $user_id, '_woocommerce_ac_persistent_cart_time' );
 				delete_user_meta( $user_id, '_woocommerce_ac_persistent_cart_temp_time' );
 			
@@ -452,8 +731,40 @@ function woocommerce_ac_delete(){
 					        				 id= %d ";
 				            $wpdb->query( $wpdb->prepare( $delete_query, $results[0]->id ) );
         				}
- 			       }
-               }
+ 			       }else {
+                    $email_id = $order->billing_email;
+                    $query = "SELECT * FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE email_id = %s";
+                    $results_id = $wpdb->get_results( $wpdb->prepare( $query, $email_id ) );
+                    
+                    if ( $results_id ) {
+                        $record_status = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id = %d AND recovered_cart = '0'";
+                        $results_status = $wpdb->get_results( $wpdb->prepare( $record_status, $results_id[0]->id ) );
+                            
+                        if ( $results_status ) {
+                            
+                            if ( get_user_meta( $results_id[0]->id, '_woocommerce_ac_modified_cart', true ) == md5("yes") ||
+                                    get_user_meta( $results_id[0]->id, '_woocommerce_ac_modified_cart', true ) == md5("no") ) {
+                                    
+                                $order_id = $order->id;
+                                $query_order = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite` SET recovered_cart= '".$order_id."', cart_ignored = '1' WHERE id='".$results_status[0]->id."' ";
+                                $wpdb->query( $query_order );
+                                delete_user_meta( $results_id[0]->id, '_woocommerce_ac_modified_cart' );
+
+								$sent_email = $_SESSION[ 'email_sent_id' ];
+								$recover_order = "UPDATE `".$wpdb->prefix."ac_sent_history` SET recovered_order = '1' 
+								WHERE id ='".$sent_email."' ";
+								$wpdb->query( $recover_order );
+                            } else {
+                                $delete_guest = "DELETE FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = '".$results_id[0]->id."'";
+                                $wpdb->query( $delete_guest );
+                                
+                                $delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id='".$results_id[0]->id."' ";
+                                $wpdb->query( $delete_query );
+                            }
+                        }       
+                    }
+                }
+ 			}
 			
 			function action_admin_init() {
 				// only hook up these filters if we're in the admin panel, and the current user has permission
@@ -846,14 +1157,39 @@ function woocommerce_ac_delete(){
             	</tr>
 			
 				<?php 
-						foreach ( $results as $key => $value )
-						{
-							$abandoned_order_id = $value->id;
-							$user_id            = $value->user_id;
-							$user_login         = $value->user_login;
-							$user_email         = $value->user_email;
-							$user_first_name    = get_user_meta( $value->user_id, 'first_name' );
-							$user_last_name     = get_user_meta( $value->user_id, 'last_name' );							
+				        $results_guest = '';
+				        
+				        foreach ( $results as $key => $value ) {
+						    
+						    if ( $value->user_type == "GUEST" ) {
+						        $query_guest = "SELECT * from `". $wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d";
+						        $results_guest = $wpdb->get_results( $wpdb->prepare( $query_guest, $value->user_id ) );
+						        
+						    }
+						    $abandoned_order_id = $value->id;
+						    $user_id            = $value->user_id;
+						    $user_login         = $value->user_login;
+						    
+        					if ( $value->user_type == "GUEST" ) {
+        					    
+                                    if ( isset( $results_guest[0]->email_id ) ) $user_email = $results_guest[0]->email_id;
+                                    
+                                    if ( isset( $results_guest[0]->billing_first_name ) ) $user_first_name = $results_guest[0]->billing_first_name;
+                                    else $user_first_name = "";
+                                    
+                                    if ( isset( $results_guest[0]->billing_last_name ) ) $user_last_name = $results_guest[0]->billing_last_name;
+                                    else $user_last_name = "";
+                            } else {
+                                $user_email = $value->user_email;
+                                $user_first_name_temp = get_user_meta($value->user_id, 'first_name');
+                                if ( isset( $user_first_name_temp[0] )) $user_first_name = $user_first_name_temp[0];
+                                else $user_first_name = "";
+                                
+                                $user_last_name_temp = get_user_meta($value->user_id, 'last_name');
+                                if ( isset( $user_last_name_temp[0] )) $user_last_name = $user_last_name_temp[0];
+                                else $user_last_name = "";
+                            }
+													
 							$cart_info          = json_decode( $value->abandoned_cart_info );
 							
 							$order_date = "";
@@ -894,7 +1230,7 @@ function woocommerce_ac_delete(){
 							{
 							?>
 							<tr id="row_<?php echo $abandoned_order_id; ?>">
-								<td><strong> <a href="admin.php?page=woocommerce_ac_page&action=orderdetails&id=<?php echo $value->id;?>"><?php echo "Abandoned Order #".$abandoned_order_id;?></a></strong><?php  if( isset( $user_first_name[0] ) && isset( $user_last_name[0] ) ) { $user_name =  $user_first_name[0]." ".$user_last_name[0]; } echo "</br>Name: ".$user_name." <br><a href='mailto:$user_email'>".$user_email."</a>"; ?></td>
+								<td><strong> <a href="admin.php?page=woocommerce_ac_page&action=orderdetails&id=<?php echo $value->id;?>"><?php echo "Abandoned Order #".$abandoned_order_id;?></a></strong><?php  if( isset( $user_first_name[0] ) && isset( $user_last_name[0] ) ) { $user_name =  $user_first_name." ".$user_last_name; } echo "</br>Name: ".$user_name." <br><a href='mailto:$user_email'>".$user_email."</a>"; ?></td>
 								<td><?php echo get_woocommerce_currency_symbol()." ".$line_total; ?></td>
 								<td><?php echo $order_date; ?></td>
 								<td><?php echo $ac_status; ?>
@@ -1566,101 +1902,112 @@ function woocommerce_ac_delete(){
                     $shipping_charges = 0;
                     $currency_symbol = get_woocommerce_currency_symbol();
 
-                    
-                    $user_id = $results[0]->user_id;                                
-                    if ( isset( $results[0]->user_login ) ) $user_login = $results[0]->user_login;
-                    $user_email = get_user_meta( $results[0]->user_id, 'billing_email', true );
-                    
-                    $user_first_name_temp = get_user_meta( $results[0]->user_id, 'first_name');
-                    if ( isset( $user_first_name_temp[0] ) ) $user_first_name = $user_first_name_temp[0];
-                    else $user_first_name = "";
-                    
-                    $user_last_name_temp = get_user_meta($results[0]->user_id, 'last_name');
-                    if ( isset( $user_last_name_temp[0] ) ) $user_last_name = $user_last_name_temp[0];
-                    else $user_last_name = "";
-                    
-                    $user_billing_first_name = get_user_meta( $results[0]->user_id, 'billing_first_name' );
-                    $user_billing_last_name = get_user_meta( $results[0]->user_id, 'billing_last_name' );
-                    
-                    $user_billing_company_temp = get_user_meta( $results[0]->user_id, 'billing_company' );
-                    if ( isset( $user_billing_company_temp[0] ) ) $user_billing_company = $user_billing_company_temp[0];
-                    else $user_billing_company = "";
-                    
-                    $user_billing_address_1_temp = get_user_meta( $results[0]->user_id, 'billing_address_1' );
-                    if ( isset( $user_billing_address_1_temp[0] ) ) $user_billing_address_1 = $user_billing_address_1_temp[0];
-                    else $user_billing_address_1 = "";
-                    
-                    $user_billing_address_2_temp = get_user_meta( $results[0]->user_id, 'billing_address_2' );
-                    if ( isset( $user_billing_address_2_temp[0] ) ) $user_billing_address_2 = $user_billing_address_2_temp[0];
-                    else $user_billing_address_2 = "";
-                    
-                    $user_billing_city_temp = get_user_meta( $results[0]->user_id, 'billing_city' );
-                    if ( isset( $user_billing_city_temp[0] ) ) $user_billing_city = $user_billing_city_temp[0];
-                    else $user_billing_city = "";
-                    
-                    $user_billing_postcode_temp = get_user_meta( $results[0]->user_id, 'billing_postcode' );
-                    if ( isset( $user_billing_postcode_temp[0] ) ) $user_billing_postcode = $user_billing_postcode_temp[0];
-                    else $user_billing_postcode = "";
-                    
-                    $user_billing_state_temp = get_user_meta( $results[0]->user_id, 'billing_state' );
-                    if ( isset( $user_billing_state_temp[0] ) ) $user_billing_state = $user_billing_state_temp[0];
-                    else $user_billing_state = "";
-                    
-                    $user_billing_country_temp = get_user_meta( $results[0]->user_id, 'billing_country' );
-                    if ( isset( $user_billing_country_temp[0] ) ) $user_billing_country = $user_billing_country_temp[0];
-                    else $user_billing_country = "";
-                    
-                    $user_billing_phone_temp = get_user_meta( $results[0]->user_id, 'billing_phone' );
-                    if ( isset( $user_billing_phone_temp[0] ) ) $user_billing_phone = $user_billing_phone_temp[0];
-                    else $user_billing_phone = "";
-                    
-                    $user_shipping_first_name = get_user_meta( $results[0]->user_id, 'shipping_first_name' );
-                    $user_shipping_last_name = get_user_meta( $results[0]->user_id, 'shipping_last_name' );
-                    
-                    $user_shipping_company_temp = get_user_meta( $results[0]->user_id, 'shipping_company' );
-                    if ( isset( $user_shipping_company_temp[0] ) ) $user_shipping_company = $user_shipping_company_temp[0];
-                    else $user_shipping_company = "";
-                    
-                    $user_shipping_address_1_temp = get_user_meta( $results[0]->user_id, 'shipping_address_1' );
-                    if ( isset( $user_shipping_address_1_temp[0] ) ) $user_shipping_address_1 = $user_shipping_address_1_temp[0];
-                    else $user_shipping_address_1 = "";
-                    
-                    $user_shipping_address_2_temp = get_user_meta( $results[0]->user_id, 'shipping_address_2' );
-                    if ( isset( $user_shipping_address_2_temp[0] ) ) $user_shipping_address_2 = $user_shipping_address_2_temp[0];
-                    else $user_shipping_address_2 = "";
-                    
-                    $user_shipping_city_temp = get_user_meta( $results[0]->user_id, 'shipping_city' );
-                    if ( isset( $user_shipping_city_temp[0] ) ) $user_shipping_city = $user_shipping_city_temp[0];
-                    else $user_shipping_city = "";
-                    
-                    $user_shipping_postcode_temp = get_user_meta( $results[0]->user_id, 'shipping_postcode' );
-                    if ( isset( $user_shipping_postcode_temp[0] ) ) $user_shipping_postcode = $user_shipping_postcode_temp[0];
-                    else $user_shipping_postcode = "";
-                    
-                    $user_shipping_state_temp = get_user_meta( $results[0]->user_id, 'shipping_state' );
-                    if ( isset( $user_shipping_state_temp[0] ) ) $user_shipping_state = $user_shipping_state_temp[0];
-                    else $user_shipping_state = "";
-                    
-                    $user_shipping_country_temp = get_user_meta( $results[0]->user_id, 'shipping_country' );
-                    if ( isset( $user_shipping_country_temp[0] ) ) $user_shipping_country = $user_shipping_country_temp[0];
-                    else $user_shipping_country = "";
-                                                
-                    $cart_info      = json_decode( $results[0]->abandoned_cart_info );
-                    $cart_details   = $cart_info->cart;
-                    $item_subtotal  = $item_total = 0;
-                    
-                    foreach ( $cart_details as $k => $v ) {
-                        $quantity_total = $v->quantity;
-                        $product_id     = $v->product_id;
-                        $prod_name      = get_post($product_id);
-                        $product_name   = $prod_name->post_title;
-                        
-                        // Item subtotal is calculated as product total including taxes
-                        if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
-                            $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
-                        } else {
-                            $item_subtotal = $item_subtotal + $v->line_total;
-                        }
+                            if ( $results[0]->user_type == "GUEST" ) {
+                                $query_guest            = "SELECT * FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d";  
+                                $results_guest          = $wpdb->get_results( $wpdb->prepare( $query_guest, $results[0]->user_id ) );
+                                $user_email             = $results_guest[0]->email_id;
+                                $user_first_name        = $results_guest[0]->billing_first_name;
+                                $user_last_name         = $results_guest[0]->billing_last_name;
+                                $user_billing_postcode  = $results_guest[0]->billing_zipcode;
+                                $user_shipping_postcode = $results_guest[0]->shipping_zipcode;
+                                $shipping_charges       = $results_guest[0]->shipping_charges;
+                                $user_billing_company   = $user_billing_address_1 = $user_billing_address_2 = $user_billing_city = $user_billing_state = $user_billing_country  = $user_billing_phone = "";
+                                $user_shipping_company  = $user_shipping_address_1 = $user_shipping_address_2 = $user_shipping_city = $user_shipping_state = $user_shipping_country = "";  
+                            } else {
+                                $user_id = $results[0]->user_id;                                
+                                if ( isset( $results[0]->user_login ) ) $user_login = $results[0]->user_login;
+                                $user_email = get_user_meta( $results[0]->user_id, 'billing_email', true );
+                                
+                                $user_first_name_temp = get_user_meta( $results[0]->user_id, 'first_name');
+                                if ( isset( $user_first_name_temp[0] ) ) $user_first_name = $user_first_name_temp[0];
+                                else $user_first_name = "";
+                                
+                                $user_last_name_temp = get_user_meta($results[0]->user_id, 'last_name');
+                                if ( isset( $user_last_name_temp[0] ) ) $user_last_name = $user_last_name_temp[0];
+                                else $user_last_name = "";
+                                
+                                $user_billing_first_name = get_user_meta( $results[0]->user_id, 'billing_first_name' );
+                                $user_billing_last_name = get_user_meta( $results[0]->user_id, 'billing_last_name' );
+                                
+                                $user_billing_company_temp = get_user_meta( $results[0]->user_id, 'billing_company' );
+                                if ( isset( $user_billing_company_temp[0] ) ) $user_billing_company = $user_billing_company_temp[0];
+                                else $user_billing_company = "";
+                                
+                                $user_billing_address_1_temp = get_user_meta( $results[0]->user_id, 'billing_address_1' );
+                                if ( isset( $user_billing_address_1_temp[0] ) ) $user_billing_address_1 = $user_billing_address_1_temp[0];
+                                else $user_billing_address_1 = "";
+                                
+                                $user_billing_address_2_temp = get_user_meta( $results[0]->user_id, 'billing_address_2' );
+                                if ( isset( $user_billing_address_2_temp[0] ) ) $user_billing_address_2 = $user_billing_address_2_temp[0];
+                                else $user_billing_address_2 = "";
+                                
+                                $user_billing_city_temp = get_user_meta( $results[0]->user_id, 'billing_city' );
+                                if ( isset( $user_billing_city_temp[0] ) ) $user_billing_city = $user_billing_city_temp[0];
+                                else $user_billing_city = "";
+                                
+                                $user_billing_postcode_temp = get_user_meta( $results[0]->user_id, 'billing_postcode' );
+                                if ( isset( $user_billing_postcode_temp[0] ) ) $user_billing_postcode = $user_billing_postcode_temp[0];
+                                else $user_billing_postcode = "";
+                                
+                                $user_billing_state_temp = get_user_meta( $results[0]->user_id, 'billing_state' );
+                                if ( isset( $user_billing_state_temp[0] ) ) $user_billing_state = $user_billing_state_temp[0];
+                                else $user_billing_state = "";
+                                
+                                $user_billing_country_temp = get_user_meta( $results[0]->user_id, 'billing_country' );
+                                if ( isset( $user_billing_country_temp[0] ) ) $user_billing_country = $user_billing_country_temp[0];
+                                else $user_billing_country = "";
+                                
+                                $user_billing_phone_temp = get_user_meta( $results[0]->user_id, 'billing_phone' );
+                                if ( isset( $user_billing_phone_temp[0] ) ) $user_billing_phone = $user_billing_phone_temp[0];
+                                else $user_billing_phone = "";
+                                
+                                $user_shipping_first_name = get_user_meta( $results[0]->user_id, 'shipping_first_name' );
+                                $user_shipping_last_name = get_user_meta( $results[0]->user_id, 'shipping_last_name' );
+                                
+                                $user_shipping_company_temp = get_user_meta( $results[0]->user_id, 'shipping_company' );
+                                if ( isset( $user_shipping_company_temp[0] ) ) $user_shipping_company = $user_shipping_company_temp[0];
+                                else $user_shipping_company = "";
+                                
+                                $user_shipping_address_1_temp = get_user_meta( $results[0]->user_id, 'shipping_address_1' );
+                                if ( isset( $user_shipping_address_1_temp[0] ) ) $user_shipping_address_1 = $user_shipping_address_1_temp[0];
+                                else $user_shipping_address_1 = "";
+                                
+                                $user_shipping_address_2_temp = get_user_meta( $results[0]->user_id, 'shipping_address_2' );
+                                if ( isset( $user_shipping_address_2_temp[0] ) ) $user_shipping_address_2 = $user_shipping_address_2_temp[0];
+                                else $user_shipping_address_2 = "";
+                                
+                                $user_shipping_city_temp = get_user_meta( $results[0]->user_id, 'shipping_city' );
+                                if ( isset( $user_shipping_city_temp[0] ) ) $user_shipping_city = $user_shipping_city_temp[0];
+                                else $user_shipping_city = "";
+                                
+                                $user_shipping_postcode_temp = get_user_meta( $results[0]->user_id, 'shipping_postcode' );
+                                if ( isset( $user_shipping_postcode_temp[0] ) ) $user_shipping_postcode = $user_shipping_postcode_temp[0];
+                                else $user_shipping_postcode = "";
+                                
+                                $user_shipping_state_temp = get_user_meta( $results[0]->user_id, 'shipping_state' );
+                                if ( isset( $user_shipping_state_temp[0] ) ) $user_shipping_state = $user_shipping_state_temp[0];
+                                else $user_shipping_state = "";
+                                
+                                $user_shipping_country_temp = get_user_meta( $results[0]->user_id, 'shipping_country' );
+                                if ( isset( $user_shipping_country_temp[0] ) ) $user_shipping_country = $user_shipping_country_temp[0];
+                                else $user_shipping_country = "";
+                            }                            
+                            $cart_info      = json_decode( $results[0]->abandoned_cart_info );
+                            $cart_details   = $cart_info->cart;
+                            $item_subtotal  = $item_total = 0;
+                            
+                            foreach ( $cart_details as $k => $v ) {
+                                $quantity_total = $v->quantity;
+                                $product_id     = $v->product_id;
+                                $prod_name      = get_post($product_id);
+                                $product_name   = $prod_name->post_title;
+                                
+                                // Item subtotal is calculated as product total including taxes
+                                if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
+                                    $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
+                                } else {
+                                    $item_subtotal = $item_subtotal + $v->line_total;
+                                }
 
                         //  Line total
                         $item_total = $item_subtotal;
@@ -2006,6 +2353,12 @@ function woocommerce_ac_delete(){
 						          id = '%d' ";
 						
 						$results = $wpdb->get_results( $wpdb->prepare( $query, $abandoned_order_id ) );
+						
+						if ( $user_id >= '63000000' ) {
+						    $guest_query = "DELETE FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = '".$user_id."'";
+						    $results_guest = $wpdb->get_results( $guest_query );
+						}
+						
 						die();
 					}
 					

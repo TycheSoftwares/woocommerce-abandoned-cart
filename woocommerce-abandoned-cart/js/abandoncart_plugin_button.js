@@ -25,6 +25,10 @@
 																b.addSeparator();
 																
 																a.addImmediate(b,"Product Information/Cart Content", '{{products.cart}}');
+																
+																b.addSeparator();
+																
+																a.addImmediate(b,"Cart Link", '{{cart.link}}');
                                                                
                                                         });
                                                 return d
