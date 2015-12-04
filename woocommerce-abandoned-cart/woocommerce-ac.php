@@ -187,6 +187,13 @@ function woocommerce_ac_delete(){
 					
 				}
 				
+				// Send Email on order recovery
+				add_action('woocommerce_order_status_pending_to_processing_notification', array(&$this, 'ac_email_admin_recovery'));
+				add_action('woocommerce_order_status_pending_to_completed_notification', array(&$this, 'ac_email_admin_recovery'));
+				add_action('woocommerce_order_status_pending_to_on-hold_notification', array(&$this, 'ac_email_admin_recovery'));
+				add_action('woocommerce_order_status_failed_to_processing_notification', array(&$this, 'ac_email_admin_recovery'));
+				add_action('woocommerce_order_status_failed_to_completed_notification', array(&$this, 'ac_email_admin_recovery'));
+				
 			}
 			
 			/*-----------------------------------------------------------------------------------*/
@@ -268,10 +275,11 @@ function woocommerce_ac_delete(){
 				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 				dbDelta( $history_query );
 				
-				$ac_settings             = new stdClass();
-				$ac_settings->cart_time  = '60';
-				$woo_ac_settings[]       = $ac_settings;
-				$woocommerce_ac_settings = json_encode( $woo_ac_settings );
+				$ac_settings              = new stdClass();
+				$ac_settings->cart_time   = '60';
+				$ac_settings->email_admin = '';
+				$woo_ac_settings[]        = $ac_settings;
+				$woocommerce_ac_settings  = json_encode( $woo_ac_settings );
 				add_option  ( 'woocommerce_ac_settings', $woocommerce_ac_settings );
 			}
 			
@@ -358,6 +366,50 @@ function woocommerce_ac_delete(){
     			    $wpdb->query( $ac_guest_history_query );
 			    }
 			     
+			}
+			
+			/******
+			 * Send email to admin when cart is recover.
+			 * @since 2.3 version
+			 */
+			
+			function ac_email_admin_recovery ($order_id) {
+			
+			    $user_id = get_current_user_id();
+			    $cart_ac_settings = json_decode(get_option('woocommerce_ac_settings'));
+			    if( $cart_ac_settings[0]->email_admin == 'on' ){
+			        if ( get_user_meta($user_id, '_woocommerce_ac_modified_cart', true) == md5("yes") || get_user_meta($user_id, '_woocommerce_ac_modified_cart', true) == md5("no") ){ // indicates cart is abandoned
+			            $order = new WC_Order( $order_id );
+			
+			            $email_heading = __('New Customer Order - Recovered', 'woocommerce-ac');
+			
+			            $blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+			
+			            $email_subject = "New Customer Order - Recovered";
+			
+			            $user_email = get_option('admin_email');
+			            $headers[] = "From: Admin <".$user_email.">";
+			            $headers[] = "Content-Type: text/html";
+			
+			            // Buffer
+			            ob_start();
+			
+			            // Get mail template
+			            woocommerce_get_template('emails/admin-new-order.php', array(
+			            'order' => $order,
+			            'email_heading' => $email_heading,
+			            'sent_to_admin' => false,
+			            'plain_text'    => false
+			            ));
+			
+			            // Get contents
+			            $email_body = ob_get_clean();
+			
+			            //$email_body .= "Recovered Order";
+			            woocommerce_mail( $user_email, $email_subject, $email_body, $headers );
+			        }
+			    }
+			
 			}
 			
 			function woocommerce_ac_admin_menu() {
@@ -810,6 +862,9 @@ function woocommerce_ac_delete(){
 			    if ( $action == 'stats' ) {
 					$active_stats = "nav-tab-active";
 				}
+				if ( $action == 'report' ) {
+				    $active_report = "nav-tab-active";
+				}
 			
 				?>
 				
@@ -820,6 +875,7 @@ function woocommerce_ac_delete(){
 				<a href="admin.php?page=woocommerce_ac_page&action=emailtemplates" class="nav-tab <?php if (isset($active_emailtemplates)) echo $active_emailtemplates; ?>"> <?php _e( 'Email Templates', 'woocommerce-ac' );?> </a>
 				<a href="admin.php?page=woocommerce_ac_page&action=emailsettings" class="nav-tab <?php if (isset($active_settings)) echo $active_settings; ?>"> <?php _e( 'Settings', 'woocommerce-ac' );?> </a>
 				<a href="admin.php?page=woocommerce_ac_page&action=stats" class="nav-tab <?php if (isset($active_stats)) echo $active_stats; ?>"> <?php _e( 'Recovered Orders', 'woocommerce-ac' );?> </a>
+				<a href="admin.php?page=woocommerce_ac_page&action=report" class="nav-tab <?php if( isset( $active_report ) ) echo $active_report; ?>"> <?php _e( 'Product Report', 'woocommerce-ac' );?> </a>
 				</h2>
 				
 				<?php
@@ -976,6 +1032,9 @@ function woocommerce_ac_delete(){
 							
 						    $ac_settings             = new stdClass();
 							$ac_settings->cart_time  = $_POST[ 'cart_abandonment_time' ];
+							if (isset($_POST['email_admin_on_conversion'])){
+							    $ac_settings->email_admin = $_POST['email_admin_on_conversion'];
+							}
 							$woo_ac_settings[]       = $ac_settings;
 							$woocommerce_ac_settings = json_encode( $woo_ac_settings );
 							
@@ -1034,7 +1093,23 @@ function woocommerce_ac_delete(){
 				    								</td>
 				    							</tr>
 				    							
-												</table>
+				    							<tr>
+				    								<th>
+				    									<label for="woocommerce_ac_email_frequency"><b><?php _e( 'Email admin on order recovery', 'woocommerce-ac' ); ?></b></label>
+				    								</th>
+				    								<td>
+													<?php
+													   $email_admin = "";
+													   
+    													if (isset($enable_email_sett_arr[0]->email_admin) && $enable_email_sett_arr[0]->email_admin == 'on') {
+    														$email_admin = "checked";
+    													}
+    													print'<input type="checkbox" name="email_admin_on_conversion" '.$email_admin.'>&nbsp;';?>
+    			    									<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Sends email to Admin if an Abandoned Cart Order is recoverd', 'woocommerce') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
+				    								</td>
+				    							</tr>
+				    							
+				    							</table>
 											</div>
 										</div>
 									</div>
@@ -1250,6 +1325,7 @@ function woocommerce_ac_delete(){
 							<?php
 							
 							// Save the field values
+							$insert_template_successfuly = $update_template_successfuly = ''; 
 							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' ) {	
 							    						
 								   $active_post = 1;
@@ -1280,7 +1356,7 @@ function woocommerce_ac_delete(){
 										           (subject, body, is_active, frequency, day_or_hour, template_name, from_name)
 										           VALUES ( %s, %s, %s, %d, %s, %s, %s )";
     												
-									    $wpdb->query( $wpdb->prepare( $query, 
+									    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query, 
 									                                  $woocommerce_ac_email_subject,
 									                                  $woocommerce_ac_email_body, 
 									                                  $active_post, 
@@ -1299,7 +1375,7 @@ function woocommerce_ac_delete(){
 										                 is_active       = %s
 										                 WHERE frequency = %d
 	                                                     AND day_or_hour = %s ";
-									    $wpdb->query($wpdb->prepare( $query_update, $update_is_active, $email_frequency, $day_or_hour ) );
+									    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update, $update_is_active, $email_frequency, $day_or_hour ) );
 									    
 									    $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
 									    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
@@ -1310,7 +1386,7 @@ function woocommerce_ac_delete(){
 										                    (subject, body, is_active, frequency, day_or_hour, template_name, from_name)
 										                    VALUES ( %s, %s, %s, %d, %s, %s, %s )";
     												
-									    $wpdb->query( $wpdb->prepare( $query_insert_new, 
+									    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query_insert_new, 
 									                                  $woocommerce_ac_email_subject,
 									                                  $woocommerce_ac_email_body, 
 									                                  $active_post, 
@@ -1356,7 +1432,7 @@ function woocommerce_ac_delete(){
                 										template_name = %s,
                 										from_name     = %s
                 										WHERE id      = %d ";
-									    $wpdb->query($wpdb->prepare( $query_update,
+									    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update,
 									                                 $woocommerce_ac_email_subject,
 									                                 $woocommerce_ac_email_body,
 									                                 $active,
@@ -1375,7 +1451,7 @@ function woocommerce_ac_delete(){
 										                     SET is_active   = %s
 										                     WHERE frequency = %d
 			                                                 AND day_or_hour = %s ";
-									    $wpdb->query( $wpdb->prepare( $query_update_new, $updated_is_active, $email_frequency, $day_or_hour ) );
+									    $update_template_successfuly = $wpdb->query( $wpdb->prepare( $query_update_new, $updated_is_active, $email_frequency, $day_or_hour ) );
 									    
 									    $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
 									    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );									    
@@ -1393,7 +1469,7 @@ function woocommerce_ac_delete(){
                 										template_name = %s,
                 										from_name     = %s
                 										WHERE id      = %d ";
-									    $wpdb->query($wpdb->prepare( $query_update_latest,
+									    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update_latest,
 									                                 $woocommerce_ac_email_subject,
 									                                 $woocommerce_ac_email_body,
 									                                 $active,
@@ -1416,13 +1492,24 @@ function woocommerce_ac_delete(){
 								$wpdb->query( $wpdb->prepare( $query_remove, $id_remove ) );
 							}
 							
-							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' ) { ?>
-							<div id="message" class="updated fade"><p><strong><?php _e( 'The Email Template has been successfully added.', 'woocommerce-ac' ); ?></strong></p></div>
-							<?php } 
-							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'update' ) { ?>
-							<div id="message" class="updated fade"><p><strong><?php _e( 'The Email Template has been successfully updated.', 'woocommerce-ac' ); ?></strong></p></div>
-							<?php }?>
 							
+							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' && (isset($insert_template_successfuly) && $insert_template_successfuly != '')) { ?>
+							<div id="message" class="updated fade"><p><strong><?php _e( 'The Email Template has been successfully added.', 'woocommerce-ac' ); ?></strong></p></div>
+							<?php } else if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' && (isset($insert_template_successfuly) && $insert_template_successfuly == '')){
+							    ?>
+							   <div id="message" class="error fade"><p><strong><?php _e( ' There was a problem adding the email template. Please contact the plugin author via <a href= "https://wordpress.org/support/plugin/woocommerce-abandoned-cart">support forum</a>.', 'woocommerce-ac' ); ?></strong></p></div>
+							 <?php   
+							}
+							
+							
+							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'update'  && isset($update_template_successfuly) && $update_template_successfuly != '' ) { ?>
+							<div id="message" class="updated fade"><p><strong><?php _e( 'The Email Template has been successfully updated.', 'woocommerce-ac' ); ?></strong></p></div>
+							<?php } else if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'update'  && isset($update_template_successfuly) && $update_template_successfuly == '' ){
+							    ?>
+							   <div id="message" class="error fade"><p><strong><?php _e( ' There was a problem updating the email template. Please contact the plugin author via <a href= "https://wordpress.org/support/plugin/woocommerce-abandoned-cart">support forum</a>.', 'woocommerce-ac' ); ?></strong></p></div>
+							 <?php   
+							}
+							?>
 							<div class="tablenav">
 							<p style="float:left;">
 							<input type="button" value="+ Add New Template" id="add_new_template" onclick="location.href='admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=addnewtemplate';" style="font-weight: bold; color: green; font-size: 18px; cursor: pointer;">							
@@ -2090,7 +2177,191 @@ function woocommerce_ac_delete(){
                                     </div>
                                 </div>
                              </div>                
-                            <?php }
+                            <?php } elseif ( $action == 'report' ) {
+						
+								$order = "";
+
+								if ( isset( $_GET['order'] ) ) $order = $_GET['order'];
+
+								if ( $order == "" ) {
+									$order = "desc";
+									$order_next = "asc";
+								} elseif ( $order == "asc" ) {
+									$order_next = "desc";
+								} elseif ( $order == "desc" ) {
+									$order_next = "asc";
+								}
+								
+								$product_name_by = "";
+                                $order_by = "";
+                                                                
+								if ( isset( $_GET['orderby'] ) ) $order_by = $_GET['orderby'];
+
+								if ( $order_by == "" ) {
+									$order_by = "recovered_cart";
+								}
+								$query = "SELECT abandoned_cart_time, abandoned_cart_info, recovered_cart FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` ORDER BY $order_by $order";
+								$recover_query =  $wpdb->get_results( $query );
+								
+								
+						?>
+						
+						
+						
+						<table class='wp-list-table widefat fixed posts' cellspacing='0' id='cart_data'>
+    						<thead>
+                                <tr class="type-page status-publish hentry  iedit author-self level-0">
+                                    <th> <?php _e( 'Product Name', 'woocommerce-ac' ); ?> </th>
+                                    <th  id="abandoned_report_ac" >
+                                         <?php _e( 'Number of Times Abandoned', 'woocommerce-ac' ); ?> 
+                                    </th>
+                                     <th id="recovered_report_ac" >
+                                             <?php _e( 'Number of Times Recovered', 'woocommerce-ac' ); ?>  
+                                    </th>
+                                </tr>
+    						</thead>
+						<?php 
+
+						$query                 = "SELECT abandoned_cart_time, abandoned_cart_info, recovered_cart FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` ORDER BY $order_by $order";
+						$recover_query         =  $wpdb->get_results( $query );
+						$rec_carts_array       = array ( );
+						$recover_product_array = array( );
+							
+							foreach ( $recover_query as $recovered_cart_key => $recovered_cart_value ) {
+							    
+							    $recovered_cart_info = json_decode( $recovered_cart_value->abandoned_cart_info );
+							    
+								$recovered_cart_dat  = json_decode( $recovered_cart_value->recovered_cart);
+								$order_date          = "";
+								$cart_update_time    = $recovered_cart_value->abandoned_cart_time;
+								$quantity_total      = 0;
+								$cart_details        = array();
+								if( isset( $recovered_cart_info->cart ) ){
+								    $cart_details = $recovered_cart_info->cart;
+								}
+								
+								if ( count( $cart_details ) > 0) {
+								   
+									foreach ( $cart_details as $k => $v ) {
+												
+										$quantity_total = $quantity_total + $v->quantity;
+									}
+								}
+											
+								if ( $cart_update_time != "" && $cart_update_time != 0 ) {
+									$order_date = date( 'd M, Y h:i A', $cart_update_time );
+								}
+
+								$ac_cutoff_time = json_decode( get_option( 'woocommerce_ac_settings' ) );
+								if ( isset( $ac_cutoff_time[0]->cart_time ) ) {
+								    $cut_off_time = $ac_cutoff_time[0]->cart_time * 60;
+								}
+								$current_time   = current_time( 'timestamp' );
+								$compare_time   = $current_time - $cart_update_time;
+								
+								
+								if ( is_array( $recovered_cart_info ) || is_object( $recovered_cart_info ) ) {
+    								foreach ( $recovered_cart_info as $rec_cart_key => $rec_cart_value ) {
+    									foreach ( $rec_cart_value as $rec_product_id_key => $rec_product_id_value ) {
+    										$product_id	= $rec_product_id_value->product_id;
+    										
+    										if ( $compare_time > $cut_off_time ) {
+    											  $rec_carts_array [] = $product_id;
+    										}
+    										if($recovered_cart_dat != 0) {
+    											$recover_product_array[] = $product_id;
+                                            }
+    									}
+    								}
+								}
+							}
+							$count        = array_count_values( $rec_carts_array );
+							 
+							$count1       = $count;
+							$count_new    = $this->bubble_sort_function ( $count1 ,$order, $order_by );
+							
+                            $recover_cart = "0";
+							$count_css    = 0;
+                            $chunck_array = array_chunk( $count_new,10, true );  // keep True for retaing the Array Index number which is product ids in our case.
+                            
+                            $new_chunked_array = array();
+                            if ( isset( $_GET['paging'] ) ) {
+                                $page              = $_GET['paging'] - 1 ;
+                                $new_chunked_array = $chunck_array[ $page ];
+                            } else {
+                                if( !empty( $chunck_array ) ) {
+                                    $new_chunked_array = $chunck_array[0];
+                                }
+                            }
+                            
+                        /* Now we use the LIMIT clause to grab a range of rows */
+						include_once( "pagination.class.php" );
+						$wpdb->get_results( "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`" );
+						$count_page = $wpdb->num_rows;
+						$count_page = count( $count_new );
+
+						if ( $count_page > 0 ) {
+							$p = new pagination;
+							$p -> items( $count_page );
+							$p -> limit( 10 ); // Limit entries per page
+							$p -> target( "admin.php?page=woocommerce_ac_page&action=report" );
+							
+							if ( isset( $p->paging ) ) {
+								
+								if ( isset( $_GET[ $p->paging ] ) ) $p->currentPage( $_GET[ $p->paging ] ); // Gets and validates the current page
+							}
+							$p  ->calculate(); // Calculates what to show
+							$p  ->parameterName( 'paging' );
+							$p  ->adjacents( 1 ); //No. of page away from the current page
+							$p  ->showCounter( true );
+							 
+							if ( ! isset( $_GET['paging'] ) ) {
+								$p->page = 1;
+							} else {
+								$p->page = $_GET['paging'];
+							}
+							 
+							//Query for limit paging
+							$limit = "LIMIT " . ( $p->page - 1 ) * $p->limit  . ", " . $p->limit; 
+						} else $limit = "";
+						
+						?>
+						  
+						<div class="tablenav">
+							<div class='tablenav-pages'>
+								<?php if ( $count_page > 0 ) echo $p->show();  // Echo out the list of paging. ?>
+							</div>
+						</div>
+						<?php
+						
+							foreach ( $new_chunked_array as $k => $v ) {
+								$prod_name       = get_post( $k );
+								$product_name    = $prod_name->post_title;
+								$abandoned_count = $v;
+								$recover         = array_count_values( $recover_product_array );
+								foreach ( $recover as $ke => $ve ) {
+											if(array_key_exists ( $ke, $count ) ) {	
+                                                                                   
+												if ( $ke == $k ) {
+													$recover_cart = $ve;
+												}
+											}
+											if( ! array_key_exists ( $k, $recover ) ) {
+												 
+													$recover_cart = "0";
+											 }
+									}
+										?>
+										<tr class="<?php echo ( ++$count_css % 2 ) ? "" : "alternate"; ?>">
+											<td> <a href="post.php?post=<?php echo $k; ?>&action=edit" title="product name"> <?php echo $product_name; ?> </a> </td>
+											<td> <?php echo $abandoned_count; ?> </td>
+											<td> <?php echo $recover_cart; ?> </td>
+										</tr>
+										<?php
+								}			
+					       }
+					}
+                         echo( "</table>" );
 							
 				if ( isset( $_GET[ 'action' ] ) ){
 				       $action = $_GET[ 'action' ];
@@ -2300,10 +2571,29 @@ function woocommerce_ac_delete(){
 						    </form>
 						  </div>
 						<?php 
-						}																	
+																							
 				}
 				
-			}				
+			}
+
+			function bubble_sort_function( $unsort_array, $order, $order_by ) {
+			
+			    $temp = array();
+			    foreach ( $unsort_array as $key => $value )
+			        $temp[$key] = $value; //concatenate something unique to make sure two equal weights don't overwrite each other
+			
+			    asort( $temp, SORT_NUMERIC ); // or ksort($temp, SORT_NATURAL); see paragraph above to understand why
+			
+			    if( $order == 'desc' ) {
+			        $array = array_reverse( $temp, true );
+			    }
+			    else if($order == 'asc') {
+			        $array = $temp;
+			    }
+			    unset( $temp );
+			
+			    return $array;
+			}
 				
 				function my_action_javascript()
 				{
