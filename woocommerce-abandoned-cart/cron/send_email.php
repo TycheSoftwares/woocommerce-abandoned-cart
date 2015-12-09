@@ -40,6 +40,112 @@ require_once $path . 'wp-load.php';
 			function woocommerce_ac_send_email() {
 				
 				global $wpdb, $woocommerce;
+				
+				// Delete any guest ac carts that might be pending because user did not go to Order Received page after payment
+				//search for the guest carts
+				$query_guest_records = "SELECT id,email_id FROM `" . $wpdb->prefix . "ac_guest_abandoned_cart_history_lite`";
+				$results_guest_list  = $wpdb->get_results( $query_guest_records );
+				
+				// This is to ensure that recovered guest carts r removed from the delete list
+				$query_records = "SELECT user_id FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_type = 'GUEST' AND recovered_cart != '0'";
+				$results_query = $wpdb->get_results( $query_records );
+				
+				foreach ( $results_guest_list as $key => $value ) {
+				    $record_found = "NO";
+				    foreach ( $results_query as $k => $v ) {
+				        if ( $value->id == $v->user_id ) {
+				            $record_found = "YES";
+				        }
+				    }
+				    if ( $record_found == "YES" ) {
+				        unset( $results_guest_list[ $key ] );
+				    }
+				}
+				foreach ( $results_guest_list as $key => $value ) {
+				    $query_email_id      = "SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = '_billing_email' AND meta_value = %s";
+				    $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $value->email_id ) );
+				
+				    //if any orders are found with the same email addr..delete those ac records
+				    if ( $results_query_email ) {
+				
+				        for ( $i = 0; $i < count( $results_query_email ); $i++ ) {
+				            $query_post   = "SELECT post_date,post_status FROM `" . $wpdb->prefix . "posts` WHERE ID = %d";
+				            $results_post = $wpdb->get_results ( $wpdb->prepare( $query_post, $results_query_email[ $i ]->post_id ) );
+				
+				            if ( $results_post[0]->post_status == "wc-pending" || $results_post[0]->post_status == "wc-failed" ) {
+				                continue;
+				            }
+				            $order_date_time = $results_post[0]->post_date;
+				            $order_date	     = substr( $order_date_time , 0 , 10 );
+				            $current_time    = current_time( 'timestamp' );
+				            $today_date	     = date( 'Y-m-d', $current_time );
+				
+				            if ( $order_date == $today_date ) {
+				                $query_delete = "DELETE FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_id = '" . $value->id . "'";
+				                $wpdb->query( $query_delete );
+				                $query_guest = "DELETE FROM `" . $wpdb->prefix . "ac_guest_abandoned_cart_history_lite` WHERE email_id = '" . $value->email_id . "'";
+				                $wpdb->query( $query_guest );
+				                break;
+				            }
+				        }
+				    }
+				}
+				
+				// Delete any logged in user carts that might be pending because user did not go to Order Received page after payment
+				$query_records = "SELECT DISTINCT user_id FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_type = 'REGISTERED' AND cart_ignored = '0' AND recovered_cart = '0'";
+				$results_list  = $wpdb->get_results( $query_records );
+				
+					
+				foreach ( $results_list as $key => $value ) {
+				    $user_id             = $value->user_id;
+				    $query_email = '';
+				    if ( is_multisite() ){
+				        // get main site's table prefix
+				        $main_prefix     = $wpdb->get_blog_prefix(1);
+				        $query_email     = "SELECT user_email FROM `".$main_prefix."users` WHERE ID = %d";
+				         
+				    }else{
+				        // non-multisite - regular table name
+				        $query_email     = "SELECT user_email FROM `".$wpdb->prefix."users` WHERE ID = %d";
+				    }
+				
+				
+				    $results_email       = $wpdb->get_results( $wpdb->prepare( $query_email, $user_id ) );
+				
+				
+				    $query_email_id      = "SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = '_billing_email' AND meta_value = %s";
+				    $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $results_email[0]->user_email ) );
+				
+				
+				    //if any orders are found with the same email addr..delete those ac records
+				    if ( is_array( $results_query_email ) && count( $results_query_email ) > 0 ) {
+				
+				        for ( $i = 0; $i < count( $results_query_email ); $i++ ) {
+				
+				            $query_post   = "SELECT post_date,post_status FROM `" . $wpdb->prefix . "posts` WHERE ID = %d ";
+				            $results_post = $wpdb->get_results ( $wpdb->prepare( $query_post, $results_query_email[ $i ]->post_id ) );
+				
+				            if ( $results_post[0]->post_status == "wc-pending" || $results_post[0]->post_status == "wc-failed" ) {
+				                continue;
+				
+				            }
+				            $order_date_time = $results_post[0]->post_date;
+				            $order_date	     = substr( $order_date_time, 0, 10 );
+				            $current_time    = current_time( 'timestamp' );
+				            $today_date    	 = date( 'Y-m-d', $current_time );
+				
+				            if ( $order_date == $today_date ) {
+				                $query_delete = "DELETE FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
+                                                                        WHERE user_id = '" . $user_id . "'
+                                                                        AND cart_ignored = '0'
+                                                                        AND recovered_cart = '0'";
+				
+				                $wpdb->query( $query_delete );
+				                break;
+				            }
+				        }
+				    }
+				}
 			
 				//Grab the cart abandoned cut-off time from database.
 				$cart_settings = json_decode( get_option( 'woocommerce_ac_settings' ) );
