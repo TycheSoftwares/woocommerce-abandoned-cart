@@ -28,7 +28,12 @@
 																
 																b.addSeparator();
 																
-																a.addImmediate(b,"Cart Link", '{{cart.link}}');
+																a.addImmediate(b,"Cart Link", '{{cart.link}}'); 
+																
+																b.addSeparator();
+																
+																a.addImmediate(b,"Date when Cart was abandoned", '{{cart.abandoned_date}}');
+																
                                                                
                                                         });
                                                 return d

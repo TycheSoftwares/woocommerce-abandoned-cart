@@ -171,7 +171,7 @@ require_once $path . 'wp-load.php';
 					{
 						$time_to_send_template_after = $value->frequency * $hour_seconds;
 					}
-			
+					
 					$carts = $this->get_carts( $time_to_send_template_after, $cart_abandon_cut_off_time );
 			
 					$email_frequency     = $value->frequency;
@@ -181,6 +181,7 @@ require_once $path . 'wp-load.php';
 					$headers[]           = "From: ".$value->from_name." <".$user_email_from.">"."\r\n";
 					$headers[]           = "Content-Type: text/html"."\r\n";
 					$template_id         = $value->id;
+					$is_wc_template      = $value->is_wc_template;
 					
 					foreach ( $carts as $key => $value )
 					{
@@ -220,6 +221,14 @@ require_once $path . 'wp-load.php';
 								    $email_body = str_replace( "{{customer.lastname}}", get_user_meta( $value->user_id, 'last_name', true ), $email_body );
 								    $email_body = str_replace( "{{customer.fullname}}", get_user_meta( $value->user_id, 'first_name', true )." ".get_user_meta( $value->user_id, 'last_name', true ), $email_body );
 								}
+								
+								$order_date = "";
+								
+								if ( $cart_update_time != "" && $cart_update_time != 0 ) {
+								    $order_date = date( 'd M, Y h:i A', $cart_update_time );
+								}
+								
+								$email_body = str_replace( "{{cart.abandoned_date}}", $order_date, $email_body );
 								
 								$query_sent = "INSERT INTO `".$wpdb->prefix."ac_sent_history_lite` ( template_id, abandoned_order_id, sent_time, sent_email_id )
 								               VALUES ( %s, %s, '".current_time( 'mysql' )."', %s )";
@@ -315,8 +324,30 @@ require_once $path . 'wp-load.php';
 								$user_email = $value->user_email;
 			
 								$email_body_final = stripslashes( $email_body );
-								wp_mail( $user_email, $email_subject, __( $email_body_final, 'woocommerce-ac' ), $headers );
-																		
+								
+								if ( isset( $is_wc_template ) && "1" == $is_wc_template ){
+								
+								    ob_start();
+								
+								    $email_heading  = __( 'Abandoned cart reminder', 'woocommerce' );
+								
+								    wc_get_template( 'emails/email-header.php', array( 'email_heading' => $email_heading ) );
+								
+								    $email_body_template_header = ob_get_clean();
+								
+								    ob_start();
+								
+								    wc_get_template( 'emails/email-footer.php' );
+								     
+								    $email_body_template_footer = ob_get_clean();
+								
+								    $final_email_body =  $email_body_template_header . $email_body . $email_body_template_footer;
+								
+								    wc_mail( $user_email, $email_subject, $final_email_body, $headers );
+								
+								}else{
+								    wp_mail( $user_email, $email_subject, __( $email_body_final, 'woocommerce-ac' ), $headers );
+								}										
 							}
 			
 						}

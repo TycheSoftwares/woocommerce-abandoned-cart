@@ -16,6 +16,7 @@ if( session_id() === '' ){
 register_uninstall_hook( __FILE__, 'woocommerce_ac_delete' );
 
 include_once( "woocommerce_guest_ac.class.php" );
+include_once( "default-settings.php" );
 
 // Add a new interval of 5 minutes
 add_filter( 'cron_schedules', 'woocommerce_ac_add_cron_schedule' );
@@ -91,8 +92,12 @@ function woocommerce_ac_delete(){
 	}
 	
 	delete_option ( 'woocommerce_ac_email_body' );
-	delete_option ( 'woocommerce_ac_settings' );
-
+	delete_option( 'ac_lite_cart_abandoned_time' );
+	delete_option( 'ac_lite_email_admin_on_recovery' );
+	delete_option( 'ac_lite_settings_status' );
+	delete_option( 'woocommerce_ac_default_templates_installed' );
+	
+	
 }
 	/**
 	 * woocommerce_abandon_cart class
@@ -159,7 +164,12 @@ function woocommerce_ac_delete(){
 				add_filter ( 'woocommerce_order_details_after_order_table', array( &$this, 'action_after_delivery_session' ) );
 				
 				add_action ( 'admin_init', array( &$this, 'action_admin_init' ) );
+				
+				// Update the options as per settings API
 				add_action ( 'admin_init', array( &$this, 'ac_lite_update_db_check' ) );
+
+				// Wordpress settings API
+				add_action( 'admin_init', array( &$this, 'ac_lite_initialize_plugin_options' ) );
 				
 				// Language Translation
 				add_action ( 'init', array( &$this, 'update_po_file' ) );
@@ -193,13 +203,80 @@ function woocommerce_ac_delete(){
 				add_action('woocommerce_order_status_pending_to_on-hold_notification', array(&$this, 'ac_email_admin_recovery'));
 				add_action('woocommerce_order_status_failed_to_processing_notification', array(&$this, 'ac_email_admin_recovery'));
 				add_action('woocommerce_order_status_failed_to_completed_notification', array(&$this, 'ac_email_admin_recovery'));
-				
+				add_action( 'admin_init', array( $this, 'wcap_preview_emails' ) );
 			}
 			
 			/*-----------------------------------------------------------------------------------*/
 			/* Class Functions */
 			/*-----------------------------------------------------------------------------------*/
+			/**
+			 * Preview email template
+			 *
+			 * @return string
+			 */
+			public function wcap_preview_emails() {
 			
+			    global $woocommerce;
+			
+			    if ( isset( $_GET['wacp_preview_woocommerce_mail'] ) ) {
+			        if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-ac') ) {
+			            die( 'Security check' );
+			        }
+			
+			        $message = '';
+			        // create a new email
+			
+			        if ( $woocommerce->version < '2.3' ) {
+			            global $email_heading;
+			             
+			            ob_start();
+			
+			            include( 'views/wacp-wc-email-template-preview.php' );
+			
+			            $mailer        = WC()->mailer();
+			            $message       = ob_get_clean();
+			            $email_heading = __( 'HTML Email Template', 'woocommerce' );
+			
+			            $message =  $mailer->wrap_message( $email_heading, $message );
+			        }else{
+			
+			            // load the mailer class
+			            $mailer        = WC()->mailer();
+			
+			            // get the preview email subject
+			            $email_heading = __( 'Abandoned cart Email Template', 'woocommerce-ac' );
+			
+			            // get the preview email content
+			            ob_start();
+			            include( 'views/wacp-wc-email-template-preview.php' );
+			            $message       = ob_get_clean();
+			
+			            // create a new email
+			            $email         = new WC_Email();
+			
+			            // wrap the content with the email template and then add styles
+			            $message       = $email->style_inline( $mailer->wrap_message( $email_heading, $message ) );
+			        }
+			
+			        echo $message;
+			        exit;
+			    }
+			
+			    if ( isset( $_GET['wacp_preview_mail'] ) ) {
+			        if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-ac') ) {
+			            die( 'Security check' );
+			        }
+			
+			        // get the preview email content
+			        ob_start();
+			        include( 'views/wacp-email-template-preview.php' );
+			        $message       = ob_get_clean();
+			
+			        // print the preview email
+			        echo $message;
+			        exit;
+			    }
+			}
 			// Language Translation
 			function  update_po_file() {
 			    $domain = 'woocommerce-ac';
@@ -245,7 +322,20 @@ function woocommerce_ac_delete(){
 			
 				require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
 				dbDelta( $sql );
-			
+				
+
+				$table_name = $wpdb->prefix . "ac_email_templates_lite";
+				$check_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'is_wc_template' ";
+				$results = $wpdb->get_results( $check_template_table_query );
+				 
+				if ( count( $results ) == 0 ) {
+				    $alter_template_table_query = "ALTER TABLE $table_name
+				    ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `from_name`,
+				    ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";
+				    
+				    $wpdb->get_results( $alter_template_table_query );
+				}
+
 				$sent_table_name = $wpdb->prefix . "ac_sent_history_lite";
 			
 				$sql_query = "CREATE TABLE IF NOT EXISTS $sent_table_name (
@@ -275,13 +365,133 @@ function woocommerce_ac_delete(){
 				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 				dbDelta( $history_query );
 				
-				$ac_settings              = new stdClass();
-				$ac_settings->cart_time   = '60';
-				$ac_settings->email_admin = '';
-				$woo_ac_settings[]        = $ac_settings;
-				$woocommerce_ac_settings  = json_encode( $woo_ac_settings );
-				add_option  ( 'woocommerce_ac_settings', $woocommerce_ac_settings );
+				// Default templates:  function call to create default templates.
+				$check_table_empty  = $wpdb->get_var( "SELECT COUNT(*) FROM `" . $wpdb->prefix . "ac_email_templates_lite`" );
+				
+				if( !get_option( 'woocommerce_ac_default_templates_installed' ) ) {
+				
+				    if( 0 == $check_table_empty ) {
+				        $default_template = new default_template_settings;
+				        $default_template->create_default_templates();
+				        update_option( 'woocommerce_ac_default_templates_installed', "yes" );
+				    }
+				}
+			 }	
+	           
+			
+			/***************************************************************
+			 * WP Settings API
+			 **************************************************************/
+			function ac_lite_initialize_plugin_options() {
+			    // First, we register a section. This is necessary since all future options must belong to a
+			    add_settings_section(
+			    'ac_lite_general_settings_section',         // ID used to identify this section and with which to register options
+			    __( 'Settings', 'woocommerce-ac' ),                  // Title to be displayed on the administration page
+			    array($this, 'ac_lite_general_options_callback' ), // Callback used to render the description of the section
+			    'woocommerce_ac_page'     // Page on which to add this section of options
+			    );
+			
+			    add_settings_field(
+			    'ac_lite_cart_abandoned_time',
+			    __( 'Cart abandoned cut-off time', 'woocommerce-ac' ),
+			    array( $this, 'ac_lite_cart_abandoned_time_callback' ),
+			    'woocommerce_ac_page',
+			    'ac_lite_general_settings_section',
+			    array( __( 'Consider cart abandoned after X minutes of item being added to cart & order not placed.', 'woocommerce-ac' ) )
+			    );
+			    
+			    add_settings_field(
+			    'ac_lite_email_admin_on_recovery',
+			    __( 'Email admin On Order Recovery', 'woocommerce-ac' ),
+			    array( $this, 'ac_lite_email_admin_on_recovery' ),
+			    'woocommerce_ac_page',
+			    'ac_lite_general_settings_section',
+			    array( __( 'Sends email to Admin if an Abandoned Cart Order is recovered.', 'woocommerce-ac' ) )
+			    );
+			
+			    // Finally, we register the fields with WordPress
+			    register_setting(
+		        'woocommerce_ac_settings',
+		        'ac_lite_cart_abandoned_time',
+		        array ( $this, 'ac_lite_cart_time_validation' )
+		        );
+		        
+		        register_setting(
+		        'woocommerce_ac_settings',
+		        'ac_lite_email_admin_on_recovery'
+	            );
+	            
 			}
+			
+			/***************************************************************
+			 * WP Settings API callback for section
+			 **************************************************************/
+			function ac_lite_general_options_callback() {
+			
+			}
+			
+			/***************************************************************
+			 * WP Settings API callback for cart time field
+			 **************************************************************/
+			function ac_lite_cart_abandoned_time_callback($args) {
+			
+			    // First, we read the option
+			    $cart_abandoned_time = get_option( 'ac_lite_cart_abandoned_time' );
+			     
+			    // Next, we update the name attribute to access this element's ID in the context of the display options array
+			    // We also access the show_header element of the options collection in the call to the checked() helper function
+			    printf(
+			    '<input type="text" id="ac_lite_cart_abandoned_time" name="ac_lite_cart_abandoned_time" value="%s" />',
+			    isset( $cart_abandoned_time ) ? esc_attr( $cart_abandoned_time ) : ''
+			        );
+			     
+			    // Here, we'll take the first argument of the array and add it to a label next to the checkbox
+			    $html = '<label for="ac_lite_cart_abandoned_time"> '  . $args[0] . '</label>';
+			    echo $html;
+			}
+			
+			/***************************************************************
+			 * WP Settings API cart time field validation
+			 **************************************************************/
+			function ac_lite_cart_time_validation( $input ) {
+			    $output = '';
+			    if ( $input == '' || is_numeric( $input) ) {
+			        $output = stripslashes( $input) ;
+			    } else {
+			        add_settings_error( 'ac_lite_cart_abandoned_time', 'error found', __( 'Abandoned cart cut off time should be numeric.', 'woocommerce-ac' ) );
+			    }
+			    return $output;
+			}
+			
+			/***************************************************************
+			 * WP Settings API callback for email admin on cart recovery field
+			 **************************************************************/
+			function ac_lite_email_admin_on_recovery( $args ) {
+			
+			    // First, we read the option
+			    $email_admin_on_recovery = get_option( 'ac_lite_email_admin_on_recovery' );
+			     
+			    // This condition added to avoid the notie displyed while Check box is unchecked.
+			    if ( isset( $email_admin_on_recovery ) && $email_admin_on_recovery == '' ) {
+			        $email_admin_on_recovery = 'off';
+			    }
+			     
+			    // Next, we update the name attribute to access this element's ID in the context of the display options array
+			    // We also access the show_header element of the options collection in the call to the checked() helper function
+			    $html='';
+			    printf(
+			    '<input type="checkbox" id="ac_lite_email_admin_on_recovery" name="ac_lite_email_admin_on_recovery" value="on"
+            			' . checked('on', $email_admin_on_recovery, false).' />'
+			            			    );
+			     
+			    // Here, we'll take the first argument of the array and add it to a label next to the checkbox
+			    $html .= '<label for="ac_lite_email_admin_on_recovery"> '  . $args[0] . '</label>';
+			    echo $html;
+			}
+			
+			/**************************************************
+			 * This function is run when the plugin is upgraded
+			 *************************************************/
 			
 			function ac_lite_update_db_check() {
 			    global $wpdb;
@@ -329,6 +539,17 @@ function woocommerce_ac_delete(){
 			        $alter_table_query = "ALTER TABLE $ac_history_table_name ADD `user_type` text AFTER  `recovered_cart`";
 			        $wpdb->get_results( $alter_table_query );
 			    }
+
+			    $table_name = $wpdb->prefix . "ac_email_templates_lite";
+			    $check_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'is_wc_template' ";
+			    $results = $wpdb->get_results( $check_template_table_query );
+			     
+			    if ( count( $results ) == 0 ) {
+			        $alter_template_table_query = "ALTER TABLE $table_name
+			        ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `from_name`,
+			        ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";			        
+			        $wpdb->get_results( $alter_template_table_query );
+			    }
 			    
 			    $guest_table = $wpdb->prefix."ac_guest_abandoned_cart_history_lite" ;
 			    $query_guest_table = "SHOW TABLES LIKE '$guest_table' ";
@@ -366,6 +587,28 @@ function woocommerce_ac_delete(){
     			    $wpdb->query( $ac_guest_history_query );
 			    }
 			     
+			    //get the option, if it is not set to individual then convert to individual records and delete the base record
+			    $ac_settings = get_option( 'ac_lite_settings_status' );
+			    if ( $ac_settings != 'INDIVIDUAL' ) {
+			        //fetch the existing settings and save them as inidividual to be used for the settings API
+			        $woocommerce_ac_settings = json_decode( get_option( 'woocommerce_ac_settings' ) );
+			        if( isset($woocommerce_ac_settings[0]->cart_time) ){
+			            add_option( 'ac_lite_cart_abandoned_time', $woocommerce_ac_settings[0]->cart_time );
+			        }else{
+			            add_option( 'ac_lite_cart_abandoned_time', '60' );
+			        }
+			    
+			        if( isset($woocommerce_ac_settings[0]->email_admin) ){
+			            add_option( 'ac_lite_email_admin_on_recovery', $woocommerce_ac_settings[0]->email_admin );
+			        }else{
+			            add_option( 'ac_lite_email_admin_on_recovery', "" );
+			        }
+			         
+			        update_option( 'ac_lite_settings_status', 'INDIVIDUAL' );
+			        //Delete the main settings record
+			        delete_option( 'woocommerce_ac_settings' );
+			    }
+			     
 			}
 			
 			/******
@@ -376,8 +619,10 @@ function woocommerce_ac_delete(){
 			function ac_email_admin_recovery ($order_id) {
 			
 			    $user_id = get_current_user_id();
-			    $cart_ac_settings = json_decode(get_option('woocommerce_ac_settings'));
-			    if( $cart_ac_settings[0]->email_admin == 'on' ){
+			    
+			    $ac_email_admin_recovery = get_option( 'ac_lite_email_admin_on_recovery' );
+			    
+			    if( $ac_email_admin_recovery == 'on' ){
 			        if ( get_user_meta($user_id, '_woocommerce_ac_modified_cart', true) == md5("yes") || get_user_meta($user_id, '_woocommerce_ac_modified_cart', true) == md5("no") ){ // indicates cart is abandoned
 			            $order = new WC_Order( $order_id );
 			
@@ -423,13 +668,13 @@ function woocommerce_ac_delete(){
 			    global $wpdb,$woocommerce;
 			    
 			    $current_time = current_time( 'timestamp' );
-			    $cut_off_time = json_decode( get_option( 'woocommerce_ac_settings' ) );
+			    $cut_off_time = get_option( 'ac_lite_cart_abandoned_time' );
 			    
 			    $cart_ignored   = 0;
 			    $recovered_cart = 0;
 			    
-			    if( isset( $cut_off_time[0]->cart_time ) ) {
-			        $cart_cut_off_time = $cut_off_time[0]->cart_time * 60;
+			    if( isset( $cut_off_time ) ) {
+			        $cart_cut_off_time = $cut_off_time * 60;
 			    } else {
 			        $cart_cut_off_time = 60 * 60;
 			    }
@@ -1028,96 +1273,18 @@ function woocommerce_ac_delete(){
 					
 					if ( $action == 'emailsettings' ) {
 						// Save the field values
-						if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' ) {
-							
-						    $ac_settings             = new stdClass();
-							$ac_settings->cart_time  = $_POST[ 'cart_abandonment_time' ];
-							if (isset($_POST['email_admin_on_conversion'])){
-							    $ac_settings->email_admin = $_POST['email_admin_on_conversion'];
-							}
-							$woo_ac_settings[]       = $ac_settings;
-							$woocommerce_ac_settings = json_encode( $woo_ac_settings );
-							
-							update_option( 'woocommerce_ac_settings', $woocommerce_ac_settings );
-						}
-						?>
-			
-							<?php if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' ) { ?>
-							<div id="message" class="updated fade"><p><strong><?php _e( 'Your settings have been saved.', 'woocommerce-ac' ); ?></strong></p></div>
-							<?php } ?>
-							
-							<?php
-								
-							     $enable_email_sett_arr = array();
-							     $enable_email_sett     = get_option( 'woocommerce_ac_settings' );
-							     if ( $enable_email_sett != '' && $enable_email_sett != '{}' && $enable_email_sett != '[]' && $enable_email_sett != 'null' ) {
-							         $enable_email_sett_arr = json_decode( $enable_email_sett );
-							     }
-							         
-							?>
-							<div id="content">
-							  <form method="post" action="" id="ac_settings">
-								  <input type="hidden" name="ac_settings_frm" value="save">
-								  <div id="poststuff">
-										<div class="postbox">
-											<h3 class="hndle"><?php _e( 'Settings', 'woocommerce-ac' ); ?></h3>
-											<div>
-											  <table class="form-table">
-			
-				    							<tr>
-				    								<th>
-				    									<label for="woocommerce_ac_email_frequency"><b><?php _e( 'Cart abandoned cut-off time', 'woocommerce-ac' ); ?></b></label>
-				    								</th>
-				    								<td>
-														<?php
-														
-														$cart_time = "";
-														
-														if ( count( $enable_email_sett_arr ) > 0 ) {
-														
-														    if ( ( isset( $enable_email_sett_arr[0]->cart_time ) ) && ( $enable_email_sett_arr[0]->cart_time != '' || $enable_email_sett_arr[0]->cart_time != 'null' ) ) {
-														
-														        $cart_time = $enable_email_sett_arr[0]->cart_time;
-														    
-														    } else {
-														        
-														        $cart_time = 60;
-														    }
-														} else {														    	
-														    $cart_time = 60;
-														}
-				    									
-														?>
-				    									<input type="text" name="cart_abandonment_time" id="cart_abandonment_time" size="5" value="<?php echo $cart_time; ?> "> <?php _e( 'minutes', 'woocommerce-ac' );?>
-				    									<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Consider cart abandoned after X minutes of item being added to cart & order not placed', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>				    									
-				    								</td>
-				    							</tr>
-				    							
-				    							<tr>
-				    								<th>
-				    									<label for="woocommerce_ac_email_frequency"><b><?php _e( 'Email admin on order recovery', 'woocommerce-ac' ); ?></b></label>
-				    								</th>
-				    								<td>
-													<?php
-													   $email_admin = "";
-													   
-    													if (isset($enable_email_sett_arr[0]->email_admin) && $enable_email_sett_arr[0]->email_admin == 'on') {
-    														$email_admin = "checked";
-    													}
-    													print'<input type="checkbox" name="email_admin_on_conversion" '.$email_admin.'>&nbsp;';?>
-    			    									<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Sends email to Admin if an Abandoned Cart Order is recoverd', 'woocommerce') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
-				    								</td>
-				    							</tr>
-				    							
-				    							</table>
-											</div>
-										</div>
-									</div>
-							   <p class="submit">
-								<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes', 'woocommerce-ac' ); ?>" />
-							   </p>
-						    </form>
-						  </div>
+                    ?>
+					    <p><?php _e( 'Change settings for sending email notifications to Customers after X minute, to Admin.', 'woocommerce-ac' ); ?></p>
+                        <div id="content">
+
+							<form method="post" action="options.php">
+                                <?php settings_fields( 'woocommerce_ac_settings' ); ?>
+                                <?php do_settings_sections( 'woocommerce_ac_page' ); ?>
+								<?php settings_errors(); ?>
+								<?php submit_button(); ?>
+
+                            </form>
+                        </div>
 						<?php 
 			      } elseif ( $action == 'listcart' || $action == '' ) {
 			?>
@@ -1160,11 +1327,11 @@ function woocommerce_ac_delete(){
 				}
 				 
 				//Query for limit paging
+				$limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
 				$limit_one = ($p->page - 1) * $p->limit;        
 				$limit_two = $p->limit;                         
-				 
 			} else 
-			    $limit = "";
+			    $limit = $limit_one = $limit_two = "";
 			
 			?>
 			  
@@ -1203,13 +1370,13 @@ function woocommerce_ac_delete(){
 					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
 					  LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
 					  WHERE recovered_cart = %d
-					  ORDER BY abandoned_cart_time $order LIMIT %d, %d";
-					   
-				      $results = $wpdb->get_results( $wpdb->prepare( $query, $recoverd_cart, $limit_one, $limit_two  ) );
+					  ORDER BY abandoned_cart_time $order LIMIT %d, %d ";        
+
+            $results = $wpdb->get_results( $wpdb->prepare( $query, $recoverd_cart, $limit_one, $limit_two  ) );
 			
 			/* From here you can do whatever you want with the data from the $result link. */
 			
-			$ac_cutoff_time = json_decode(get_option('woocommerce_ac_settings'));
+			$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 			
 			?> 						
             <table class='wp-list-table widefat fixed posts' cellspacing='0' id='cart_data'>
@@ -1237,7 +1404,7 @@ function woocommerce_ac_delete(){
 				        foreach ( $results as $key => $value ) {
 						    
 						    if ( $value->user_type == "GUEST" ) {
-						        $query_guest = "SELECT * from `". $wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d";
+						        $query_guest = "SELECT * from `". $wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d ORDER BY `id` DESC LIMIT 1";
 						        $results_guest = $wpdb->get_results( $wpdb->prepare( $query_guest, $value->user_id ) );
 						        
 						    }
@@ -1273,9 +1440,9 @@ function woocommerce_ac_delete(){
 								 $order_date = date( 'd M, Y h:i A', $cart_update_time );
 							}
 							
-							$ac_cutoff_time = json_decode( get_option( 'woocommerce_ac_settings' ) );
-							if ( isset( $ac_cutoff_time[0]->cart_time ) ) {
-							     $cut_off_time = $ac_cutoff_time[0]->cart_time * 60;
+							$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
+							if ( isset( $ac_cutoff_time ) ) {
+							     $cut_off_time = $ac_cutoff_time * 60;
 							} else {
 							     $cut_off_time = 60 * 60;
 							}
@@ -1329,7 +1496,7 @@ function woocommerce_ac_delete(){
 							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' ) {	
 							    						
 								   $active_post = 1;
-								   
+								   $is_wc_template = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';     //It  is fix
 								   
 								if ( $active_post == 1 ) { 								    
 								    								
@@ -1343,7 +1510,9 @@ function woocommerce_ac_delete(){
 	                                                AND day_or_hour = %s ";
 								    $check_results = $wpdb->get_results( $wpdb->prepare( $check_query, $is_active, $email_frequency, $day_or_hour ) );
 								    
-									
+								    $default_value =  0 ;
+								     
+								    
 									if ( count( $check_results ) == 0 ) {
 									    
 									     $active_post = 1;
@@ -1353,9 +1522,9 @@ function woocommerce_ac_delete(){
 									     $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
 									     
 									     $query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
-										           (subject, body, is_active, frequency, day_or_hour, template_name, from_name)
-										           VALUES ( %s, %s, %s, %d, %s, %s, %s )";
-    												
+										           (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template )      
+										           VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d )";        //It  is fix
+									     
 									    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query, 
 									                                  $woocommerce_ac_email_subject,
 									                                  $woocommerce_ac_email_body, 
@@ -1363,9 +1532,11 @@ function woocommerce_ac_delete(){
 									                                  $email_frequency, 
 									                                  $day_or_hour, 
 									                                  $woocommerce_ac_template_name, 
-									                                  $woocommerce_ac_from_name )
+									                                  $woocommerce_ac_from_name,
+									                                  $is_wc_template,
+									                                  $default_value )        //It  is fix
 									     );
-									      
+									   
 									}
 									else {
 									    
@@ -1377,14 +1548,15 @@ function woocommerce_ac_delete(){
 	                                                     AND day_or_hour = %s ";
 									    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update, $update_is_active, $email_frequency, $day_or_hour ) );
 									    
+									    
 									    $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
 									    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
 									    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
 									    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
 									    
 									    $query_insert_new = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
-										                    (subject, body, is_active, frequency, day_or_hour, template_name, from_name)
-										                    VALUES ( %s, %s, %s, %d, %s, %s, %s )";
+										                    (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template)
+										                    VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d )";
     												
 									    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query_insert_new, 
 									                                  $woocommerce_ac_email_subject,
@@ -1393,7 +1565,9 @@ function woocommerce_ac_delete(){
 									                                  $email_frequency, 
 									                                  $day_or_hour, 
 									                                  $woocommerce_ac_template_name, 
-									                                  $woocommerce_ac_from_name )
+									                                  $woocommerce_ac_from_name,
+									                                  $is_wc_template,
+									                                  $default_value )
 									     );
 									}
 								}
@@ -1402,6 +1576,7 @@ function woocommerce_ac_delete(){
 							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'update' )
 							{
 								$active = 1;
+								$is_wc_template = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
 								if ( $active == 1 )
 								{   
 								    $is_active       = 1;
@@ -1412,6 +1587,12 @@ function woocommerce_ac_delete(){
 						                            AND frequency  = %d 
 						                            AND day_or_hour= %s ";
 								    $check_results = $wpdb->get_results( $wpdb->prepare( $check_query, $is_active, $email_frequency, $day_or_hour ) );
+								    
+								    $default_value = '';
+								    foreach($check_results as $result_key => $result_value) {
+								        $default_value = ( empty( $result_value->default_template ) ) ? 0 : $result_value->default_template;
+								        	
+								    }
 								    
 									if (count($check_results) == 0 )
 									{
@@ -1430,7 +1611,9 @@ function woocommerce_ac_delete(){
 				                                        frequency     = %d,
                 										day_or_hour   = %s,
                 										template_name = %s,
-                										from_name     = %s
+                										from_name     = %s,
+						                                is_wc_template = %s,
+								                        default_template = %d
                 										WHERE id      = %d ";
 									    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update,
 									                                 $woocommerce_ac_email_subject,
@@ -1440,9 +1623,14 @@ function woocommerce_ac_delete(){
                         									         $day_or_hour,
                         									         $woocommerce_ac_template_name,
                         									         $woocommerce_ac_from_name,
+									                                 $is_wc_template,
+									                                 $default_value,
                         									         $id )
 									        
 									     );
+									    
+									    
+									    
 									}
 									else {
 									    
@@ -1467,7 +1655,9 @@ function woocommerce_ac_delete(){
 				                                        frequency     = %d,
                 										day_or_hour   = %s,
                 										template_name = %s,
-                										from_name     = %s
+                										from_name     = %s,
+				                                        is_wc_template = %s,
+				                                        default_template = %d
                 										WHERE id      = %d ";
 									    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update_latest,
 									                                 $woocommerce_ac_email_subject,
@@ -1477,6 +1667,8 @@ function woocommerce_ac_delete(){
                         									         $day_or_hour,
                         									         $woocommerce_ac_template_name,
                         									         $woocommerce_ac_from_name,
+									                                 $is_wc_template,
+									                                 $default_value,
                         									         $id )
 									        
 									     );
@@ -2252,9 +2444,9 @@ function woocommerce_ac_delete(){
 									$order_date = date( 'd M, Y h:i A', $cart_update_time );
 								}
 
-								$ac_cutoff_time = json_decode( get_option( 'woocommerce_ac_settings' ) );
-								if ( isset( $ac_cutoff_time[0]->cart_time ) ) {
-								    $cut_off_time = $ac_cutoff_time[0]->cart_time * 60;
+								$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
+								if ( isset( $ac_cutoff_time ) ) {
+								    $cut_off_time = $ac_cutoff_time * 60;
 								}
 								$current_time   = current_time( 'timestamp' );
 								$compare_time   = $current_time - $cart_update_time;
@@ -2481,6 +2673,31 @@ function woocommerce_ac_delete(){
 				    									?></span>
 				    								</td>
 				    							</tr>
+				    							
+				    							 <tr>
+                                                    <th>
+                                                        <label for="is_wc_template"><b><?php _e( 'Use WooCommerce Template Style:', 'woocommerce-ac' ); ?></b></label>
+                                                    </th>
+                                                    <td>
+
+                                                    <?php
+                                                    $is_wc_template="";
+                                                    
+                                                    if ( $mode == 'edittemplate' ) {
+                                                        $use_wc_template = $results[0]->is_wc_template;
+                                                        
+                                                        if ( $use_wc_template == '1' ) {
+                                                            $is_wc_template = "checked";
+                                                        } else {
+                                                            $is_wc_template = "";
+                                                        }
+                                                    }
+                                                    print'<input type="checkbox" name="is_wc_template" id="is_wc_template" ' . $is_wc_template . '>  </input>'; ?>
+                                                    <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Use WooCommerce default style template for abandoned cart reminder emails.', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /> <a target = '_blank' href= <?php  echo wp_nonce_url( admin_url( '?wacp_preview_woocommerce_mail=true' ), 'woocommerce-ac' ) ; ?> > 
+                                                    Click here to preview </a>how the email template will look with WooCommerce Template Style enabled. Alternatively, if this is unchecked, the template will appear as <a target = '_blank' href=<?php  echo wp_nonce_url( admin_url( '?wacp_preview_mail=true' ), 'woocommerce-ac' ) ; ?>>shown here</a>.
+                                                    </p>
+                                                    </td>
+                                                
 			
 				    							<tr>
 				    								<th>
@@ -2751,7 +2968,4 @@ function woocommerce_ac_delete(){
 		}
 		
 		$woocommerce_abandon_cart = new woocommerce_abandon_cart();
-		
-
-
 ?>
