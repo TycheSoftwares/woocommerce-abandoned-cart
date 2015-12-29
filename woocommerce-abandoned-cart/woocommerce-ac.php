@@ -1160,7 +1160,8 @@ function woocommerce_ac_delete(){
 				}
 				 
 				//Query for limit paging
-				$limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
+				$limit_one = ($p->page - 1) * $p->limit;        
+				$limit_two = $p->limit;                         
 				 
 			} else 
 			    $limit = "";
@@ -1202,10 +1203,9 @@ function woocommerce_ac_delete(){
 					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
 					  LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
 					  WHERE recovered_cart = %d
-					  ORDER BY %s %s
-					  $limit";
+					  ORDER BY abandoned_cart_time $order LIMIT %d, %d";
 					   
-				      $results = $wpdb->get_results( $wpdb->prepare( $query, $recoverd_cart, $order_by, $order ) );
+				      $results = $wpdb->get_results( $wpdb->prepare( $query, $recoverd_cart, $limit_one, $limit_two  ) );
 			
 			/* From here you can do whatever you want with the data from the $result link. */
 			
