@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <th>Total</th>
 </tr>
 <tr style="background-color:#f4f5f4;">
-<td><img src = "<?php echo plugins_url();?>/woocommerce-abandon-cart-pro/images/spectre.jpg" height="40px" width="40px"></td><td>Spectre</td><td>$300</td><td>2</td><td>$300</td>
+<td><img src = "<?php echo plugins_url();?>/woocommerce-abandoned-cart/images/spectre.jpg" height="40px" width="40px"></td><td>Spectre</td><td>$150</td><td>2</td><td>$300</td>
 </tr>
 <tr>
 <td>&nbsp;</td>
