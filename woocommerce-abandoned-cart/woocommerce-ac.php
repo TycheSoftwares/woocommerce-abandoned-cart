@@ -986,9 +986,10 @@ function woocommerce_ac_delete(){
 				
 				global $wpdb;
 				$user_id = get_current_user_id();
-				
-				$sent_email = $_SESSION[ 'email_sent_id' ];
-				
+				$sent_email = '';
+				if ( isset( $_SESSION[ 'email_sent_id' ] ) ){
+				    $sent_email = $_SESSION[ 'email_sent_id' ];
+				}
 				if ( $user_id == "" ) {
 				    $user_id = $_SESSION['user_id'];
 				    //  Set the session variables to blanks
