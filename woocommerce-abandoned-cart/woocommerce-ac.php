@@ -2023,10 +2023,11 @@ function woocommerce_ac_delete(){
 								$p->page = $_GET[ 'paging' ];
 							}
 						    //Query for limit paging
-							$limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;						
+							$limit_one = ($p->page - 1) * $p->limit ;
+							$limit_two = $p->limit ;
 						}
 						else
-							$limit = "";	
+							$limit_two = $limit_one = "";	
 						?>
 															  
 						<div class="tablenav">
@@ -2064,8 +2065,8 @@ function woocommerce_ac_delete(){
 									 WHERE abandoned_cart_time >= %d
 									 AND abandoned_cart_time <= %d
 									 AND recovered_cart > %d
-								     ORDER BY  %s %s $limit";
-						$ac_results = $wpdb->get_results( $wpdb->prepare( $query_ac, $start_date, $end_date, $recoverd_cart, $order_by,$order ) );						
+								     ORDER BY $order_by $order LIMIT %d, %d";
+						$ac_results = $wpdb->get_results( $wpdb->prepare( $query_ac, $start_date, $end_date, $recoverd_cart, $limit_one, $limit_two ) );						
 												
 						$query_ac_carts = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite
 										   WHERE abandoned_cart_time >= %d
