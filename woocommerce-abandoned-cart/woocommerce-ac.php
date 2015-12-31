@@ -2885,12 +2885,14 @@ function woocommerce_ac_delete(){
 									var from_name_preview     = $( '#woocommerce_ac_from_name' ).val();
 									var subject_email_preview = $( '#woocommerce_ac_email_subject' ).val();
 									var body_email_preview    = tinyMCE.activeEditor.getContent();
-									var send_email_id         = $( '#send_test_email' ).val();																		
+									var send_email_id         = $( '#send_test_email' ).val();	
+									var is_wc_template        = document.getElementById("is_wc_template").checked;																	
 									var data                  = {
                             										from_name_preview    : from_name_preview,
                             										subject_email_preview: subject_email_preview,
                             										body_email_preview   : body_email_preview,
                             										send_email_id        : send_email_id,
+                            										is_wc_template       : is_wc_template,
                             										action               : 'preview_email_sent'
 									};									
 									
@@ -2913,6 +2915,7 @@ function woocommerce_ac_delete(){
 						$from_email_name       = $_POST[ 'from_name_preview' ];
 						$subject_email_preview = $_POST[ 'subject_email_preview' ];						
 						$body_email_preview    = $_POST[ 'body_email_preview' ];
+						$is_wc_template        = $_POST['is_wc_template'];
 						$body_email_preview    = str_replace( '{{customer.firstname}}', 'John', $body_email_preview );
 						$body_email_preview    = str_replace( '{{customer.lastname}}', 'Doe', $body_email_preview );
 						$body_email_preview    = str_replace( '{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview );
@@ -2960,7 +2963,16 @@ function woocommerce_ac_delete(){
 						$headers[] = "Content-Type: text/html"."\r\n";                                                                                               
 				                        
 						$body_email_final_preview = stripslashes( $body_email_preview );
-						wp_mail( $to_email_preview, $subject_email_preview, __( $body_email_final_preview, 'woocommerce-ac' ), $headers );	
+					    if ( isset( $is_wc_template ) && "true" == $is_wc_template ){
+						
+						    $email_heading = __( 'Abandoned cart reminder', 'woocommerce-ac' );
+						
+						    $mailer           = WC()->mailer();
+						    $message          = $mailer->wrap_message( $email_heading, stripslashes( $body_email_preview ) );
+						    wc_mail( $to_email_preview, $subject_email_preview, $message , $headers );
+						}else{
+						    wp_mail( $to_email_preview, $subject_email_preview, stripslashes( $body_email_preview ), $headers );
+						}	
 				
 						echo "email sent";
 						
