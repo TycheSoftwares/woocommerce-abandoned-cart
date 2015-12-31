@@ -2334,7 +2334,8 @@ function woocommerce_ac_delete(){
                                                ?> 
                                     </p>                                        
                                     <p> <strong> <?php _e( 'Email:', 'woocommerce-ac' ); ?> </strong>
-                                    <a href='mailto:$user_email'><?php echo $user_email;?> </a>
+                                    <?php $user_mail_to =  "mailto:".$user_email; ?>
+                                    <a href=<?php echo $user_mail_to;?>><?php echo $user_email;?> </a>
                                     </p>                                            
                                     <p> <strong> <?php _e( 'Phone:', 'woocommerce-ac' ); ?> </strong>
                                     <?php echo $user_billing_phone;?>
