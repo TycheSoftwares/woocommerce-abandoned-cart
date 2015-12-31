@@ -1452,11 +1452,13 @@ function woocommerce_ac_delete(){
 							$cart_details = $cart_info->cart;							
 							
 							$line_total = 0;
-							foreach ( $cart_details as $k => $v )
-							{
-								$line_total = $line_total + $v->line_total;
+							$cart_details = array();
+							if ( is_array ( $cart_details ) > 0 ) {
+    							foreach ( $cart_details as $k => $v )
+    							{
+    								$line_total = $line_total + $v->line_total;
+    							}
 							}
-							
 							if( $value->cart_ignored == 0 && $value->recovered_cart == 0 ) {
 								$ac_status = "Abandoned";
 							}
@@ -2084,13 +2086,15 @@ function woocommerce_ac_delete(){
 								$product_details = $cart_detail->cart;
 								
 								$line_total = 0;
-								foreach ( $product_details as $k => $v )
-								{
-									$line_total = $line_total + $v->line_total;
+								$product_details = array();
+								if ( is_array( $product_details ) > 0 ) {
+    								foreach ( $product_details as $k => $v )
+    								{
+    									$line_total = $line_total + $v->line_total;
+    								}
 								}
-								
 								$total_value += $line_total;
-							}
+							 }
 						}
 						$table_data = "";
 						foreach ( $ac_results as $key => $value )
@@ -2276,40 +2280,42 @@ function woocommerce_ac_delete(){
                             $cart_info      = json_decode( $results[0]->abandoned_cart_info );
                             $cart_details   = $cart_info->cart;
                             $item_subtotal  = $item_total = 0;
-                            
-                            foreach ( $cart_details as $k => $v ) {
-                                $quantity_total = $v->quantity;
-                                $product_id     = $v->product_id;
-                                $prod_name      = get_post($product_id);
-                                $product_name   = $prod_name->post_title;
-                                
-                                // Item subtotal is calculated as product total including taxes
-                                if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
-                                    $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
-                                } else {
-                                    $item_subtotal = $item_subtotal + $v->line_total;
+                            $cart_details = array();
+                            if ( is_array ( $cart_details ) > 0 ) {
+                                foreach ( $cart_details as $k => $v ) {
+                                    $quantity_total = $v->quantity;
+                                    $product_id     = $v->product_id;
+                                    $prod_name      = get_post($product_id);
+                                    $product_name   = $prod_name->post_title;
+                                    
+                                    // Item subtotal is calculated as product total including taxes
+                                    if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
+                                        $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
+                                    } else {
+                                        $item_subtotal = $item_subtotal + $v->line_total;
+                                    }
+    
+                                    //  Line total
+                                    $item_total = $item_subtotal;
+                                    $item_subtotal = $item_subtotal / $quantity_total;
+                                    $item_total = number_format( $item_total, 2 );
+                                    $item_subtotal = number_format( $item_subtotal, 2 );                               
+                                    $product = get_product( $product_id );
+                                    $prod_image = $product->get_image();
+                                ?>                   
+                                    <tr>
+                                    <td> <?php echo $prod_image; ?></td>
+                                    <td> <?php echo $product->id; ?> </td>
+                                    <td> <?php echo $product_name; ?></td>
+                                    <td> <?php echo $quantity_total; ?></td>
+                                    <td> <?php echo get_woocommerce_currency_symbol()." ".$item_subtotal; ?></td>
+                                    <td> <?php echo get_woocommerce_currency_symbol()." ".$item_total; ?></td>
+                                    </tr>
+                                        
+                            <?php 
+                            $item_subtotal = $item_total = 0;
                                 }
-
-                        //  Line total
-                        $item_total = $item_subtotal;
-                        $item_subtotal = $item_subtotal / $quantity_total;
-                        $item_total = number_format( $item_total, 2 );
-                        $item_subtotal = number_format( $item_subtotal, 2 );                               
-                        $product = get_product( $product_id );
-                        $prod_image = $product->get_image();
-                    ?>                   
-                        <tr>
-                        <td> <?php echo $prod_image; ?></td>
-                        <td> <?php echo $product->id; ?> </td>
-                        <td> <?php echo $product_name; ?></td>
-                        <td> <?php echo $quantity_total; ?></td>
-                        <td> <?php echo get_woocommerce_currency_symbol()." ".$item_subtotal; ?></td>
-                        <td> <?php echo get_woocommerce_currency_symbol()." ".$item_total; ?></td>
-                        </tr>
-                            
-                <?php 
-                $item_subtotal = $item_total = 0;
-                    }
+                            }
                       ?>
                     </table>
                         </div>  
@@ -2599,7 +2605,7 @@ function woocommerce_ac_delete(){
 								}
 								  print'<input type="hidden" name="ac_settings_frm" value="'.$button_mode.'">';?>
 								  <div id="poststuff">
-										<div class="postbox">
+										<div> <!-- <div class="postbox" > -->
 											<h3 class="hndle"><?php _e( $display_message, 'woocommerce-ac' ); ?></h3>
 											<div>
 											  <table class="form-table" id="addedit_template">
