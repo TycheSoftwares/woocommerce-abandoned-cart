@@ -2210,7 +2210,13 @@ function woocommerce_ac_delete(){
                             } else {
                                 $user_id = $results[0]->user_id;                                
                                 if ( isset( $results[0]->user_login ) ) $user_login = $results[0]->user_login;
+                                
                                 $user_email = get_user_meta( $results[0]->user_id, 'billing_email', true );
+                                
+                                if($user_email == ""){
+                                    $user_data = get_userdata( $results[0]->user_id );
+                                    $user_email = $user_data->user_email;
+                                }
                                 
                                 $user_first_name_temp = get_user_meta( $results[0]->user_id, 'first_name');
                                 if ( isset( $user_first_name_temp[0] ) ) $user_first_name = $user_first_name_temp[0];
