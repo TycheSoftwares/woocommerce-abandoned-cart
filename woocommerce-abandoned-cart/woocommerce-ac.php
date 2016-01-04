@@ -1426,7 +1426,13 @@ function woocommerce_ac_delete(){
                                 $user_id = $value->user_id;
                                 $key = 'billing_email';
                                 $single = true;
-                                $user_email = get_user_meta( $user_id, $key, $single );
+                                $user_billing_email = get_user_meta( $user_id, $key, $single );
+                                $user_email = '';
+                                if( isset($user_billing_email) && $user_billing_email !=''){
+                                    $user_email = $user_billing_email;
+                                }else{
+                                    $user_email = $value->user_email;
+                                }
                                 $user_first_name_temp = get_user_meta($value->user_id, 'first_name');
                                 if ( isset( $user_first_name_temp[0] )) $user_first_name = $user_first_name_temp[0];
                                 else $user_first_name = "";

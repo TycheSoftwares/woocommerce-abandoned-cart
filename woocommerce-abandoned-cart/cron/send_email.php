@@ -195,7 +195,10 @@ require_once $path . 'wp-load.php';
 					        $user_id = $value->user_id;
 					        $key = 'billing_email';
 					        $single = true;
-					        $value->user_email = get_user_meta( $user_id, $key, $single );
+					        $user_biiling_email = get_user_meta( $user_id, $key, $single );
+					        if( isset( $user_biiling_email ) && $user_biiling_email != '' ){
+					           $value->user_email = $user_biiling_email;
+					       }
 					    }
 					    
 						$cart_info_db_field = json_decode( $value->abandoned_cart_info );
