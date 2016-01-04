@@ -11,7 +11,7 @@ class default_template_settings {
        $site_title             = get_bloginfo( 'name' );
        $site_url               = get_option( 'siteurl' );
        $template_subject_array = $site_title . ": Did you have checkout trouble?"; 
-       $active_post_array      = 0;
+       $active_post_array      = 1;
        $email_frequency_array  = 1;
        $day_or_hour_array      = 'Hours';
        $body_content_array     =  addslashes("<html>
