@@ -350,7 +350,7 @@ require_once $path . 'wp-load.php';
 								     
 								    $email_body_template_footer = ob_get_clean();
 								
-								    $final_email_body =  $email_body_template_header . $email_body . $email_body_template_footer;
+								    $final_email_body =  $email_body_template_header . $email_body_final . $email_body_template_footer;
 								
 								    wc_mail( $user_email, $email_subject, $final_email_body, $headers );
 								
