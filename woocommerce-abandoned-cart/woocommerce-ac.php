@@ -1447,13 +1447,13 @@ function woocommerce_ac_delete(){
 							} else {
 							     $cut_off_time = 60 * 60;
 							}
+							$cart_details = array();
 							$current_time = current_time( 'timestamp' );							
 							$compare_time = $current_time - $cart_update_time;							
-							$cart_details = $cart_info->cart;							
+							$cart_details = (array) $cart_info->cart;							
 							
 							$line_total = 0;
-							$cart_details = array();
-							if ( is_array ( $cart_details ) > 0 ) {
+							if ( is_array ( $cart_details ) && count($cart_details) > 0 ) {
     							foreach ( $cart_details as $k => $v )
     							{
     								$line_total = $line_total + $v->line_total;
@@ -2280,7 +2280,7 @@ function woocommerce_ac_delete(){
                             $cart_info      = json_decode( $results[0]->abandoned_cart_info );
                             $cart_details   = $cart_info->cart;
                             $item_subtotal  = $item_total = 0;
-                            $cart_details = array();
+                            $cart_details   = array();
                             if ( is_array ( $cart_details ) > 0 ) {
                                 foreach ( $cart_details as $k => $v ) {
                                     $quantity_total = $v->quantity;
