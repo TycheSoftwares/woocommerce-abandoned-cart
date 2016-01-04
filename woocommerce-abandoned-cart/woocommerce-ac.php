@@ -2985,10 +2985,22 @@ function woocommerce_ac_delete(){
 					    if ( isset( $is_wc_template ) && "true" == $is_wc_template ){
 						
 						    $email_heading = __( 'Abandoned cart reminder', 'woocommerce-ac' );
-						
-						    $mailer           = WC()->mailer();
-						    $message          = $mailer->wrap_message( $email_heading, stripslashes( $body_email_preview ) );
-						    wc_mail( $to_email_preview, $subject_email_preview, $message , $headers );
+						    
+						    ob_start();
+						    
+						    wc_get_template( 'emails/email-header.php', array( 'email_heading' => $email_heading ) );
+						    
+						    $email_body_template_header = ob_get_clean();
+						    
+						    ob_start();
+						    
+						    wc_get_template( 'emails/email-footer.php' );
+						    	
+						    $email_body_template_footer = ob_get_clean();
+						    
+						    $final_email_body =  $email_body_template_header . $body_email_final_preview . $email_body_template_footer;
+						    wc_mail( $to_email_preview, $subject_email_preview, $final_email_body , $headers );
+						    
 						}else{
 						    wp_mail( $to_email_preview, $subject_email_preview, stripslashes( $body_email_preview ), $headers );
 						}	
