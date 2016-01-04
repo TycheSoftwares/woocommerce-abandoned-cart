@@ -2089,14 +2089,14 @@ function woocommerce_ac_delete(){
 						{
 							 							
 							{
+							    $product_details = array();
 								$count_carts += 1;
 									
 								$cart_detail     = json_decode( $value->abandoned_cart_info );
-								$product_details = $cart_detail->cart;
+								$product_details = (array) $cart_detail->cart;
 								
-								$line_total = 0;
-								$product_details = array();
-								if ( is_array( $product_details ) > 0 ) {
+								$line_total = 0;		
+								if ( is_array( $product_details )  && count($product_details) > 0 ) {
     								foreach ( $product_details as $k => $v )
     								{
     									$line_total = $line_total + $v->line_total;
@@ -2285,12 +2285,13 @@ function woocommerce_ac_delete(){
                                 $user_shipping_country_temp = get_user_meta( $results[0]->user_id, 'shipping_country' );
                                 if ( isset( $user_shipping_country_temp[0] ) ) $user_shipping_country = $user_shipping_country_temp[0];
                                 else $user_shipping_country = "";
-                            }                            
-                            $cart_info      = json_decode( $results[0]->abandoned_cart_info );
-                            $cart_details   = $cart_info->cart;
-                            $item_subtotal  = $item_total = 0;
+                            } 
                             $cart_details   = array();
-                            if ( is_array ( $cart_details ) > 0 ) {
+                            $cart_info      = json_decode( $results[0]->abandoned_cart_info );
+                            $cart_details   = (array) $cart_info->cart;
+                            $item_subtotal  = $item_total = 0;
+                            
+                            if ( is_array ( $cart_details ) && count($cart_details) > 0 ) {
                                 foreach ( $cart_details as $k => $v ) {
                                     $quantity_total = $v->quantity;
                                     $product_id     = $v->product_id;
