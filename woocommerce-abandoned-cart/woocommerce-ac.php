@@ -2925,6 +2925,9 @@ function woocommerce_ac_delete(){
 						$body_email_preview    = str_replace( '{{customer.firstname}}', 'John', $body_email_preview );
 						$body_email_preview    = str_replace( '{{customer.lastname}}', 'Doe', $body_email_preview );
 						$body_email_preview    = str_replace( '{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview );
+						$current_time_stamp    = current_time( 'timestamp' );
+						$test_date             = date( 'd M, Y h:i A', $current_time_stamp );
+						$body_email_preview    = str_replace( '{{cart.abandoned_date}}', $test_date, $body_email_preview );
 						
 						$var =  '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
                                  <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
