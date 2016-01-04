@@ -190,6 +190,12 @@ require_once $path . 'wp-load.php';
 					        $query_guest = "SELECT billing_first_name, billing_last_name, email_id FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d";
 					        $results_guest = $wpdb->get_results( $wpdb->prepare( $query_guest, $value->user_id ) );
 					        $value->user_email = $results_guest[0]->email_id;
+					    }else{
+					        
+					        $user_id = $value->user_id;
+					        $key = 'billing_email';
+					        $single = true;
+					        $value->user_email = get_user_meta( $user_id, $key, $single );
 					    }
 					    
 						$cart_info_db_field = json_decode( $value->abandoned_cart_info );
