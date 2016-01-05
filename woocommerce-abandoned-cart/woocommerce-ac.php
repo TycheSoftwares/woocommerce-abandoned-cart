@@ -1507,12 +1507,13 @@ function woocommerce_ac_delete(){
 							$insert_template_successfuly = $update_template_successfuly = ''; 
 							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' ) {	
 							    						
-								   $active_post = 1;
+								   
+								   $active_post    = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
 								   $is_wc_template = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';     //It  is fix
 								   
 								if ( $active_post == 1 ) { 								    
 								    								
-									$is_active       = 1;
+									$is_active       = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
 									$email_frequency = trim( $_POST[ 'email_frequency' ] );
 									$day_or_hour     = trim( $_POST[ 'day_or_hour' ] );
 									
@@ -1527,7 +1528,8 @@ function woocommerce_ac_delete(){
 								    
 									if ( count( $check_results ) == 0 ) {
 									    
-									     $active_post = 1;
+									    
+									     $active_post                  = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
 									     $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
 									     $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
 									     $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
@@ -1582,16 +1584,47 @@ function woocommerce_ac_delete(){
 									                                  $default_value )
 									     );
 									}
+								}else{
+								    
+								    
+								    $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
+								    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
+								    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
+								    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+								    $active_post                  = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
+								    $email_frequency              = trim( $_POST[ 'email_frequency' ] );
+								    $day_or_hour                  = trim( $_POST[ 'day_or_hour' ] );
+								    $is_wc_template               = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
+								    $default_value                =  0 ;
+								    
+								    
+								    $query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
+										           (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template )
+										           VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d )";
+								    
+								    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query,
+								        $woocommerce_ac_email_subject,
+								        $woocommerce_ac_email_body,
+								        $active_post,
+								        $email_frequency,
+								        $day_or_hour,
+								        $woocommerce_ac_template_name,
+								        $woocommerce_ac_from_name,
+								        $is_wc_template,
+								        $default_value )        //It  is fix
+								    );
+								    
 								}
 							}
 							
 							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'update' )
 							{
-								$active = 1;
+								
+								$active         = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
 								$is_wc_template = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
 								if ( $active == 1 )
 								{   
-								    $is_active       = 1;
+								    $is_active       = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
 								    $email_frequency = trim( $_POST[ 'email_frequency' ] );
 								    $day_or_hour     = trim( $_POST[ 'day_or_hour' ] );
 								    $check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
@@ -1686,6 +1719,62 @@ function woocommerce_ac_delete(){
 									     );
 									    
 									}
+								}else{
+								    
+								    $query_update_new = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
+										                     SET is_active   = %s
+										                     WHERE frequency = %d
+			                                                 AND day_or_hour = %s ";
+								    $update_template_successfuly = $wpdb->query( $wpdb->prepare( $query_update_new, $updated_is_active, $email_frequency, $day_or_hour ) );
+								    
+								    $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
+								    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
+								    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
+								    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+								    $id                           = trim( $_POST[ 'id' ] );
+								    $active                       = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
+								    $email_frequency              = trim( $_POST[ 'email_frequency' ] );
+								    $day_or_hour                  = trim( $_POST[ 'day_or_hour' ] );
+								    $is_wc_template               = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
+								    
+								    $check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
+									                WHERE is_active= %s
+						                            AND frequency  = %d
+						                            AND day_or_hour= %s ";
+								    $check_results = $wpdb->get_results( $wpdb->prepare( $check_query, $is_active, $email_frequency, $day_or_hour ) );
+								    
+								    $default_value = '';
+								    foreach($check_results as $result_key => $result_value) {
+								        $default_value = ( empty( $result_value->default_template ) ) ? 0 : $result_value->default_template;
+								         
+								    }
+								    	
+								    $query_update_latest = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
+										                SET
+                										subject       = %s,
+                										body          = %s,
+                										is_active     = %s,
+				                                        frequency     = %d,
+                										day_or_hour   = %s,
+                										template_name = %s,
+                										from_name     = %s,
+				                                        is_wc_template = %s,
+				                                        default_template = %d
+                										WHERE id      = %d ";
+								    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update_latest,
+								        $woocommerce_ac_email_subject,
+								        $woocommerce_ac_email_body,
+								        $active,
+								        $email_frequency,
+								        $day_or_hour,
+								        $woocommerce_ac_template_name,
+								        $woocommerce_ac_from_name,
+								        $is_wc_template,
+								        $default_value,
+								        $id )
+								        	
+								    );
+								    
 								}
 							}
 							
@@ -2723,7 +2812,40 @@ function woocommerce_ac_delete(){
                                                     </p>
                                                     </td>
                                                 
-			
+			                                     </tr>
+			                                     
+			                                     <tr>
+                                                    <th>
+                                                        <label for="is_active"><b><?php _e( 'Active:', 'woocommerce-ac' );  ?></b></label>
+                                                    </th>
+                                                    <td>
+
+                                                    <?php
+                                                    $is_active_edit="";
+                                                    
+                                                    if ( $mode == 'edittemplate' ) {
+                                                        $active_edit = $results[0]->is_active;
+                                                        
+                                                        if ( $active_edit == '1' ) {
+                                                            $is_active_edit = "checked";
+                                                        } else {
+                                                            $is_active_edit = "";
+                                                        }
+                                                    }
+
+                                                    if ( $mode == 'copytemplate' ) {
+                                                        $active_edit = $results_copy[0]->is_active;
+                                                        
+                                                        if($active_edit == '1') {
+                                                            $is_active_edit = "checked";
+                                                        } else {
+                                                            $is_active_edit = "";
+                                                        }
+                                                    }
+                                                        print'<input type="checkbox" name="is_active" id="is_active" ' . $is_active_edit . '>  </input>'; ?>
+                                                        <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Yes, This email should be sent to shoppers with abandoned carts', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
+                                                        </td>
+                                                </tr> 
 				    							<tr>
 				    								<th>
 				    									<label for="woocommerce_ac_email_frequency"><b><?php _e( 'Send this email:', 'woocommerce-ac' ); ?></b></label>
