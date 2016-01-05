@@ -25,9 +25,9 @@ require_once $path . 'wp-load.php';
 			
 			public function __construct() {
 				
-				$this->cart_settings_cron = json_decode( get_option( 'woocommerce_ac_settings' ) );
+				$this->cart_settings_cron = get_option( 'ac_lite_cart_abandoned_time' );
 				
-				$this->cart_abandon_cut_off_time_cron = ( $this->cart_settings_cron[0]->cart_time ) * 60;				
+				$this->cart_abandon_cut_off_time_cron = ( $this->cart_settings_cron ) * 60;				
 			}
 			
 			/*-----------------------------------------------------------------------------------*/
@@ -148,9 +148,9 @@ require_once $path . 'wp-load.php';
 				}
 			
 				//Grab the cart abandoned cut-off time from database.
-				$cart_settings = json_decode( get_option( 'woocommerce_ac_settings' ) );
+				$cart_settings = get_option( 'ac_lite_cart_abandoned_time' );
 				
-				$cart_abandon_cut_off_time = ( $cart_settings[0]->cart_time ) * 60;
+				$cart_abandon_cut_off_time = $cart_settings * 60;
 			
 				//Fetch all active templates present in the system
 				$query = "SELECT wpet . *
