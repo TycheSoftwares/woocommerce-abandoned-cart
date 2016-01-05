@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce Abandon Cart Lite Plugin
 Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
 Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
-Version: 2.5
+Version: 2.5.1
 Author: Tyche Softwares
 Author URI: http://www.tychesoftwares.com/
 */
@@ -1721,21 +1721,24 @@ function woocommerce_ac_delete(){
 									}
 								}else{
 								    
+								    $updated_is_active            = '0';
+								    $is_active                    = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
+								    $email_frequency              = trim( $_POST[ 'email_frequency' ] );
+								    $day_or_hour                  = trim( $_POST[ 'day_or_hour' ] );
+								    $is_wc_template               = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
+								    
 								    $query_update_new = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
 										                     SET is_active   = %s
 										                     WHERE frequency = %d
 			                                                 AND day_or_hour = %s ";
-								    $update_template_successfuly = $wpdb->query( $wpdb->prepare( $query_update_new, $updated_is_active, $email_frequency, $day_or_hour ) );
+								    $wpdb->query( $wpdb->prepare( $query_update_new, $updated_is_active, $email_frequency, $day_or_hour ) );
 								    
 								    $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
 								    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
 								    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
 								    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
 								    $id                           = trim( $_POST[ 'id' ] );
-								    $active                       = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
-								    $email_frequency              = trim( $_POST[ 'email_frequency' ] );
-								    $day_or_hour                  = trim( $_POST[ 'day_or_hour' ] );
-								    $is_wc_template               = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
+								    	
 								    
 								    $check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
 									                WHERE is_active= %s
@@ -1761,10 +1764,11 @@ function woocommerce_ac_delete(){
 				                                        is_wc_template = %s,
 				                                        default_template = %d
                 										WHERE id      = %d ";
+								    
 								    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update_latest,
 								        $woocommerce_ac_email_subject,
 								        $woocommerce_ac_email_body,
-								        $active,
+								        $is_active,
 								        $email_frequency,
 								        $day_or_hour,
 								        $woocommerce_ac_template_name,
@@ -1772,7 +1776,7 @@ function woocommerce_ac_delete(){
 								        $is_wc_template,
 								        $default_value,
 								        $id )
-								        	
+								         
 								    );
 								    
 								}
@@ -1795,9 +1799,9 @@ function woocommerce_ac_delete(){
 							}
 							
 							
-							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'update'  && isset($update_template_successfuly) && $update_template_successfuly != '' ) { ?>
+							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'update'  && isset($update_template_successfuly) && $update_template_successfuly >= 0 ) { ?>
 							<div id="message" class="updated fade"><p><strong><?php _e( 'The Email Template has been successfully updated.', 'woocommerce-ac' ); ?></strong></p></div>
-							<?php } else if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'update'  && isset($update_template_successfuly) && $update_template_successfuly == '' ){
+							<?php } else if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'update'  && isset($update_template_successfuly) && $update_template_successfuly === false ){
 							    ?>
 							   <div id="message" class="error fade"><p><strong><?php _e( ' There was a problem updating the email template. Please contact the plugin author via <a href= "https://wordpress.org/support/plugin/woocommerce-abandoned-cart">support forum</a>.', 'woocommerce-ac' ); ?></strong></p></div>
 							 <?php   
