@@ -38,7 +38,9 @@ if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
 // Hook into that action that'll fire every 5 minutes
 add_action( 'woocommerce_ac_send_email_action', 'woocommerce_ac_send_email_cron' );
 function woocommerce_ac_send_email_cron() {
-    require_once( ABSPATH.'wp-content/plugins/woocommerce-abandoned-cart/cron/send_email.php' );
+    //require_once( ABSPATH.'wp-content/plugins/woocommerce-abandoned-cart/cron/send_email.php' );
+    $plugin_dir_path = plugin_dir_path( __FILE__ );
+    require_once( $plugin_dir_path . 'cron/send_email.php' );
 }
 
 function woocommerce_ac_delete(){
@@ -2199,9 +2201,11 @@ function woocommerce_ac_delete(){
 							 }
 						}
 						$table_data = "";
+						$cart_blank_value = '{"cart":[]}';
+						$blank_cart_info_guest = '[]';
 						foreach ( $ac_results as $key => $value )
 						{	
-							if( $value->recovered_cart != 0 )
+							if( $value->recovered_cart != 0 && $value->abandoned_cart_info != $cart_blank_value || $value->abandoned_cart_info != $blank_cart_info_guest )
 							{
 								$recovered_id       = $value->recovered_cart;
 								$rec_order          = get_post_meta( $recovered_id );

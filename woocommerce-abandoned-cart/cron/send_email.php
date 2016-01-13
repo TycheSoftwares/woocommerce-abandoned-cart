@@ -1,7 +1,11 @@
 <?php 
 
-if(defined('WP_CONTENT_FOLDERNAME')){
+if( defined('WP_CONTENT_FOLDERNAME' ) ) {
     $wp_content_dir_name = WP_CONTENT_FOLDERNAME;
+}elseif( defined( 'WP_CONTENT_DIR' ) ) {
+    $url = WP_CONTENT_DIR;
+    $explode_url = explode( "/", $url );
+    $wp_content_dir_name = end( $explode_url );
 }else{
     $wp_content_dir_name = "wp-content";
 }
