@@ -181,9 +181,9 @@ require_once $path . 'wp-load.php';
 					$email_frequency     = $value->frequency;
 					$email_body_template = $value->body;			
 					$email_subject       = $value->subject;
-					$user_email_from     = get_option( 'admin_email' );
-					$headers[]           = "From: ".$value->from_name." <".$user_email_from.">"."\r\n";
-					$headers[]           = "Content-Type: text/html"."\r\n";
+					$headers             = "From: " . $value->from_name . " <" . $value->from_email . ">" . "\r\n";
+					$headers            .= "Content-Type: text/html"."\r\n";
+					$headers            .= "Reply-To:  " . $value->reply_email . " " . "\r\n";
 					$template_id         = $value->id;
 					$is_wc_template      = $value->is_wc_template;
 					

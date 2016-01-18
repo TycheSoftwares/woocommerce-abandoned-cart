@@ -337,7 +337,17 @@ function woocommerce_ac_delete(){
 				    
 				    $wpdb->get_results( $alter_template_table_query );
 				}
-
+                $table_name = $wpdb->prefix . "ac_email_templates_lite";
+			    $check_email_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'reply_email' ";
+			    $results_email = $wpdb->get_results( $check_email_template_table_query );
+			    
+			    if ( count(  $results_email ) == 0 ) {
+			        $alter_email_template_table_query = "ALTER TABLE $table_name
+			        ADD COLUMN `reply_email` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `default_template`,
+			        ADD COLUMN `from_email` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `reply_email`";
+			        $wpdb->get_results( $alter_email_template_table_query );
+			    }
+			    
 				$sent_table_name = $wpdb->prefix . "ac_sent_history_lite";
 			
 				$sql_query = "CREATE TABLE IF NOT EXISTS $sent_table_name (
@@ -549,10 +559,19 @@ function woocommerce_ac_delete(){
 			    if ( count( $results ) == 0 ) {
 			        $alter_template_table_query = "ALTER TABLE $table_name
 			        ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `from_name`,
-			        ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";			        
+			        ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";
 			        $wpdb->get_results( $alter_template_table_query );
 			    }
+			    $table_name = $wpdb->prefix . "ac_email_templates_lite";
+			    $check_email_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'reply_email' ";
+			    $results_email = $wpdb->get_results( $check_email_template_table_query );
 			    
+			    if ( count(  $results_email ) == 0 ) {
+			        $alter_email_template_table_query = "ALTER TABLE $table_name
+			        ADD COLUMN `reply_email` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `default_template`,
+			        ADD COLUMN `from_email` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `reply_email`";
+			        $wpdb->get_results( $alter_email_template_table_query );
+			    }
 			    $guest_table = $wpdb->prefix."ac_guest_abandoned_cart_history_lite" ;
 			    $query_guest_table = "SHOW TABLES LIKE '$guest_table' ";
 			    $result_guest_table = $wpdb->get_results( $query_guest_table );
@@ -1536,10 +1555,12 @@ function woocommerce_ac_delete(){
 									     $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
 									     $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
 									     $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+									     $woocommerce_ac_email_reply   = trim( $_POST['woocommerce_ac_email_reply'] );
+									     $woocommerce_ac_email_from   = trim( $_POST[ 'woocommerce_ac_email_from' ] );
 									     
 									     $query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
-										           (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template )      
-										           VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d )";        //It  is fix
+										           (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template, reply_email, from_email )      
+										           VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d, %s, %s )";        //It  is fix
 									     
 									    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query, 
 									                                  $woocommerce_ac_email_subject,
@@ -1550,8 +1571,10 @@ function woocommerce_ac_delete(){
 									                                  $woocommerce_ac_template_name, 
 									                                  $woocommerce_ac_from_name,
 									                                  $is_wc_template,
-									                                  $default_value )        //It  is fix
-									     );
+									                                  $default_value,
+									                                  $woocommerce_ac_email_reply,
+									                                  $woocommerce_ac_email_from)       
+	                                      );
 									   
 									}
 									else {
@@ -1569,10 +1592,12 @@ function woocommerce_ac_delete(){
 									    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
 									    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
 									    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+									    $woocommerce_ac_email_from     = trim( $_POST['woocommerce_ac_email_from'] );
+									    $woocommerce_ac_email_reply   = trim( $_POST[ 'woocommerce_ac_email_reply' ] );
 									    
 									    $query_insert_new = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
-										                    (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template)
-										                    VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d )";
+										                    (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template, reply_email, from_email )
+										                    VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d, %s, %s )";
     												
 									    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query_insert_new, 
 									                                  $woocommerce_ac_email_subject,
@@ -1583,8 +1608,9 @@ function woocommerce_ac_delete(){
 									                                  $woocommerce_ac_template_name, 
 									                                  $woocommerce_ac_from_name,
 									                                  $is_wc_template,
-									                                  $default_value )
-									     );
+									                                  $woocommerce_ac_email_reply,
+									                                  $woocommerce_ac_email_from )
+	                                   );
 									}
 								}else{
 								    
@@ -1592,7 +1618,10 @@ function woocommerce_ac_delete(){
 								    $woocommerce_ac_email_subject = trim( $_POST[ 'woocommerce_ac_email_subject' ] );
 								    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
 								    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
-								    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+								    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );  
+								    $woocommerce_ac_email_reply   = trim( $_POST[ 'woocommerce_ac_email_reply' ] );
+								    $woocommerce_ac_email_from     = trim( $_POST['woocommerce_ac_email_from'] );
+								    
 								    $active_post                  = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
 								    $email_frequency              = trim( $_POST[ 'email_frequency' ] );
 								    $day_or_hour                  = trim( $_POST[ 'day_or_hour' ] );
@@ -1601,20 +1630,22 @@ function woocommerce_ac_delete(){
 								    
 								    
 								    $query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
-										           (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template )
-										           VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d )";
+										           (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template, reply_email, from_email )
+										           VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d, %s, %s )";
 								    
 								    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query,
-								        $woocommerce_ac_email_subject,
-								        $woocommerce_ac_email_body,
-								        $active_post,
-								        $email_frequency,
-								        $day_or_hour,
-								        $woocommerce_ac_template_name,
-								        $woocommerce_ac_from_name,
-								        $is_wc_template,
-								        $default_value )        //It  is fix
-								    );
+                            								        $woocommerce_ac_email_subject,
+                            								        $woocommerce_ac_email_body,
+                            								        $active_post,
+                            								        $email_frequency,
+                            								        $day_or_hour,
+                            								        $woocommerce_ac_template_name,
+                            								        $woocommerce_ac_from_name,
+                            								        $is_wc_template,
+                            								        $default_value,
+                            								        $woocommerce_ac_email_reply,
+								                                    $woocommerce_ac_email_from )        
+								     );
 								    
 								}
 							}
@@ -1648,6 +1679,8 @@ function woocommerce_ac_delete(){
 									    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );									    
 									    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
 									    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+									    $woocommerce_ac_email_from     = trim( $_POST['woocommerce_ac_email_from'] );
+									    $woocommerce_ac_email_reply   = trim( $_POST[ 'woocommerce_ac_email_reply' ] );
 									    $id                           = trim( $_POST[ 'id' ] );
 									    
 									    $query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
@@ -1660,7 +1693,9 @@ function woocommerce_ac_delete(){
                 										template_name = %s,
                 										from_name     = %s,
 						                                is_wc_template = %s,
-								                        default_template = %d
+								                        default_template = %d,
+						                                reply_email   = %s,
+				                                        from_email    = %s
                 										WHERE id      = %d ";
 									    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update,
 									                                 $woocommerce_ac_email_subject,
@@ -1672,6 +1707,8 @@ function woocommerce_ac_delete(){
                         									         $woocommerce_ac_from_name,
 									                                 $is_wc_template,
 									                                 $default_value,
+									                                 $woocommerce_ac_email_from,
+									                                 $woocommerce_ac_email_reply,
                         									         $id )
 									        
 									     );
@@ -1692,6 +1729,8 @@ function woocommerce_ac_delete(){
 									    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );									    
 									    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
 									    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+									    $woocommerce_ac_email_from     = trim( $_POST['woocommerce_ac_email_from'] );
+									    $woocommerce_ac_email_reply   = trim( $_POST[ 'woocommerce_ac_email_reply' ] );
 									    $id                           = trim( $_POST[ 'id' ] );
 									    
 									    $query_update_latest = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
@@ -1704,7 +1743,9 @@ function woocommerce_ac_delete(){
                 										template_name = %s,
                 										from_name     = %s,
 				                                        is_wc_template = %s,
-				                                        default_template = %d
+				                                        default_template = %d,
+			                                            reply_email   = %s,
+			                                            from_email    = %s
                 										WHERE id      = %d ";
 									    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update_latest,
 									                                 $woocommerce_ac_email_subject,
@@ -1716,6 +1757,8 @@ function woocommerce_ac_delete(){
                         									         $woocommerce_ac_from_name,
 									                                 $is_wc_template,
 									                                 $default_value,
+									                                 $woocommerce_ac_email_reply,
+									                                 $woocommerce_ac_email_from,
                         									         $id )
 									        
 									     );
@@ -1739,6 +1782,8 @@ function woocommerce_ac_delete(){
 								    $woocommerce_ac_email_body    = trim( $_POST[ 'woocommerce_ac_email_body' ] );
 								    $woocommerce_ac_template_name = trim( $_POST[ 'woocommerce_ac_template_name' ] );
 								    $woocommerce_ac_from_name     = trim( $_POST[ 'woocommerce_ac_from_name' ] );
+								    $woocommerce_ac_email_from    = trim( $_POST['woocommerce_ac_email_from'] );
+								    $woocommerce_ac_email_reply   = trim( $_POST[ 'woocommerce_ac_email_reply' ] );
 								    $id                           = trim( $_POST[ 'id' ] );
 								    	
 								    
@@ -1764,7 +1809,9 @@ function woocommerce_ac_delete(){
                 										template_name = %s,
                 										from_name     = %s,
 				                                        is_wc_template = %s,
-				                                        default_template = %d
+				                                        default_template = %d,
+				                                        reply_email   = %s,
+            				                            from_email    = %s
                 										WHERE id      = %d ";
 								    
 								    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update_latest,
@@ -1777,6 +1824,8 @@ function woocommerce_ac_delete(){
 								        $woocommerce_ac_from_name,
 								        $is_wc_template,
 								        $default_value,
+								        $woocommerce_ac_email_reply,
+								        $woocommerce_ac_email_from,
 								        $id )
 								         
 								    );
@@ -2755,6 +2804,41 @@ function woocommerce_ac_delete(){
 													<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the name that should appear in the email sent', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
 													
 												</tr>
+												<tr>
+                                                   <th>
+                                                        <label for="woocommerce_ac_email_from"><b><?php _e( 'Send From This Email Address:', 'woocommerce-ac' ); ?></b></label>
+                                                    </th>
+                                                    <td>
+
+                                                    <?php
+                                                    $from_edit = get_option( 'admin_email' );
+                                                    
+                                                    if ( $mode == 'edittemplate' && $results[0]->from_email != '') { // this is the fix
+                                                        $from_edit = $results[0]->from_email;
+                                                    }
+                                                   print'<input type="text" name="woocommerce_ac_email_from" id="woocommerce_ac_email_from" class="regular-text" value="' . $from_edit . '">'; ?>
+                                                   <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Which email address should be shown in the "From    Email" field for this email?', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
+                                                   <?php ?></textarea>
+                                                    </td>
+                                                </tr>                                                
+                                                <tr>
+                                                   <th>
+                                                        <label for="woocommerce_ac_email_reply"><b><?php _e( 'Send Reply Emails to:', 'woocommerce-ac' ); ?></b></label>
+                                                    </th>
+                                                    <td>
+
+                                                    <?php
+                                                    $reply_edit = get_option( 'admin_email' );
+                                                    
+                                                    if ( $mode == 'edittemplate' && $results[0]->reply_email != '' ) { // this is the fix
+                                                        $reply_edit = $results[0]->reply_email;
+                                                    }
+
+                                                    print'<input type="text" name="woocommerce_ac_email_reply" id="woocommerce_ac_email_reply" class="regular-text" value="' . $reply_edit . '">'; ?>
+                                                    <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'When a contact receives your email and clicks reply, which email address should that reply be sent to?', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
+                                                    <?php ?></textarea>
+                                                    </td>
+                                                </tr>            
 												
 												<tr>
 											       <th>
@@ -3035,12 +3119,16 @@ function woocommerce_ac_delete(){
 								{
 								
 									var from_name_preview     = $( '#woocommerce_ac_from_name' ).val();
+									var reply_name_preview      = $( '#woocommerce_ac_email_reply' ).val();
+									var from_email_preview      = $( '#woocommerce_ac_email_from' ).val();
 									var subject_email_preview = $( '#woocommerce_ac_email_subject' ).val();
 									var body_email_preview    = tinyMCE.activeEditor.getContent();
 									var send_email_id         = $( '#send_test_email' ).val();	
 									var is_wc_template        = document.getElementById("is_wc_template").checked;																	
 									var data                  = {
                             										from_name_preview    : from_name_preview,
+                            										reply_name_preview   : reply_name_preview,
+                            										from_email_preview   : from_email_preview,
                             										subject_email_preview: subject_email_preview,
                             										body_email_preview   : body_email_preview,
                             										send_email_id        : send_email_id,
@@ -3065,9 +3153,16 @@ function woocommerce_ac_delete(){
 					function preview_email_sent() {
 						
 						$from_email_name       = $_POST[ 'from_name_preview' ];
+						$reply_name_preview    = $_POST['reply_name_preview'];
+						$from_email_preview    = $_POST['from_email_preview'];
 						$subject_email_preview = $_POST[ 'subject_email_preview' ];						
 						$body_email_preview    = $_POST[ 'body_email_preview' ];
 						$is_wc_template        = $_POST['is_wc_template'];
+						
+						$headers                = "From: " . $from_email_name . " <" . $from_email_preview . ">" . "\r\n";
+						$headers               .= "Content-Type: text/html" . "\r\n";
+						$headers               .= "Reply-To:  " . $reply_name_preview . " " . "\r\n";				
+						
 						$body_email_preview    = str_replace( '{{customer.firstname}}', 'John', $body_email_preview );
 						$body_email_preview    = str_replace( '{{customer.lastname}}', 'Doe', $body_email_preview );
 						$body_email_preview    = str_replace( '{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview );

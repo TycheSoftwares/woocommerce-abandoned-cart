@@ -36,9 +36,11 @@ class default_template_settings {
        $ac_from_name     = 'Admin'; 
        $is_wc_template   =  1 ;
        $default_template =  1;
+       $from_email       = get_option( 'admin_email' );
+       $ac_email_reply   = get_option( 'admin_email' );
        
            $query = "INSERT INTO `" . $wpdb->prefix . "ac_email_templates_lite`
-           ( subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template )
+           ( subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template, reply_email, from_email )
            VALUES ( '" . $template_subject_array . "',
                    '" . $body_content_array . "',
                    '" . $active_post_array . "',
@@ -47,9 +49,10 @@ class default_template_settings {
                    '" . $template_name_array . "',
                    '" . $ac_from_name . "',
                    '" . $is_wc_template . "',
-                   '" . $default_template . "' )";
+                   '" . $default_template . "',
+                   '" . $ac_email_reply . "',
+                   '" . $from_email . "' )";
            
-
            $wpdb->query( $query );
            
    }
