@@ -3209,9 +3209,7 @@ function woocommerce_ac_delete(){
 						      $to_email_preview = "";
 						}
 						$user_email_from = get_option( 'admin_email' );
-						$headers[] = "From: ".$from_email_name." <".$user_email_from.">"."\r\n";
-						$headers[] = "Content-Type: text/html"."\r\n";                                                                                               
-				                        
+						              
 						$body_email_final_preview = stripslashes( $body_email_preview );
 					    if ( isset( $is_wc_template ) && "true" == $is_wc_template ){
 						
