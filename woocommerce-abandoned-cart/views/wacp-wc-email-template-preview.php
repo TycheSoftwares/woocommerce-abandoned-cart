@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <p > Hello John Carter, </p>
 <p> &nbsp; </p>
-<p > We\'re following up with you, because we noticed that on 12-12-2015 you attempted to purchase the following products on <?php echo get_option( 'blogname' );?>. </p>
+<p > We're following up with you, because we noticed that on 12-12-2015 you attempted to purchase the following products on <?php echo get_option( 'blogname' );?>. </p>
 <p> &nbsp; </p>
 <p> 
 
