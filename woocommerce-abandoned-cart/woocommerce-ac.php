@@ -1411,14 +1411,19 @@ function woocommerce_ac_delete(){
 				 $order_by = "abandoned_cart_time";
 			}
 			/* Now we use the LIMIT clause to grab a range of rows */
+			$blank_cart_info       =  '{"cart":[]}';
+			$blank_cart_info_guest =  '[]';
+			$results = array();
 			
 		    $query = "SELECT wpac . * , wpu.user_login, wpu.user_email
 					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
 					  LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
 					  WHERE recovered_cart = %d
+					  AND wpac.abandoned_cart_info NOT LIKE %s 
+					  AND wpac.abandoned_cart_info NOT LIKE %s
 					  ORDER BY abandoned_cart_time $order LIMIT %d, %d ";        
 
-            $results = $wpdb->get_results( $wpdb->prepare( $query, $recoverd_cart, $limit_one, $limit_two  ) );
+            $results = $wpdb->get_results( $wpdb->prepare( $query, $recoverd_cart,$blank_cart_info, $blank_cart_info_guest, $limit_one, $limit_two  ) );
 			
 			/* From here you can do whatever you want with the data from the $result link. */
 			
@@ -1446,102 +1451,103 @@ function woocommerce_ac_delete(){
 			
 				<?php 
 				        $results_guest = '';
-				        
-				        foreach ( $results as $key => $value ) {
-						    
-						    if ( $value->user_type == "GUEST" ) {
-						        $query_guest = "SELECT * from `". $wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d ORDER BY `id` DESC LIMIT 1";
-						        $results_guest = $wpdb->get_results( $wpdb->prepare( $query_guest, $value->user_id ) );
-						        
-						    }
-						    $abandoned_order_id = $value->id;
-						    $user_id            = $value->user_id;
-						    $user_login         = $value->user_login;
-						    
-        					if ( $value->user_type == "GUEST" ) {
-        					    
-                                    if ( isset( $results_guest[0]->email_id ) ) $user_email = $results_guest[0]->email_id;
-                                    
-                                    if ( isset( $results_guest[0]->billing_first_name ) ) $user_first_name = $results_guest[0]->billing_first_name;
+				        if ( count ($results) > 0 ){
+    				        foreach ( $results as $key => $value ) {
+    						    
+    						    if ( $value->user_type == "GUEST" ) {
+    						        $query_guest = "SELECT * from `". $wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d ORDER BY `id` DESC LIMIT 1";
+    						        $results_guest = $wpdb->get_results( $wpdb->prepare( $query_guest, $value->user_id ) );
+    						        
+    						    }
+    						    $abandoned_order_id = $value->id;
+    						    $user_id            = $value->user_id;
+    						    $user_login         = $value->user_login;
+    						    
+            					if ( $value->user_type == "GUEST" ) {
+            					    
+                                        if ( isset( $results_guest[0]->email_id ) ) $user_email = $results_guest[0]->email_id;
+                                        
+                                        if ( isset( $results_guest[0]->billing_first_name ) ) $user_first_name = $results_guest[0]->billing_first_name;
+                                        else $user_first_name = "";
+                                        
+                                        if ( isset( $results_guest[0]->billing_last_name ) ) $user_last_name = $results_guest[0]->billing_last_name;
+                                        else $user_last_name = "";
+                                } else {
+                                    $user_id = $value->user_id;
+                                    $key = 'billing_email';
+                                    $single = true;
+                                    $user_billing_email = get_user_meta( $user_id, $key, $single );
+                                    $user_email = '';
+                                    if( isset($user_billing_email) && $user_billing_email !=''){
+                                        $user_email = $user_billing_email;
+                                    }else{
+                                        $user_email = $value->user_email;
+                                    }
+                                    $user_first_name_temp = get_user_meta($value->user_id, 'first_name');
+                                    if ( isset( $user_first_name_temp[0] )) $user_first_name = $user_first_name_temp[0];
                                     else $user_first_name = "";
                                     
-                                    if ( isset( $results_guest[0]->billing_last_name ) ) $user_last_name = $results_guest[0]->billing_last_name;
+                                    $user_last_name_temp = get_user_meta($value->user_id, 'last_name');
+                                    if ( isset( $user_last_name_temp[0] )) $user_last_name = $user_last_name_temp[0];
                                     else $user_last_name = "";
-                            } else {
-                                $user_id = $value->user_id;
-                                $key = 'billing_email';
-                                $single = true;
-                                $user_billing_email = get_user_meta( $user_id, $key, $single );
-                                $user_email = '';
-                                if( isset($user_billing_email) && $user_billing_email !=''){
-                                    $user_email = $user_billing_email;
-                                }else{
-                                    $user_email = $value->user_email;
                                 }
-                                $user_first_name_temp = get_user_meta($value->user_id, 'first_name');
-                                if ( isset( $user_first_name_temp[0] )) $user_first_name = $user_first_name_temp[0];
-                                else $user_first_name = "";
-                                
-                                $user_last_name_temp = get_user_meta($value->user_id, 'last_name');
-                                if ( isset( $user_last_name_temp[0] )) $user_last_name = $user_last_name_temp[0];
-                                else $user_last_name = "";
-                            }
-													
-							$cart_info          = json_decode( $value->abandoned_cart_info );
-							
-							$order_date = "";
-							$cart_update_time = $value->abandoned_cart_time;
-							if ( $cart_update_time != "" && $cart_update_time != 0 ) {
-								 $order_date = date( 'd M, Y h:i A', $cart_update_time );
-							}
-							
-							$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
-							if ( isset( $ac_cutoff_time ) ) {
-							     $cut_off_time = $ac_cutoff_time * 60;
-							} else {
-							     $cut_off_time = 60 * 60;
-							}
-							$cart_details = array();
-							$current_time = current_time( 'timestamp' );							
-							$compare_time = $current_time - $cart_update_time;							
-							$cart_details = (array) $cart_info->cart;							
-							
-							$line_total = 0;
-							if ( is_array ( $cart_details ) && count($cart_details) > 0 ) {
-    							foreach ( $cart_details as $k => $v )
-    							{
-    								$line_total = $line_total + $v->line_total;
+    													
+    							$cart_info          = json_decode( $value->abandoned_cart_info );
+    							
+    							$order_date = "";
+    							$cart_update_time = $value->abandoned_cart_time;
+    							if ( $cart_update_time != "" && $cart_update_time != 0 ) {
+    								 $order_date = date( 'd M, Y h:i A', $cart_update_time );
     							}
-							}
-							if( $value->cart_ignored == 0 && $value->recovered_cart == 0 ) {
-								$ac_status = "Abandoned";
-							}
-							elseif( $value->cart_ignored == 1 && $value->recovered_cart == 0 ) {
-								$ac_status = "Abandoned but new </br>cart created after this";
-							} else {
-								$ac_status = "";
-							}
-							
-							?>
-							
-							<?php 
-							if ( $compare_time > $cut_off_time && $ac_status != "" )
-							{
-							?>
-							<tr id="row_<?php echo $abandoned_order_id; ?>">
-								<td><strong> <a href="admin.php?page=woocommerce_ac_page&action=orderdetails&id=<?php echo $value->id;?>"><?php echo "Abandoned Order #".$abandoned_order_id;?></a></strong><?php  if( isset( $user_first_name[0] ) && isset( $user_last_name[0] ) ) { $user_name =  $user_first_name." ".$user_last_name; } echo "</br>Name: ".$user_name." <br><a href='mailto:$user_email'>".$user_email."</a>"; ?></td>
-								<td><?php echo get_woocommerce_currency_symbol()." ".$line_total; ?></td>
-								<td><?php echo $order_date; ?></td>
-								<td><?php echo $ac_status; ?>
-								<td id="<?php echo $abandoned_order_id; ?>">
-								<?php echo "<a href='#' id='$abandoned_order_id-$user_id' class='remove_cart'> <img src='".plugins_url()."/woocommerce-abandoned-cart/images/delete.png' alt='Remove Cart Data' title='Remove Cart Data'></a>"; ?>
-								&nbsp;
-								
-							</tr>
-							
-							<?php 
-							}
-						}
+    							
+    							$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
+    							if ( isset( $ac_cutoff_time ) ) {
+    							     $cut_off_time = $ac_cutoff_time * 60;
+    							} else {
+    							     $cut_off_time = 60 * 60;
+    							}
+    							$cart_details = array();
+    							$current_time = current_time( 'timestamp' );							
+    							$compare_time = $current_time - $cart_update_time;							
+    							$cart_details = (array) $cart_info->cart;							
+    							
+    							$line_total = 0;
+    							if ( is_array ( $cart_details ) && count($cart_details) > 0 ) {
+        							foreach ( $cart_details as $k => $v )
+        							{
+        								$line_total = $line_total + $v->line_total;
+        							}
+    							}
+    							if( $value->cart_ignored == 0 && $value->recovered_cart == 0 ) {
+    								$ac_status = "Abandoned";
+    							}
+    							elseif( $value->cart_ignored == 1 && $value->recovered_cart == 0 ) {
+    								$ac_status = "Abandoned but new </br>cart created after this";
+    							} else {
+    								$ac_status = "";
+    							}
+    							
+    							?>
+    							
+    							<?php 
+    							if ( $compare_time > $cut_off_time && $ac_status != "" )
+    							{
+    							?>
+    							<tr id="row_<?php echo $abandoned_order_id; ?>">
+    								<td><strong> <a href="admin.php?page=woocommerce_ac_page&action=orderdetails&id=<?php echo $value->id;?>"><?php echo "Abandoned Order #".$abandoned_order_id;?></a></strong><?php  if( isset( $user_first_name[0] ) && isset( $user_last_name[0] ) ) { $user_name =  $user_first_name." ".$user_last_name; } echo "</br>Name: ".$user_name." <br><a href='mailto:$user_email'>".$user_email."</a>"; ?></td>
+    								<td><?php echo get_woocommerce_currency_symbol()." ".$line_total; ?></td>
+    								<td><?php echo $order_date; ?></td>
+    								<td><?php echo $ac_status; ?>
+    								<td id="<?php echo $abandoned_order_id; ?>">
+    								<?php echo "<a href='#' id='$abandoned_order_id-$user_id' class='remove_cart'> <img src='".plugins_url()."/woocommerce-abandoned-cart/images/delete.png' alt='Remove Cart Data' title='Remove Cart Data'></a>"; ?>
+    								&nbsp;
+    								
+    							</tr>
+    							
+    							<?php 
+    							}
+    						}
+				        }
 						echo "</table>";
 					} elseif ( $action == 'emailtemplates' && ( $mode != 'edittemplate' && $mode != 'addnewtemplate' ) ) {
 							?>													
