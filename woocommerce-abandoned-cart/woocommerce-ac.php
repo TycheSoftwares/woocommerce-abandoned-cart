@@ -66,8 +66,18 @@ function woocommerce_ac_delete(){
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	$wpdb->get_results( $sql_ac_abandoned_cart_history );
 	
+	$sql_table_user_meta_cart = "DELETE FROM `" . $wpdb->prefix . "usermeta` WHERE meta_key = '_woocommerce_persistent_cart'";
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	$wpdb->get_results( $sql_table_user_meta_cart );
+	
+	$sql_table_user_meta_cart_modified = "DELETE FROM `" . $wpdb->prefix . "usermeta` WHERE meta_key = '_woocommerce_ac_modified_cart'";
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	$wpdb->get_results( $sql_table_user_meta_cart_modified );
+	
 	$query   = "SELECT blog_id FROM `".$wpdb->prefix."blogs`";
 	$results = $wpdb->get_results( $query );
+	
+	
 	
 	foreach( $results as $key => $value ) {
 	     
@@ -90,6 +100,14 @@ function woocommerce_ac_delete(){
 	    $sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_guest_abandoned_cart_history ;
 	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	    $wpdb->get_results( $sql_ac_abandoned_cart_history );
+	    
+	    $sql_table_user_meta_cart = "DELETE FROM `" . $wpdb->prefix.$value->blog_id."_"."usermeta` WHERE meta_key = '_woocommerce_persistent_cart'";
+	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	    $wpdb->get_results( $sql_table_user_meta_cart );
+	    
+	    $sql_table_user_meta_cart_modified = "DELETE FROM `" . $wpdb->prefix.$value->blog_id."_"."usermeta` WHERE meta_key = '_woocommerce_ac_modified_cart'";
+	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	    $wpdb->get_results( $sql_table_user_meta_cart_modified );
 	     
 	}
 	
@@ -858,13 +876,15 @@ function woocommerce_ac_delete(){
 			            exit;
 			        }
 			        $user = wp_set_current_user( $user_id );
+			        
+			        
 			
 			        if ( $user_id >= "63000000" ) {
 			            $query_guest = "SELECT * from `". $wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d";
 			            $results_guest = $wpdb->get_results( $wpdb->prepare( $query_guest, $user_id ) );
 			            $query_cart = "SELECT recovered_cart FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id = %d";
 			            $results = $wpdb->get_results( $wpdb->prepare( $query_cart, $user_id ) );
-			
+			            
 			            if ( $results_guest  && $results[0]->recovered_cart == '0' ) {
 			                $_SESSION[ 'guest_first_name' ] = $results_guest[0]->billing_first_name;
 			                $_SESSION[ 'guest_last_name' ] = $results_guest[0]->billing_last_name;
@@ -899,7 +919,9 @@ function woocommerce_ac_delete(){
 			function woocommerce_load_guest_persistent_cart() {
 			    global $woocommerce;
 			
-			    $saved_cart = json_decode( get_user_meta( $_SESSION['user_id'], '_woocommerce_persistent_cart', true ), true );
+			    
+			    $saved_cart = json_decode( get_user_meta( $_SESSION['user_id'], '_woocommerce_persistent_cart',true ), true );
+			    
 			    $c = array();
 			    $cart_contents_total = $cart_contents_weight = $cart_contents_count = $cart_contents_tax = $total = $subtotal = $subtotal_ex_tax = $tax_total = 0;
 			
@@ -2900,7 +2922,7 @@ function woocommerce_ac_delete(){
                                                     }
                                                     print'<input type="checkbox" name="is_wc_template" id="is_wc_template" ' . $is_wc_template . '>  </input>'; ?>
                                                     <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Use WooCommerce default style template for abandoned cart reminder emails.', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /> <a target = '_blank' href= <?php  echo wp_nonce_url( admin_url( '?wacp_preview_woocommerce_mail=true' ), 'woocommerce-ac' ) ; ?> > 
-                                                    Click here to preview </a>how the email template will look with WooCommerce Template Style enabled. Alternatively, if this is unchecked, the template will appear as <a target = '_blank' href=<?php  echo wp_nonce_url( admin_url( '?wacp_preview_mail=true' ), 'woocommerce-ac' ) ; ?>>shown here</a>.
+                                                    Click here to preview </a>how the email template will look with WooCommerce Template Style enabled. Alternatively, if this is unchecked, the template will appear as <a target = '_blank' href=<?php  echo wp_nonce_url( admin_url( '?wacp_preview_mail=true' ), 'woocommerce-ac' ) ; ?>>shown here</a>. <br> <strong>Note: </strong>When this setting is enabled, then "Send From This Name:" & "Send From This Email Address:" will be overwritten with WooCommerce -> Settings -> Email -> Email Sender Options.   
                                                     </p>
                                                     </td>
                                                 
@@ -3209,7 +3231,7 @@ function woocommerce_ac_delete(){
 						      $to_email_preview = "";
 						}
 						$user_email_from = get_option( 'admin_email' );
-						              
+						                
 						$body_email_final_preview = stripslashes( $body_email_preview );
 					    if ( isset( $is_wc_template ) && "true" == $is_wc_template ){
 						
