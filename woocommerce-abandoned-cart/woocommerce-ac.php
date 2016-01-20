@@ -844,7 +844,9 @@ function woocommerce_ac_delete(){
 			    if ( $track_link == 'track_links' ) {
 			        global $wpdb;
 			
-			        $validate_server_string = $_SERVER["QUERY_STRING"];
+			        $validate_server_string  = rawurldecode ( $_SERVER["QUERY_STRING"] );
+                    $validate_server_string = str_replace ( " " , "+", $validate_server_string);
+                    
 			        $validate_server_arr = explode("validate=", $validate_server_string);
 			        $validate_encoded_string = end($validate_server_arr);
 			
