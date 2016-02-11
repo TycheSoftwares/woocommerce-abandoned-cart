@@ -1764,7 +1764,7 @@ function woocommerce_ac_delete(){
 							?>
 							<div class="tablenav">
 							<p style="float:left;">
-							<input type="button" value="+ Add New Template" id="add_new_template" onclick="location.href='admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=addnewtemplate';" style="font-weight: bold; color: green; font-size: 18px; cursor: pointer;">							
+							<a cursor: pointer; href="<?php echo "admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=addnewtemplate"; ?>" class="button-secondary"><?php _e( 'Add New Template', 'woocommerce-ac' ); ?></a>							
 							</p>
 							
 				<?php
