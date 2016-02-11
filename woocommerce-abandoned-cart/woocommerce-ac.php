@@ -17,7 +17,7 @@ register_uninstall_hook( __FILE__, 'woocommerce_ac_delete' );
 
 include_once( "woocommerce_guest_ac.class.php" );
 include_once( "default-settings.php" );
-
+require_once( "actions.php" );
 // Add a new interval of 5 minutes
 add_filter( 'cron_schedules', 'woocommerce_ac_add_cron_schedule' );
 
@@ -224,6 +224,7 @@ function woocommerce_ac_delete(){
 				add_action('woocommerce_order_status_failed_to_processing_notification', array(&$this, 'ac_email_admin_recovery'));
 				add_action('woocommerce_order_status_failed_to_completed_notification', array(&$this, 'ac_email_admin_recovery'));
 				add_action( 'admin_init', array( $this, 'wcap_preview_emails' ) );
+				add_action('init', array( $this, 'app_output_buffer') );
 			}
 			
 			/*-----------------------------------------------------------------------------------*/
@@ -1206,6 +1207,11 @@ function woocommerce_ac_delete(){
 							location.href='admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=removetemplate&id='+id;
 					    }
 					}
+
+				    function activate_email_template( template_id, active_state ) {
+                        
+                        location.href = 'admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=activate_template&id='+template_id+'&active_state='+active_state ;
+                    }
 				    </script>
 				    
 				    <?php
@@ -1267,7 +1273,7 @@ function woocommerce_ac_delete(){
 					wp_enqueue_style( 'jquery-ui', "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" , '', '', false );					
 					wp_enqueue_style( 'woocommerce_admin_styles', plugins_url() . '/woocommerce/assets/css/admin.css' );
 					wp_enqueue_style( 'jquery-ui-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
-					
+					wp_enqueue_style( 'abandoned-orders-list', plugins_url() . '/woocommerce-abandoned-cart/css/view.abadoned.orders.style.css' );
 				 ?>
 						
 					<style>
@@ -1281,6 +1287,12 @@ function woocommerce_ac_delete(){
 				
 				<?php 
 				}
+			}
+			
+			//bulk action
+			// to over come the wp redirect warning while deleting
+			function app_output_buffer() {
+			    ob_start();
 			}
 				
 			/**
@@ -1316,7 +1328,49 @@ function woocommerce_ac_delete(){
 				 }                       
 					
 				 $this->display_tabs();
-					
+				 /**
+				  * When we delete the item from the below drop down it is registred in action 2
+				  */
+				 if ( isset( $_GET['action2'] ) ) $action_two = $_GET['action2'];
+				 else $action_two = "";
+				 
+				 // Detect when a bulk action is being triggered on abadoned orders page.
+				 if( 'wcap_delete' === $action || 'wcap_delete' === $action_two  ){
+				 
+				     $ids    = isset( $_GET['abandoned_order_id'] ) ? $_GET['abandoned_order_id'] : false;
+				     if ( ! is_array( $ids ) ){
+				         $ids = array( $ids );
+				     }
+				 
+				     foreach ( $ids as $id ) {
+				         $class = new wcap_delete_bulk_action_handler();
+				         $class->wcap_delete_bulk_action_handler_function_lite( $id );
+				     }
+				 }
+				 
+				 //Detect when a bulk action is being triggered on temnplates page.
+				 if( 'wcap_delete_template' === $action || 'wcap_delete_template' === $action_two  ){
+				 
+				     $ids    = isset( $_GET['template_id'] ) ? $_GET['template_id'] : false;
+				 
+				     if ( ! is_array( $ids ) ){
+				         $ids = array( $ids );
+				     }
+				 
+				     foreach ( $ids as $id ) {
+				         $class = new wcap_delete_bulk_action_handler();
+				         $class->wcap_delete_template_bulk_action_handler_function_lite( $id );
+				     }
+				 }
+				 
+                if ( isset($_GET ['wcap_deleted']) && 'YES' == $_GET['wcap_deleted'] ) { ?>
+                 <div id="message" class="updated fade"><p><strong><?php _e( 'The Abadoned cart has been successfully deleted.', 'woocommerce-ac' ); ?></strong></p></div>
+                 <?php }
+
+                 if ( isset($_GET ['wcap_template_deleted']) && 'YES' == $_GET['wcap_template_deleted'] ) { ?>
+                    <div id="message" class="updated fade"><p><strong><?php _e( 'The Template has been successfully deleted.', 'woocommerce-ac' ); ?></strong></p></div>
+                   <?php }
+                
 					if ( $action == 'emailsettings' ) {
 						// Save the field values
                     ?>
@@ -1338,217 +1392,20 @@ function woocommerce_ac_delete(){
 			<p> <?php _e( 'The list below shows all Abandoned Carts which have remained in cart for a time higher than the "Cart abandoned cut-off time" setting.', 'woocommerce-ac' );?> </p>
 			
 			<?php
-
-			include_once(  "pagination.class.php");
-			 
-			/* Find the number of rows returned from a query; Note: Do NOT use a LIMIT clause in this query */
-			
-			$recoverd_cart = 0;
-			$query = "SELECT wpac . * , wpu.user_login, wpu.user_email
-					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
-					  LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
-					  WHERE recovered_cart= %d ";
-			$results = $wpdb->get_results( $wpdb->prepare( $query, $recoverd_cart ) );
-			
-            $count = $wpdb->num_rows;
-            			
-			if( $count > 0 ) {
-				$p = new pagination;
-				$p->items( $count );
-				$p->limit( 10 ); // Limit entries per page
-				$p->target( "admin.php?page=woocommerce_ac_page&action=listcart" );
-				
-                if ( isset( $p->paging ) ) {
-                      if ( isset( $_GET[ $p->paging ] ) ) $p->currentPage( $_GET[ $p->paging ] ); // Gets and validates the current page
-                }
-				$p->calculate(); // Calculates what to show
-				$p->parameterName( 'paging' );
-				$p->adjacents( 1 ); //No. of page away from the current page
-				$p->showCounter( true );
-				 
-				if( !isset( $_GET[ 'paging' ] ) ) {
-					$p->page = 1;
-				} else {
-					$p->page = $_GET[ 'paging' ];
-				}
-				 
-				//Query for limit paging
-				$limit = "LIMIT " . ($p->page - 1) * $p->limit  . ", " . $p->limit;
-				$limit_one = ($p->page - 1) * $p->limit;        
-				$limit_two = $p->limit;                         
-			} else 
-			    $limit = $limit_one = $limit_two = "";
-			
-			?>
-			  
-			<div class="tablenav">
-			    <div class='tablenav-pages'>
-			    	<?php if ( $count > 0 ) echo $p->show();  // Echo out the list of paging. ?>
-			    </div>
-			</div>
-			
-			<?php 
-			
-			$order = "";
-            if( isset( $_GET[ 'order' ] ) ){
-			      $order = $_GET[ 'order' ];
-            }
-			if ( $order == "" ) {
-				 $order      = "desc";
-				 $order_next = "asc";
-			}
-			elseif ( $order == "asc" ) {
-				$order_next = "desc";
-			} elseif ( $order == "desc" ) {
-				$order_next = "asc";
-			}
-			
-			$order_by = "";
-            if( isset( $_GET[ 'orderby' ] ) ){
-			      $order_by = $_GET[ 'orderby' ];
-            }
-            if ( $order_by == "" ) {
-				 $order_by = "abandoned_cart_time";
-			}
-			/* Now we use the LIMIT clause to grab a range of rows */
-			$blank_cart_info       =  '{"cart":[]}';
-			$blank_cart_info_guest =  '[]';
-			$results = array();
-			
-		    $query = "SELECT wpac . * , wpu.user_login, wpu.user_email
-					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
-					  LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
-					  WHERE recovered_cart = %d
-					  AND wpac.abandoned_cart_info NOT LIKE %s 
-					  AND wpac.abandoned_cart_info NOT LIKE %s
-					  ORDER BY abandoned_cart_time $order LIMIT %d, %d ";        
-
-            $results = $wpdb->get_results( $wpdb->prepare( $query, $recoverd_cart,$blank_cart_info, $blank_cart_info_guest, $limit_one, $limit_two  ) );
-			
-			/* From here you can do whatever you want with the data from the $result link. */
-			
-			$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
-			
-			?> 						
-            <table class='wp-list-table widefat fixed posts' cellspacing='0' id='cart_data'>
-            	<tr>
-            	   <th> <?php _e( 'Customer', 'woocommerce-ac' ); ?> </th>
-            	   <th> <?php _e( 'Order Total', 'woocommerce-ac' ); ?> </th>
-            	   <th scope="col" id="date_ac" class="manage-column column-date_ac sorted <?php echo $order;?>" style="">
-            		<a href="admin.php?page=woocommerce_ac_page&action=listcart&orderby=abandoned_cart_time&order=<?php echo $order_next;?>">
-            		   <span> <?php _e( 'Date', 'woocommerce-ac' ); ?> </span>
-            		   <span class="sorting-indicator"></span>
-            		</a>
-            	   </th>
-            	   <th scope="col" id="status_ac" class="manage-column column-status_ac sorted <?php echo $order;?>" style="">
-            		 <a href="admin.php?page=woocommerce_ac_page&action=listcart&orderby=cart_ignored&order=<?php echo $order_next;?>">
-            			<span> <?php _e( 'Status', 'woocommerce-ac' ); ?> </span>
-            			<span class="sorting-indicator"></span>
-            		 </a>
-            	   </th>
-            	   <th> <?php _e( 'Actions', 'woocommerce-ac' ); ?> </th>
-            	</tr>
-			
-				<?php 
-				        $results_guest = '';
-				        if ( count ($results) > 0 ){
-    				        foreach ( $results as $key => $value ) {
-    						    
-    						    if ( $value->user_type == "GUEST" ) {
-    						        $query_guest = "SELECT * from `". $wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d ORDER BY `id` DESC LIMIT 1";
-    						        $results_guest = $wpdb->get_results( $wpdb->prepare( $query_guest, $value->user_id ) );
-    						        
-    						    }
-    						    $abandoned_order_id = $value->id;
-    						    $user_id            = $value->user_id;
-    						    $user_login         = $value->user_login;
-    						    
-            					if ( $value->user_type == "GUEST" ) {
-            					    
-                                        if ( isset( $results_guest[0]->email_id ) ) $user_email = $results_guest[0]->email_id;
-                                        
-                                        if ( isset( $results_guest[0]->billing_first_name ) ) $user_first_name = $results_guest[0]->billing_first_name;
-                                        else $user_first_name = "";
-                                        
-                                        if ( isset( $results_guest[0]->billing_last_name ) ) $user_last_name = $results_guest[0]->billing_last_name;
-                                        else $user_last_name = "";
-                                } else {
-                                    $user_id = $value->user_id;
-                                    $key = 'billing_email';
-                                    $single = true;
-                                    $user_billing_email = get_user_meta( $user_id, $key, $single );
-                                    $user_email = '';
-                                    if( isset($user_billing_email) && $user_billing_email !=''){
-                                        $user_email = $user_billing_email;
-                                    }else{
-                                        $user_email = $value->user_email;
-                                    }
-                                    $user_first_name_temp = get_user_meta($value->user_id, 'first_name');
-                                    if ( isset( $user_first_name_temp[0] )) $user_first_name = $user_first_name_temp[0];
-                                    else $user_first_name = "";
-                                    
-                                    $user_last_name_temp = get_user_meta($value->user_id, 'last_name');
-                                    if ( isset( $user_last_name_temp[0] )) $user_last_name = $user_last_name_temp[0];
-                                    else $user_last_name = "";
-                                }
-    													
-    							$cart_info          = json_decode( $value->abandoned_cart_info );
-    							
-    							$order_date = "";
-    							$cart_update_time = $value->abandoned_cart_time;
-    							if ( $cart_update_time != "" && $cart_update_time != 0 ) {
-    								 $order_date = date( 'd M, Y h:i A', $cart_update_time );
-    							}
-    							
-    							$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
-    							if ( isset( $ac_cutoff_time ) ) {
-    							     $cut_off_time = $ac_cutoff_time * 60;
-    							} else {
-    							     $cut_off_time = 60 * 60;
-    							}
-    							$cart_details = array();
-    							$current_time = current_time( 'timestamp' );							
-    							$compare_time = $current_time - $cart_update_time;							
-    							$cart_details = (array) $cart_info->cart;							
-    							
-    							$line_total = 0;
-    							if ( is_array ( $cart_details ) && count($cart_details) > 0 ) {
-        							foreach ( $cart_details as $k => $v )
-        							{
-        								$line_total = $line_total + $v->line_total;
-        							}
-    							}
-    							if( $value->cart_ignored == 0 && $value->recovered_cart == 0 ) {
-    								$ac_status = "Abandoned";
-    							}
-    							elseif( $value->cart_ignored == 1 && $value->recovered_cart == 0 ) {
-    								$ac_status = "Abandoned but new </br>cart created after this";
-    							} else {
-    								$ac_status = "";
-    							}
-    							
-    							?>
-    							
-    							<?php 
-    							if ( $compare_time > $cut_off_time && $ac_status != "" )
-    							{
-    							?>
-    							<tr id="row_<?php echo $abandoned_order_id; ?>">
-    								<td><strong> <a href="admin.php?page=woocommerce_ac_page&action=orderdetails&id=<?php echo $value->id;?>"><?php echo "Abandoned Order #".$abandoned_order_id;?></a></strong><?php  if( isset( $user_first_name[0] ) && isset( $user_last_name[0] ) ) { $user_name =  $user_first_name." ".$user_last_name; } echo "</br>Name: ".$user_name." <br><a href='mailto:$user_email'>".$user_email."</a>"; ?></td>
-    								<td><?php echo get_woocommerce_currency_symbol()." ".$line_total; ?></td>
-    								<td><?php echo $order_date; ?></td>
-    								<td><?php echo $ac_status; ?>
-    								<td id="<?php echo $abandoned_order_id; ?>">
-    								<?php echo "<a href='#' id='$abandoned_order_id-$user_id' class='remove_cart'> <img src='".plugins_url()."/woocommerce-abandoned-cart/images/delete.png' alt='Remove Cart Data' title='Remove Cart Data'></a>"; ?>
-    								&nbsp;
-    								
-    							</tr>
-    							
-    							<?php 
-    							}
-    						}
-				        }
-						echo "</table>";
+            global $wpdb;
+            
+            include_once('class-abandoned-orders-table.php');
+            $wcap_abandoned_order_list = new WACP_Abandoned_Orders_Table();
+            $wcap_abandoned_order_list->wcap_abadoned_order_prepare_items();
+            ?>
+            <div class="wrap">
+                <form id="wacp-abandoned-orders" method="get" >
+                    <input type="hidden" name="page" value="woocommerce_ac_page" />
+                    <?php $wcap_abandoned_order_list->display(); ?>
+                </form>
+            </div>
+            
+            <?php 
 					} elseif ( $action == 'emailtemplates' && ( $mode != 'edittemplate' && $mode != 'addnewtemplate' ) ) {
 							?>													
 							<p> <?php _e( 'Add email templates at different intervals to maximize the possibility of recovering your abandoned carts.', 'woocommerce-ac' );?> </p>
@@ -1560,7 +1417,7 @@ function woocommerce_ac_delete(){
 							    						
 								   
 								   $active_post    = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
-								   $is_wc_template = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';     //It  is fix
+								   $is_wc_template = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';     
 								   
 								if ( $active_post == 1 ) { 								    
 								    								
@@ -1870,6 +1727,23 @@ function woocommerce_ac_delete(){
 								$wpdb->query( $wpdb->prepare( $query_remove, $id_remove ) );
 							}
 							
+							if ( $action == 'emailtemplates' && $mode == 'activate_template' ) {
+							    $template_id             = $_GET['id'];
+							    $current_template_status = $_GET['active_state'];
+							
+							    if( "1" == $current_template_status ) {
+							        $active = "0";
+							    } else {
+							        $active = "1";
+							    }
+							    $query_update = "UPDATE `" . $wpdb->prefix . "ac_email_templates_lite`
+                                        SET
+                                        is_active       = '" . $active . "'
+                                        WHERE id        = '" . $template_id . "' ";
+							    $wpdb->query( $query_update );
+							
+							    wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=emailtemplates' ) );
+							}
 							
 							if ( isset( $_POST[ 'ac_settings_frm' ] ) && $_POST[ 'ac_settings_frm' ] == 'save' && (isset($insert_template_successfuly) && $insert_template_successfuly != '')) { ?>
 							<div id="message" class="updated fade"><p><strong><?php _e( 'The Email Template has been successfully added.', 'woocommerce-ac' ); ?></strong></p></div>
@@ -1894,139 +1768,19 @@ function woocommerce_ac_delete(){
 							</p>
 							
 				<?php
-				include_once( "pagination.class.php" ); 
-				 
-				/* Find the number of rows returned from a query; Note: Do NOT use a LIMIT clause in this query */
-				$wpdb->get_results( "SELECT wpet . *   
-									 FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet  
-								   "); 
-                                
-                $count = $wpdb->num_rows;
-
-				if( $count > 0 ) {
-					$p = new pagination;
-					$p->items( $count );
-					$p->limit( 10 ); // Limit entries per page
-					$p->target( "admin.php?page=woocommerce_ac_page&action=emailtemplates" );
-					if ( isset( $p->paging ) ) {
-						if ( isset( $_GET[ $p->paging ] ) ){
-						    $p->currentPage( $_GET[ $p->paging ] ); // Gets and validates the current page
-					    }
-					}    
-					$p->calculate(); // Calculates what to show
-					$p->parameterName( 'paging' );
-					$p->adjacents( 1 ); //No. of page away from the current page
-					$p->showCounter( true );
-						
-					if( !isset( $_GET[ 'paging' ] ) ) {
-						$p->page = 1;
-					} else {
-						$p->page = $_GET[ 'paging' ];
-					}
-						
-					//Query for limit paging
-					$limit = "LIMIT " . ( $p->page - 1 ) * $p->limit  . ", " . $p->limit;
-						
-				} 
-                else $limit = "";
-					
-				?>
-							  
-				    <div class='tablenav-pages'>
-				    	<?php if ( $count>0 ) echo $p->show();  // Echo out the list of paging. ?>
-				    </div>
-				</div>
-				
-				<?php 
-
-				$order = "";
-				if ( isset( $_GET[ 'order' ] ) ) {
-				    $order = $_GET[ 'order' ];
-				}    
-				if ( $order == "" ) {
-					$order      = "asc";
-					$order_next = "desc";
-				} elseif ( $order == "asc" ) {
-					$order_next = "desc";
-				} elseif ( $order == "desc" ) {
-					$order_next = "asc";
-				}
-					
-				$order_by = "";
-				if ( isset($_GET[ 'orderby' ] ) ) {
-				     $order_by = $_GET[ 'orderby' ];
-				}     
-				if ( $order_by == "" ) {
-					 $order_by = "frequency";
-				}
-				
-				$query = "SELECT wpet . *
-						  FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet
-						  ORDER BY %s %s
-						  $limit";
-				$results = $wpdb->get_results($wpdb->prepare( $query, $order_by, $order ) );
-				/* From here you can do whatever you want with the data from the $result link. */
-				?> 
-		
-			            <table class='wp-list-table widefat fixed posts' cellspacing='0' id='email_templates'>
-						<tr>
-							<th> <?php _e( 'Sr', 'woocommerce-ac' ); ?> </th>
-							<th scope="col" id="temp_name" class="manage-column column-temp_name sorted <?php echo $order;?>" style="">
-								<a href="admin.php?page=woocommerce_ac_page&action=emailtemplates&orderby=template_name&order=<?php echo $order_next;?>">
-									<span> <?php _e( 'Template Name', 'woocommerce-ac' ); ?> </span>
-									<span class="sorting-indicator"></span>
-								</a>
-							</th>
-							<th scope="col" id="sent" class="manage-column column-sent sorted <?php echo $order;?>" style="">
-								<a href="admin.php?page=woocommerce_ac_page&action=emailtemplates&orderby=frequency&order=<?php echo $order_next;?>">
-									<span> <?php _e( 'Sent', 'woocommerce-ac' ); ?> </span>
-									<span class="sorting-indicator"></span>
-								</a>
-							</th>
-							<th> <?php _e( 'Active ?', 'woocommerce-ac' ); ?> </th>
-							<th> <?php _e( 'Actions', 'woocommerce-ac' ); ?> </th>
-						</tr>
-							
-							<?php 
-						if ( isset( $_GET[ 'pageno' ] ) ){
-						     $add_var = ($_GET['pageno'] - 1) * $limit; 
-						} else {
-						     $add_var = "";
-						}    
-						$i = 1 + $add_var;
-						foreach ( $results as $key => $value )
-						{
-								$id = $value->id;
-								
-								$is_active = $value->is_active;
-								if ( $is_active == '1' )
-								{
-									$active = "Yes";
-								}
-								else
-								{
-									$active = "No";
-								}
-								$frequency   = $value->frequency;
-								$day_or_hour = $value->day_or_hour;
-								?>
-			
-								<tr id="row_<?php echo $id; ?>">
-								   <td><?php echo $i; ?></td>
-								   <td><?php echo $value->template_name; ?></td>
-								   <td><?php echo $frequency." ".$day_or_hour." After Abandonment";?></td>
-								   <td><?php echo $active; ?></td>
-								   <td>
-									<a href="admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=edittemplate&id=<?php echo $id; ?>"> <img src="<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/edit.png" alt="Edit" title="Edit" width="20" height="20"> </a>&nbsp;
-									<a href="#" onclick="delete_email_template( <?php echo $id; ?> )" > <img src="<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/delete.png" alt="Delete" title="Delete" width="20" height="20"> </a>&nbsp;
-								   </td>											
-							    </tr>
-			
-							<?php 
-							$i++;
-						}
-						echo "</table>";
-			
+					/* From here you can do whatever you want with the data from the $result link. */
+                include_once('class-templates-table.php');
+                $wcap_template_list = new WACP_Templates_Table();
+                $wcap_template_list->wcap_templates_prepare_items();
+                ?>
+                <div class="wrap">
+                    <form id="wacp-abandoned-templates" method="get" >
+                        <input type="hidden" name="page" value="woocommerce_ac_page" />
+                        <?php $wcap_template_list->display(); ?>
+                    </form>
+                </div>
+                <?php 
+              
 					}
 					elseif ($action == 'stats' || $action == '')
 					{						
@@ -2140,217 +1894,75 @@ function woocommerce_ac_delete(){
 							});
 							</script>
 														
-							<?php 
-			
-							if ( isset( $_POST[ 'start_date' ] ) ){
-							       $start_date_range = $_POST[ 'start_date' ];
-							} else {
-							       $start_date_range = "";
-							}       
-							if ( $start_date_range == "" ){
-								 $start_date_range = $date_sett[ 'start_date' ];
-							}
-							if ( isset( $_POST[ 'end_date' ] ) ){
-							       $end_date_range = $_POST[ 'end_date' ];
-							} else {
-							       $end_date_range = "";
-							}       
-							if ( $end_date_range == "" ){
-								 $end_date_range = $date_sett[ 'end_date' ];
-							}
 							
-							?>
-							
-							<label class="start_label" for="start_day"> <?php _e( 'Start Date:', 'woocommerce-ac' ); ?> </label>
-							<input type="text" id="start_date" name="start_date" readonly="readonly" value="<?php echo $start_date_range; ?>"/>
-							 
-							<label class="end_label" for="end_day"> <?php _e( 'End Date:', 'woocommerce-ac' ); ?> </label>
-							<input type="text" id="end_date" name="end_date" readonly="readonly" value="<?php echo $end_date_range; ?>"/>
-							
-							<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Go', 'woocommerce-ac' ); ?>"  />
-							</form>
-							</div>
-						</div>
 						<?php 
 						
-						global $wpdb;
-						$start_date = strtotime( $start_date_range." 00:01:01" );
-						$end_date   = strtotime( $end_date_range." 23:59:59" );
-						
-						include_once( "pagination.class.php" );
-						
-						/* Find the number of rows returned from a query; Note: Do NOT use a LIMIT clause in this query */
-					             $recoverd_cart = 0;      
-                                 $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite
-								                                      WHERE abandoned_cart_time >= %d
-								                                      AND abandoned_cart_time <= %d
-								                                      AND recovered_cart > %d 
-								                                    ",$start_date,$end_date,$recoverd_cart ) );
-                                 $count = $wpdb->num_rows;
-						
-						if ( $count > 0 ) {
-							$p = new pagination;
-							$p->items( $count );
-							$p->limit( 10 ); // Limit entries per page
-							$p->target( "admin.php?page=woocommerce_ac_page&action=stats&duration_select=$duration_range" );
-							
-                            if ( isset( $p->paging ) ) {
-                                if ( isset( $_GET[ $p->paging ] ) ) $p->currentPage( $_GET[$p->paging ] ); // Gets and validates the current page
-                            }
-							$p->calculate(); // Calculates what to show
-							$p->parameterName( 'paging' );
-							$p->adjacents( 1 ); //No. of page away from the current page
-							$p->showCounter( true );
-						
-							if ( !isset( $_GET[ 'paging' ] ) ) {
-								$p->page = 1;
-							} else {
-								$p->page = $_GET[ 'paging' ];
-							}
-						    //Query for limit paging
-							$limit_one = ($p->page - 1) * $p->limit ;
-							$limit_two = $p->limit ;
-						}
-						else
-							$limit_two = $limit_one = "";	
-						?>
-															  
-						<div class="tablenav">
-						    <div class='tablenav-pages'>
-						    	<?php if ( $count>0 ) echo $p->show();  // Echo out the list of paging. ?>
-						    </div>
-						</div>
-						
-						<?php 
-						
-						$order = "";
-						if ( isset( $_GET[ 'order' ] ) ){
-						       $order = $_GET[ 'order' ];
-						}       
-						if ( $order == "" ){
-							 $order      = "desc";
-							 $order_next = "asc";
-						} elseif ( $order == "asc" ){
-							 $order_next = "desc";
-						} elseif ( $order == "desc" )
-						{
-							 $order_next = "asc";
-						}
-						
-						$order_by = "";
-						if ( isset( $_GET[ 'orderby' ] ) ){
-						       $order_by = $_GET[ 'orderby' ];
-						}       
-						if ( $order_by == "" ){
-							   $order_by = "recovered_cart";
-						}
-						
-						$recoverd_cart = 0;
-						$query_ac = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite
-									 WHERE abandoned_cart_time >= %d
-									 AND abandoned_cart_time <= %d
-									 AND recovered_cart > %d
-								     ORDER BY $order_by $order LIMIT %d, %d";
-						$ac_results = $wpdb->get_results( $wpdb->prepare( $query_ac, $start_date, $end_date, $recoverd_cart, $limit_one, $limit_two ) );						
-												
-						$query_ac_carts = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite
-										   WHERE abandoned_cart_time >= %d
-									 	   AND abandoned_cart_time <= %d ";
-						$ac_carts_results = $wpdb->get_results($wpdb->prepare($query_ac_carts, $start_date, $end_date) );												
-						
-						$recovered_item = $recovered_total = $count_carts = $total_value = $order_total = 0;
-						foreach ( $ac_carts_results as $key => $value )
-						{
-							 							
-							{
-							    $product_details = array();
-								$count_carts += 1;
-									
-								$cart_detail     = json_decode( $value->abandoned_cart_info );
-								$product_details = (array) $cart_detail->cart;
-								
-								$line_total = 0;		
-								if ( is_array( $product_details )  && count($product_details) > 0 ) {
-    								foreach ( $product_details as $k => $v )
-    								{
-    									$line_total = $line_total + $v->line_total;
-    								}
-								}
-								$total_value += $line_total;
-							 }
-						}
-						$table_data = "";
-						$cart_blank_value = '{"cart":[]}';
-						$blank_cart_info_guest = '[]';
-						foreach ( $ac_results as $key => $value )
-						{	
-							if( $value->recovered_cart != 0 && $value->abandoned_cart_info != $cart_blank_value || $value->abandoned_cart_info != $blank_cart_info_guest )
-							{
-								$recovered_id       = $value->recovered_cart;
-								$rec_order          = get_post_meta( $recovered_id );
-								$woo_order          = new WC_Order( $recovered_id );
-								$recovered_date     = strtotime( $woo_order->order_date );
-								$recovered_date_new = date( 'd M, Y h:i A', $recovered_date );
-								$recovered_item     += 1;
-								if ( isset( $rec_order[ '_order_total' ][ 0 ] ) ) {							
-								$recovered_total    += $rec_order[ '_order_total' ][ 0 ];
-								}
-								
-								$abandoned_date            = date( 'd M, Y h:i A', $value->abandoned_cart_time );								
-								$abandoned_order_id        = $value->id;                                                                
-                                $billing_first_name        = $billing_last_name = $billing_email = ''; 
-								$recovered_order_total     = 0;
-								if ( isset( $rec_order[ '_billing_first_name' ][ 0 ] ) ) {
-									$billing_first_name    = $rec_order[ '_billing_first_name' ][ 0 ];
-								}
-								if ( isset( $rec_order[ '_billing_last_name' ][ 0 ] ) ) {
-									$billing_last_name     = $rec_order[ '_billing_last_name' ][ 0 ];
-								}
-								if ( isset( $rec_order[ '_billing_email' ][ 0 ] ) ) {
-									$billing_email         = $rec_order[ '_billing_email' ][ 0 ];
-								}
-								if ( isset( $rec_order[ '_order_total' ][ 0 ] ) ) {
-									$recovered_order_total = $rec_order[ '_order_total' ][ 0 ];
-								}
-								
-								$table_data .="<tr>
-											  <td>Name: ".$billing_first_name." ".$billing_last_name."</br><a href='mailto:'".$billing_email."'>".$billing_email."</td>
-											  <td>".$abandoned_date."</td>
-											  <td>".$recovered_date_new."</td>
-											  <td>".get_woocommerce_currency_symbol()." ".$recovered_order_total."</td>
-											  <td> <a href=\"post.php?post=". $recovered_id."&action=edit\">View Details</td>";
-							}
-						}
-						
-						?>
-						<div id="recovered_stats" class="postbox" style="display:block">
-						<div class="inside" >
-						  <p style="font-size: 15px"> <?php _e('During the selected range', 'woocommerce-ac');?> <strong> <?php echo $count_carts; ?> </strong> <?php _e('carts totaling', 'woocommerce-ac');?> <strong> <?php echo get_woocommerce_currency_symbol()." ".$total_value; ?> </strong> <?php _e('were abandoned. We were able to recover', 'woocommerce-ac');?> <strong> <?php echo $recovered_item; ?> </strong> <?php _e('of them, which led to an extra', 'woocommerce-ac');?> <strong> <?php echo get_woocommerce_currency_symbol()." ".$recovered_total; ?> </strong> <?php _e('in sales', 'woocommerce-ac');?></p>
-						</div>
-						</div>
-						
-						<table class='wp-list-table widefat fixed posts' cellspacing='0' id='cart_data'>
-												<tr>
-												<th> <?php _e( 'Customer', 'woocommerce-ac' ); ?> </th>
-												<th scope="col" id="created_date" class="manage-column column-created_date sorted <?php echo $order;?>" style="">
-													<a href="admin.php?page=woocommerce_ac_page&action=stats&orderby=abandoned_cart_time&order=<?php echo $order_next;?>&durationselect=<?php echo $duration_range;?>">
-														<span> <?php _e( 'Created On', 'woocommerce-ac' ); ?> </span>
-														<span class="sorting-indicator"></span>
-													</a>
-												</th>
-												<th scope="col" id="rec_order" class="manage-column column-rec_order sorted <?php echo $order;?>" style="">
-													<a href="admin.php?page=woocommerce_ac_page&action=stats&orderby=recovered_cart&order=<?php echo $order_next;?>&durationselect=<?php echo $duration_range;?>">
-														<span> <?php _e( 'Recovered Date', 'woocommerce-ac' ); ?> </span>
-														<span class="sorting-indicator"></span>
-													</a>
-												</th>
-												<th> <?php _e( 'Order Total', 'woocommerce-ac' ); ?> </th>
-												<th></th>
-												</tr>
-						<?php
-						echo $table_data;
-						print ('</table>');
-					}elseif ( $action == 'orderdetails' ) {
+                    include_once('class-recover-orders-table.php');
+                    
+                    $wcap_recover_orders_list = new WACP_Recover_Orders_Table();
+                    $wcap_recover_orders_list->wcap_recovered_orders_prepare_items_lite();
+                    
+                    if ( isset( $_POST['start_date'] ) ) $start_date_range = $_POST['start_date'];
+                    else $start_date_range = "";
+    
+                    if ( $start_date_range == "" ) {
+                        $start_date_range = $date_sett['start_date'];
+                    }
+    
+                    if ( isset( $_POST['end_date'] ) ) $end_date_range = $_POST['end_date'];
+                    else $end_date_range = "";
+                    
+                    if ( $end_date_range == "" ) {
+                        $end_date_range = $date_sett['end_date'];
+                    }
+                    ?>                       
+                    <label class="start_label" for="start_day"> <?php _e( 'Start Date:', 'woocommerce-ac' ); ?> </label>
+                    <input type="text" id="start_date" name="start_date" readonly="readonly" value="<?php echo $start_date_range; ?>"/>     
+                    <label class="end_label" for="end_day"> <?php _e( 'End Date:', 'woocommerce-ac' ); ?> </label>
+                    <input type="text" id="end_date" name="end_date" readonly="readonly" value="<?php echo $end_date_range; ?>"/>  
+                    <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Go', 'woocommerce-ac' ); ?>"  />
+                    </form>
+                    </div>
+                </div>
+                <div id="recovered_stats" class="postbox" style="display:block">
+                    <div class="inside" >
+                    <p style="font-size: 15px"><?php  _e( 'During the selected range ', 'woocommerce-ac' ); ?>
+                        <strong>
+                            <?php $count = $wcap_recover_orders_list->total_abandoned_cart_count; 
+                                  echo $count; ?> 
+                        </strong>
+                        <?php _e( 'carts totaling', 'woocommerce-ac' ); ?> 
+                        <strong> 
+                            <?php $total_of_all_order = $wcap_recover_orders_list->total_order_amount; 
+                                   
+                            echo get_woocommerce_currency_symbol().$total_of_all_order; ?>
+                         </strong>
+                         <?php _e( ' were abandoned. We were able to recover', 'woocommerce-ac' ); ?> 
+                         <strong>
+                            <?php 
+                            $recovered_item = $wcap_recover_orders_list->recovered_item;
+                            
+                            echo $recovered_item; ?>
+                         </strong>
+                         <?php _e( ' of them, which led to an extra', 'woocommerce-ac' ); ?> 
+                         <strong>
+                            <?php 
+                                $recovered_total = $wcap_recover_orders_list->total_recover_amount;
+                                echo get_woocommerce_currency_symbol().$recovered_total; ?>
+                         </strong>
+                         <?php //_e( ' in sales', 'woocommerce-ac' ); ?>
+                     </p>
+                    </div>
+                </div>
+              
+                <div class="wrap">
+                    <form id="wacp-recover-orders" method="get" >
+                        <input type="hidden" name="page" value="woocommerce_ac_page" />
+                        <?php $wcap_recover_orders_list->display(); ?>
+                    </form>
+                </div>
+                <?php
+				}elseif ( $action == 'orderdetails' ) {
                             $ac_order_id = $_GET['id'];
                             ?>
                             <p> </p>
