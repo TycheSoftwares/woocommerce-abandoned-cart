@@ -1374,7 +1374,7 @@ function woocommerce_ac_delete(){
 					if ( $action == 'emailsettings' ) {
 						// Save the field values
                     ?>
-					    <p><?php _e( 'Change settings for sending email notifications to Customers after X minute, to Admin.', 'woocommerce-ac' ); ?></p>
+					    <p><?php _e( 'Change settings for sending email notifications to Customers after X minute.', 'woocommerce-ac' ); ?></p>
                         <div id="content">
 
 							<form method="post" action="options.php">
