@@ -2183,188 +2183,20 @@ function woocommerce_ac_delete(){
                                 </div>
                              </div>                
                             <?php } elseif ( $action == 'report' ) {
-						
-								$order = "";
-
-								if ( isset( $_GET['order'] ) ) $order = $_GET['order'];
-
-								if ( $order == "" ) {
-									$order = "desc";
-									$order_next = "asc";
-								} elseif ( $order == "asc" ) {
-									$order_next = "desc";
-								} elseif ( $order == "desc" ) {
-									$order_next = "asc";
-								}
-								
-								$product_name_by = "";
-                                $order_by = "";
-                                                                
-								if ( isset( $_GET['orderby'] ) ) $order_by = $_GET['orderby'];
-
-								if ( $order_by == "" ) {
-									$order_by = "recovered_cart";
-								}
-								$query = "SELECT abandoned_cart_time, abandoned_cart_info, recovered_cart FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` ORDER BY $order_by $order";
-								$recover_query =  $wpdb->get_results( $query );
-								
-								
-						?>
-						
-						
-						
-						<table class='wp-list-table widefat fixed posts' cellspacing='0' id='cart_data'>
-    						<thead>
-                                <tr class="type-page status-publish hentry  iedit author-self level-0">
-                                    <th> <?php _e( 'Product Name', 'woocommerce-ac' ); ?> </th>
-                                    <th  id="abandoned_report_ac" >
-                                         <?php _e( 'Number of Times Abandoned', 'woocommerce-ac' ); ?> 
-                                    </th>
-                                     <th id="recovered_report_ac" >
-                                             <?php _e( 'Number of Times Recovered', 'woocommerce-ac' ); ?>  
-                                    </th>
-                                </tr>
-    						</thead>
-						<?php 
-
-						$query                 = "SELECT abandoned_cart_time, abandoned_cart_info, recovered_cart FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` ORDER BY $order_by $order";
-						$recover_query         =  $wpdb->get_results( $query );
-						$rec_carts_array       = array ( );
-						$recover_product_array = array( );
-							
-							foreach ( $recover_query as $recovered_cart_key => $recovered_cart_value ) {
-							    
-							    $recovered_cart_info = json_decode( $recovered_cart_value->abandoned_cart_info );
-							    
-								$recovered_cart_dat  = json_decode( $recovered_cart_value->recovered_cart);
-								$order_date          = "";
-								$cart_update_time    = $recovered_cart_value->abandoned_cart_time;
-								$quantity_total      = 0;
-								$cart_details        = array();
-								if( isset( $recovered_cart_info->cart ) ){
-								    $cart_details = $recovered_cart_info->cart;
-								}
-								
-								if ( count( $cart_details ) > 0) {
-								   
-									foreach ( $cart_details as $k => $v ) {
-												
-										$quantity_total = $quantity_total + $v->quantity;
-									}
-								}
-											
-								if ( $cart_update_time != "" && $cart_update_time != 0 ) {
-									$order_date = date( 'd M, Y h:i A', $cart_update_time );
-								}
-
-								$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
-								if ( isset( $ac_cutoff_time ) ) {
-								    $cut_off_time = $ac_cutoff_time * 60;
-								}
-								$current_time   = current_time( 'timestamp' );
-								$compare_time   = $current_time - $cart_update_time;
-								
-								
-								if ( is_array( $recovered_cart_info ) || is_object( $recovered_cart_info ) ) {
-    								foreach ( $recovered_cart_info as $rec_cart_key => $rec_cart_value ) {
-    									foreach ( $rec_cart_value as $rec_product_id_key => $rec_product_id_value ) {
-    										$product_id	= $rec_product_id_value->product_id;
-    										
-    										if ( $compare_time > $cut_off_time ) {
-    											  $rec_carts_array [] = $product_id;
-    										}
-    										if($recovered_cart_dat != 0) {
-    											$recover_product_array[] = $product_id;
-                                            }
-    									}
-    								}
-								}
-							}
-							$count        = array_count_values( $rec_carts_array );
-							 
-							$count1       = $count;
-							$count_new    = $this->bubble_sort_function ( $count1 ,$order, $order_by );
-							
-                            $recover_cart = "0";
-							$count_css    = 0;
-                            $chunck_array = array_chunk( $count_new,10, true );  // keep True for retaing the Array Index number which is product ids in our case.
-                            
-                            $new_chunked_array = array();
-                            if ( isset( $_GET['paging'] ) ) {
-                                $page              = $_GET['paging'] - 1 ;
-                                $new_chunked_array = $chunck_array[ $page ];
-                            } else {
-                                if( !empty( $chunck_array ) ) {
-                                    $new_chunked_array = $chunck_array[0];
-                                }
-                            }
-                            
-                        /* Now we use the LIMIT clause to grab a range of rows */
-						include_once( "pagination.class.php" );
-						$wpdb->get_results( "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`" );
-						$count_page = $wpdb->num_rows;
-						$count_page = count( $count_new );
-
-						if ( $count_page > 0 ) {
-							$p = new pagination;
-							$p -> items( $count_page );
-							$p -> limit( 10 ); // Limit entries per page
-							$p -> target( "admin.php?page=woocommerce_ac_page&action=report" );
-							
-							if ( isset( $p->paging ) ) {
-								
-								if ( isset( $_GET[ $p->paging ] ) ) $p->currentPage( $_GET[ $p->paging ] ); // Gets and validates the current page
-							}
-							$p  ->calculate(); // Calculates what to show
-							$p  ->parameterName( 'paging' );
-							$p  ->adjacents( 1 ); //No. of page away from the current page
-							$p  ->showCounter( true );
-							 
-							if ( ! isset( $_GET['paging'] ) ) {
-								$p->page = 1;
-							} else {
-								$p->page = $_GET['paging'];
-							}
-							 
-							//Query for limit paging
-							$limit = "LIMIT " . ( $p->page - 1 ) * $p->limit  . ", " . $p->limit; 
-						} else $limit = "";
-						
-						?>
-						  
-						<div class="tablenav">
-							<div class='tablenav-pages'>
-								<?php if ( $count_page > 0 ) echo $p->show();  // Echo out the list of paging. ?>
-							</div>
-						</div>
-						<?php
-						
-							foreach ( $new_chunked_array as $k => $v ) {
-								$prod_name       = get_post( $k );
-								$product_name    = $prod_name->post_title;
-								$abandoned_count = $v;
-								$recover         = array_count_values( $recover_product_array );
-								foreach ( $recover as $ke => $ve ) {
-											if(array_key_exists ( $ke, $count ) ) {	
-                                                                                   
-												if ( $ke == $k ) {
-													$recover_cart = $ve;
-												}
-											}
-											if( ! array_key_exists ( $k, $recover ) ) {
-												 
-													$recover_cart = "0";
-											 }
-									}
-										?>
-										<tr class="<?php echo ( ++$count_css % 2 ) ? "" : "alternate"; ?>">
-											<td> <a href="post.php?post=<?php echo $k; ?>&action=edit" title="product name"> <?php echo $product_name; ?> </a> </td>
-											<td> <?php echo $abandoned_count; ?> </td>
-											<td> <?php echo $recover_cart; ?> </td>
-										</tr>
-										<?php
-								}			
-					       }
+                                include_once('class-product-report-table.php');
+                                
+                                $wcap_product_report_list = new WACP_Product_Report_Table();
+                                $wcap_product_report_list->wcap_product_report_prepare_items_lite();
+                                
+                                ?>
+    						    <div class="wrap">
+            					    <form id="wacp-sent-emails" method="get" >
+            					        <input type="hidden" name="page" value="woocommerce_ac_page" />
+                                                <?php $wcap_product_report_list->display(); ?>
+                                    </form>
+                                </div>
+    						                            
+                            <?php }
 					}
                          echo( "</table>" );
 							
@@ -2674,7 +2506,7 @@ function woocommerce_ac_delete(){
 				
 			}
 
-			function bubble_sort_function( $unsort_array, $order, $order_by ) {
+			function bubble_sort_function( $unsort_array, $order ) {
 			
 			    $temp = array();
 			    foreach ( $unsort_array as $key => $value )

@@ -23,7 +23,14 @@ class WACP_Templates_Table extends WP_List_Table {
 	 */
 	public $base_url;
 
-
+	/**
+	 * Total number of bookings
+	 *
+	 * @var int
+	 * @since 2.5.3
+	 */
+	public $total_count;
+	
     /**
 	 * Get things started
 	 *
