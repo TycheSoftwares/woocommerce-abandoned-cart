@@ -204,10 +204,6 @@ function woocommerce_ac_delete(){
 				add_action ( 'admin_enqueue_scripts', array( &$this, 'my_enqueue_scripts_css' ) );
 				
 				if ( is_admin() ) {
-					if ( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == "woocommerce_ac_page" )	{
-						add_action ( 'admin_head', array( &$this, 'tinyMCE_ac' ) );
-					}
-					
 					// Load "admin-only" scripts here
 					add_action ( 'admin_head', array( &$this, 'my_action_javascript' ) );
 					add_action ( 'wp_ajax_remove_cart_data', array( &$this, 'remove_cart_data' ) );
@@ -1111,9 +1107,20 @@ function woocommerce_ac_delete(){
  			}
 			
 			function action_admin_init() {
+			    global $typenow;
 				// only hook up these filters if we're in the admin panel, and the current user has permission
-				// to edit posts and pages				
-				if ( current_user_can( 'edit_posts' ) && current_user_can( 'edit_pages' ) ) {
+				// to edit posts and pages
+			    if ( !current_user_can( 'edit_posts' ) && !current_user_can( 'edit_pages' ) ) {
+			        return;
+			    }
+			    
+			    if ( !isset( $_GET['page'] ) || $_GET['page'] != "woocommerce_ac_page" ) {
+			        return;
+			    }
+			    				
+				if ( get_user_option( 'rich_editing' ) == 'true' ) {
+				    remove_filter( 'the_excerpt', 'wpautop' );
+				    add_filter('tiny_mce_before_init', array( &$this, 'myformatTinyMCE_ac'));
 					add_filter( 'mce_buttons', array( &$this, 'filter_mce_button' ) );
 					add_filter( 'mce_external_plugins', array( &$this, 'filter_mce_plugin' ) );
 				}
@@ -1121,7 +1128,7 @@ function woocommerce_ac_delete(){
 			
 			function filter_mce_button( $buttons ) {
 				// add a separation before our button, here our button's id is &quot;mygallery_button&quot;
-				array_unshift( $buttons, 'abandoncart_email_variables', '|' );
+				array_push( $buttons, 'abandoncart', '|' );
 				return $buttons;
 			}
 			
@@ -1215,54 +1222,40 @@ function woocommerce_ac_delete(){
 				    </script>
 				    
 				    <?php
-				    wp_enqueue_script( 'tinyMCE_ac', plugins_url() . '/woocommerce-abandoned-cart/js/tinymce/jscripts/tiny_mce/tiny_mce.js' );
-				    wp_enqueue_script( 'ac_email_variables', plugins_url() . '/woocommerce-abandoned-cart/js/abandoncart_plugin_button.js' );
-				    ?>
+				    $js_src = includes_url('js/tinymce/') . 'tinymce.min.js';
 				    
-				    <?php
+				    wp_enqueue_script( 'tinyMce_ac',$js_src );
+				    wp_enqueue_script( 'ac_email_variables', plugins_url() . '/woocommerce-abandoned-cart/js/abandoncart_plugin_button.js' );
+				    
 				}
 			
 			}
 			
-			function tinyMCE_ac(){
-			
-				?>
-				<script language="javascript" type="text/javascript">
-				tinyMCE.init({
-					theme : "advanced",
-					mode: "exact",
-					elements : "woocommerce_ac_email_body",
-					theme_advanced_toolbar_location : "top",
-					theme_advanced_buttons1 : "abandoncart_email_variables,separator,code,separator,preview,separator,bold,italic,underline,strikethrough,separator,"
-					+ "justifyleft,justifycenter,justifyright,justifyfull,formatselect,"
-					+ "bullist,numlist,outdent,indent,separator,"
-					+ "cut,copy,paste,separator,sub,sup,charmap",
-					theme_advanced_buttons2 : "formatselect,fontselect,fontsizeselect,styleselect,forecolor,backcolor,forecolorpicker,backcolorpicker,separator,link,unlink,anchor,image,separator,"
-					+"undo,redo,cleanup"
-					+"image", 
-					height:"500px",
-					width:"1000px",
-					apply_source_formatting : true,
-					cleanup: true,
-					plugins : "advhr,emotions,fullpage,fullscreen,iespell,media,paste,nonbreaking,pagebreak,preview,print,spellchecker,visualchars,searchreplace,insertdatetime,table,directionality,layer,style,xhtmlxtras,abandoncart",
-			        theme_advanced_buttons4 : "advhr,emotions,fullpage,fullscreen,iespell,media,nonbreaking,pagebreak,print,spellchecker,visualchars,searchreplace,insertdatetime,directionality,layer,style,xhtmlxtras,insertlayer,moveforward,movebackward,absolute,cite,ins,del,abbr,acronym,attribs,help,hr,removeformat",
-			        theme_advanced_buttons3 : "tablecontrols,search,replace,pastetext,pasteword,selectall,styleprops,ltr,rtl,visualaid,newdocument,blockquote",
-			        extended_valid_elements : "hr[class|width|size|noshade]",
-			        fullpage_fontsizes : '13px,14px,15px,18pt,xx-large',
-			        fullpage_default_xml_pi : false,
-			        fullpage_default_langcode : 'en',
-			        fullpage_default_title : "My document title",
-			        table_styles : "Header 1=header1;Header 2=header2;Header 3=header3",
-			        table_cell_styles : "Header 1=header1;Header 2=header2;Header 3=header3;Table Cell=tableCel1",
-			        table_row_styles : "Header 1=header1;Header 2=header2;Header 3=header3;Table Row=tableRow1",
-			        table_cell_limit : 100,
-			        table_row_limit : 5,
-			        table_col_limit : 5,
-                    convert_urls : false
-				});
-					
-				</script>
-				<?php
+			function myformatTinyMCE_ac( $in ) {
+			    
+			    $in['force_root_block']             = false;
+			    $in['valid_children']               = '+body[style]';
+			    $in['remove_linebreaks']            = false;
+			    $in['gecko_spellcheck']             = false;
+			    $in['keep_styles']                  = true;
+			    $in['accessibility_focus']          = true;
+			    $in['tabfocus_elements']            = 'major-publishing-actions';
+			    $in['media_strict']                 = false;
+			    $in['paste_remove_styles']          = false;
+			    $in['paste_remove_spans']           = false;
+			    $in['paste_strip_class_attributes'] = 'none';
+			    $in['paste_text_use_dialog']        = true;
+			    $in['wpeditimage_disable_captions'] = true;
+			    $in['wpautop']                      = false;
+			    $in['apply_source_formatting']      = true;
+			    $in['cleanup']                      = true;
+			    $in['convert_newlines_to_brs']      = FALSE; 
+			    $in['fullpage_default_xml_pi']      = false; 
+			    $in['convert_urls']                 = false;
+			    // Do not remove redundant BR tags
+			    $in['remove_redundant_brs']         = false;
+			    
+			    return $in;
 			}
 			
 			function my_enqueue_scripts_css( $hook ) {
@@ -1274,18 +1267,7 @@ function woocommerce_ac_delete(){
 					wp_enqueue_style( 'woocommerce_admin_styles', plugins_url() . '/woocommerce/assets/css/admin.css' );
 					wp_enqueue_style( 'jquery-ui-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
 					wp_enqueue_style( 'abandoned-orders-list', plugins_url() . '/woocommerce-abandoned-cart/css/view.abadoned.orders.style.css' );
-				 ?>
-						
-					<style>
-					span.mce_abandoncart_email_variables 
-					{
-					    background-image: url("<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/ac_editor_icon.png") !important;
-					    background-position: center center !important;
-					    background-repeat: no-repeat !important;
-					}
-					</style>
 				
-				<?php 
 				}
 			}
 			
@@ -1599,9 +1581,6 @@ function woocommerce_ac_delete(){
                         									         $id )
 									        
 									     );
-									    
-									    
-									    
 									}
 									else {
 									    
@@ -1768,7 +1747,7 @@ function woocommerce_ac_delete(){
 							</p>
 							
 				<?php
-					/* From here you can do whatever you want with the data from the $result link. */
+				/* From here you can do whatever you want with the data from the $result link. */
                 include_once('class-templates-table.php');
                 $wcap_template_list = new WACP_Templates_Table();
                 $wcap_template_list->wcap_templates_prepare_items();

@@ -1,53 +1,59 @@
-(
-        function(){
-       
-                tinymce.create(
-                        "tinymce.plugins.abandoncart",
-                        {
-                                init: function(d,e) {},
-                                createControl:function(d,e)
-                                {
-                               
-                                        if(d=="abandoncart_email_variables"){
-                                       
-                                                d=e.createMenuButton( "abandoncart_email_variables",{
-                                                        title:"Custom Fields",
-                                                        icons:false
-                                                        });
-                                                       
-                                                        var a=this;d.onRenderMenu.add(function(c,b){
-                                                               
-                                                               
-                                                                a.addImmediate(b,"Customer First Name", '{{customer.firstname}}');
-                                                                a.addImmediate(b,"Customer Last Name", '{{customer.lastname}}');
-                                                                a.addImmediate(b,"Customer Full Name", '{{customer.fullname}}');
-                                                                
-																b.addSeparator();
-																
-																a.addImmediate(b,"Product Information/Cart Content", '{{products.cart}}');
-																
-																b.addSeparator();
-																
-																a.addImmediate(b,"Cart Link", '{{cart.link}}'); 
-																
-																b.addSeparator();
-																
-																a.addImmediate(b,"Date when Cart was abandoned", '{{cart.abandoned_date}}');
-																
-                                                               
-                                                        });
-                                                return d
-                                       
-                                        } // End IF Statement
-                                       
-                                        return null
-                                },
+(function() {
+
+	tinymce.PluginManager.add('abandoncart', function(editor, url) {
+
+	
+    editor.addButton('abandoncart', {
+        type: 'menubutton',
+        text: false,
+        icon: "abandoncart_email_variables",
+        menu: [
+               {
+                   text: 'Customer First Name',
+                   value: '{{customer.firstname}} <br>',
+                   onclick: function() {
+                       editor.insertContent(this.value());
+                   }
+               },
+               {
+                   text: 'Customer Last Name',
+                   value: '{{customer.lastname}} <br>',
+                   onclick: function() {
+                       editor.insertContent(this.value());
+                   }
+               },
+               {
+                   text: 'Customer Full Name',
+                   value: '{{customer.fullname}}  <br>',
+                   onclick: function() {
+                       editor.insertContent(this.value());
+                   }
+               },
+               {
+                   text: 'Product Information/Cart Content',
+                   value: '{{products.cart}} <br>',
+                   onclick: function() {
+                       editor.insertContent(this.value());
+                   }
+               },
+               {
+                   text: 'Cart Link',
+                   value: '{{cart.link}} <br>',
+                   onclick: function() {
+                       editor.insertContent(this.value());
+                   }
+               },
+               {
+                   text: 'Date when Cart was abandoned',
+                   value: '{{cart.abandoned_date}} <br>',
+                   onclick: function() {
+                       editor.insertContent(this.value());
+                   }
+               }
                
-                                addImmediate:function(d,e,a){d.add({title:e,onclick:function(){tinyMCE.activeEditor.execCommand( "mceInsertContent",false,a)}})}
-                               
-                        }
-                );
-               
-                tinymce.PluginManager.add( "abandoncart", tinymce.plugins.abandoncart);
-        }
-)();
+           ]
+    });
+
+});
+
+})();

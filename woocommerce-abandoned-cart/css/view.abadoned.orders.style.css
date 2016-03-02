@@ -36,3 +36,9 @@ span.mce_abandoncart_email_variables_css {
 table.wp-list-table .column-sr {
 	width:4% !important;
 }
+
+i.mce-i-abandoncart_email_variables {
+    background-image: url(../images/ac_editor_icon.png) ;
+    width: 30px;
+    height: 30px;
+}
