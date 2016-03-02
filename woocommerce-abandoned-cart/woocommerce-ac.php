@@ -2322,11 +2322,23 @@ function woocommerce_ac_delete(){
 													{
 														$initial_data = stripslashes( $results[0]->body );
 													}
-																										
-													echo "<textarea id='woocommerce_ac_email_body' name='woocommerce_ac_email_body' rows='15'' cols='80'>".$initial_data."</textarea>";
+													
+													wp_editor(
+													$initial_data,
+													'woocommerce_ac_email_body',
+													array(
+													'media_buttons' => true,
+													'textarea_rows' => 15,
+													'tabindex' => 4,
+													'tinymce' => array(
+													'theme_advanced_buttons1' => 'bold,italic,underline,|,bullist,numlist,blockquote,|,link,unlink,|,spellchecker,fullscreen,|,formatselect,styleselect'
+													
+													    ),
+													)
+													);
+													
 													?>
-				    								
-				    									<?php echo stripslashes(get_option( 'woocommerce_ac_email_body' )); ?>
+													<?php echo stripslashes(get_option( 'woocommerce_ac_email_body' )); ?>
 				    									<span class="description"><?php
 				    										echo __( 'Message to be sent in the reminder email.', 'woocommerce-ac' );
 				    									?></span>
