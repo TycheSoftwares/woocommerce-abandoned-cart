@@ -209,8 +209,16 @@ class WACP_Abandoned_Orders_Table extends WP_List_Table {
     		
     		        if ( isset( $results_guest[0]->billing_last_name ) ) $user_last_name = $results_guest[0]->billing_last_name;
     		        else $user_last_name = "";
+    		        
     		    } else {
-        		   $user_email = $value->user_email;
+    		        
+    		        $user_email_temp = get_user_meta($value->user_id, 'billing_email'); 
+    		        if ( isset( $user_email_temp[0] ) ) {             
+    		            $user_email = $user_email_temp[0];            
+    		        }else {                                       
+    		            $user_email = "";         
+    		        }
+        		   
     		        $user_first_name_temp = get_user_meta($value->user_id, 'first_name');
     		        if ( isset( $user_first_name_temp[0] ) ) {
     		            $user_first_name = $user_first_name_temp[0];
