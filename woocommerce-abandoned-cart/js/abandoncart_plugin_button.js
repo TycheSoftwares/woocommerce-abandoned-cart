@@ -10,42 +10,42 @@
         menu: [
                {
                    text: 'Customer First Name',
-                   value: '{{customer.firstname}} <br>',
+                   value: '{{customer.firstname}}',
                    onclick: function() {
                        editor.insertContent(this.value());
                    }
                },
                {
                    text: 'Customer Last Name',
-                   value: '{{customer.lastname}} <br>',
+                   value: '{{customer.lastname}}',
                    onclick: function() {
                        editor.insertContent(this.value());
                    }
                },
                {
                    text: 'Customer Full Name',
-                   value: '{{customer.fullname}}  <br>',
+                   value: '{{customer.fullname}}',
                    onclick: function() {
                        editor.insertContent(this.value());
                    }
                },
                {
                    text: 'Product Information/Cart Content',
-                   value: '{{products.cart}} <br>',
+                   value: '{{products.cart}}',
                    onclick: function() {
                        editor.insertContent(this.value());
                    }
                },
                {
                    text: 'Cart Link',
-                   value: '{{cart.link}} <br>',
+                   value: '{{cart.link}}',
                    onclick: function() {
                        editor.insertContent(this.value());
                    }
                },
                {
                    text: 'Date when Cart was abandoned',
-                   value: '{{cart.abandoned_date}} <br>',
+                   value: '{{cart.abandoned_date}}',
                    onclick: function() {
                        editor.insertContent(this.value());
                    }

@@ -14,10 +14,7 @@ class default_template_settings {
        $active_post_array      = 0;
        $email_frequency_array  = 1;
        $day_or_hour_array      = 'Hours';
-       $body_content_array     =  addslashes("<html>
-                                   <head>
-                                       <title>My document title</title>
-                                   </head>
+       $body_content_array     =  addslashes("<html>                                   
                                        <body>
                                        <p> Hello {{customer.fullname}}, </p>
                                        <p> &nbsp; </p>

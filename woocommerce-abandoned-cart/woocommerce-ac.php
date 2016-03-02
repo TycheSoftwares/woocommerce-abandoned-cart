@@ -2323,6 +2323,8 @@ function woocommerce_ac_delete(){
 														$initial_data = stripslashes( $results[0]->body );
 													}
 													
+													$initial_data = str_replace ( "My document title", "", $initial_data );
+													
 													wp_editor(
 													$initial_data,
 													'woocommerce_ac_email_body',
