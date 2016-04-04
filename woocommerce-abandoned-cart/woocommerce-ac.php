@@ -13,7 +13,7 @@ if( session_id() === '' ){
     session_start();
 }
 // Deletion Settings
-register_uninstall_hook( __FILE__, 'woocommerce_ac_delete' );
+register_uninstall_hook( __FILE__, 'woocommerce_ac_delete_lite' );
 
 include_once( "woocommerce_guest_ac.class.php" );
 include_once( "default-settings.php" );
@@ -36,14 +36,14 @@ if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
 }
 
 // Hook into that action that'll fire every 5 minutes
-add_action( 'woocommerce_ac_send_email_action', 'woocommerce_ac_send_email_cron' );
-function woocommerce_ac_send_email_cron() {
+add_action( 'woocommerce_ac_send_email_action', 'woocommerce_ac_send_email_cron_lite' );
+function woocommerce_ac_send_email_cron_lite() {
     //require_once( ABSPATH.'wp-content/plugins/woocommerce-abandoned-cart/cron/send_email.php' );
     $plugin_dir_path = plugin_dir_path( __FILE__ );
     require_once( $plugin_dir_path . 'cron/send_email.php' );
 }
 
-function woocommerce_ac_delete(){
+function woocommerce_ac_delete_lite(){
 	
 	global $wpdb;
 	$table_name_ac_abandoned_cart_history = $wpdb->prefix . "ac_abandoned_cart_history_lite";
@@ -398,8 +398,8 @@ function woocommerce_ac_delete(){
 				if( !get_option( 'woocommerce_ac_default_templates_installed' ) ) {
 				
 				    if( 0 == $check_table_empty ) {
-				        $default_template = new default_template_settings;
-				        $default_template->create_default_templates();
+				        $default_template = new default_template_settings_lite;
+				        $default_template->create_default_templates_lite();
 				        update_option( 'woocommerce_ac_default_templates_installed', "yes" );
 				    }
 				}
@@ -1325,7 +1325,7 @@ function woocommerce_ac_delete(){
 				     }
 				 
 				     foreach ( $ids as $id ) {
-				         $class = new wcap_delete_bulk_action_handler();
+				         $class = new wcap_delete_bulk_action_handler_lite();
 				         $class->wcap_delete_bulk_action_handler_function_lite( $id );
 				     }
 				 }

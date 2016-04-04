@@ -1,10 +1,10 @@
 <?php
-class default_template_settings {
+class default_template_settings_lite {
    /* This function will load default template while activating the plugin.
     * 
     * @since: AFter 2.5 version
     */
-   function create_default_templates() {
+   function create_default_templates_lite() {
        global $wpdb;
 
        $template_name_array    = 'Initial';

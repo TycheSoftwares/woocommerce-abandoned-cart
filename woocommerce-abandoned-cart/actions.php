@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @return void
  */
 
-class wcap_delete_bulk_action_handler{
+class wcap_delete_bulk_action_handler_lite{
 
     function wcap_delete_bulk_action_handler_function_lite( $abadoned_cart_id ) {
         global $wpdb;
