@@ -19,9 +19,9 @@ include_once( "woocommerce_guest_ac.class.php" );
 include_once( "default-settings.php" );
 require_once( "actions.php" );
 // Add a new interval of 5 minutes
-add_filter( 'cron_schedules', 'woocommerce_ac_add_cron_schedule' );
+add_filter( 'cron_schedules', 'woocommerce_ac_add_cron_schedule_lite' );
 
-function woocommerce_ac_add_cron_schedule( $schedules ) {
+function woocommerce_ac_add_cron_schedule_lite( $schedules ) {
 	
     $schedules['5_minutes'] = array(
                 'interval'  => 300 , // 5 minutes in seconds
