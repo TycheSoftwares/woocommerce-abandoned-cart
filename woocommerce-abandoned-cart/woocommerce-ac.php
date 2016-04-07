@@ -1516,6 +1516,7 @@ function woocommerce_ac_delete_lite(){
 									                                  $woocommerce_ac_template_name, 
 									                                  $woocommerce_ac_from_name,
 									                                  $is_wc_template,
+									                                  $default_value,
 									                                  $woocommerce_ac_email_reply,
 									                                  $woocommerce_ac_email_from,
 									                                  $woocommerce_ac_email_header )
