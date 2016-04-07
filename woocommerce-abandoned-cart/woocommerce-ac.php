@@ -24,6 +24,7 @@ add_filter( 'cron_schedules', 'woocommerce_ac_add_cron_schedule_lite' );
 function woocommerce_ac_add_cron_schedule_lite( $schedules ) {
 	
     $schedules['15_minutes_lite'] = array(
+                'interval'  => 900 , // 15 minutes in seconds
                 'display'   => __( 'Once Every Fifteen Minutes' ),
     );
     return $schedules;
