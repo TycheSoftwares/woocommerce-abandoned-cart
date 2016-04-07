@@ -147,7 +147,7 @@ class WACP_Product_Report_Table extends WP_List_Table {
 	public function wacp_product_report_lite_data () { 
     		global $wpdb;
     		
-    		$wcap_class = new woocommerce_abandon_cart ();
+    		$wcap_class = new woocommerce_abandon_cart_lite ();
     		$i = 1;
     		
     		$order                 = "desc";

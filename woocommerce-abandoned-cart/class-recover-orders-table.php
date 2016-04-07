@@ -184,7 +184,7 @@ public function wcap_recovered_orders_prepare_items_lite() {
 	public function wacp_recovered_orders_data_lite() { 
     		global $wpdb;
     		
-    		$wcap_class = new woocommerce_abandon_cart ();
+    		$wcap_class = new woocommerce_abandon_cart_lite ();
     		
     		if ( isset( $_POST['duration_select'] ) ) $duration_range = $_POST['duration_select'];
     		else $duration_range = "";
