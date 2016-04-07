@@ -1,6 +1,6 @@
 <?php 
 /*
-Plugin Name: WooCommerce Abandon Cart Lite Plugin
+Plugin Name: Abandoned Cart Lite for WooCommerce
 Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
 Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
 Version: 2.6
@@ -23,16 +23,15 @@ add_filter( 'cron_schedules', 'woocommerce_ac_add_cron_schedule_lite' );
 
 function woocommerce_ac_add_cron_schedule_lite( $schedules ) {
 	
-    $schedules['5_minutes'] = array(
-                'interval'  => 300 , // 5 minutes in seconds
-                'display'   => __( 'Once Every Five Minutes' ),
+    $schedules['15_minutes_lite'] = array(
+                'display'   => __( 'Once Every Fifteen Minutes' ),
     );
     return $schedules;
 }
 
 // Schedule an action if it's not already scheduled
 if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
-    wp_schedule_event( time(), '5_minutes', 'woocommerce_ac_send_email_action' );
+    wp_schedule_event( time(), '15_minutes_lite', 'woocommerce_ac_send_email_action' );
 }
 
 // Hook into that action that'll fire every 5 minutes
@@ -120,11 +119,11 @@ function woocommerce_ac_delete_lite(){
 	
 }
 	/**
-	 * woocommerce_abandon_cart class
+	 * woocommerce_abandon_cart_lite class
 	 **/
-	if ( !class_exists( 'woocommerce_abandon_cart' ) ) {
+	if ( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 	
-		class woocommerce_abandon_cart {
+		class woocommerce_abandon_cart_lite {
 			
 			var $one_hour;
 			var $three_hours;
@@ -221,6 +220,33 @@ function woocommerce_ac_delete_lite(){
 				add_action('woocommerce_order_status_failed_to_completed_notification', array(&$this, 'ac_email_admin_recovery'));
 				add_action( 'admin_init', array( $this, 'wcap_preview_emails' ) );
 				add_action('init', array( $this, 'app_output_buffer') );
+				
+				add_action( 'admin_init', array( &$this, 'wcap_check_pro_activated' ) );
+			}
+			
+			
+			
+			/**
+			 * Check If Pro is activated along with Lite version.
+			 */
+			public static function wcap_check_pro_activated() {
+			
+			    if ( is_plugin_active( 'woocommerce-abandon-cart-pro/woocommerce-ac.php' ) && class_exists( 'woocommerce_abandon_cart' ) ) {
+			         add_action( 'admin_notices', array( 'woocommerce_abandon_cart_lite', 'wcap_check_pro_notice' ) );
+			    }
+			}
+			
+			/**
+			 * Display a notice in the admin Plugins page if the LITE version is
+			 * activated whith PRO version is activated.
+			 */
+			public static function wcap_check_pro_notice() {
+
+			    $class = 'notice notice-error is-dismissible';
+			    
+			    $message = __( 'The Lite & Pro version of Abandoned Cart plugin for WooCommerce (from Tyche Softwares) are active on your website. <br> In this case, the abandoned carts will be captured in both plugins & email reminders will also be sent from both plugins. <br> It is recommended that you deactivate the Lite version & keep the Pro version active.', 'woocommerce-ac' );
+			
+			    printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
 			}
 			
 			/*-----------------------------------------------------------------------------------*/
@@ -2760,5 +2786,5 @@ function woocommerce_ac_delete_lite(){
 			
 		}
 		
-		$woocommerce_abandon_cart = new woocommerce_abandon_cart();
+		$woocommerce_abandon_cart = new woocommerce_abandon_cart_lite();
 ?>
