@@ -1351,7 +1351,7 @@ function woocommerce_ac_delete_lite(){
 				     }
 				 
 				     foreach ( $ids as $id ) {
-				         $class = new wcap_delete_bulk_action_handler();
+				         $class = new wcap_delete_bulk_action_handler_lite();
 				         $class->wcap_delete_template_bulk_action_handler_function_lite( $id );
 				     }
 				 }
