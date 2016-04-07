@@ -157,7 +157,7 @@ class WACP_Templates_Table extends WP_List_Table {
 	public function wacp_templates_data_lite() { 
     		global $wpdb;
     		
-    		$return_bookings = array();
+    		$return_templates_data = array();
     		$per_page       = $this->per_page;
     		$results = array();
     	 
