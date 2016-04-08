@@ -2143,8 +2143,8 @@ function woocommerce_ac_delete_lite(){
                                     <td> <?php echo $product->id; ?> </td>
                                     <td> <?php echo $product_name; ?></td>
                                     <td> <?php echo $quantity_total; ?></td>
-                                    <td> <?php echo get_woocommerce_currency_symbol()." ".$item_subtotal; ?></td>
-                                    <td> <?php echo get_woocommerce_currency_symbol()." ".$item_total; ?></td>
+                                    <td> <?php echo get_woocommerce_currency_symbol().$item_subtotal; ?></td>
+                                    <td> <?php echo get_woocommerce_currency_symbol().$item_total; ?></td>
                                     </tr>
                                         
                             <?php 
