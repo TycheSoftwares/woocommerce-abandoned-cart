@@ -2477,7 +2477,7 @@ function woocommerce_ac_delete_lite(){
                                                         }
                                                     }
                                                         print'<input type="checkbox" name="is_active" id="is_active" ' . $is_active_edit . '>  </input>'; ?>
-                                                        <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Yes, This email should be sent to shoppers with abandoned carts', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
+                                                        <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'The email template will be sent to customers only if the "Active" checkbox is enabled. Leave this unchecked if you want to add the email template but not send it to customers.', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
                                                         </td>
                                                 </tr> 
 				    							<tr>
