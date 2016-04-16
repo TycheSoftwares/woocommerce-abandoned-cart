@@ -2685,7 +2685,7 @@ function woocommerce_ac_delete_lite(){
 								var reply_name_preview    = $( '#woocommerce_ac_email_reply' ).val();
 								var from_email_preview    = $( '#woocommerce_ac_email_from' ).val();
 								var subject_email_preview = $( '#woocommerce_ac_email_subject' ).val();
-								var body_email_preview    = tinyMCE.activeEditor.getContent();
+								var body_email_preview    = tinyMCE.get('woocommerce_ac_email_body').getContent();
 								var send_email_id         = $( '#send_test_email' ).val();	
 								var is_wc_template        = document.getElementById("is_wc_template").checked;	
 								var wc_template_header    = $( '#wcap_wc_email_header' ).val() != '' ? $( '#wcap_wc_email_header' ).val() : 'Abandoned cart reminder';																
