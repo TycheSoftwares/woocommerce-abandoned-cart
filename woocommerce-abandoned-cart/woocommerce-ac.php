@@ -1222,7 +1222,7 @@ function woocommerce_ac_delete_lite(){
 					wp_enqueue_script( 'jquery' );
                     wp_enqueue_script( 
                                        'jquery-ui-min',
-            						   '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js',
+            						   '//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js',
             						   '',
             						   '',
             					       false
