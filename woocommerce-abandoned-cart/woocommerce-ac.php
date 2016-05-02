@@ -2680,7 +2680,13 @@ function woocommerce_ac_delete_lite(){
 						jQuery( document ).ready( function( $ )
 						{
 							$( "table#addedit_template input#preview_email" ).click( function()
-							{								
+							{	
+								var email_body            = '';
+								if ( jQuery("#wp-woocommerce_ac_email_body-wrap").hasClass( "tmce-active" ) ) {
+                                    email_body =  tinyMCE.get('woocommerce_ac_email_body').getContent();
+                                } else {
+                                    email_body =  jQuery('#woocommerce_ac_email_body').val();
+                                }								
 								var from_name_preview     = $( '#woocommerce_ac_from_name' ).val();
 								var reply_name_preview    = $( '#woocommerce_ac_email_reply' ).val();
 								var from_email_preview    = $( '#woocommerce_ac_email_from' ).val();
@@ -2704,9 +2710,16 @@ function woocommerce_ac_delete_lite(){
 								// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
 								$.post( ajaxurl, data, function( response )
 								{
-									$( "#preview_email_sent_msg" ).html( "<img src='<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/check.jpg'>&nbsp;Email has been sent successfully." );
-									$( "#preview_email_sent_msg" ).fadeIn();
-									setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 3000 );
+									if ( 'not sent' == response ) {
+	   									 $( "#preview_email_sent_msg" ).html( "Email has been not sent. There are no proper Email content." );
+	   									 $( "#preview_email_sent_msg" ).fadeIn();
+										     setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 4000 );
+	   								 } else {
+
+	   									 $( "#preview_email_sent_msg" ).html( "<img src='<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/images/check.jpg'>&nbsp;Email has been sent successfully." );
+											 $( "#preview_email_sent_msg" ).fadeIn();
+											 setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 3000 );
+	   								 }
 									//alert('Got this from the server: ' + response);
 								});
 							});
@@ -2718,85 +2731,89 @@ function woocommerce_ac_delete_lite(){
 				// Send Test Email  	
 				function preview_email_sent() {
 					
-					$from_email_name       = $_POST['from_name_preview'];
-					$reply_name_preview    = $_POST['reply_name_preview'];
-					$from_email_preview    = $_POST['from_email_preview'];
-					$subject_email_preview = $_POST['subject_email_preview'];						
-					$body_email_preview    = $_POST['body_email_preview'];
-					$is_wc_template        = $_POST['is_wc_template'];
-					$wc_template_header    = stripslashes( $_POST['wc_template_header'] );
-					$headers               = "From: " . $from_email_name . " <" . $from_email_preview . ">" . "\r\n";
-					$headers               .= "Content-Type: text/html" . "\r\n";
-					$headers               .= "Reply-To:  " . $reply_name_preview . " " . "\r\n";										
-					$body_email_preview    = str_replace( '{{customer.firstname}}', 'John', $body_email_preview );
-					$body_email_preview    = str_replace( '{{customer.lastname}}', 'Doe', $body_email_preview );
-					$body_email_preview    = str_replace( '{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview );
-					$current_time_stamp    = current_time( 'timestamp' );
-					$test_date             = date( 'd M, Y h:i A', $current_time_stamp );
-					$body_email_preview    = str_replace( '{{cart.abandoned_date}}', $test_date, $body_email_preview );
-					
-					$var =  '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
-                             <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
-                                <tr align="center">
-                                   <th>'.__( "Item", "woocommerce-ac" ).'</th>
-                                   <th>'.__( "Name", "woocommerce-ac" ).'</th>
-                                   <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
-                                   <th>'.__( "Price", "woocommerce-ac" ).'</th>
-                                   <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
-                                </tr>
-					            <tr align="center">
-                                   <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/shoes.jpg"/></td>                                                                  
-                                   <td>'.__( "Men\'\s Formal Shoes", "woocommerce-ac" ).'</td>
-                                   <td>1</td>
-                                   <td>$100</td>
-                                   <td>$100</td>
-                                </tr>
-                                <tr align="center">
-                                   <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/handbag.jpg"/></td>                                                                  
-                                   <td>'.__( "Woman\'\s Hand Bags", "woocommerce-ac" ).'</td>
-                                   <td>1</td>
-                                   <td>$100</td>
-                                   <td>$100</td>
-                                </tr>
-                                <tr align="center">
-                                   <td></td>
-                                   <td></td>
-                                   <td></td>
-                                   <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
-                                   <td>$200</td>
-                                </tr>
-                             </table>';
-			                
-					$body_email_preview = str_replace( '{{products.cart}}', $var, $body_email_preview );
-					
-				    if ( isset( $_POST['send_email_id'] ) ) {
-					      $to_email_preview = $_POST['send_email_id'];
-					} else {
-					      $to_email_preview = "";
-					}
-					 
-					$user_email_from = get_option( 'admin_email' );                
-					$body_email_final_preview = stripslashes( $body_email_preview );
-				    if ( isset( $is_wc_template ) && "true" == $is_wc_template ) {
-					
-					    ob_start();
-					    //
-					    wc_get_template( 'emails/email-header.php', array( 'email_heading' => $wc_template_header ) );
-					    $email_body_template_header = ob_get_clean();						    
-
-					    ob_start();						    
-					    wc_get_template( 'emails/email-footer.php' );						    	
-					    $email_body_template_footer = ob_get_clean();						    
-					    $final_email_body =  $email_body_template_header . $body_email_final_preview . $email_body_template_footer;
-					    wc_mail( $to_email_preview, $subject_email_preview, $final_email_body , $headers );    
-					}
-					else {
-					    wp_mail( $to_email_preview, $subject_email_preview, stripslashes( $body_email_preview ), $headers );
-					}	
-									
-					echo "email sent";
-					die();
-	          }					
+				    if ( '' != $_POST['body_email_preview'] ) {
+    				    $from_email_name       = $_POST['from_name_preview'];
+    					$reply_name_preview    = $_POST['reply_name_preview'];
+    					$from_email_preview    = $_POST['from_email_preview'];
+    					$subject_email_preview = $_POST['subject_email_preview'];						
+    					$body_email_preview    = $_POST['body_email_preview'];
+    					$is_wc_template        = $_POST['is_wc_template'];
+    					$wc_template_header    = stripslashes( $_POST['wc_template_header'] );
+    					$headers               = "From: " . $from_email_name . " <" . $from_email_preview . ">" . "\r\n";
+    					$headers               .= "Content-Type: text/html" . "\r\n";
+    					$headers               .= "Reply-To:  " . $reply_name_preview . " " . "\r\n";										
+    					$body_email_preview    = str_replace( '{{customer.firstname}}', 'John', $body_email_preview );
+    					$body_email_preview    = str_replace( '{{customer.lastname}}', 'Doe', $body_email_preview );
+    					$body_email_preview    = str_replace( '{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview );
+    					$current_time_stamp    = current_time( 'timestamp' );
+    					$test_date             = date( 'd M, Y h:i A', $current_time_stamp );
+    					$body_email_preview    = str_replace( '{{cart.abandoned_date}}', $test_date, $body_email_preview );
+    					
+    					$var =  '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
+                                 <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
+                                    <tr align="center">
+                                       <th>'.__( "Item", "woocommerce-ac" ).'</th>
+                                       <th>'.__( "Name", "woocommerce-ac" ).'</th>
+                                       <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
+                                       <th>'.__( "Price", "woocommerce-ac" ).'</th>
+                                       <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
+                                    </tr>
+    					            <tr align="center">
+                                       <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/shoes.jpg"/></td>                                                                  
+                                       <td>'.__( "Men\'\s Formal Shoes", "woocommerce-ac" ).'</td>
+                                       <td>1</td>
+                                       <td>$100</td>
+                                       <td>$100</td>
+                                    </tr>
+                                    <tr align="center">
+                                       <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/handbag.jpg"/></td>                                                                  
+                                       <td>'.__( "Woman\'\s Hand Bags", "woocommerce-ac" ).'</td>
+                                       <td>1</td>
+                                       <td>$100</td>
+                                       <td>$100</td>
+                                    </tr>
+                                    <tr align="center">
+                                       <td></td>
+                                       <td></td>
+                                       <td></td>
+                                       <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
+                                       <td>$200</td>
+                                    </tr>
+                                 </table>';
+    			                
+    					$body_email_preview = str_replace( '{{products.cart}}', $var, $body_email_preview );
+    					
+    				    if ( isset( $_POST['send_email_id'] ) ) {
+    					      $to_email_preview = $_POST['send_email_id'];
+    					} else {
+    					      $to_email_preview = "";
+    					}
+    					 
+    					$user_email_from = get_option( 'admin_email' );                
+    					$body_email_final_preview = stripslashes( $body_email_preview );
+    				    if ( isset( $is_wc_template ) && "true" == $is_wc_template ) {
+    					
+    					    ob_start();
+    					    // Get email heading
+    					    wc_get_template( 'emails/email-header.php', array( 'email_heading' => $wc_template_header ) );
+    					    $email_body_template_header = ob_get_clean();						    
+    
+    					    ob_start();						    
+    					    wc_get_template( 'emails/email-footer.php' );						    	
+    					    $email_body_template_footer = ob_get_clean();						    
+    					    $final_email_body =  $email_body_template_header . $body_email_final_preview . $email_body_template_footer;
+    					    wc_mail( $to_email_preview, $subject_email_preview, $final_email_body , $headers );    
+    					}
+    					else {
+    					    wp_mail( $to_email_preview, $subject_email_preview, stripslashes( $body_email_preview ), $headers );
+    					}					
+    					echo "email sent";
+    					die();
+				    } else {
+				        echo "not sent";
+				        die();
+				    }
+	          } 					
 		}	
     }   	
 $woocommerce_abandon_cart = new woocommerce_abandon_cart_lite();
