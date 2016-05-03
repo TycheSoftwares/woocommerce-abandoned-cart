@@ -133,6 +133,7 @@ class WACP_Abandoned_Orders_Table extends WP_List_Table {
 	    if( isset($abadoned_row_info->email) ){
 	    
 	    $abadoned_order_id = $abadoned_row_info->id ; 
+	    $row_actions['edit']   = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'orderdetails', 'id' => $abadoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'View order', 'woocommerce-ac' ) . '</a>';
 	    $row_actions['delete'] = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'wcap_delete', 'abandoned_order_id' => $abadoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'Delete', 'woocommerce-ac' ) . '</a>';
 	
 	    $email = $abadoned_row_info->email;
@@ -212,11 +213,12 @@ class WACP_Abandoned_Orders_Table extends WP_List_Table {
     		        
     		    } else {
     		        
-    		        $user_email_temp = get_user_meta($value->user_id, 'billing_email'); 
-    		        if ( isset( $user_email_temp[0] ) ) {             
-    		            $user_email = $user_email_temp[0];            
-    		        }else {                                       
-    		            $user_email = "";         
+    		        $user_email_billing = get_user_meta( $value->user_id, 'billing_email', true );
+    		        if( $user_email_billing != '' ){
+    		            $user_email = $user_email_billing;
+    		        }else{
+    		            $user_data = get_userdata( $value->user_id );
+    		            $user_email = $user_data->user_email;
     		        }
         		   
     		        $user_first_name_temp = get_user_meta($value->user_id, 'first_name');

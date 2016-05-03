@@ -8,17 +8,15 @@ Author: Tyche Softwares
 Author URI: http://www.tychesoftwares.com/
 */
 
-if( session_id() === '' ){
-    //session has not started
-    session_start();
-}
-
 // Deletion Settings
 register_uninstall_hook( __FILE__, 'woocommerce_ac_delete_lite' );
 
 include_once( "woocommerce_guest_ac.class.php" );
 include_once( "default-settings.php" );
 require_once( "actions.php" );
+require_once( "inc/class-wcap-lite-aes.php" );
+require_once( "inc/class-wcap-lite-aes-counter.php" );
+
 // Add a new interval of 5 minutes
 add_filter( 'cron_schedules', 'woocommerce_ac_add_cron_schedule_lite' );
 
@@ -115,6 +113,7 @@ function woocommerce_ac_delete_lite(){
 	delete_option( 'ac_lite_email_admin_on_recovery' );
 	delete_option( 'ac_lite_settings_status' );
 	delete_option( 'woocommerce_ac_default_templates_installed' );	
+	delete_option( 'wcap_lite_security_key' );
 }
 	/**
 	 * woocommerce_abandon_cart_lite class
@@ -500,10 +499,10 @@ function woocommerce_ac_delete_lite(){
 			 **************************************************************/
 			function ac_lite_cart_time_validation( $input ) {
 			    $output = '';
-			    if ( $input == '' || is_numeric( $input) ) {
+			    if ( $input != '' && ( is_numeric( $input) && $input > 0  ) ) {
 			        $output = stripslashes( $input) ;
 			    } else {
-			        add_settings_error( 'ac_lite_cart_abandoned_time', 'error found', __( 'Abandoned cart cut off time should be numeric.', 'woocommerce-ac' ) );
+			        add_settings_error( 'ac_lite_cart_abandoned_time', 'error found', __( 'Abandoned cart cut off time should be numeric and has to be greater than 0.', 'woocommerce-ac' ) );
 			    }
 			    return $output;
 			}
@@ -675,6 +674,9 @@ function woocommerce_ac_delete_lite(){
 			        //Delete the main settings record
 			        delete_option( 'woocommerce_ac_settings' );
 			    }
+			    if ( !get_option( 'wcap_lite_security_key' ) ){
+			        update_option( 'wcap_lite_security_key', 'qJB0rGtIn5UB1xG03efyCp' );
+			    }
 			}
 			
 			/******
@@ -721,7 +723,12 @@ function woocommerce_ac_delete_lite(){
 			}
 			
 			// Capture the cart and insert the information of the cart into DataBase
-			function woocommerce_ac_store_cart_timestamp() {   
+			function woocommerce_ac_store_cart_timestamp() {  
+			    
+			    if( session_id() === '' ){
+			        //session has not started
+			        session_start();
+			    } 
 			    global $wpdb,$woocommerce;
 			    $current_time   = current_time( 'timestamp' );
 			    $cut_off_time   = get_option( 'ac_lite_cart_abandoned_time' );			    
@@ -798,21 +805,10 @@ function woocommerce_ac_delete_lite(){
 				    $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id ) );
 				    $cart    = array();
 				    
-				    foreach ( $woocommerce->cart->cart_contents as $cart_id => $value ) {				        
-				        $cart['cart'][$cart_id] = array();
-				        				    
-				        foreach ( $value as $k=>$v ) {				            
-				            $cart['cart'][$cart_id][$k] = $v;
-				    
-				            if ( $k == "quantity" ) {				                
-				                $price = get_post_meta( $cart['cart'][$cart_id]['product_id'], '_price', true );
-				                $cart['cart'][$cart_id]['line_total'] = $cart['cart'][$cart_id]['quantity'] * $price;
-				                $cart['cart'][$cart_id]['line_tax'] = '0';
-				                $cart['cart'][$cart_id]['line_subtotal'] = $cart['cart'][$cart_id]['line_total'];
-				                $cart['cart'][$cart_id]['line_subtotal_tax'] = $cart['cart'][$cart_id]['line_tax'];
-				                break;
-				            }
-				        }
+				    if (function_exists('WC')) {
+				        $cart['cart'] = WC()->cart->get_cart();
+				    } else {
+				        $cart['cart'] = $woocommerce->cart->get_cart();
 				    }
 				    
 				    $updated_cart_info = json_encode($cart);
@@ -821,7 +817,8 @@ function woocommerce_ac_delete_lite(){
 				        
 				            if ( $compare_time > $results[0]->abandoned_cart_time ) {
 				                	
-				                if ( $updated_cart_info != $results[0]->abandoned_cart_info ) {
+				                
+				                if ( ! $this->compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {
 				                    
 				                    $query_ignored = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
 			                                         SET cart_ignored = '1' 
@@ -851,7 +848,8 @@ function woocommerce_ac_delete_lite(){
             
             // Decrypt Function
 			function decrypt_validate( $validate ) {			    
-			    $cryptKey         = 'qJB0rGtIn5UB1xG03efyCp';
+			    
+			    $cryptKey         = get_option( 'wcap_lite_security_key' );
 			    $validate_decoded = rtrim( mcrypt_decrypt( MCRYPT_RIJNDAEL_256, md5( $cryptKey ), base64_decode( $validate ), MCRYPT_MODE_CBC, md5( md5( $cryptKey ) ) ), "\0");
 			    return( $validate_decoded );
 			}
@@ -866,13 +864,19 @@ function woocommerce_ac_delete_lite(){
 			        $track_link = $_GET['wacp_action'];
 			    }
 			
-			    if ( $track_link == 'track_links' ) { 
+			    if ( $track_link == 'track_links' ) {
+			        
+			        if( session_id() === '' ){
+			            //session has not started
+			            session_start();
+			        }
+			         
 			        global $wpdb;
 			
-			        $validate_server_string  = rawurldecode ( $_SERVER["QUERY_STRING"] );
-                    $validate_server_string  = str_replace ( " " , "+", $validate_server_string);
-			        $validate_server_arr     = explode("validate=", $validate_server_string);
-			        $validate_encoded_string = end($validate_server_arr);			
+                    $validate_server_string  = rawurldecode ( $_GET ['validate'] );
+			        $validate_server_string  = str_replace ( " " , "+", $validate_server_string);
+			        $validate_encoded_string = $validate_server_string;
+			        
 			        $link_decode_test        = base64_decode( $validate_encoded_string );
 			
 			        // it will check if any old email have open the link
@@ -880,6 +884,12 @@ function woocommerce_ac_delete_lite(){
 			            $link_decode = $link_decode_test;
 			        } else {			            
 			            $link_decode = $this->decrypt_validate( $validate_encoded_string );
+			        }
+			        
+			        if ( !preg_match( '/&url=/', $link_decode ) ) { // This will decrypt more security
+			            $cryptKey    = get_option( 'ac_security_key' );
+			        
+			            $link_decode = Wcap_Lite_Aes_Ctr::decrypt( $validate_encoded_string, $cryptKey, 256 );
 			        }
 			        
 			        $sent_email_id_pos = strpos( $link_decode, '&' );
@@ -1002,6 +1012,51 @@ function woocommerce_ac_delete_lite(){
 			        }
 			    }
 			}
+			
+			function compare_only_guest_carts( $new_cart, $last_abandoned_cart ) {
+			
+			    $current_woo_cart   = array();
+			    $current_woo_cart   = json_decode ( $new_cart, true );
+			
+			    $abandoned_cart_arr = array();
+			    $abandoned_cart_arr = json_decode( $last_abandoned_cart, true );
+			
+			    $temp_variable      = "";
+			
+			    if ( count( $current_woo_cart['cart'] ) >= count( $abandoned_cart_arr['cart'] ) ) {
+			
+			    } else {
+			        $temp_variable      = $current_woo_cart;
+			        $current_woo_cart   = $abandoned_cart_arr;
+			        $abandoned_cart_arr = $temp_variable;
+			    }
+			    if ( is_array( $current_woo_cart ) || is_object( $current_woo_cart ) ){
+			        foreach ( $current_woo_cart as $key => $value ) {
+			
+			            foreach ( $value as $item_key => $item_value ) {
+			                $current_cart_product_id   = $item_value['product_id'];
+			                $current_cart_variation_id = $item_value['variation_id'];
+			                $current_cart_quantity     = $item_value['quantity'];
+			
+			                if ( isset( $abandoned_cart_arr[$key][$item_key]['product_id'] ) ) $abandoned_cart_product_id = $abandoned_cart_arr[$key][$item_key]['product_id'];
+			                else $abandoned_cart_product_id = "";
+			
+			                if ( isset( $abandoned_cart_arr[$key][$item_key]['variation_id'] ) ) $abandoned_cart_variation_id = $abandoned_cart_arr[$key][$item_key]['variation_id'];
+			                else $abandoned_cart_variation_id = "";
+			
+			                if ( isset( $abandoned_cart_arr[$key][$item_key]['quantity'] ) ) $abandoned_cart_quantity = $abandoned_cart_arr[$key][$item_key]['quantity'];
+			                else $abandoned_cart_quantity = "";
+			
+			                if ( ( $current_cart_product_id   != $abandoned_cart_product_id ) ||
+			                    ( $current_cart_variation_id != $abandoned_cart_variation_id ) ||
+			                    ( $current_cart_quantity     != $abandoned_cart_quantity ) ) {
+			                        return false;
+			                    }
+			            }
+			        }
+			    }
+			    return true;
+			}
 
 			// Compare the existing cart with new cart
 			function compare_carts( $user_id, $last_abandoned_cart ) {			    
@@ -1054,6 +1109,11 @@ function woocommerce_ac_delete_lite(){
 			// function is call when order is recovered
 			function action_after_delivery_session( $order ) {
 				
+			    if( session_id() === '' ){
+			        //session has not started
+			        session_start();
+			    }
+			    
 				global $wpdb;
 				$user_id = get_current_user_id();
 				$sent_email = '';
@@ -1158,6 +1218,13 @@ function woocommerce_ac_delete_lite(){
 				    add_filter('tiny_mce_before_init', array( &$this, 'myformatTinyMCE_ac'));
 					add_filter( 'mce_buttons', array( &$this, 'filter_mce_button' ) );
 					add_filter( 'mce_external_plugins', array( &$this, 'filter_mce_plugin' ) );
+				}
+				
+				if ( isset( $_GET['page'] ) && 'woocommerce_ac_page' == $_GET['page'] ){
+				    if( session_id() === '' ){
+				        //session has not started
+				        session_start();
+				    }
 				}
 			}
 			
@@ -1975,7 +2042,6 @@ function woocommerce_ac_delete_lite(){
                             <table cellpadding="0" cellspacing="0" class="wp-list-table widefat fixed posts">
                             <tr>
                             <th> <?php _e( 'Item', 'woocommerce-ac' ); ?> </th>
-                            <th> <?php _e( 'Id', 'woocommerce-ac' ); ?> </th>
                             <th> <?php _e( 'Name', 'woocommerce-ac' ); ?> </th>
                             <th> <?php _e( 'Quantity', 'woocommerce-ac' ); ?> </th>
                             <th> <?php _e( 'Line Subtotal', 'woocommerce-ac' ); ?> </th>
@@ -2180,14 +2246,13 @@ function woocommerce_ac_delete_lite(){
                                             $product       = get_product( $product_id );
                                             $prod_image    = $product->get_image();
                                         ?>                   
-                                            <tr>
+                                        <tr>
                                             <td> <?php echo $prod_image; ?></td>
-                                            <td> <?php echo $product->id; ?> </td>
                                             <td> <?php echo $product_name; ?></td>
                                             <td> <?php echo $quantity_total; ?></td>
                                             <td> <?php echo get_woocommerce_currency_symbol().$item_subtotal; ?></td>
                                             <td> <?php echo get_woocommerce_currency_symbol().$item_total; ?></td>
-                                            </tr>           
+                                        </tr>           
                                     <?php 
                                     $item_subtotal = $item_total = 0;
                                         }
@@ -2393,7 +2458,7 @@ function woocommerce_ac_delete_lite(){
 													$subject_edit = "";
 													if ( $mode == 'edittemplate' )
 													{
-														$subject_edit=$results[0]->subject;
+														$subject_edit= stripslashes ( $results[0]->subject );
 													}
 													
 													print'<input type="text" name="woocommerce_ac_email_subject" id="woocommerce_ac_email_subject" class="regular-text" value="'.$subject_edit.'">';?>
@@ -2735,7 +2800,7 @@ function woocommerce_ac_delete_lite(){
     				    $from_email_name       = $_POST['from_name_preview'];
     					$reply_name_preview    = $_POST['reply_name_preview'];
     					$from_email_preview    = $_POST['from_email_preview'];
-    					$subject_email_preview = $_POST['subject_email_preview'];						
+    					$subject_email_preview = stripslashes ( $_POST['subject_email_preview'] );		 				
     					$body_email_preview    = $_POST['body_email_preview'];
     					$is_wc_template        = $_POST['is_wc_template'];
     					$wc_template_header    = stripslashes( $_POST['wc_template_header'] );
@@ -2748,6 +2813,9 @@ function woocommerce_ac_delete_lite(){
     					$current_time_stamp    = current_time( 'timestamp' );
     					$test_date             = date( 'd M, Y h:i A', $current_time_stamp );
     					$body_email_preview    = str_replace( '{{cart.abandoned_date}}', $test_date, $body_email_preview );
+    					
+    					$cart_url              = wc_get_page_permalink( 'cart' );
+    					$body_email_preview    = str_replace( '{{cart.link}}', $cart_url, $body_email_preview );
     					
     					$var =  '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
                                  <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">

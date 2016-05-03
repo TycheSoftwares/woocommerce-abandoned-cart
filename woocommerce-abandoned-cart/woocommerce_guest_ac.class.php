@@ -147,42 +147,14 @@
                             $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id ) );		
                             $cart = array();
 
-                            foreach ( $woocommerce->cart->cart_contents as $cart_id => $value ) {
-                                    $cart['cart'][$cart_id] = array();
-                                    foreach ( $value as $k=>$v ) {
-                                            $cart['cart'][$cart_id][$k] = $v;
-                                            if ( $k == "quantity" ) {
-                                                    $product = get_product( $cart['cart'][$cart_id]['product_id'] );
-                                                    $product_type = $product->product_type;
-
-                                                    if ( $product_type == "variable" ) {
-                                                            if(is_plugin_active('woocommerce-dynamic-pricing/woocommerce-dynamic-pricing.php')) {
-                                                                $price = floatval( preg_replace( '#[^\d.]#', '', $woocommerce->cart->total ) );
-                                                            }  else {
-                                                                $price = get_post_meta( $cart['cart'][$cart_id]['variation_id'], '_price', true);
-                                                            }
-                                                    } else {
-                                                            if(is_plugin_active('woocommerce-dynamic-pricing/woocommerce-dynamic-pricing.php')) {
-                                                                $price = floatval( preg_replace( '#[^\d.]#', '', $woocommerce->cart->total ) );
-                                                            }  else {
-                                                                $price = get_post_meta( $cart['cart'][$cart_id]['product_id'], '_price', true);
-                                                            }
-                                                    }
-                                                    if(is_plugin_active('woocommerce-dynamic-pricing/woocommerce-dynamic-pricing.php')) {
-                                                        $cart['cart'][$cart_id]['line_total'] = $price;
-                                                    }else {
-                                                        $cart['cart'][$cart_id]['line_total'] = $cart['cart'][$cart_id]['quantity'] * $price;
-                                                    }
-                                                    $cart['cart'][$cart_id]['line_tax']	= '0';
-                                                    $cart['cart'][$cart_id]['line_subtotal'] = $cart['cart'][$cart_id]['line_total'];
-                                                    $cart['cart'][$cart_id]['line_subtotal_tax'] = $cart['cart'][$cart_id]['line_tax'];
-                                                    break;
-                                            } 
-                                    }
+                            if (function_exists('WC')) {
+                                $cart['cart'] = WC()->cart->get_cart();
+                            } else {
+                                $cart['cart'] = $woocommerce->cart->get_cart();
                             }
 
                             if ( count( $results ) == 0 ) {
-                                    $cart_info = json_encode( $cart );
+                                    $cart_info = json_encode( $cart, JSON_HEX_QUOT | JSON_HEX_TAG  );
                                     $insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type )
                                                                             VALUES ( '".$user_id."', '".$cart_info."', '".$current_time."', '0', '0', 'GUEST' )";	
                                     $wpdb->query( $insert_query );	

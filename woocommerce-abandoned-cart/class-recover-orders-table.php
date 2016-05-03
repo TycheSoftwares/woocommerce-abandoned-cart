@@ -264,6 +264,7 @@ public function wcap_recovered_orders_prepare_items_lite() {
     		
     		$this->total_recover_amount = round( $recovered_order_total, 2 )  ;
     		
+    		$this->recovered_item = 0;
     		
     		$table_data  = "";
     		

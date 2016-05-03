@@ -1,22 +1,22 @@
 <?php 
 
-if( defined('WP_CONTENT_FOLDERNAME' ) ) {
-    $wp_content_dir_name = WP_CONTENT_FOLDERNAME;
-}elseif( defined( 'WP_CONTENT_DIR' ) ) {
-    $url = WP_CONTENT_DIR;
-    $explode_url = explode( "/", $url );
-    $wp_content_dir_name = end( $explode_url );
-}else{
-    $wp_content_dir_name = "wp-content";
+static $wp_load; // Since this will be called twice, hold onto it.
+if ( ! isset( $wp_load ) ) {
+    $wp_load = false;
+    $dir = __FILE__;
+    while ( '/' != ( $dir = dirname( $dir ) ) ) {
+        if ( file_exists( $wp_load = "{$dir}/wp-load.php" ) ) {
+            break;
+        }
+    }
 }
 
+$wcap_root = dirname( dirname(__FILE__) ); // go two level up for directory from this file.
 
+require_once $wp_load;
+require_once $wcap_root.'/inc/class-wcap-lite-aes-counter.php';
+require_once $wcap_root.'/inc/class-wcap-lite-aes.php';
 
-$url = dirname( __FILE__ );
-$my_url = explode( $wp_content_dir_name , $url );
-$path = $my_url[0];
-
-require_once $path . 'wp-load.php';
 	/**
 	 * woocommerce_abandon_cart_cron class
 	 **/
@@ -113,9 +113,7 @@ require_once $path . 'wp-load.php';
 				        $query_email     = "SELECT user_email FROM `".$wpdb->prefix."users` WHERE ID = %d";
 				    }
 				
-				
 				    $results_email       = $wpdb->get_results( $wpdb->prepare( $query_email, $user_id ) );
-				
 				
 				    $query_email_id      = "SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = '_billing_email' AND meta_value = %s";
 				    $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $results_email[0]->user_email ) );
@@ -140,9 +138,9 @@ require_once $path . 'wp-load.php';
 				
 				            if ( $order_date == $today_date ) {
 				                $query_delete = "DELETE FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
-                                                                        WHERE user_id = '" . $user_id . "'
-                                                                        AND cart_ignored = '0'
-                                                                        AND recovered_cart = '0'";
+                                                        WHERE user_id = '" . $user_id . "'
+                                                        AND cart_ignored = '0'
+                                                        AND recovered_cart = '0'";
 				
 				                $wpdb->query( $query_delete );
 				                break;
@@ -180,7 +178,7 @@ require_once $path . 'wp-load.php';
 			
 					$email_frequency     = $value->frequency;
 					$email_body_template = $value->body;			
-					$email_subject       = $value->subject;
+					$email_subject       = stripslashes  ( $value->subject );
 					$headers             = "From: " . $value->from_name . " <" . $value->from_email . ">" . "\r\n";
 					$headers            .= "Content-Type: text/html"."\r\n";
 					$headers            .= "Reply-To:  " . $value->reply_email . " " . "\r\n";
@@ -202,8 +200,12 @@ require_once $path . 'wp-load.php';
 					        $key = 'billing_email';
 					        $single = true;
 					        $user_biiling_email = get_user_meta( $user_id, $key, $single );
-					        if( isset( $user_biiling_email ) && $user_biiling_email != '' ){
-					           $value->user_email = $user_biiling_email;
+					        
+					       if( $user_biiling_email != '' ){
+					           $value->user_email = $user_email_billing;
+					       }else{
+					           $user_data         = get_userdata( $user_id );
+					           $value->user_email = $user_data->user_email;
 					       }
 					    }
 					    
@@ -257,8 +259,20 @@ require_once $path . 'wp-load.php';
 									
 								$results_sent = $wpdb->get_results( $wpdb->prepare( $query_id, $template_id, $value->id ) );
 									
-								
 								$email_sent_id = $results_sent[0]->id;
+								
+								if ( $woocommerce->version < '2.3' ) {
+								    $cart_page_link	= $woocommerce->cart->get_cart_url();
+								} else {
+								    $cart_page_id = woocommerce_get_page_id( 'cart' );
+								    $cart_page_link = $cart_page_id ? get_permalink( $cart_page_id ) : '';
+								}
+								
+								$encoding_cart = $email_sent_id.'&url='.$cart_page_link;
+								
+								$validate_cart = $this->encrypt_validate ($encoding_cart);
+								$cart_link_track = get_option('siteurl').'/?wacp_action=track_links&validate=' . $validate_cart;
+								$email_body	= str_replace( "{{cart.link}}", $cart_link_track, $email_body );
 								
 								$var = '';
 								if( preg_match( "{{products.cart}}", $email_body, $matched ) ) {
@@ -294,47 +308,34 @@ require_once $path . 'wp-load.php';
 								        //	Line total
 								        $item_total         = $item_subtotal;
 								        $item_subtotal	    = $item_subtotal / $quantity_total;
-								        $item_total_display = number_format( $item_total, 2 );
-								        $item_subtotal	    = number_format( $item_subtotal, 2 );
+								        $item_total_display = round( $item_total, 2 );
+								        $item_subtotal	    = round( $item_subtotal, 2 );
 								        $product            = get_product( $product_id );
 								        $prod_image         = $product->get_image();
 								        $image_url          =  wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );
 								        $var .='<tr align="center">
-                                                                        <td> <a href="'.$product_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
-                                                                        <td> <a href="'.$product_link_track.'">'.__( $product_name, "woocommerce-ac" ).'</a></td>
-                                                                        <td> '.$quantity_total.'</td>
-                                                                        <td> '.get_woocommerce_currency_symbol()."".$item_subtotal.'</td>
-                                                                        <td> '.get_woocommerce_currency_symbol()."".$item_total_display.'</td>
-                                                                        </tr>';
+                                                    <td> <a href="'.$cart_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
+                                                    <td> <a href="'.$cart_link_track.'">'.__( $product_name, "woocommerce-ac" ).'</a></td>
+                                                    <td> '.$quantity_total.'</td>
+                                                    <td> '.get_woocommerce_currency_symbol()."".$item_subtotal.'</td>
+                                                    <td> '.get_woocommerce_currency_symbol()."".$item_total_display.'</td>
+                                                </tr>';
 								        $cart_total += $item_total;
 								        $item_subtotal = $item_total = 0;
 								    }
-								    $cart_total = number_format( $cart_total, 2 );
+								    $cart_total = round( $cart_total, 2 );
 								    $var .= '<tr align="center">
-                                                                <td> </td>
-                                                                <td> </td>
-                                                                <td> </td>
-                                                                <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
-                                                                <td> '.get_woocommerce_currency_symbol()."".$cart_total.'</td>
-                                                                </tr>';
+                                                <td> </td>
+                                                <td> </td>
+                                                <td> </td>
+                                                <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
+                                                <td> '.get_woocommerce_currency_symbol()."".$cart_total.'</td>
+                                            </tr>';
 								    $var .= '</table>
                                                                 ';
 								    $email_body    = str_replace( "{{products.cart}}", $var, $email_body );
 								    $email_subject = str_replace( "{{product.name}}", __( $sub_line_prod_name, "woocommerce-ac" ), $email_subject );
 								}
-								
-								if ( $woocommerce->version < '2.3' ) {
-								    $cart_page_link	= $woocommerce->cart->get_cart_url();
-								} else {
-								    $cart_page_id = woocommerce_get_page_id( 'cart' );
-								    $cart_page_link = $cart_page_id ? get_permalink( $cart_page_id ) : '';
-								}
-								
-								$encoding_cart = $email_sent_id.'&url='.$cart_page_link;
-								
-								$validate_cart = $this->encrypt_validate ($encoding_cart);
-								$cart_link_track = get_option('siteurl').'/?wacp_action=track_links&validate=' . $validate_cart;
-								$email_body	= str_replace( "{{cart.link}}", $cart_link_track, $email_body );
 								
 								$user_email = $value->user_email;
 			
@@ -402,9 +403,10 @@ require_once $path . 'wp-load.php';
 			******/
 			function encrypt_validate( $validate ) {
 			     
-			    $cryptKey  = 'qJB0rGtIn5UB1xG03efyCp';
-			    $validate_encoded = base64_encode( mcrypt_encrypt( MCRYPT_RIJNDAEL_256, md5( $cryptKey ), $validate, MCRYPT_MODE_CBC, md5( md5( $cryptKey ) ) ) );
-			    return $validate_encoded;
+			    $cryptKey  = get_option( 'wcap_lite_security_key' );
+            
+                $validate_encoded = Wcap_Lite_Aes_Ctr::encrypt( $validate, $cryptKey, 256 );
+                return( $validate_encoded );
 			}
 			
 			function check_sent_history( $user_id, $cart_update_time, $template_id, $id ) {
