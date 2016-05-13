@@ -147,10 +147,10 @@
                             $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id ) );		
                             $cart = array();
 
-                            if (function_exists('WC')) {
-                                $cart['cart'] = WC()->cart->get_cart();
+                            if ( function_exists('WC') ) {
+                                $cart['cart'] = WC()->session->cart;
                             } else {
-                                $cart['cart'] = $woocommerce->cart->get_cart();
+                                $cart['cart'] = $woocommerce->session->cart;
                             }
 
                             if ( count( $results ) == 0 ) {
