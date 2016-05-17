@@ -2776,7 +2776,7 @@ function woocommerce_ac_delete_lite(){
 								$.post( ajaxurl, data, function( response )
 								{
 									if ( 'not sent' == response ) {
-	   									 $( "#preview_email_sent_msg" ).html( "Email has been not sent. There are no proper Email content." );
+	   									 $( "#preview_email_sent_msg" ).html( "Test email is not sent as the Email body is empty." );
 	   									 $( "#preview_email_sent_msg" ).fadeIn();
 										     setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 4000 );
 	   								 } else {
