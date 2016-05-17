@@ -888,7 +888,7 @@ function woocommerce_ac_delete_lite(){
 			        }
 			        
 			        if ( !preg_match( '/&url=/', $link_decode ) ) { // This will decrypt more security
-			            $cryptKey    = get_option( 'ac_security_key' );
+			            $cryptKey    = get_option( 'wcap_lite_security_key' );
 			        
 			            $link_decode = Wcap_Lite_Aes_Ctr::decrypt( $validate_encoded_string, $cryptKey, 256 );
 			        }
