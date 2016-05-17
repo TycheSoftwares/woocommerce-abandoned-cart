@@ -707,7 +707,8 @@ function woocommerce_ac_delete_lite(){
 			            'order'         => $order,
 			            'email_heading' => $email_heading,
 			            'sent_to_admin' => false,
-			            'plain_text'    => false
+			            'plain_text'    => false,
+			            'email'         => true
 			            ) );
 			
 			            // Get contents
