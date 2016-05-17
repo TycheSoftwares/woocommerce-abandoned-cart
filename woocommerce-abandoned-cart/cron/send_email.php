@@ -201,12 +201,9 @@ require_once $wcap_root.'/inc/class-wcap-lite-aes.php';
 					        $single = true;
 					        $user_biiling_email = get_user_meta( $user_id, $key, $single );
 					        
-					       if( $user_biiling_email != '' ){
-					           $value->user_email = $user_email_billing;
-					       }else{
-					           $user_data         = get_userdata( $user_id );
-					           $value->user_email = $user_data->user_email;
-					       }
+					        if( isset( $user_biiling_email ) && $user_biiling_email != '' ){
+					           $value->user_email = $user_biiling_email;
+					        }
 					    }
 					    
 						$cart_info_db_field = json_decode( $value->abandoned_cart_info );
