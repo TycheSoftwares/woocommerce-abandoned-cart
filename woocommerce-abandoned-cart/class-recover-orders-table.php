@@ -113,8 +113,8 @@ public function wcap_recovered_orders_prepare_items_lite() {
 	    
 	    $columns = array(
  		        
-                'user_name'       => __( 'User Name', 'woocommerce-ac' ),
-		        'user_email_id'   => __( 'User Email Address', 'woocommerce-ac' ),
+                'user_name'       => __( 'Customer Name', 'woocommerce-ac' ),
+		        'user_email_id'   => __( 'Email Address', 'woocommerce-ac' ),
 				'created_on'      => __( 'Cart Abandoned Date', 'woocommerce-ac' ),				
 	            'recovered_date'  => __( 'Cart Recovered Date' , 'woocommerce-ac'),
 	            'order_total'     => __( 'Order Total', 'woocommerce-ac' )
