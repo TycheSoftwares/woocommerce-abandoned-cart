@@ -46,7 +46,6 @@ class WACP_Abandoned_Orders_Table extends WP_List_Table {
 		        'plural'   => __( 'abandoned_order_ids', 'woocommerce-ac' ), //plural name of the listed records
 				'ajax'      => false             			// Does this table support ajax?
 		) );
-		$this->wcap_get_abadoned_orders_count_lite();
 		$this->process_bulk_action();
         $this->base_url = admin_url( 'admin.php?page=woocommerce_ac_page' );
 	}
@@ -56,15 +55,15 @@ class WACP_Abandoned_Orders_Table extends WP_List_Table {
 		$columns  = $this->get_columns();
 		$hidden   = array(); // No hidden columns
 		$sortable = $this->get_sortable_columns();
+		$this->total_count = 0;
 		$data     = $this->wacp_abandoned_cart_lite_data();
-		
 		$this->_column_headers = array( $columns, $hidden, $sortable);
 		$total_items           = $this->total_count;
 		
 		if ( count($data) > 0 ){
 		  $this->items = $data;
 		}else{
-		    $this->items = '';
+		    $this->items = array();
 		}
 		$this->set_pagination_args( array(
 				'total_items' => $total_items,                  	// WE have to calculate the total number of items
@@ -145,35 +144,12 @@ class WACP_Abandoned_Orders_Table extends WP_List_Table {
 	    return apply_filters( 'wcap_abandoned_orders_single_column', $value, $abadoned_order_id, 'email' );
 	}
     
-	/***
-	 * This function used to get the abadoned orders count
-	 */
-    public function wcap_get_abadoned_orders_count_lite() {
-	
-    global $wpdb;
-		$results = array();
-		
-		$blank_cart_info       =  '{"cart":[]}';
-		$blank_cart_info_guest =  '[]';
-		    
-	 // non-multisite - regular table name
-	    $query = "SELECT wpac . * , wpu.user_login, wpu.user_email
-					  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
-					  LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
-					  WHERE recovered_cart = '0'
-					  AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' ORDER BY wpac.abandoned_cart_time DESC";       
-
-            $results = $wpdb->get_results($query);
-			
-	   $abadoned_orders   = count($results);
-	   $this->total_count = $abadoned_orders;
-    }
 	public function wacp_abandoned_cart_lite_data() { 
     		global $wpdb;
     		
-    		$return_bookings = array();
-    		$per_page       = $this->per_page;
-    		$results = array();
+    		$return_abadoned_orders = array();
+    		$per_page = $this->per_page;
+    		$results  = array();
     	 
     		$blank_cart_info       =  '{"cart":[]}';
     		$blank_cart_info_guest =  '[]';
@@ -189,9 +165,7 @@ class WACP_Abandoned_Orders_Table extends WP_List_Table {
 			
     		$i = 0;
 		   		
-    		foreach ( $results as $key => $value ) {
-    		    
-    		    $return_abadoned_orders[$i] = new stdClass();
+    		foreach ( $results as $key => $value ) {    
     		
     		    if ( $value->user_type == "GUEST" ) {
     		        $query_guest   = "SELECT * from `" . $wpdb->prefix . "ac_guest_abandoned_cart_history_lite` WHERE id = %d";
@@ -290,7 +264,9 @@ class WACP_Abandoned_Orders_Table extends WP_List_Table {
     		    }
     		    
     		    if ( $compare_time > $cut_off_time && $ac_status != "" ) {
-                    
+                   
+    		        $return_abadoned_orders[$i] = new stdClass();
+    		        
                     if( $quantity_total > 0 ) {
                         
                         $abandoned_order_id                        =  $abandoned_order_id;
@@ -303,6 +279,8 @@ class WACP_Abandoned_Orders_Table extends WP_List_Table {
                         $return_abadoned_orders[ $i ]->status      = $ac_status;
                         
                    }
+                   // To get the abadoned orders count
+                   $this->total_count = count ($return_abadoned_orders);
                    $i++;
               }
             
