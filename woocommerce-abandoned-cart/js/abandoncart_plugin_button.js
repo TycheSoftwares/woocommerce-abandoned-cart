@@ -49,6 +49,13 @@
                    onclick: function() {
                        editor.insertContent(this.value());
                    }
+               },
+               {
+            	   text: 'Unsubscribe Link',
+                   value: '{{cart.unsubscribe}}',
+                   onclick: function() {
+                       editor.insertContent(this.value());
+                   }
                }
                
            ]

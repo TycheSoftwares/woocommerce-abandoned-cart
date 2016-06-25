@@ -192,6 +192,15 @@ function woocommerce_ac_delete_lite(){
 				// track links
 				add_filter( 'template_include', array( &$this, 'email_track_links_lite' ), 99, 1 );
 				
+				/*
+				 * @since: 2.9
+				 * @comment : 
+				 * It will used to unsubcribe the emails.
+				 * 
+				 *
+				 */
+				add_action( 'template_include', array( &$this, 'wcap_email_unsubscribe'),99, 1 );
+				
 				//Discount Coupon Notice
 				add_action ( 'admin_notices', array( &$this, 'ac_lite_coupon_notice' ) );
 				add_action ( 'admin_enqueue_scripts', array( &$this, 'my_enqueue_scripts_js' ) );
@@ -209,15 +218,131 @@ function woocommerce_ac_delete_lite(){
 				
 				// Send Email on order recovery
 				add_action('woocommerce_order_status_pending_to_processing_notification', array(&$this, 'ac_email_admin_recovery'));
-				add_action('woocommerce_order_status_pending_to_completed_notification', array(&$this, 'ac_email_admin_recovery'));
-				add_action('woocommerce_order_status_pending_to_on-hold_notification', array(&$this, 'ac_email_admin_recovery'));
-				add_action('woocommerce_order_status_failed_to_processing_notification', array(&$this, 'ac_email_admin_recovery'));
-				add_action('woocommerce_order_status_failed_to_completed_notification', array(&$this, 'ac_email_admin_recovery'));
+				add_action('woocommerce_order_status_pending_to_completed_notification',  array(&$this, 'ac_email_admin_recovery'));
+				add_action('woocommerce_order_status_pending_to_on-hold_notification',    array(&$this, 'ac_email_admin_recovery'));
+				add_action('woocommerce_order_status_failed_to_processing_notification',  array(&$this, 'ac_email_admin_recovery'));
+				add_action('woocommerce_order_status_failed_to_completed_notification',   array(&$this, 'ac_email_admin_recovery'));
+				
+				add_action('woocommerce_order_status_changed',                            array( &$this, 'ac_lite_email_admin_recovery_for_paypal' ), 10, 3);
+				
 				add_action( 'admin_init', array( $this, 'wcap_preview_emails' ) );
 				add_action('init', array( $this, 'app_output_buffer') );
 				add_action( 'admin_init', array( &$this, 'wcap_check_pro_activated' ) );
+				
+				add_action( 'woocommerce_checkout_order_processed', array( &$this, 'wcap_lite_order_placed' ), 10 , 1 );
+				
+				add_filter('woocommerce_payment_complete_order_status',array( &$this ,'wcap_lite_order_complete_action'), 10 , 2 );
 			}
-						
+			
+			
+
+			public static function wcap_lite_order_placed( $order_id ) {
+			
+			    if( session_id() === '' ){
+			        //session has not started
+			        session_start();
+			    }
+			
+			    if ( isset( $_SESSION['email_sent_id'] ) && $_SESSION['email_sent_id'] !='' ) {
+			
+			        global $woocommerce, $wpdb;
+			
+			        $email_sent_id     = $_SESSION['email_sent_id'];
+			        $get_ac_id_query   = "SELECT abandoned_order_id FROM `" . $wpdb->prefix."ac_sent_history_lite` WHERE id = %d";
+			        $get_ac_id_results = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
+			
+			        $abandoned_order_id = $get_ac_id_results[0]->abandoned_order_id;
+			
+			        update_post_meta( $order_id , 'wcap_lite_recover_order_placed', $abandoned_order_id );
+			
+			        update_post_meta( $order_id , 'wcap_lite_recover_order_placed_sent_id', $email_sent_id );
+			
+			    }
+			    else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] !=''  ){
+			
+			        global $woocommerce, $wpdb;
+			
+			        $results_sent  = array();
+			
+			
+			        $abandoned_cart_id = $_SESSION['abandoned_cart_id_lite'];
+			
+			        $get_email_sent_for_abandoned_id = "SELECT * FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE abandoned_order_id = %d ";
+			
+			        $results_sent  = $wpdb->get_results ( $wpdb->prepare( $get_email_sent_for_abandoned_id, $abandoned_cart_id ) );
+			
+			        if ( empty ( $results_sent ) && count ($results_sent) == 0 ){
+			             
+			
+			            /*
+			             * If logeged in user place the order once it isdisplyed under the abadoned orders tab.
+			             * But the email has been not sent to the user. And order is placed successfuly
+			             * Then We are deleteing those order. But for those orders Recovered email has been set to the Admin.
+			             * Below code ensure that admin recovery email wil not be sent for tose orders.
+			             */
+			            $get_user_id_of_abandoned_cart = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE id = %d ";
+			
+			            $get_results_of_user_id        = $wpdb->get_results ( $wpdb->prepare( $get_user_id_of_abandoned_cart, $abandoned_cart_id ) );
+			            $user_id                       = $get_results_of_user_id[0]->user_id;
+			
+			            delete_user_meta( $user_id, '_woocommerce_ac_modified_cart' );
+			
+			            /*
+			             * It will delete the order from history table if the order is placed before any email sent to the user.
+			             *
+			            */
+			             
+			            $table_name = $wpdb->prefix . 'ac_abandoned_cart_history';
+			
+			            $wpdb->delete( $table_name , array( 'id' => $abandoned_cart_id ) );
+			
+			
+			        }else{
+			
+			            $email_sent_id = $results_sent[0]->id;
+			            update_post_meta( $order_id , 'wcap_lite_recover_order_placed', $abandoned_cart_id );
+			            update_post_meta( $order_id , 'wcap_lite_recover_order_placed_sent_id', $email_sent_id );
+			        }
+			
+			    }
+			
+			
+			}
+			
+			public function wcap_lite_order_complete_action( $order_status, $order_id ) {
+			
+			    if ( 'failed' != $order->status  ) {
+			
+			        global $woocommerce, $wpdb;
+			        $order = new WC_Order( $order_id );
+			         
+			        $get_abandoned_id_of_order  = '';
+			        $get_sent_email_id_of_order = '';
+			        $get_abandoned_id_of_order  =   get_post_meta( $order_id, 'wcap_lite_recover_order_placed', true );
+			         
+			        if ( isset( $get_abandoned_id_of_order ) && $get_abandoned_id_of_order != '' ){
+			             
+			            $get_abandoned_id_of_order  =   get_post_meta( $order_id, 'wcap_lite_recover_order_placed', true );
+			
+			            $get_sent_email_id_of_order = get_post_meta( $order_id, 'wcap_lite_recover_order_placed_sent_id', true );
+			
+			            $query_order = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET recovered_cart= '" . $order_id . "', cart_ignored = '1'
+                                        WHERE id = '".$get_abandoned_id_of_order."' ";
+			            $wpdb->query( $query_order );
+			
+			            $recover_order = "UPDATE `" . $wpdb->prefix . "ac_sent_history_lite` SET recovered_order = '1'
+										  WHERE id ='" . $get_sent_email_id_of_order . "' ";
+			            $wpdb->query( $recover_order );
+			
+			            $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-ac' ) );
+			             
+			            delete_post_meta( $order_id, 'wcap_lite_recover_order_placed', $get_abandoned_id_of_order );
+			            delete_post_meta( $order_id , 'wcap_lite_recover_order_placed_sent_id', $get_sent_email_id_of_order );
+			        }
+			    }
+			    return $order_status;
+			}
+			
 			/**
 			 * Check If Pro is activated along with Lite version.
 			 */
@@ -677,6 +802,69 @@ function woocommerce_ac_delete_lite(){
 			    if ( !get_option( 'wcap_lite_security_key' ) ){
 			        update_option( 'wcap_lite_security_key', 'qJB0rGtIn5UB1xG03efyCp' );
 			    }
+			    
+			    $ac_history_lite_table_name = $wpdb->prefix . "ac_abandoned_cart_history_lite";
+			    
+			    $check_table_query = "SHOW COLUMNS FROM $ac_history_lite_table_name LIKE 'unsubscribe_link'";
+			    $results           = $wpdb->get_results( $check_table_query );
+			    
+			    if ( count( $results ) == 0 ) {
+			        $alter_table_query = "ALTER TABLE $ac_history_table_name 
+			        ADD `unsubscribe_link` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER  `user_type`";
+			        $wpdb->get_results( $alter_table_query );
+			    }
+			}
+			
+			/******
+			 * Send email to admin when cart is recover via PayPal.
+			 * @since 2.9 version
+			 */
+			public static function ac_lite_email_admin_recovery_for_paypal ( $order_id, $old, $new_status ) {
+			     
+			    if ( 'pending' == $old && 'processing' == $new_status ){
+			
+			        $user_id                 = get_current_user_id();
+			        $ac_email_admin_recovery = get_option( 'ac_lite_email_admin_on_recovery' );
+			
+			        $order   = new WC_Order( $order_id );
+			        $user_id = $order->user_id;
+			
+			        if( $ac_email_admin_recovery == 'on' ) {
+			
+			            if ( get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "yes" ) || get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "no" ) ) { // indicates cart is abandoned
+			                $order          = new WC_Order( $order_id );
+			                $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce' );
+			                $blogname       = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
+			                $email_subject  = "New Customer Order - Recovered";
+			                $user_email     = get_option( 'admin_email' );
+			                $headers[]      = "From: Admin <".$user_email.">";
+			                $headers[]      = "Content-Type: text/html";
+			
+			                // Buffer
+			                ob_start();
+			
+			                // Get mail template
+			                woocommerce_get_template( 'emails/admin-new-order.php', array(
+    			                'order'         => $order,
+    			                'email_heading' => $email_heading,
+    			                'sent_to_admin' => false,
+    			                'plain_text'    => false,
+    			                'email'         => true
+    			                )
+			                );
+			
+			                // Get contents
+			                $email_body = ob_get_clean();
+			                woocommerce_mail( $user_email, $email_subject, $email_body, $headers );
+			
+			                /**
+			                 * Delete user meta, so it would not send again the recover order email.
+			                */
+			                delete_user_meta( $user_id, '_woocommerce_ac_modified_cart' );
+			
+			            }
+			        }
+			    }
 			}
 			
 			/******
@@ -714,6 +902,8 @@ function woocommerce_ac_delete_lite(){
 			            // Get contents
 			            $email_body = ob_get_clean();
 			            woocommerce_mail( $user_email, $email_subject, $email_body, $headers );
+			            
+			            delete_user_meta( $user_id, '_woocommerce_ac_modified_cart' );
 			        }
 			    }
 			}
@@ -760,6 +950,10 @@ function woocommerce_ac_delete_lite(){
     					                 ( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type )
     					                 VALUES ( %d, %s, %d, %s, %s )";
     					$wpdb->query( $wpdb->prepare( $insert_query, $user_id, $cart_info,$current_time, $cart_ignored, $user_type ) );
+    					
+    					$abadoned_cart_id              = $wpdb->insert_id;
+    					
+    					$_SESSION['abandoned_cart_id_lite'] = $abadoned_cart_id;
     				}
     				elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {	
     				    $updated_cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
@@ -779,6 +973,11 @@ function woocommerce_ac_delete_lite(){
     					    $wpdb->query( $wpdb->prepare( $query_update, $user_id, $updated_cart_info, $current_time, $cart_ignored, $user_type ) );
     					    
     						update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "yes" ) );
+    						
+    						$abadoned_cart_id              = $wpdb->insert_id;
+    						
+    						$_SESSION['abandoned_cart_id_lite'] = $abadoned_cart_id;
+    						
     					} else {    
     						update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "no" ) );
     				  }
@@ -790,6 +989,13 @@ function woocommerce_ac_delete_lite(){
                     					 WHERE user_id      = %d 
     			                         AND   cart_ignored = %s ";
     					$wpdb->query( $wpdb->prepare( $query_update, $updated_cart_info, $current_time, $user_id, $cart_ignored ) );
+    					
+    					$query_update = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_id ='" . $user_id . "' AND cart_ignored='0' ";
+    					
+    					$get_abadoned_record           = $wpdb->get_results( $query_update );
+    					$abadoned_cart_id              = $get_abadoned_record[0]->id;
+    					
+    					$_SESSION['abandoned_cart_id_lite'] = $abadoned_cart_id;
 				       }
 				} else { 
 				    
@@ -854,6 +1060,77 @@ function woocommerce_ac_delete_lite(){
 			    $validate_decoded = rtrim( mcrypt_decrypt( MCRYPT_RIJNDAEL_256, md5( $cryptKey ), base64_decode( $validate ), MCRYPT_MODE_CBC, md5( md5( $cryptKey ) ) ), "\0");
 			    return( $validate_decoded );
 			}
+			
+			
+			function wcap_email_unsubscribe ( $args ){
+			    global $wpdb;
+			    if ( isset( $_GET['wcap_track_unsubscribe_lite'] ) && $_GET['wcap_track_unsubscribe_lite'] == 'wcap_unsubscribe' ){
+			
+			        $encoded_email_id         = rawurldecode ( $_GET['validate'] );
+			        $validate_email_id_string = str_replace ( " " , "+", $encoded_email_id);
+			
+			        $validate_email_address_string = '';
+			        $validate_email_id_decode = 0;
+			
+			        if( isset( $_GET['track_email_id'] ) ) {
+			
+			            $encoded_email_address         = rawurldecode ( $_GET['track_email_id'] );
+			            $validate_email_address_string = str_replace ( " " , "+", $encoded_email_address);
+			
+			            if( isset( $validate_email_id_string ) ) {
+			                $validate_email_id_decode  = $this->decrypt_validate( $validate_email_id_string );
+			            }
+			            $validate_email_address_string = $validate_email_address_string;
+			        }
+			
+			        if ( !preg_match('/^[1-9][0-9]*$/', $validate_email_id_decode ) ) { // This will decrypt more security
+			            $cryptKey  = get_option( 'wcap_lite_security_key' );
+			            $validate_email_id_decode = Wcap_Lite_Aes_Ctr::decrypt( $validate_email_id_string, $cryptKey, 256 );
+			        }
+			
+			        $query_id      = "SELECT * FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE id = %d ";
+			        $results_sent  = $wpdb->get_results ( $wpdb->prepare( $query_id, $validate_email_id_decode ) );
+			        $email_address = '';
+			
+			        if( isset( $results_sent[0] ) ) {
+			            $email_address =  $results_sent[0]->sent_email_id;
+			        }
+			
+			        if( $validate_email_address_string == hash( 'sha256', $email_address ) ) {
+			             
+			            $email_sent_id     = $validate_email_id_decode;
+			            $get_ac_id_query   = "SELECT abandoned_order_id FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE id = %d";
+			            $get_ac_id_results = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query , $email_sent_id ) );
+			            $user_id           = 0;
+			            if( isset( $get_ac_id_results[0] ) ) {
+			                $get_user_id_query = "SELECT user_id FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE id = %d";
+			                $get_user_results  = $wpdb->get_results( $wpdb->prepare( $get_user_id_query , $get_ac_id_results[0]->abandoned_order_id ) );
+			            }
+			            if( isset( $get_user_results[0] ) ) {
+			                $user_id = $get_user_results[0]->user_id;
+			            }
+			             
+			            $unsubscribe_query = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
+                                                SET unsubscribe_link = '1'
+                                                WHERE user_id= %d AND cart_ignored='0' ";
+			            $wpdb->query( $wpdb->prepare( $unsubscribe_query , $user_id ) );
+			             
+			            echo "Unsubscribed Successfully";
+			             
+			            sleep( 2 );
+			             
+			            $url = get_option( 'siteurl' );
+			            ?>
+                       <script>
+                            location.href = "<?php echo $url; ?>";
+                       </script>
+                       <?php 
+                         }
+                }else {
+                   return $args; 
+                }
+                
+            }
 			
 			// It will track the URL of cart link from email  
 			function email_track_links_lite( $template ) {			    
@@ -1116,6 +1393,33 @@ function woocommerce_ac_delete_lite(){
 			    }
 			    
 				global $wpdb;
+				
+				$order_id = $order->id;
+				$get_abandoned_id_of_order  = '';
+				$get_sent_email_id_of_order = '';
+				$get_abandoned_id_of_order  =   get_post_meta( $order_id, 'wcap_recover_order_placed_sent_id', true );
+				 
+				if ( isset( $get_abandoned_id_of_order ) && $get_abandoned_id_of_order != '' ){
+				     
+				    $get_abandoned_id_of_order  =   get_post_meta( $order_id, 'wcap_recover_order_placed_sent_id', true );
+				
+				    $get_sent_email_id_of_order = get_post_meta( $order_id, 'wcap_lite_recover_order_placed_sent_id', true );
+				
+				
+				    $query_order = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET recovered_cart= '" . $order_id . "', cart_ignored = '1'
+                                        WHERE id = '".$get_abandoned_id_of_order."' ";
+				    $wpdb->query( $query_order );
+				
+				    $recover_order = "UPDATE `" . $wpdb->prefix . "ac_sent_history_lite` SET recovered_order = '1'
+										  WHERE id ='" . $get_sent_email_id_of_order . "' ";
+				    $wpdb->query( $recover_order );
+				
+				    $order->add_order_note( __( 'The order has been Recovered.', 'woocommerce-ac' ) );
+				     
+				    delete_post_meta( $order_id, 'wcap_recover_order_placed_sent_id', $get_abandoned_id_of_order );
+				    delete_post_meta( $order_id , 'wcap_lite_recover_order_placed_sent_id', $get_sent_email_id_of_order );
+				}
+				
 				$user_id = get_current_user_id();
 				$sent_email = '';
 				if ( isset( $_SESSION['email_sent_id'] ) ){

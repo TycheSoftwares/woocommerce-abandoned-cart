@@ -271,6 +271,13 @@ require_once $wcap_root.'/inc/class-wcap-lite-aes.php';
 								$cart_link_track = get_option('siteurl').'/?wacp_action=track_links&validate=' . $validate_cart;
 								$email_body	= str_replace( "{{cart.link}}", $cart_link_track, $email_body );
 								
+								$validate_unsubscribe          = $this->encrypt_validate( $email_sent_id );
+								$email_sent_id_address         = $results_sent[0]->sent_email_id;
+								$encrypt_email_sent_id_address = hash( 'sha256', $email_sent_id_address );
+								$plugins_url                   = get_option( 'siteurl' ) . "/?wcap_track_unsubscribe_lite=wcap_unsubscribe&validate=" . $validate_unsubscribe . "&track_email_id=" . $encrypt_email_sent_id_address;
+								$unsubscribe_link_track        = $plugins_url;
+								$email_body                    = str_replace( "{{cart.unsubscribe}}" , $unsubscribe_link_track , $email_body );
+								
 								$var = '';
 								if( preg_match( "{{products.cart}}", $email_body, $matched ) ) {
 								    $var = '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
@@ -381,14 +388,16 @@ require_once $wcap_root.'/inc/class-wcap-lite-aes.php';
 				$cart_time = current_time( 'timestamp' ) - $template_to_send_after_time - $cart_abandon_cut_off_time;
 			    
 				$cart_ignored = 0;
+				$unsubscribe  = 0;
 				$query = "SELECT wpac . * , wpu.user_login, wpu.user_email
             			  FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
             			  LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
 				            			  WHERE cart_ignored = %s
+				            			  AND unsubscribe_link = %s
 				            			  AND abandoned_cart_time < $cart_time
 				            			  ORDER BY `id` ASC ";
 					
-				$results = $wpdb->get_results( $wpdb->prepare( $query, $cart_ignored ) );
+				$results = $wpdb->get_results( $wpdb->prepare( $query, $cart_ignored, $unsubscribe ) );
 				
 				return $results;
 			

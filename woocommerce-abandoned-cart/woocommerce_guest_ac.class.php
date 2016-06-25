@@ -72,6 +72,12 @@
 			function save_data() {
 				
                         if ( ! is_user_logged_in() ) {
+                            
+                            if( session_id() === '' ){
+                                //session has not started
+                                session_start();
+                            }
+                            
                             global $wpdb, $woocommerce;
 
                             $_SESSION['billing_first_name'] = $_POST['billing_first_name'];
@@ -144,7 +150,18 @@
                             $compare_time = $current_time - $cart_cut_off_time;
 
                             $query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0' AND user_type = 'GUEST'";			
-                            $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id ) );		
+                            $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id ) );
+
+                            
+                            $guest_id            = $_SESSION['user_id'];
+                            $query_update_get    = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history` WHERE user_id ='" . $guest_id . "' ";
+                            
+                            $get_abadoned_record = $wpdb->get_results( $query_update_get );
+                            $abadoned_cart_id    = $get_abadoned_record[0]->id;
+                            
+                            $_SESSION['abandoned_cart_id_lite'] = $abadoned_cart_id;
+                            
+                            
                             $cart = array();
 
                             if ( function_exists('WC') ) {
@@ -154,7 +171,7 @@
                             }
 
                             if ( count( $results ) == 0 ) {
-                                    $cart_info = json_encode( $cart, JSON_HEX_QUOT | JSON_HEX_TAG  );
+                                    $cart_info = json_encode( $cart );
                                     $insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type )
                                                                             VALUES ( '".$user_id."', '".$cart_info."', '".$current_time."', '0', '0', 'GUEST' )";	
                                     $wpdb->query( $insert_query );	
