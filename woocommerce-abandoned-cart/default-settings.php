@@ -26,6 +26,8 @@ class default_template_settings_lite {
                                        <p> &nbsp; </p>
                                        <p> Otherwise, how about giving us another chance? Shop <a href= $site_url >$site_title</a>. </p>
                                        <hr></hr>
+                                       <p> You may <a href='{{cart.unsubscribe}}'>unsubscribe</a> to stop receiving these emails. </p> 
+                                       <p> &nbsp; </p>
                                        <p> <a href=$site_url>$site_title</a> appreciates your business.  </p>
                                     </body>
                            </html>");
