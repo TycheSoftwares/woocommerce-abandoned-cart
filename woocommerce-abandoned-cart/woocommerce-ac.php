@@ -1472,11 +1472,11 @@ function woocommerce_ac_delete_lite(){
 				$order_id = $order->id;
 				$get_abandoned_id_of_order  = '';
 				$get_sent_email_id_of_order = '';
-				$get_abandoned_id_of_order  =   get_post_meta( $order_id, 'wcap_recover_order_placed_sent_id', true );
+				$get_abandoned_id_of_order  =   get_post_meta( $order_id, 'wcap_lite_recover_order_placed', true );
 				 
 				if ( isset( $get_abandoned_id_of_order ) && $get_abandoned_id_of_order != '' ){
 				     
-				    $get_abandoned_id_of_order  =   get_post_meta( $order_id, 'wcap_recover_order_placed_sent_id', true );
+				    $get_abandoned_id_of_order  =   get_post_meta( $order_id, 'wcap_lite_recover_order_placed', true );
 				
 				    $get_sent_email_id_of_order = get_post_meta( $order_id, 'wcap_lite_recover_order_placed_sent_id', true );
 				
@@ -1491,7 +1491,7 @@ function woocommerce_ac_delete_lite(){
 				
 				    $order->add_order_note( __( 'The order has been Recovered.', 'woocommerce-ac' ) );
 				     
-				    delete_post_meta( $order_id, 'wcap_recover_order_placed_sent_id', $get_abandoned_id_of_order );
+				    delete_post_meta( $order_id, 'wcap_lite_recover_order_placed', $get_abandoned_id_of_order );
 				    delete_post_meta( $order_id , 'wcap_lite_recover_order_placed_sent_id', $get_sent_email_id_of_order );
 				}
 				
