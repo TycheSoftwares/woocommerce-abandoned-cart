@@ -3258,22 +3258,22 @@ function woocommerce_ac_delete_lite(){
                                        <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/shoes.jpg"/></td>                                                                  
                                        <td>'.__( "Men\'\s Formal Shoes", "woocommerce-ac" ).'</td>
                                        <td>1</td>
-                                       <td>$100</td>
-                                       <td>$100</td>
+                                       <td>$104</td>
+                                       <td>$104</td>
                                     </tr>
                                     <tr align="center">
                                        <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/handbag.jpg"/></td>                                                                  
                                        <td>'.__( "Woman\'\s Hand Bags", "woocommerce-ac" ).'</td>
                                        <td>1</td>
-                                       <td>$100</td>
-                                       <td>$100</td>
+                                       <td>$104</td>
+                                       <td>$104</td>
                                     </tr>
                                     <tr align="center">
                                        <td></td>
                                        <td></td>
                                        <td></td>
                                        <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
-                                       <td>$200</td>
+                                       <td>$208</td>
                                     </tr>
                                  </table>';
     	                }		                
