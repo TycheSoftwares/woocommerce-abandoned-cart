@@ -171,7 +171,7 @@
                             }
 
                             if ( count( $results ) == 0 ) {
-                                    $cart_info = json_encode( $cart );
+                                    $cart_info = addslashes( json_encode( $cart ) );
                                     $insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type )
                                                                             VALUES ( '".$user_id."', '".$cart_info."', '".$current_time."', '0', '0', 'GUEST' )";	
                                     $wpdb->query( $insert_query );	
