@@ -1008,7 +1008,7 @@ function woocommerce_ac_delete_lite(){
     				if ( count($results) == 0 ) {
     				    
     					$cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
-    					$cart_info = addslashes ( $cart_info );
+    					
     					$user_type = "REGISTERED";
     					$insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
     					                 ( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type )
@@ -1021,7 +1021,7 @@ function woocommerce_ac_delete_lite(){
     				}
     				elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {	
     				    $updated_cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
-    				    $updated_cart_info = addslashes ( $updated_cart_info );
+    				    
     					if ( ! $this->compare_carts( $user_id, $results[0]->abandoned_cart_info ) ) {  
     					    
     					    $updated_cart_ignored = 1;
@@ -1047,7 +1047,7 @@ function woocommerce_ac_delete_lite(){
     				  }
     				} else {   				    
     					$updated_cart_info = json_encode( get_user_meta( $user_id, '_woocommerce_persistent_cart', true ) );
-    					$updated_cart_info = addslashes ( $updated_cart_info );
+    					
     					$query_update = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
                     					 SET abandoned_cart_info = %s,
                     					     abandoned_cart_time = %d
