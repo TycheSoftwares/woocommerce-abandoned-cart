@@ -323,10 +323,6 @@ function woocommerce_ac_delete_lite(){
                                         WHERE id = '".$get_abandoned_id_of_order."' ";
 			            $wpdb->query( $query_order );
 			
-			            $recover_order = "UPDATE `" . $wpdb->prefix . "ac_sent_history_lite` SET recovered_order = '1'
-										  WHERE id ='" . $get_sent_email_id_of_order . "' ";
-			            $wpdb->query( $recover_order );
-			
 			            $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-ac' ) );
 			             
 			            delete_post_meta( $order_id, 'wcap_lite_recover_order_placed', $get_abandoned_id_of_order );
@@ -1480,10 +1476,6 @@ function woocommerce_ac_delete_lite(){
                                         WHERE id = '".$get_abandoned_id_of_order."' ";
 				    $wpdb->query( $query_order );
 				
-				    $recover_order = "UPDATE `" . $wpdb->prefix . "ac_sent_history_lite` SET recovered_order = '1'
-										  WHERE id ='" . $get_sent_email_id_of_order . "' ";
-				    $wpdb->query( $recover_order );
-				
 				    $order->add_order_note( __( 'The order has been Recovered.', 'woocommerce-ac' ) );
 				     
 				    delete_post_meta( $order_id, 'wcap_lite_recover_order_placed', $get_abandoned_id_of_order );
@@ -1557,12 +1549,6 @@ function woocommerce_ac_delete_lite(){
                                 $wpdb->query( $query_order );
                                 delete_user_meta( $results_id[0]->id, '_woocommerce_ac_modified_cart' );
 
-								$sent_email = $_SESSION['email_sent_id'];
-								$recover_order = "UPDATE `".$wpdb->prefix."ac_sent_history` 
-				                                  SET recovered_order = '1' 
-								                  WHERE id ='".$sent_email."' ";
-								$wpdb->query( $recover_order );
-								
                             } 
                             else {
                                 $delete_guest = "DELETE FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = '".$results_id[0]->id."'";
