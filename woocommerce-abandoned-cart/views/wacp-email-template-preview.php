@@ -28,14 +28,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 <th>Price</th>
 <th>Quantity</th>
 <th>Total</th>
-
+</tr>
+<tr style="background-color:#f4f5f4;">
+<td><img src = "<?php echo plugins_url();?>/woocommerce-abandoned-cart/images/spectre.jpg" height="40px" width="40px"></td><td>Spectre</td><td>$150</td><td>2</td><td>$300</td>
+</tr>
 <?php 
 $ac_include_tax = get_option( 'ac_lite_include_tax' );    					
 if( $ac_include_tax == 'on' ) {
 ?>
-<tr style="background-color:#f4f5f4;">
-<td><img src = "<?php echo plugins_url();?>/woocommerce-abandoned-cart/images/spectre.jpg" height="40px" width="40px"></td><td>Spectre</td><td>$150</td><td>2</td><td>$300</td>
-</tr>
 <tr>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
@@ -43,13 +43,6 @@ if( $ac_include_tax == 'on' ) {
 <th>Tax:</th>
 <td>$12</td>
 </tr>
-<?php } else { ?>
-
-</tr>
-<tr style="background-color:#f4f5f4;">
-<td><img src = "<?php echo plugins_url();?>/woocommerce-abandoned-cart/images/spectre.jpg" height="40px" width="40px"></td><td>Spectre</td><td>$156</td><td>2</td><td>$312</td>
-</tr>
-<?php } ?>
 <tr>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
@@ -57,7 +50,15 @@ if( $ac_include_tax == 'on' ) {
 <th>Cart Total:</th>
 <td>$312</td>
 </tr>
-</tbody></table> </p>
+<?php } else { ?>					
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<th>Cart Total:</th>
+<td>$300</td>
+</tr>
+<?php } ?></tbody></table> </p>
 <p> &nbsp; </p>
 <p align="center"> If you had any purchase troubles, could you please Contact to share them? </p>
 <p> &nbsp; </p>

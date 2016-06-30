@@ -306,9 +306,9 @@ require_once $wcap_root.'/inc/class-wcap-lite-aes.php';
 								        }
     								    if( isset($ac_include_tax) && $ac_include_tax == 'on' ) {
     							            
-    							            $item_subtotal = $item_subtotal + $v->line_total;        	
-    							            $line_subtotal_tax += $v->line_subtotal_tax; 
-    							            $line_subtotal_tax = round( $line_subtotal_tax, 2 );
+    							            $item_subtotal = $item_subtotal + $v->line_total;  // This is fix       	
+    							            $line_subtotal_tax += $v->line_subtotal_tax; // This is fix
+    							            
     							        }else{
         							        // Item subtotal is calculated as product total including taxes
         							        if( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
@@ -345,7 +345,7 @@ require_once $wcap_root.'/inc/class-wcap-lite-aes.php';
                                                     <td> </td>
                                                     <td>'.__( "Tax:", "woocommerce-ac" ).'</td>
                                                     <td> '.get_woocommerce_currency_symbol()."".$line_subtotal_tax.'</td>
-                                                </tr>'; 
+                                                </tr>'; //This is fix
 								    						
 								    }
     								if( isset($ac_include_tax) && $ac_include_tax == 'on' ) {
