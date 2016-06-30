@@ -166,7 +166,6 @@ function woocommerce_ac_delete_lite(){
 								                'end_date'       => date( "d M Y", ( current_time( 'timestamp' ) ) ) ) 				    
 				                               );
 				
-				
 				// Initialize settings
 				register_activation_hook ( __FILE__, array( &$this, 'woocommerce_ac_activate' ) );
 				
@@ -213,8 +212,7 @@ function woocommerce_ac_delete_lite(){
 					add_action ( 'wp_ajax_remove_cart_data', array( &$this, 'remove_cart_data' ) );
 					
 					add_action ( 'admin_head', array( &$this, 'my_action_send_preview' ) );
-					add_action ( 'wp_ajax_preview_email_sent', array( &$this, 'preview_email_sent' ) );
-					
+					add_action ( 'wp_ajax_preview_email_sent', array( &$this, 'preview_email_sent' ) );	
 				}
 				
 				// Send Email on order recovery
@@ -235,8 +233,6 @@ function woocommerce_ac_delete_lite(){
 				add_filter('woocommerce_payment_complete_order_status',array( &$this ,'wcap_lite_order_complete_action'), 10 , 2 );
 			}
 			
-			
-
 			public static function wcap_lite_order_placed( $order_id ) {
 			
 			    if( session_id() === '' ){
@@ -265,7 +261,6 @@ function woocommerce_ac_delete_lite(){
 			
 			        $results_sent  = array();
 			
-			
 			        $abandoned_cart_id = $_SESSION['abandoned_cart_id_lite'];
 			
 			        $get_email_sent_for_abandoned_id = "SELECT * FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE abandoned_order_id = %d ";
@@ -273,8 +268,6 @@ function woocommerce_ac_delete_lite(){
 			        $results_sent  = $wpdb->get_results ( $wpdb->prepare( $get_email_sent_for_abandoned_id, $abandoned_cart_id ) );
 			
 			        if ( empty ( $results_sent ) && count ($results_sent) == 0 ){
-			             
-			
 			            /*
 			             * If logeged in user place the order once it isdisplyed under the abadoned orders tab.
 			             * But the email has been not sent to the user. And order is placed successfuly
@@ -293,10 +286,9 @@ function woocommerce_ac_delete_lite(){
 			             *
 			            */
 			             
-			            $table_name = $wpdb->prefix . 'ac_abandoned_cart_history';
+			            $table_name = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
 			
 			            $wpdb->delete( $table_name , array( 'id' => $abandoned_cart_id ) );
-			
 			
 			        }else{
 			
