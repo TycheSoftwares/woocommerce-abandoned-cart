@@ -59,11 +59,9 @@ require_once $wcap_root.'/inc/class-wcap-lite-aes.php';
 				    foreach ( $results_query as $k => $v ) {
 				        if ( $value->id == $v->user_id ) {
 				            $record_found = "YES";
+				            unset( $results_guest_list[ $key ] );
 				        }
-				    }
-				    if ( $record_found == "YES" ) {
-				        unset( $results_guest_list[ $key ] );
-				    }
+				    } 
 				}
 				foreach ( $results_guest_list as $key => $value ) {
 				    $query_email_id      = "SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = '_billing_email' AND meta_value = %s";
