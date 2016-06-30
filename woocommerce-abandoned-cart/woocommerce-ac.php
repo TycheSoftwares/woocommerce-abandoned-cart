@@ -111,7 +111,6 @@ function woocommerce_ac_delete_lite(){
 	delete_option ( 'woocommerce_ac_email_body' );
 	delete_option( 'ac_lite_cart_abandoned_time' );
 	delete_option( 'ac_lite_email_admin_on_recovery' );
-	delete_option( 'ac_lite_include_tax' );
 	delete_option( 'ac_lite_settings_status' );
 	delete_option( 'woocommerce_ac_default_templates_installed' );	
 	delete_option( 'wcap_lite_security_key' );
@@ -367,9 +366,8 @@ function woocommerce_ac_delete_lite(){
 			
 			    global $woocommerce;
 			
-			    if ( isset( $_GET['wacp_preview_woocommerce_mail'] ) || isset( $_GET['wacp_tax_preview_wc_mail'] ) || isset( $_GET['wacp_preview_wc_mail'] ) ) {
-			       
-			        if ( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-ac') ) {
+			    if ( isset( $_GET['wacp_preview_woocommerce_mail'] ) ) {
+			        if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-ac') ) {
 			            die( 'Security check' );
 			        }
 			
@@ -380,19 +378,9 @@ function woocommerce_ac_delete_lite(){
 			            global $email_heading;
 			             
 			            ob_start();
-			           if ( isset( $_GET['wacp_preview_woocommerce_mail'] )){
-			            
-			               include( 'views/wacp-wc-email-template-preview.php' );
-
-			           } else if ( isset( $_GET['wacp_tax_preview_wc_mail'] )) {
-
-			               include( 'views/wacp-wc-email-template-tax-preview.php' );
-			           
-			           } else if ( isset( $_GET['wacp_preview_wc_mail'] )) {
-			               
-			                   include( 'views/wacp-wc-email-preview.php' );
-			               
-			           }
+			
+			            include( 'views/wacp-wc-email-template-preview.php' );
+			
 			            $mailer        = WC()->mailer();
 			            $message       = ob_get_clean();
 			            $email_heading = __( 'HTML Email Template', 'woocommerce' );
@@ -408,19 +396,7 @@ function woocommerce_ac_delete_lite(){
 			
 			            // get the preview email content
 			            ob_start();
-			           if ( isset( $_GET['wacp_preview_woocommerce_mail'] ) ){
-			            
-			               include( 'views/wacp-wc-email-template-preview.php' );
-
-			           } else if ( isset( $_GET['wacp_tax_preview_wc_mail'] )) {
-
-			               include( 'views/wacp-wc-email-template-tax-preview.php' );
-			           
-			           }else if ( isset( $_GET['wacp_preview_wc_mail'] )) {
-			               
-			                   include( 'views/wacp-wc-email-preview.php' );
-			               
-			           }
+			            include( 'views/wacp-wc-email-template-preview.php' );
 			            $message       = ob_get_clean();
 			
 			            // create a new email
@@ -590,21 +566,6 @@ function woocommerce_ac_delete_lite(){
 			    array( __( 'Sends email to Admin if an Abandoned Cart Order is recovered.', 'woocommerce-ac' ) )
 			    );
 			
-			    $admin_url_wc_mail = wp_nonce_url( admin_url( '?wacp_preview_wc_mail=true' ), 'woocommerce-ac' );
-			    $admin_url_preview_mail = wp_nonce_url( admin_url( '?wacp_tax_preview_wc_mail=true' ), 'woocommerce-ac');
-			    $set = "<a target = _blank href= ".$admin_url_wc_mail." > as shown here. </a>";
-			    $preview = "<a target = _blank href= ".$admin_url_preview_mail." > as shown here. </a>";
-			    
-			    add_settings_field(
-			    'ac_lite_include_tax',
-			    __( 'Display Taxes separately', 'woocommerce-ac' ),
-			    array( $this, 'ac_lite_include_tax' ),
-			    'woocommerce_ac_page',
-			    'ac_lite_general_settings_section',
-			    array( __( 'If this is unchecked, taxes will be added in the product price & no separate row for Tax will be shown in the Abandoned Cart email notification '.$set.' Otherwise a separate row for Tax will be displayed in the email '.$preview.' ', 'woocommerce-ac' ) )
-			    );
-			    	
-			    
 			    // Finally, we register the fields with WordPress
 			    register_setting(
 		        'woocommerce_ac_settings',
@@ -617,10 +578,6 @@ function woocommerce_ac_delete_lite(){
 		        'ac_lite_email_admin_on_recovery'
 	            );
 	            
-		        register_setting(
-		        'woocommerce_ac_settings',
-		        'ac_lite_include_tax'
-		            );
 			}
 			
 			/***************************************************************
@@ -686,32 +643,6 @@ function woocommerce_ac_delete_lite(){
 			     
 			    // Here, we'll take the first argument of the array and add it to a label next to the checkbox
 			    $html .= '<label for="ac_lite_email_admin_on_recovery"> '  . $args[0] . '</label>';
-			    echo $html;
-			}
-			
-			/***************************************************************
-			 * WP Settings API callback for including taxes
-			 **************************************************************/
-			function ac_lite_include_tax( $args ) {
-			    	
-			    // First, we read the option
-			    $include_tax = get_option( 'ac_lite_include_tax' );
-			
-			    // This condition added to avoid the notice displyed while Check box is unchecked.
-			    if ( isset( $include_tax ) && $include_tax == '' ) {
-			        $include_tax = 'off';
-			    }
-			
-			    // Next, we update the name attribute to access this element's ID in the context of the display options array
-			    // We also access the show_header element of the options collection in the call to the checked() helper function
-			    $html='';
-			    printf(
-			    '<input type="checkbox" id="ac_lite_include_tax" name="ac_lite_include_tax" value="on"
-            			' . checked('on', $include_tax, false).' />'
-			            			    );
-			
-			    // Here, we'll take the first argument of the array and add it to a label next to the checkbox
-			    $html .= '<label for="ac_lite_include_tax"> '  . $args[0] . '</label>';
 			    echo $html;
 			}
 			
@@ -850,12 +781,6 @@ function woocommerce_ac_delete_lite(){
 			            add_option( 'ac_lite_email_admin_on_recovery', $woocommerce_ac_settings[0]->email_admin );
 			        }else{
 			            add_option( 'ac_lite_email_admin_on_recovery', "" );
-			        }
-			        
-			        if( isset($woocommerce_ac_settings[0]->include_tax) ){
-			            add_option( 'ac_lite_include_tax', $woocommerce_ac_settings[0]->include_tax );
-			        }else{
-			            add_option( 'ac_lite_include_tax', "" );
 			        }
 			         
 			        update_option( 'ac_lite_settings_status', 'INDIVIDUAL' );
@@ -3178,54 +3103,6 @@ function woocommerce_ac_delete_lite(){
     					$cart_url              = wc_get_page_permalink( 'cart' );
     					$body_email_preview    = str_replace( '{{cart.link}}', $cart_url, $body_email_preview );
     					
-    					$body_email_preview    = str_replace( '{{cart.unsubscribe}}', '<a href=#>unsubscribe</a>', $body_email_preview );
-    					$ac_include_tax = get_option( 'ac_lite_include_tax' );
-    					
-    					if( $ac_include_tax == 'on' ) {
-    					    
-    					    $var =  '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
-                                 <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
-                                    <tr align="center">
-                                       <th>'.__( "Item", "woocommerce-ac" ).'</th>
-                                       <th>'.__( "Name", "woocommerce-ac" ).'</th>
-                                       <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
-                                       <th>'.__( "Price", "woocommerce-ac" ).'</th>
-                                       <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
-                                    </tr>
-    					            <tr align="center">
-                                       <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/shoes.jpg"/></td>
-                                       <td>'.__( "Men\'\s Formal Shoes", "woocommerce-ac" ).'</td>
-                                       <td>1</td>
-                                       <td>$100</td>
-                                       <td>$100</td>
-                                    </tr>
-                                    <tr align="center">
-                                       <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/images/handbag.jpg"/></td>
-                                       <td>'.__( "Woman\'\s Hand Bags", "woocommerce-ac" ).'</td>
-                                       <td>1</td>
-                                       <td>$100</td>
-                                       <td>$100</td>
-                                    </tr>
-	                                <tr align="center">
-                                       <td></td>
-                                       <td></td>
-                                       <td></td>
-                                       <td>'.__( "Tax:", "woocommerce-ac" ).'</td>
-                                       <td>$8</td>
-                                    </tr>
-                                    <tr align="center">
-                                       <td></td>
-                                       <td></td>
-                                       <td></td>
-                                       <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
-                                       <td>$208</td>
-                                    </tr>
-                                 </table>';
-    					    
-    					    
-    					}
-    					else {
-    					
     					$var =  '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
                                  <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
                                     <tr align="center">
@@ -3257,7 +3134,7 @@ function woocommerce_ac_delete_lite(){
                                        <td>$200</td>
                                     </tr>
                                  </table>';
-    	                }		                
+    			                
     					$body_email_preview = str_replace( '{{products.cart}}', $var, $body_email_preview );
     					
     				    if ( isset( $_POST['send_email_id'] ) ) {

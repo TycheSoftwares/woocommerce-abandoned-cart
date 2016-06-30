@@ -292,9 +292,7 @@ require_once $wcap_root.'/inc/class-wcap-lite-aes.php';
 								    
 								    $cart_details = $cart_info_db_field->cart;
 								    $cart_total = $item_subtotal = $item_total = 0;
-								    $ac_include_tax = get_option( 'ac_lite_include_tax' );
-								    $sub_line_prod_name = $line_subtotal_tax = '';
-								    
+								    $sub_line_prod_name = '';
 								    foreach ( $cart_details as $k => $v ) {
 								        $quantity_total	= $v->quantity;
 								        $product_id	        = $v->product_id;
@@ -304,20 +302,12 @@ require_once $wcap_root.'/inc/class-wcap-lite-aes.php';
 								        if ( $sub_line_prod_name == '' ) {
 								            $sub_line_prod_name = $product_name;
 								        }
-    								    if( isset($ac_include_tax) && $ac_include_tax == 'on' ) {
-    							            
-    							            $item_subtotal = $item_subtotal + $v->line_total;  // This is fix       	
-    							            $line_subtotal_tax += $v->line_subtotal_tax; // This is fix
-    							            
-    							        }else{
-        							        // Item subtotal is calculated as product total including taxes
-        							        if( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
-        							            $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
-        							        } else {
-        							            $item_subtotal = $item_subtotal + $v->line_total;
-        							        }
-        							    }
-							
+								        // Item subtotal is calculated as product total including taxes
+								        if( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
+								            $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
+								        } else {
+								            $item_subtotal = $item_subtotal + $v->line_total;
+								        }
 								
 								        //	Line total
 								        $item_total         = $item_subtotal;
@@ -337,23 +327,7 @@ require_once $wcap_root.'/inc/class-wcap-lite-aes.php';
 								        $cart_total += $item_total;
 								        $item_subtotal = $item_total = 0;
 								    }
-								    
-								    if( isset($ac_include_tax) && $ac_include_tax == 'on' ) {
-								        $var .= '<tr align="center">
-                                                    <td> </td>
-                                                    <td> </td>
-                                                    <td> </td>
-                                                    <td>'.__( "Tax:", "woocommerce-ac" ).'</td>
-                                                    <td> '.get_woocommerce_currency_symbol()."".$line_subtotal_tax.'</td>
-                                                </tr>'; //This is fix
-								    						
-								    }
-    								if( isset($ac_include_tax) && $ac_include_tax == 'on' ) {
-    							        $cart_total = $cart_total + $line_subtotal_tax ;
-    							        $cart_total = round( $cart_total, 2 );
-    							    }else{
-    							         $cart_total = round( $cart_total, 2 );
-    							    }
+								    $cart_total = round( $cart_total, 2 );
 								    $var .= '<tr align="center">
                                                 <td> </td>
                                                 <td> </td>
