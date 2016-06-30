@@ -26,14 +26,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 <th>Total</th>
 </tr>
 <tr style="background-color:#f4f5f4;">
-<td><img src = "<?php echo plugins_url();?>/woocommerce-abandoned-cart/images/spectre.jpg" height="40px" width="40px"></td><td>Spectre</td><td>$156</td><td>2</td><td>$312</td>
+<td><img src = "<?php echo plugins_url();?>/woocommerce-abandoned-cart/images/spectre.jpg" height="40px" width="40px"></td><td>Spectre</td><td>$150</td><td>2</td><td>$300</td>
 </tr>
 <tr>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
 <th>Cart Total:</th>
-<td>$312</td>
+<td>$300</td>
 </tr></tbody></table> </p>
 <p> &nbsp; </p>
 <p > If you had any purchase troubles, could you please Contact to share them? </p>
