@@ -3102,6 +3102,7 @@ function woocommerce_ac_delete_lite(){
     					
     					$cart_url              = wc_get_page_permalink( 'cart' );
     					$body_email_preview    = str_replace( '{{cart.link}}', $cart_url, $body_email_preview );
+    					$body_email_preview    = str_replace( '{{cart.unsubscribe}}', '<a href=#>unsubscribe</a>', $body_email_preview );
     					
     					$var =  '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
                                  <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
