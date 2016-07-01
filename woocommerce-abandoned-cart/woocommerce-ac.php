@@ -1401,7 +1401,7 @@ function woocommerce_ac_delete_lite(){
                                         WHERE id = '".$get_abandoned_id_of_order."' ";
 				    $wpdb->query( $query_order );
 				
-				    $order->add_order_note( __( 'The order has been Recovered.', 'woocommerce-ac' ) );
+				    $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-ac' ) );
 				     
 				    delete_post_meta( $order_id, 'wcap_lite_recover_order_placed', $get_abandoned_id_of_order );
 				    delete_post_meta( $order_id , 'wcap_lite_recover_order_placed_sent_id', $get_sent_email_id_of_order );
