@@ -228,10 +228,30 @@ require_once $wcap_root.'/inc/class-wcap-lite-aes.php';
 								    else if ( isset( $results_guest[0]->billing_first_name ) ) $email_body = str_replace( "{{customer.fullname}}", $results_guest[0]->billing_first_name, $email_body );
 								    else if ( isset( $results_guest[0]->billing_last_name)) $email_body = str_replace( "{{customer.fullname}}", $results_guest[0]->billing_last_name, $email_body );
 								} else {
-								    $email_body = str_replace( "{{customer.firstname}}", get_user_meta( $value->user_id, 'first_name', true ), $email_body );
-								    $email_subject = str_replace( "{{customer.firstname}}", get_user_meta( $value->user_id, 'first_name', true ), $email_subject );
-								    $email_body = str_replace( "{{customer.lastname}}", get_user_meta( $value->user_id, 'last_name', true ), $email_body );
-								    $email_body = str_replace( "{{customer.fullname}}", get_user_meta( $value->user_id, 'first_name', true )." ".get_user_meta( $value->user_id, 'last_name', true ), $email_body );
+								    $user_first_name = '';
+								    //
+								    $user_first_name_temp = get_user_meta( $value->user_id, 'billing_first_name', true );
+								    if ( isset( $user_first_name_temp ) &&  '' != $user_first_name_temp) {
+								        $user_first_name = $user_first_name_temp;
+								    }else {
+								        $user_first_name = get_user_meta( $value->user_id, 'first_name', true );
+								    }
+								    
+								    $email_body = str_replace( "{{customer.firstname}}", $user_first_name, $email_body );
+								    
+								    $email_subject = str_replace( "{{customer.firstname}}", $user_first_name, $email_subject );
+								    
+								    $user_last_name = '';
+								    $user_last_name_temp = get_user_meta( $value->user_id, 'billing_last_name', true);
+								    if ( isset( $user_last_name_temp ) && '' !=  $user_last_name_temp) {
+								        $user_last_name = $user_last_name_temp;
+								    }else {
+								        $user_last_name = get_user_meta( $value->user_id, 'last_name', true);;
+								    }
+								    
+								    $email_body = str_replace( "{{customer.lastname}}", $user_last_name, $email_body );
+								    
+								    $email_body = str_replace( "{{customer.fullname}}", $user_first_name." ".$user_last_name, $email_body );
 								}
 								
 								$order_date = "";

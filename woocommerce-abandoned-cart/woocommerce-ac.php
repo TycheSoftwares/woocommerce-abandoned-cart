@@ -2362,20 +2362,20 @@ function woocommerce_ac_delete_lite(){
                                             $user_email = $user_data->user_email;
                                         }
                                         
-                                        $user_first_name_temp = get_user_meta( $results[0]->user_id, 'first_name');
-                                        if ( isset( $user_first_name_temp[0] ) ) {
-                                            $user_first_name = $user_first_name_temp[0];
-                                        }
-                                        else {
-                                            $user_first_name = "";
+                                        $user_first_name = '';
+                                        $user_first_name_temp = get_user_meta( $results[0]->user_id, 'billing_first_name', true );
+                                        if ( isset( $user_first_name_temp ) &&  '' != $user_first_name_temp) {
+                                            $user_first_name = $user_first_name_temp;
+                                        }else {
+                                            $user_first_name = get_user_meta( $results[0]->user_id, 'first_name', true );
                                         }
                                         
-                                        $user_last_name_temp = get_user_meta($results[0]->user_id, 'last_name');
-                                        if ( isset( $user_last_name_temp[0] ) ) { 
-                                            $user_last_name = $user_last_name_temp[0];
-                                        }
-                                        else {
-                                            $user_last_name = "";
+                                        $user_last_name = '';
+                                        $user_last_name_temp = get_user_meta( $results[0]->user_id, 'billing_last_name', true);
+                                        if ( isset( $user_last_name_temp ) && '' !=  $user_last_name_temp) {
+                                            $user_last_name = $user_last_name_temp;
+                                        }else {
+                                            $user_last_name = get_user_meta( $results[0]->user_id, 'last_name', true);;
                                         }
                                       
                                         $user_billing_first_name = get_user_meta( $results[0]->user_id, 'billing_first_name' );
