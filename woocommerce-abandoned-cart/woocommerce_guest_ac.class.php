@@ -62,7 +62,7 @@
                                         ship_to_billing		: jQuery('#shiptobilling-checkbox').val(),
                                         action: 'save_data'
                                 };					
-                                jQuery.post( "<?php echo get_home_url();?>/wp-admin/admin-ajax.php", data, function(response) {
+                                jQuery.post( "<?php echo get_admin_url();?>admin-ajax.php", data, function(response) {
                                 });					
                     });
 				</script>			
