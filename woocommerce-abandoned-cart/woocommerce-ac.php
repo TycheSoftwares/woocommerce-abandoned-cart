@@ -2403,7 +2403,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             <h3> <p> <?php _e( 'Customer Details' , 'woocommerce-ac' ); ?> </p> </h3>
                             <div class="inside" style="height: 300px;" >                                       
                                 <div id="order_data" class="panel">
-                                    <div style="width:500px;float:left">
+                                    <div style="width:50%;float:left">
                                         <h3> <p> <?php _e( 'Billing Details' , 'woocommerce-ac' ); ?> </p> </h3>
                                         <p> <strong> <?php _e( 'Name:' , 'woocommerce-ac' ); ?> </strong>
                                             <?php echo $user_first_name." ".$user_last_name;?>
@@ -2426,7 +2426,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             <?php echo $user_billing_phone;?>
                                         </p>
                                     </div>                                                                                   
-                                    <div style="width:500px;float:right">
+                                    <div style="width:50%;float:right">
                                         <h3> <p> <?php _e( 'Shipping Details', 'woocommerce-ac' ); ?> </p> </h3>                                       
                                         <p> <strong> <?php _e( 'Address:', 'woocommerce-ac' ); ?> </strong>
                                             <?php 
