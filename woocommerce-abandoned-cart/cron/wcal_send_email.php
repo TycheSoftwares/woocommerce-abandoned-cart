@@ -314,7 +314,29 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 							        $product            = get_product( $product_id );
 							        $prod_image         = $product->get_image();
 							        $image_url          =  wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );
-							      
+							        
+							        if ( isset( $v->variation_id ) && '' != $v->variation_id ){
+							            $variation_id               = $v->variation_id;
+							            $variation                  = wc_get_product( $variation_id );
+							            $name                       = $variation->get_formatted_name() ;
+							            $explode_all                = explode ( "&ndash;", $name );
+							            $pro_name_variation         = array_slice( $explode_all, 1, -1 );
+							            $product_name_with_variable = '';
+							            $explode_many_varaition     = array();
+							             
+							            foreach ( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ){
+							                $explode_many_varaition = explode ( ",", $pro_name_variation_value );
+							                if ( !empty( $explode_many_varaition ) ) {
+							                    foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ){
+							                        $product_name_with_variable = $product_name_with_variable . "<br>". html_entity_decode ( $explode_many_varaition_value );
+							                    }
+							                } else {
+							                    $product_name_with_variable = $product_name_with_variable . "<br>". html_entity_decode ( $explode_many_varaition_value );
+							                }
+							            }
+							             
+							            $product_name = $product_name_with_variable;
+							        }
 							        $var .='<tr align="center">
                                                 <td> <a href="'.$cart_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
                                                 <td> <a href="'.$cart_link_track.'">'.__( $product_name, "woocommerce-ac" ).'</a></td>

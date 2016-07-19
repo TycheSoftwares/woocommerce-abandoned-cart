@@ -2346,6 +2346,29 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             $prod_name      = get_post($product_id);
                                             $product_name   = $prod_name->post_title;
                                             
+                                            if ( isset( $v->variation_id ) && '' != $v->variation_id ){
+                                                $variation_id               = $v->variation_id;
+                                                $variation                  = wc_get_product( $variation_id );
+                                                $name                       = $variation->get_formatted_name() ;
+                                                $explode_all                = explode ( "&ndash;", $name );
+                                                $pro_name_variation         = array_slice( $explode_all, 1, -1 );
+                                                $product_name_with_variable = '';
+                                                $explode_many_varaition     = array();
+                                                 
+                                                foreach ( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ){
+                                                    $explode_many_varaition = explode ( ",", $pro_name_variation_value );
+                                                    if ( !empty( $explode_many_varaition ) ) {
+                                                        foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ){
+                                                            $product_name_with_variable = $product_name_with_variable . "<br>". html_entity_decode ( $explode_many_varaition_value );
+                                                        }
+                                                    } else {
+                                                        $product_name_with_variable = $product_name_with_variable . "<br>". html_entity_decode ( $explode_many_varaition_value );
+                                                    }
+                                                }
+                                                 
+                                                $product_name = $product_name_with_variable;
+                                            }
+                                            
                                             // Item subtotal is calculated as product total including taxes
                                             if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
                                                 $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
