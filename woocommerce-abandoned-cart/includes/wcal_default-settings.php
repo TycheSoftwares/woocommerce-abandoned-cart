@@ -1,12 +1,11 @@
 <?php
-class default_template_settings_lite {
+class wcal_default_template_settings {
    /* This function will load default template while activating the plugin.
     * 
     * @since: AFter 2.5 version
     */
-   function create_default_templates_lite() {
+   function wcal_create_default_templates() {
        global $wpdb;
-
        $template_name_array    = 'Initial';
        $site_title             = get_bloginfo( 'name' );
        $site_url               = get_option( 'siteurl' );
@@ -14,8 +13,8 @@ class default_template_settings_lite {
        $active_post_array      = 0;
        $email_frequency_array  = 1;
        $day_or_hour_array      = 'Hours';
-       $body_content_array     =  addslashes("<html>                                   
-                                       <body>
+       $body_content_array     = addslashes( "<html>                                   
+                                    <body>
                                        <p> Hello {{customer.fullname}}, </p>
                                        <p> &nbsp; </p>
                                        <p> We\'re following up with you, because we noticed that on {{cart.abandoned_date}} you attempted to purchase the following products on $site_title. </p>
@@ -30,15 +29,14 @@ class default_template_settings_lite {
                                        <p> &nbsp; </p>
                                        <p> <a href=$site_url>$site_title</a> appreciates your business.  </p>
                                     </body>
-                           </html>");
-
-       $ac_from_name     = 'Admin'; 
-       $is_wc_template   =  1 ;
-       $default_template =  1;
-       $from_email       = get_option( 'admin_email' );
-       $ac_email_reply   = get_option( 'admin_email' );
+                                </html>" );
+       $ac_from_name            = 'Admin'; 
+       $is_wc_template          =  1 ;
+       $default_template        =  1;
+       $from_email              = get_option( 'admin_email' );
+       $ac_email_reply          = get_option( 'admin_email' );
        
-           $query = "INSERT INTO `" . $wpdb->prefix . "ac_email_templates_lite`
+       $query = "INSERT INTO `" . $wpdb->prefix . "ac_email_templates_lite`
            ( subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template, reply_email, from_email )
            VALUES ( '" . $template_subject_array . "',
                    '" . $body_content_array . "',
@@ -51,8 +49,6 @@ class default_template_settings_lite {
                    '" . $default_template . "',
                    '" . $ac_email_reply . "',
                    '" . $from_email . "' )";
-           
-           $wpdb->query( $query );
-           
+       $wpdb->query( $query );      
    }
 }

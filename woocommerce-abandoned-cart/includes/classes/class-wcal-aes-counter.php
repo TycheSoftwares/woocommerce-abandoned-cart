@@ -6,7 +6,7 @@
 /*    No warranty of any form is offered.                                                         */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-Class Wcap_Lite_Aes_Ctr extends Wcap_Lite_Aes
+Class Wcal_Aes_Ctr extends Wcal_Aes
 {
 
     /**
@@ -31,7 +31,7 @@ Class Wcap_Lite_Aes_Ctr extends Wcap_Lite_Aes
         $nBytes = $nBits / 8; // no bytes in key
         $pwBytes = array();
         for ($i = 0; $i < $nBytes; $i++) $pwBytes[$i] = ord(substr($password, $i, 1)) & 0xff;
-        $key = Wcap_Lite_Aes::cipher($pwBytes, Wcap_Lite_Aes::keyExpansion($pwBytes));
+        $key = Wcal_Aes::cipher($pwBytes, Wcal_Aes::keyExpansion($pwBytes));
         $key = array_merge($key, array_slice($key, 0, $nBytes - 16)); // expand key to 16/24/32 bytes long
 
         // initialise 1st 8 bytes of counter block with nonce (NIST SP800-38A §B.2): [0-1] = millisec,
@@ -51,7 +51,7 @@ Class Wcap_Lite_Aes_Ctr extends Wcap_Lite_Aes
         for ($i = 0; $i < 8; $i++) $ctrTxt .= chr($counterBlock[$i]);
 
         // generate key schedule - an expansion of the key into distinct Key Rounds for each round
-        $keySchedule = Wcap_Lite_Aes::keyExpansion($key);
+        $keySchedule = Wcal_Aes::keyExpansion($key);
         //print_r($keySchedule);
 
         $blockCount = ceil(strlen($plaintext) / $blockSize);
@@ -63,7 +63,7 @@ Class Wcap_Lite_Aes_Ctr extends Wcap_Lite_Aes
             for ($c = 0; $c < 4; $c++) $counterBlock[15 - $c] = self::urs($b, $c * 8) & 0xff;
             for ($c = 0; $c < 4; $c++) $counterBlock[15 - $c - 4] = self::urs($b / 0x100000000, $c * 8);
 
-            $cipherCntr = Wcap_Lite_Aes::cipher($counterBlock, $keySchedule); // -- encrypt counter block --
+            $cipherCntr = Wcal_Aes::cipher($counterBlock, $keySchedule); // -- encrypt counter block --
 
             // block size is reduced on final block
             $blockLength = $b < $blockCount - 1 ? $blockSize : (strlen($plaintext) - 1) % $blockSize + 1;
@@ -101,7 +101,7 @@ Class Wcap_Lite_Aes_Ctr extends Wcap_Lite_Aes
         $nBytes = $nBits / 8; // no bytes in key
         $pwBytes = array();
         for ($i = 0; $i < $nBytes; $i++) $pwBytes[$i] = ord(substr($password, $i, 1)) & 0xff;
-        $key = Wcap_Lite_Aes::cipher($pwBytes, Wcap_Lite_Aes::keyExpansion($pwBytes));
+        $key = Wcal_Aes::cipher($pwBytes, Wcal_Aes::keyExpansion($pwBytes));
         $key = array_merge($key, array_slice($key, 0, $nBytes - 16)); // expand key to 16/24/32 bytes long
 
         // recover nonce from 1st element of ciphertext
@@ -110,7 +110,7 @@ Class Wcap_Lite_Aes_Ctr extends Wcap_Lite_Aes
         for ($i = 0; $i < 8; $i++) $counterBlock[$i] = ord(substr($ctrTxt, $i, 1));
 
         // generate key schedule
-        $keySchedule = Wcap_Lite_Aes::keyExpansion($key);
+        $keySchedule = Wcal_Aes::keyExpansion($key);
 
         // separate ciphertext into blocks (skipping past initial 8 bytes)
         $nBlocks = ceil((strlen($ciphertext) - 8) / $blockSize);
@@ -126,7 +126,7 @@ Class Wcap_Lite_Aes_Ctr extends Wcap_Lite_Aes
             for ($c = 0; $c < 4; $c++) $counterBlock[15 - $c] = self::urs($b, $c * 8) & 0xff;
             for ($c = 0; $c < 4; $c++) $counterBlock[15 - $c - 4] = self::urs(($b + 1) / 0x100000000 - 1, $c * 8) & 0xff;
 
-            $cipherCntr = Wcap_Lite_Aes::cipher($counterBlock, $keySchedule); // encrypt counter block
+            $cipherCntr = Wcal_Aes::cipher($counterBlock, $keySchedule); // encrypt counter block
 
             $plaintxtByte = array();
             for ($i = 0; $i < strlen($ciphertext[$b]); $i++) {

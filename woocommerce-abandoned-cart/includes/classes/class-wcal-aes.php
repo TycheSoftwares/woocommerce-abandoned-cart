@@ -6,7 +6,7 @@
 /*    No warranty of any form is offered.                                                         */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-Class Wcap_Lite_Aes
+Class Wcal_Aes
 {
     /**
      * AES Cipher function [§5.1]: encrypt 'input' with Rijndael algorithm
@@ -18,37 +18,34 @@ Class Wcap_Lite_Aes
      */
     public static function cipher($input, $w)
     {
-        $Nb = 4; // block size (in words): no of columns in state (fixed at 4 for AES)
-        $Nr = count($w) / $Nb - 1; // no of rounds: 10/12/14 for 128/192/256-bit keys
+        $Nb     = 4; // block size (in words): no of columns in state (fixed at 4 for AES)
+        $Nr     = count($w) / $Nb - 1; // no of rounds: 10/12/14 for 128/192/256-bit keys
+        $state  = array(); // initialise 4xNb byte-array 'state' with input [§3.4]
+        for( $i = 0; $i < 4 * $Nb; $i++ ) $state[$i % 4][floor($i / 4)] = $input[$i];
 
-        $state = array(); // initialise 4xNb byte-array 'state' with input [§3.4]
-        for ($i = 0; $i < 4 * $Nb; $i++) $state[$i % 4][floor($i / 4)] = $input[$i];
+        $state = self::addRoundKey( $state, $w, 0, $Nb );
 
-        $state = self::addRoundKey($state, $w, 0, $Nb);
-
-        for ($round = 1; $round < $Nr; $round++) { // apply Nr rounds
-            $state = self::subBytes($state, $Nb);
-            $state = self::shiftRows($state, $Nb);
-            $state = self::mixColumns($state, $Nb);
-            $state = self::addRoundKey($state, $w, $round, $Nb);
+        for ( $round = 1; $round < $Nr; $round++ ) { // apply Nr rounds
+            $state = self::subBytes( $state, $Nb );
+            $state = self::shiftRows( $state, $Nb );
+            $state = self::mixColumns( $state, $Nb );
+            $state = self::addRoundKey( $state, $w, $round, $Nb );
         }
 
-        $state = self::subBytes($state, $Nb);
-        $state = self::shiftRows($state, $Nb);
-        $state = self::addRoundKey($state, $w, $Nr, $Nb);
+        $state = self::subBytes( $state, $Nb );
+        $state = self::shiftRows( $state, $Nb );
+        $state = self::addRoundKey( $state, $w, $Nr, $Nb );
 
-        $output = array(4 * $Nb); // convert state to 1-d array before returning [§3.4]
-        for ($i = 0; $i < 4 * $Nb; $i++) $output[$i] = $state[$i % 4][floor($i / 4)];
+        $output = array( 4 * $Nb ); // convert state to 1-d array before returning [§3.4]
+        for( $i = 0; $i < 4 * $Nb; $i++ ) $output[$i] = $state[$i % 4][floor($i / 4)];
         return $output;
     }
-
-
     /**
      * Xor Round Key into state S [§5.1.4].
      */
-    private static function addRoundKey($state, $w, $rnd, $Nb)
+    private static function addRoundKey( $state, $w, $rnd, $Nb )
     {
-        for ($r = 0; $r < 4; $r++) {
+        for( $r = 0; $r < 4; $r++ ) {
             for ($c = 0; $c < $Nb; $c++) $state[$r][$c] ^= $w[$rnd * 4 + $c][$r];
         }
         return $state;
@@ -59,8 +56,8 @@ Class Wcap_Lite_Aes
      */
     private static function subBytes($s, $Nb)
     {
-        for ($r = 0; $r < 4; $r++) {
-            for ($c = 0; $c < $Nb; $c++) $s[$r][$c] = self::$sBox[$s[$r][$c]];
+        for( $r = 0; $r < 4; $r++ ) {
+            for( $c = 0; $c < $Nb; $c++ ) $s[$r][$c] = self::$sBox[$s[$r][$c]];
         }
         return $s;
     }
