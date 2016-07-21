@@ -225,12 +225,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		        global $woocommerce, $wpdb;
 		
 		        $email_sent_id      = $_SESSION['email_sent_id'];
+		        
 		        $get_ac_id_query    = "SELECT abandoned_order_id FROM `" . $wpdb->prefix."ac_sent_history_lite` WHERE id = %d";
 		        $get_ac_id_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );			
+
 		        $abandoned_order_id = $get_ac_id_results[0]->abandoned_order_id;
 		        			
-		        update_post_meta( $order_id , 'wcal_recover_order_placed', $abandoned_order_id );
-		        update_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $email_sent_id );			
 		    } else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] !='' ) {
 		        global $woocommerce, $wpdb;
 		
