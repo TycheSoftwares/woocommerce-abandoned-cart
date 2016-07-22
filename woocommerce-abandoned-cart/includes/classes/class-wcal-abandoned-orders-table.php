@@ -225,7 +225,8 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		            }
 		        }
 		    }
-		    $line_total     = round( $line_total, 2 );
+		    $number_decimal = wc_get_price_decimals();
+		    $line_total     = round( $line_total, $number_decimal );
 		    $quantity_total = 0;
 		
 		    if ( count( $cart_details ) > 0) {    		         

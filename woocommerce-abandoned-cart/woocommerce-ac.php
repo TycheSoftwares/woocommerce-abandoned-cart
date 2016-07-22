@@ -2165,9 +2165,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                     <?php 
                                     $query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE id = %d ";
                                     $results = $wpdb->get_results( $wpdb->prepare( $query,$_GET['id'] ) );                         
+                                    
                                     $shipping_charges = 0;
-                                    $currency_symbol = get_woocommerce_currency_symbol();
-                
+                                    $currency_symbol  = get_woocommerce_currency_symbol();
+                                    $number_decimal   = wc_get_price_decimals();
+                                    
                                     if ( $results[0]->user_type == "GUEST" ) {
                                         $query_guest            = "SELECT * FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d";  
                                         $results_guest          = $wpdb->get_results( $wpdb->prepare( $query_guest, $results[0]->user_id ) );
@@ -2379,8 +2381,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             //  Line total
                                             $item_total    = $item_subtotal;
                                             $item_subtotal = $item_subtotal / $quantity_total;
-                                            $item_total    = number_format( $item_total, 2 );
-                                            $item_subtotal = number_format( $item_subtotal, 2 );                               
+                                            $item_total    = round( $item_total, $number_decimal );
+                                            $item_subtotal = round( $item_subtotal, $number_decimal );                               
                                             $product       = get_product( $product_id );
                                             $prod_image    = $product->get_image();
                                         ?>                   

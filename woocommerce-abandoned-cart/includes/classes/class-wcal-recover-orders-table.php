@@ -145,7 +145,8 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
     	
 	public function wcal_recovered_orders_data() { 
 		global $wpdb;    		
-		$wcal_class = new woocommerce_abandon_cart_lite ();
+		$wcal_class      = new woocommerce_abandon_cart_lite ();
+		$number_decimal  = wc_get_price_decimals();
 		
 		if ( isset( $_POST['duration_select'] ) ) {
 		    $duration_range = $_POST['duration_select'];
@@ -221,11 +222,11 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	        }
 	        $total_value += $line_total; 
 		}
-		$total_value                      = round( $total_value, 2 );    		
+		$total_value                      = round( $total_value, $number_decimal );    		
 		$this->total_order_amount         = $total_value ;
 		$this->total_abandoned_cart_count = $count_carts ;    		
 		$recovered_order_total            = 0;    		
-		$this->total_recover_amount       = round( $recovered_order_total, 2 )  ;    		
+		$this->total_recover_amount       = round( $recovered_order_total, $number_decimal )  ;    		
 		$this->recovered_item             = 0;    		
 		$table_data                       = "";
 		
@@ -274,7 +275,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		        $return_recovered_orders[ $i ]->order_total        = get_woocommerce_currency_symbol() . $recovered_order_total;
 		            		        
 		        $this->recovered_item = $recovered_item;
-		        $this->total_recover_amount = round( ( $recovered_order_total + $this->total_recover_amount ) , 2 );    		        
+		        $this->total_recover_amount = round( ( $recovered_order_total + $this->total_recover_amount ) , $number_decimal );    		        
 		        $i++;
 		    }    		    
 		}
