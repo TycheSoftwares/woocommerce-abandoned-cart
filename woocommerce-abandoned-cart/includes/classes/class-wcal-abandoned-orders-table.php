@@ -312,12 +312,12 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    $value_two          = $value2->date;	    
 	    $date_formatted_one = date_create_from_format( 'd M, Y h:i A', $value_one );
 	    if( isset( $date_formatted_one ) && $date_formatted_one != '' ) {
-	        $date_one = date_format( $date_formatted_one, 'Y-m-d' );
+	        $date_one = date_format( $date_formatted_one, 'Y-m-d h:i A' );
 	    }
 	    
 	    $date_formatted_two = date_create_from_format( 'd M, Y h:i A', $value_two );
 	    if( isset( $date_formatted_two ) && $date_formatted_two != '' ) {
-	        $date_two = date_format( $date_formatted_two, 'Y-m-d' );
+	        $date_two = date_format( $date_formatted_two, 'Y-m-d h:i A' );
 	    }
 	    return strtotime( $date_one ) - strtotime( $date_two );
 	}
@@ -328,12 +328,12 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    $value_two          = $value2->date;	     
 	    $date_formatted_one = date_create_from_format( 'd M, Y h:i A', $value_one );
 	    if( isset( $date_formatted_one ) && $date_formatted_one != '' ) {
-	        $date_one = date_format( $date_formatted_one, 'Y-m-d' );
+	        $date_one = date_format( $date_formatted_one, 'Y-m-d h:i A' );
 	    }
 	     
 	    $date_formatted_two = date_create_from_format( 'd M, Y h:i A', $value_two );
 	    if( isset( $date_formatted_two ) && $date_formatted_two != '' ) {
-	        $date_two = date_format( $date_formatted_two, 'Y-m-d' );
+	        $date_two = date_format( $date_formatted_two, 'Y-m-d h:i A' );
 	    }	    
 	    return strtotime($date_two) - strtotime($date_one);
 	}
