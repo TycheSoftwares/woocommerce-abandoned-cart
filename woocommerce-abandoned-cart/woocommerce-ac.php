@@ -806,8 +806,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	            // Get contents
     	            $email_body = ob_get_clean();
     	            woocommerce_mail( $user_email, $email_subject, $email_body, $headers );
-    	            
-    	            delete_user_meta( $user_id, '_woocommerce_ac_modified_cart' );
     	        }
     	    }
     	}
