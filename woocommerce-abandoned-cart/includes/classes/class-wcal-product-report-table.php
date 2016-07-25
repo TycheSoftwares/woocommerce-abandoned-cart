@@ -202,7 +202,7 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		    $i++;    		    
 		    }
 		}			
-		$this->total_count = count ( $chunck_array_value ) > 0 ? count ( $chunck_array_value )  : 0 ;     
+		$this->total_count = count ( $return_product_report ) > 0 ? count ( $return_product_report )  : 0 ;     
 		   
 		// Pagination per page
 		if( isset( $_GET['paged'] ) && $_GET['paged'] > 1 ) {
