@@ -260,7 +260,12 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
                     $return_abandoned_orders[ $i ]->order_total = get_woocommerce_currency_symbol() . "" . $line_total;
                     $return_abandoned_orders[ $i ]->date        = $order_date;
                     $return_abandoned_orders[ $i ]->status      = $ac_status;                        
-               }
+               }else {
+                   $abandoned_order_id                    = $abandoned_order_id;
+                   $return_abandoned_orders[ $i ]->id     = $abandoned_order_id;
+                   $return_abandoned_orders[ $i ]->date   = $order_date;
+                   $return_abandoned_orders[ $i ]->status = $ac_status;
+                }
                // To get the abandoned orders count
                $this->total_count = count( $return_abandoned_orders );
                $i++;
