@@ -93,23 +93,28 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 			
 				
 			foreach( $results_list as $key => $value ) {
-			    $user_id             = $value->user_id;
-			    $query_email = '';
-			    if ( is_multisite() ) {
-			        // get main site's table prefix
-			        $main_prefix     = $wpdb->get_blog_prefix(1);
-			        $query_email     = "SELECT user_email FROM `".$main_prefix."users` 
-			                             WHERE ID = %d";      
-			    } else {
-			        // non-multisite - regular table name
-			        $query_email     = "SELECT user_email FROM `".$wpdb->prefix."users`  
-			                             WHERE ID = %d";
-			    }
-			    $results_email       = $wpdb->get_results( $wpdb->prepare( $query_email, $user_id ) );
+			    $user_id            = $value->user_id;
+                $key                = 'billing_email';
+                $single             = true;
+                $user_billing_email = get_user_meta( $user_id, $key, $single );
+                if( isset( $user_billing_email ) && $user_billing_email == '' ){
+                    $user_id        = $value->user_id;
+                    if( is_multisite() ) {
+                        // get main site's table prefix
+                        $main_prefix = $wpdb->get_blog_prefix(1);
+                        $query_email = "SELECT user_email FROM `".$main_prefix."users` WHERE ID = %d";
+                         
+                    } else {
+                        // non-multisite - regular table name
+                        $query_email = "SELECT user_email FROM `".$wpdb->prefix."users` WHERE ID = %d";
+                    }
+                    $results_email       = $wpdb->get_results( $wpdb->prepare( $query_email, $user_id ) );
+                    $user_billing_email  = $results_email[0]->user_email;
+                }
 			
 			    $query_email_id      = "SELECT post_id FROM `" . $wpdb->prefix . "postmeta` 
 			                           WHERE meta_key = '_billing_email' AND meta_value = %s";
-			    $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $results_email[0]->user_email ) );
+			    $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $user_billing_email ) );
 			
 			    //if any orders are found with the same email address then delete those abandoned cart records
 			    if ( is_array( $results_query_email ) && count( $results_query_email ) > 0 ) {			
