@@ -130,7 +130,8 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		$recover_query         = $wpdb->get_results( $query );
 		$rec_carts_array       = array ( );
 		$recover_product_array = array( );
-			
+		$return_product_report = array();
+		
 		foreach( $recover_query as $recovered_cart_key => $recovered_cart_value ) {
 		    $recovered_cart_info = json_decode( $recovered_cart_value->abandoned_cart_info );
 		    $recovered_cart_dat  = json_decode( $recovered_cart_value->recovered_cart);
@@ -179,27 +180,27 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 
 		foreach ( $chunck_array as $chunck_array_key => $chunck_array_value ) {    		    
 		    foreach ( $chunck_array_value as $k => $v ) {    		    
-		    $return_product_report[$i] = new stdClass();    		    
-		    $prod_name                 = get_post( $k );
-		    $product_name              = $prod_name->post_title;
-		    $abandoned_count           = $v;
-		    $recover                   = array_count_values( $recover_product_array );
-		    foreach ( $recover as $ke => $ve ) {
-		        if( array_key_exists ( $ke, $count ) ) {    		             
-		            if ( $ke == $k ) {
-		                $recover_cart = $ve;
-		            }
-		        }
-		        if( ! array_key_exists ( $k, $recover ) ) {
-		            $recover_cart = "0";
-		        }
-		    }
-		    
-		    $return_product_report[ $i ]->product_name     = $product_name ;
-		    $return_product_report[ $i ]->abandoned_number = $abandoned_count;
-		    $return_product_report[ $i ]->recover_number   = $recover_cart;
-		    $return_product_report[ $i ]->product_id       = $k;
-		    $i++;    		    
+    		    $return_product_report[$i] = new stdClass();    		    
+    		    $prod_name                 = get_post( $k );
+    		    $product_name              = $prod_name->post_title;
+    		    $abandoned_count           = $v;
+    		    $recover                   = array_count_values( $recover_product_array );
+    		    foreach ( $recover as $ke => $ve ) {
+    		        if( array_key_exists ( $ke, $count ) ) {    		             
+    		            if ( $ke == $k ) {
+    		                $recover_cart = $ve;
+    		            }
+    		        }
+    		        if( ! array_key_exists ( $k, $recover ) ) {
+    		            $recover_cart = "0";
+    		        }
+    		    }
+    		    
+    		    $return_product_report[ $i ]->product_name     = $product_name ;
+    		    $return_product_report[ $i ]->abandoned_number = $abandoned_count;
+    		    $return_product_report[ $i ]->recover_number   = $recover_cart;
+    		    $return_product_report[ $i ]->product_id       = $k;
+    		    $i++;    		    
 		    }
 		}			
 		$this->total_count = count ( $return_product_report ) > 0 ? count ( $return_product_report )  : 0 ;     
