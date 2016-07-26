@@ -291,6 +291,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		             
 		            delete_post_meta( $order_id, 'wcal_recover_order_placed', $get_abandoned_id_of_order );
 		            delete_post_meta( $order_id, 'wcal_recover_order_placed_sent_id', $get_sent_email_id_of_order );
+		            delete_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );
 		        }
 		    }
 		    return $order_status;
@@ -744,7 +745,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	        $user_id                 = $order->user_id;
     	
     	        if( $ac_email_admin_recovery == 'on' ) {
-    	            if ( get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "yes" ) || get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "no" ) ) { // indicates cart is abandoned
+    	            $recovered_email_sent = get_post_meta( $order_id, 'wcap_recovered_email_sent', true );
+    	            if ( 'yes' != $recovered_email_sent && ( get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "yes" ) || get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "no" ) ) ) { // indicates cart is abandoned
     	                $order          = new WC_Order( $order_id );
     	                $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce' );
     	                $blogname       = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
@@ -767,10 +769,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	                // Get contents
     	                $email_body = ob_get_clean();
     	                woocommerce_mail( $user_email, $email_subject, $email_body, $headers );
-    	                /**
-    	                 * Delete user meta, so it would not send again the recover order email.
-    	                */
-    	                delete_user_meta( $user_id, '_woocommerce_ac_modified_cart' );
+    	                
+    	                update_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );
+    	                
     	            }
     	        }
     	    }
@@ -785,7 +786,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	    $ac_email_admin_recovery = get_option( 'ac_lite_email_admin_on_recovery' );
     	    
     	    if( $ac_email_admin_recovery == 'on' ) {
-    	        if ( get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5("yes") || get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5("no") ){ // indicates cart is abandoned
+    	        $recovered_email_sent = get_post_meta( $order_id, 'wcap_recovered_email_sent', true );
+    	        
+    	        if ( 'yes' != $recovered_email_sent && ( get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "yes" ) || get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "no" ) ) ) { // indicates cart is abandoned
     	            $order         = new WC_Order( $order_id );    	
     	            $email_heading = __( 'New Customer Order - Recovered', 'woocommerce-ac' );			
     	            $blogname      = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
@@ -806,6 +809,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	            // Get contents
     	            $email_body = ob_get_clean();
     	            woocommerce_mail( $user_email, $email_subject, $email_body, $headers );
+    	            
+    	            update_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );
     	        }
     	    }
     	}
@@ -1319,6 +1324,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     					WHERE id = %d ";
     					$wpdb->query( $wpdb->prepare( $query_order, $order_id, $updated_cart_ignored, $results[0]->id ) );
     					delete_user_meta( $user_id, '_woocommerce_ac_modified_cart' );
+    					delete_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );
     					
     				} else { 
     		            $delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
@@ -1345,6 +1351,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		                                WHERE id='".$results_status[0]->id."' ";
                             $wpdb->query( $query_order );
                             delete_user_meta( $results_id[0]->id, '_woocommerce_ac_modified_cart' );
+                            delete_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );
                         } else {
                             $delete_guest = "DELETE FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = '".$results_id[0]->id."'";
                             $wpdb->query( $delete_guest );
