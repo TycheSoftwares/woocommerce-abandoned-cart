@@ -230,6 +230,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		        $get_ac_id_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );			
 
 		        $abandoned_order_id = $get_ac_id_results[0]->abandoned_order_id;
+		        
+		        update_post_meta( $order_id , 'wcal_recover_order_placed',         $abandoned_order_id );
+		        update_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $email_sent_id );
+		        
 		        			
 		    } else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] !='' ) {
 		        global $woocommerce, $wpdb;
@@ -269,7 +273,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		
 		public function wcal_order_complete_action( $order_status, $order_id ) {
 		
-		    if ( 'failed' != $order->status  ) {
+		    
+		    if ( 'failed' != $order_status  ) {
 		        global $woocommerce, $wpdb;
 		        $order = new WC_Order( $order_id );
 		         
@@ -734,7 +739,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	}
 	
     	/******
-    	 * Send email to admin when cart is recover via PayPal.
+    	 * Send email to admin when cart is recovered only via PayPal.
     	 * @since 2.9 version
     	 */
     	public static function wcal_email_admin_recovery_for_paypal ( $order_id, $old, $new_status ) {    	     
@@ -746,6 +751,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	
     	        if( $ac_email_admin_recovery == 'on' ) {
     	            $recovered_email_sent = get_post_meta( $order_id, 'wcap_recovered_email_sent', true );
+    	            
+    	            // mention here why are we comparing both "yes" and "no" values
     	            if ( 'yes' != $recovered_email_sent && ( get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "yes" ) || get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "no" ) ) ) { // indicates cart is abandoned
     	                $order          = new WC_Order( $order_id );
     	                $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce' );
@@ -778,7 +785,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	}
 	
     	/******
-    	 * Send email to admin when cart is recover.
+    	 * Send email to admin when cart is recovered via any other payment gateway other than PayPal.
     	 * @since 2.3 version
     	 */
     	function wcal_email_admin_recovery ( $order_id ) {    	
