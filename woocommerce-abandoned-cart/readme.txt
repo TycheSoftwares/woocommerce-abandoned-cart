@@ -8,11 +8,11 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: http://www.tychesoftwares.com/
 
-This easy-to-use plugin gives WooCommerce store owners the ability to recover sales that are lost to abandoned shopping carts by logged-in customers. 
+This easy-to-use plugin allows WooCommerce store owners to recover sales that are lost to abandoned shopping carts by customers. 
 
 == Description ==
 
-Abandoned Cart plugin works in the background, sending email notifications to your customers, reminding them about their abandoned orders.
+Abandoned Cart plugin works in the background, sending email notifications to your guests customers & logged-in customers, reminding them about their abandoned orders.
 
 The Abandoned Cart plugin allows you to recover orders that were just a step away from closing. It enables you to create automatic & well-timed email reminders to be sent to your customers who have added your products to their cart, but did not complete the order. As a result, with this plugin you will start recovering at least 30% or more of your lost sales. Why let this 30% revenue go unclaimed?
 
@@ -44,7 +44,7 @@ Abandoned Cart PRO plugin enables to do the following additional things:
 
 **Pro Version:**
 
-**[Abandoned Cart Pro for WooCommerce 3.3](http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro "Abandoned Cart Pro for WooCommerce")** - The PRO version allows you to track products in abandoned carts, create unlimited email templates, track coupons, keep a track of sent emails & much more.
+**[Abandoned Cart Pro for WooCommerce 3.4](http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro "Abandoned Cart Pro for WooCommerce")** - The PRO version allows you to track products in abandoned carts, create unlimited email templates, track coupons, keep a track of sent emails & much more.
 
 
 **Email Sending Setup:**
@@ -87,9 +87,25 @@ The documentation can be found **[here](https://www.tychesoftwares.com/woocommer
 
 4. Lists Recovered Orders.
 
+5. Product Report Tab.
+
 == Changelog ==
 
+= 3.0 =
+
+* Enhancements - In this version, the code has been refined throughout the plugin & the folder structure has also been modified.
+
+* Enhancements - Earlier rounding off of the decimal values was hardcoded in the plugin. Now, it will round the decimal values based on the WooCommerce setting named “Number of Decimals” which is located at WooCommerce -> Settings menu.
+
+* Bugs Fixed - When setting "Email admin On Order Recovery" is enabled & order is recovered from the abandoned cart reminder notifications using "Cash On Delivery" payment gateway. Then the order is not considered as recovered & the order was not displayed in the "Recovered Orders" tab. This has been fixed.
+
+* Bugs Fixed - Earlier the abandoned cart reminder emails & abandoned orders details page was not displaying the selected attributes for the variable products. This has been fixed.
+
+* Bugs Fixed - The "Abandoned Date" column of the abandoned orders tab was not considering the time for sorting. This has been fixed.
+
 = 2.9 =
+
+* New Feature - New merge tag {{cart.unsubscribe}} has been added for email templates. This merge tag allows user to stop receiving further abandoned cart reminder email notifications. This merge tag has been added to comply with email sending laws in different countries.
 
 * Bugs Fixed - Earlier if any user came from abandoned cart reminder email and place the order using PayPal payment gateway and do not reach the order received page. Then plugin was not considering that order as a recovered order. From now onwards if the user came from the abandoned cart reminder email and place the order using PayPal and does not reach the order received the page. Then plugin will consider that cart as a recovered order.
 
