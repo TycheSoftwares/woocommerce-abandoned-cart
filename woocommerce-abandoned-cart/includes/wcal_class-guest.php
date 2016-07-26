@@ -171,7 +171,7 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
     
             if ( isset( $_SESSION['shipping_postcode'] ) && $_SESSION['shipping_postcode'] != "" ) {
                 $shipping_zipcode = $_SESSION['shipping_postcode'];
-            } else {
+            } elseif( isset( $_SESSION['billing_postcode'] ) && $_SESSION['billing_postcode'] != "" ) {
                 $shipping_zipcode = $billing_zipcode = $_SESSION['billing_postcode'];
             }			
             $shipping_charges = $woocommerce->cart->shipping_total;			
