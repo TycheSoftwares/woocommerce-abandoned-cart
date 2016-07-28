@@ -171,7 +171,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 				$headers            .= "Reply-To:  " . $value->reply_email . " " . "\r\n";
 				$template_id         = $value->id;
 				$is_wc_template      = $value->is_wc_template;
-				$wc_template_header_text = $value->wc_email_header != '' ? $value->wc_email_header : __( 'Abandoned cart reminder', 'woocommerce-ac ');
+				$wc_template_header_text = $value->wc_email_header != '' ? $value->wc_email_header : __( 'Abandoned cart reminder', 'woocommerce-ac');
 				$wc_template_header  = stripslashes( $wc_template_header_text );
 				
 				foreach ( $carts as $key => $value ) {
