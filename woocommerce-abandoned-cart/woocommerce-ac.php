@@ -727,14 +727,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	        update_option( 'wcal_security_key', 'qJB0rGtIn5UB1xG03efyCp' );
     	    }
     	    
-    	    $ac_history_lite_table_name = $wpdb->prefix . "ac_abandoned_cart_history_lite";    	    
-    	    $check_table_query          = "SHOW COLUMNS FROM $ac_history_lite_table_name LIKE 'unsubscribe_link'";
-    	    $results                    = $wpdb->get_results( $check_table_query );
-    	    
-    	    if ( count( $results ) == 0 ) {
-    	        $alter_table_query = "ALTER TABLE $ac_history_table_name 
-    	        ADD `unsubscribe_link` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER  `user_type`";
-    	        $wpdb->get_results( $alter_table_query );
+    	   if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_abandoned_cart_history_lite';" ) ) {
+    	        if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_abandoned_cart_history_lite` LIKE 'unsubscribe_link';" ) ) {
+    	            $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_abandoned_cart_history_lite ADD `unsubscribe_link` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER  `user_type`;" );
+    	        }
     	    }
     	}
 	
