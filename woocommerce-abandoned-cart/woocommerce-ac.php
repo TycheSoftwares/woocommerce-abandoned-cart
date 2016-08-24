@@ -402,6 +402,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	/*-----------------------------------------------------------------------------------*/								
 	    function wcal_activate() {
     		global $wpdb; 
+    		$wcap_collate = '';
+    		if ( $wpdb->has_cap( 'collation' ) ) {
+    		    $wcap_collate = $wpdb->get_charset_collate();
+    		}
     		$table_name = $wpdb->prefix . "ac_email_templates_lite";
     		
     		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
@@ -414,7 +418,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     				`template_name` text COLLATE utf8_unicode_ci NOT NULL,
     				`from_name` text COLLATE utf8_unicode_ci NOT NULL,
       				PRIMARY KEY (`id`)
-    		        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ";
+    		        ) $wcap_collate AUTO_INCREMENT=1 ";
     	
     		require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
     		dbDelta( $sql );
@@ -450,7 +454,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         				`sent_time` datetime NOT NULL,
         				`sent_email_id` text COLLATE utf8_unicode_ci NOT NULL,
         				PRIMARY KEY  (`id`)
-    		            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ";
+    		            ) $wcap_collate AUTO_INCREMENT=1 ";
     		 
     		require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
     		dbDelta ( $sql_query );
@@ -465,7 +469,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             				 `cart_ignored` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
             				 `recovered_cart` int(11) NOT NULL,
             				 PRIMARY KEY (`id`)
-    		                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+    		                 ) $wcap_collate";
     				 
     		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     		dbDelta( $history_query );
@@ -591,7 +595,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	 *************************************************/
     	function wcal_update_db_check() {
     	    global $wpdb;
-    	    
+    	    $wcap_collate = '';
+    	    if ( $wpdb->has_cap( 'collation' ) ) {
+    	        $wcap_collate = $wpdb->get_charset_collate();
+    	    }
     	    if( get_option( 'ac_lite_delete_alter_table_queries' ) != 'yes' ) {
     	        update_option( 'ac_lite_alter_table_queries', '' );
     	        update_option( 'ac_lite_delete_alter_table_queries', 'yes' );
@@ -696,7 +703,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		    `shipping_zipcode` double,
     		    `shipping_charges` double,
     		    PRIMARY KEY (`id`)
-    		    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=63000000";
+    		    ) $wcap_collate AUTO_INCREMENT=63000000";
     		    require_once( ABSPATH . 'wp-admin/includes/upgrade.php');
     		    $wpdb->query( $ac_guest_history_query );
     	    }
