@@ -108,8 +108,10 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                         // non-multisite - regular table name
                         $query_email = "SELECT user_email FROM `".$wpdb->prefix."users` WHERE ID = %d";
                     }
-                    $results_email       = $wpdb->get_results( $wpdb->prepare( $query_email, $user_id ) );
-                    $user_billing_email  = $results_email[0]->user_email;
+                    $results_email   = $wpdb->get_results( $wpdb->prepare( $query_email, $user_id ) );
+                    if ( isset( $results_guest[0]->user_email ) ) {
+                        $user_billing_email  = $results_email[0]->user_email;
+                    }
                 }
 			
 			    $query_email_id      = "SELECT post_id FROM `" . $wpdb->prefix . "postmeta` 
