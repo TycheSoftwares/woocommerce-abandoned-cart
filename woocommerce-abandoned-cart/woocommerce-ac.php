@@ -977,8 +977,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $validate_email_address_string = str_replace ( " " , "+", $encoded_email_address);
         
                     if( isset( $validate_email_id_string ) ) {
-                        $validate_email_id_decode  = $this->wcal_decrypt_validate( $validate_email_id_string );
-                    }
+                        if( function_exists( "mcrypt_encrypt" ) ) {
+                            $validate_email_id_decode  = $this->wcal_decrypt_validate( $validate_email_id_string );                    
+                        } else {
+                            $validate_email_id_decode = base64_decode( $validate_email_id_string );
+                        }
+                    }   
                     $validate_email_address_string = $validate_email_address_string;
                 }
         
@@ -1051,8 +1055,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	        // it will check if any old email have open the link
     	        if ( preg_match( '/&url=/', $link_decode_test ) ) { 			            
     	            $link_decode = $link_decode_test;
-    	        } else {			            
-    	            $link_decode = $this->wcal_decrypt_validate( $validate_encoded_string );
+    	        } else {
+    	            if( function_exists( "mcrypt_encrypt" ) ) {			            
+    	                $link_decode = $this->wcal_decrypt_validate( $validate_encoded_string );
+    	            } else {
+                        $link_decode = base64_decode( $validate_encoded_string );
+                    }
     	        }
     	        
     	        if ( !preg_match( '/&url=/', $link_decode ) ) { // This will decrypt more security
