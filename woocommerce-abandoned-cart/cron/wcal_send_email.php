@@ -165,6 +165,13 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 				}
 				
 				$carts               = $this->wcal_get_carts( $time_to_send_template_after, $cart_abandon_cut_off_time );
+				/**
+				 * When there are 3 templates and for cart id 1 all template time has been reached. BUt all templates are deactivated.
+				 * If we activate all 3 template then at a 1 time all 3 email templates send to the users.
+				 * So below function check that after first email is sent time and then from that time it will send the 2nd template time.  ( It will not consider the cart abadoned time in this case. )
+				 */
+				$carts               = $this->wcal_remove_cart_for_mutiple_templates( $carts, $time_to_send_template_after, $value->id );
+					
 				$email_frequency     = $value->frequency;
 				$email_body_template = $value->body;			
 				$email_subject       = stripslashes  ( $value->subject );
@@ -410,6 +417,26 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 			$results = $wpdb->get_results( $wpdb->prepare( $query, $cart_ignored, $unsubscribe ) );			
 			return $results;		
 			exit;
+		}
+		
+		public static function wcal_remove_cart_for_mutiple_templates( $carts, $time_to_send_template_after, $template_id ) {
+		    global $wpdb;
+		    
+		    foreach( $carts as $carts_key => $carts_value ) {		
+		        $wcal_get_last_email_sent_time               = "SELECT * FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE abandoned_order_id = $carts_value->id ORDER BY `sent_time` DESC LIMIT 1";
+		        $wcal_get_last_email_sent_time_results_list  = $wpdb->get_results( $wcal_get_last_email_sent_time );
+		
+		        if( count( $wcal_get_last_email_sent_time_results_list ) > 0 ) {
+		            $last_template_send_time  = strtotime( $wcal_get_last_email_sent_time_results_list[0]->sent_time );
+		            $second_template_send_time = $last_template_send_time + $time_to_send_template_after ;
+		            $current_time_test         = current_time( 'timestamp' );
+		
+		            if( $second_template_send_time > $current_time_test ) {
+		                unset( $carts [ $carts_key ] );
+		            }
+		        }
+		    }
+		    return $carts;
 		}
 		/******
 		*  This function is used to encode the validate string.
