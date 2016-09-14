@@ -14,8 +14,9 @@ if ( ! isset( $wp_load ) ) {
 $wcal_root = dirname( dirname(__FILE__) ); // go two level up for directory from this file.
 
 require_once $wp_load;
-require_once $wcal_root.'/includes/classes/class-wcal-aes-counter.php';
 require_once $wcal_root.'/includes/classes/class-wcal-aes.php';
+require_once $wcal_root.'/includes/classes/class-wcal-aes-counter.php';
+
 
 /**
  * woocommerce_abandon_cart_cron class
