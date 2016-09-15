@@ -191,8 +191,10 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 				                            WHERE id = %d";
 				        $results_guest     = $wpdb->get_results( $wpdb->prepare( $query_guest, $value->user_id ) );
 				        $value->user_email = $results_guest[0]->email_id;
-				    } else {				       
-				        $user_id            = $value->user_id;
+				    } else {
+				        if( isset( $value->user_id ) ) {
+				            $user_id            = $value->user_id;
+				        }
 				        $key                = 'billing_email';
 				        $single             = true;
 				        $user_biiling_email = get_user_meta( $user_id, $key, $single );
@@ -201,8 +203,9 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 				           $value->user_email = $user_biiling_email;
 				        }
 				    }
-				    
-					$cart_info_db_field = json_decode( $value->abandoned_cart_info );
+				    if( isset( $value->abandoned_cart_info ) ) {
+					   $cart_info_db_field = json_decode( $value->abandoned_cart_info );
+				    }
 					if( count( $cart_info_db_field->cart ) > 0 ) {
 						$cart_update_time = $value->abandoned_cart_time;
 						$new_user         = $this->wcal_check_sent_history( $value->user_id, $cart_update_time, $template_id, $value->id );
