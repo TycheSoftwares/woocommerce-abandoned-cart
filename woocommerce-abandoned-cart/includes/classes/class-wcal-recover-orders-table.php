@@ -222,7 +222,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	        }
 	        $total_value += $line_total; 
 		}
-		$total_value                      = round( $total_value, $number_decimal );    		
+		$total_value                      = wc_price( $total_value );    		
 		$this->total_order_amount         = $total_value ;
 		$this->total_abandoned_cart_count = $count_carts ;    		
 		$recovered_order_total            = 0;    		
@@ -272,7 +272,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		        $return_recovered_orders[ $i ]->recovered_id       = $recovered_id;
 		        $return_recovered_orders[ $i ]->recover_order_date = $recovered_date;
 		        $return_recovered_orders[ $i ]->abandoned_date     = $value->abandoned_cart_time;
-		        $return_recovered_orders[ $i ]->order_total        = get_woocommerce_currency_symbol() . $recovered_order_total;
+		        $return_recovered_orders[ $i ]->order_total        = wc_price($recovered_order_total);
 		            		        
 		        $this->recovered_item = $recovered_item;
 		        $this->total_recover_amount = round( ( $recovered_order_total + $this->total_recover_amount ) , $number_decimal );    		        

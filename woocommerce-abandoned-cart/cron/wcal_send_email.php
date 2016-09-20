@@ -327,11 +327,11 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 							        //	Line total
 							        $item_total         = $item_subtotal;
 							        $item_subtotal	    = $item_subtotal / $quantity_total;
-							        $item_total_display = round( $item_total, 2 );
-							        $item_subtotal	    = round( $item_subtotal, 2 );
+							        $item_total_display = wc_price( $item_total );
+							        $item_subtotal	    = wc_price( $item_subtotal );
 							        $product            = get_product( $product_id );
 							        $prod_image         = $product->get_image();
-							        $image_url          =  wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );
+							        $image_url          = wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );
 							        
 							        if ( isset( $v->variation_id ) && '' != $v->variation_id ){
 							            $variation_id               = $v->variation_id;
@@ -359,19 +359,19 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                 <td> <a href="'.$cart_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
                                                 <td> <a href="'.$cart_link_track.'">'.__( $product_name, "woocommerce-ac" ).'</a></td>
                                                 <td> '.$quantity_total.'</td>
-                                                <td> '.get_woocommerce_currency_symbol()."".$item_subtotal.'</td>
-                                                <td> '.get_woocommerce_currency_symbol()."".$item_total_display.'</td>
+                                                <td> '.$item_subtotal.'</td>
+                                                <td> '.$item_total_display.'</td>
                                             </tr>';
 							        $cart_total += $item_total;
 							        $item_subtotal = $item_total = 0;
 							    }
-							    $cart_total = round( $cart_total, 2 );
+							    $cart_total = wc_price( $cart_total );
 							    $var .= '<tr align="center">
                                             <td> </td>
                                             <td> </td>
                                             <td> </td>
                                             <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
-                                            <td> '.get_woocommerce_currency_symbol()."".$cart_total.'</td>
+                                            <td> '.$cart_total.'</td>
                                         </tr>';
 							    $var .= '</table>
                                                             ';

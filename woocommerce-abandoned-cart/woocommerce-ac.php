@@ -2144,7 +2144,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                     <strong> 
                                         <?php $total_of_all_order = $wcal_recover_orders_list->total_order_amount; 
                                                
-                                        echo get_woocommerce_currency_symbol().$total_of_all_order; ?>
+                                        echo $total_of_all_order; ?>
                                      </strong>
                                      <?php _e( ' were abandoned. We were able to recover', 'woocommerce-ac' ); ?> 
                                      <strong>
@@ -2157,7 +2157,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                      <strong>
                                         <?php 
                                             $recovered_total = $wcal_recover_orders_list->total_recover_amount;
-                                            echo get_woocommerce_currency_symbol().$recovered_total; ?>
+                                            echo $recovered_total; ?>
                                      </strong>
                                  </p>
                             </div>
@@ -2404,8 +2404,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             //  Line total
                                             $item_total    = $item_subtotal;
                                             $item_subtotal = $item_subtotal / $quantity_total;
-                                            $item_total    = round( $item_total, $number_decimal );
-                                            $item_subtotal = round( $item_subtotal, $number_decimal );                               
+                                            $item_total    = wc_price( $item_total );
+                                            $item_subtotal = wc_price( $item_subtotal );                               
                                             $product       = get_product( $product_id );
                                             $prod_image    = $product->get_image();
                                         ?>                   
@@ -2413,8 +2413,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             <td> <?php echo $prod_image; ?></td>
                                             <td> <?php echo $product_name; ?></td>
                                             <td> <?php echo $quantity_total; ?></td>
-                                            <td> <?php echo get_woocommerce_currency_symbol().$item_subtotal; ?></td>
-                                            <td> <?php echo get_woocommerce_currency_symbol().$item_total; ?></td>
+                                            <td> <?php echo $item_subtotal; ?></td>
+                                            <td> <?php echo $item_total; ?></td>
                                         </tr>           
                                     <?php 
                                     $item_subtotal = $item_total = 0;
