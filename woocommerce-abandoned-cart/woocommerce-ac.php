@@ -2211,27 +2211,29 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         }
                                         $user_email = get_user_meta( $results[0]->user_id, 'billing_email', true );
                                         
-                                        if( $user_email == "" ) {
+                                        if( "" == $user_email ) {
                                             $user_data = get_userdata( $results[0]->user_id );
                                             $user_email = $user_data->user_email;
                                         }
                                         
-                                        $user_first_name = '';
-                                        $user_first_name_temp = get_user_meta( $results[0]->user_id, 'billing_first_name', true );
-                                        if ( isset( $user_first_name_temp ) &&  '' != $user_first_name_temp) {
+                                        $user_first_name = "";
+                                        $user_first_name_temp = get_user_meta( $user_id, 'billing_first_name', true );
+                                        if( isset( $user_first_name_temp ) && "" == $user_first_name_temp ) {
+                                            $user_data  = get_userdata( $user_id );
+                                            $user_first_name = $user_data->first_name;
+                                        } else {
                                             $user_first_name = $user_first_name_temp;
-                                        }else {
-                                            $user_first_name = get_user_meta( $results[0]->user_id, 'first_name', true );
                                         }
                                         
-                                        $user_last_name = '';
-                                        $user_last_name_temp = get_user_meta( $results[0]->user_id, 'billing_last_name', true);
-                                        if ( isset( $user_last_name_temp ) && '' !=  $user_last_name_temp) {
+                                        $user_last_name = "";
+                                        $user_last_name_temp = get_user_meta( $user_id, 'billing_last_name', true );
+                                        if( isset( $user_last_name_temp ) && "" == $user_last_name_temp ) {
+                                            $user_data  = get_userdata( $user_id );
+                                            $user_last_name = $user_data->last_name;
+                                        } else {
                                             $user_last_name = $user_last_name_temp;
-                                        }else {
-                                            $user_last_name = get_user_meta( $results[0]->user_id, 'last_name', true);;
                                         }
-                                      
+                                        
                                         $user_billing_first_name = get_user_meta( $results[0]->user_id, 'billing_first_name' );
                                         $user_billing_last_name = get_user_meta( $results[0]->user_id, 'billing_last_name' );
                                         

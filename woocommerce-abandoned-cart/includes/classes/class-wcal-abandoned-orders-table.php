@@ -181,20 +181,22 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		            $user_data = get_userdata( $value->user_id );
 		            $user_email = $user_data->user_email;
 		        }        		   
-		        $user_first_name = '';
-		        $user_first_name_temp = get_user_meta( $value->user_id, 'billing_first_name', true );
-		        if( isset( $user_first_name_temp ) &&  '' != $user_first_name_temp ) {
+		        $user_first_name = "";
+		        $user_first_name_temp = get_user_meta( $user_id, 'billing_first_name', true );
+		        if( isset( $user_first_name_temp ) && "" == $user_first_name_temp ) {
+		            $user_data  = get_userdata( $user_id );
+		            $user_first_name = $user_data->first_name;
+		        } else {
 		            $user_first_name = $user_first_name_temp;
-		        } else {
-		            $user_first_name = get_user_meta( $value->user_id, 'first_name', true );
 		        }
-		
-		        $user_last_name = '';
-		        $user_last_name_temp = get_user_meta( $value->user_id, 'billing_last_name', true );
-		        if( isset( $user_last_name_temp ) && '' !=  $user_last_name_temp ) {
-		            $user_last_name = $user_last_name_temp;
+		        
+		        $user_last_name = "";
+		        $user_last_name_temp = get_user_meta( $user_id, 'billing_last_name', true );
+		        if( isset( $user_last_name_temp ) && "" == $user_last_name_temp ) {
+		            $user_data  = get_userdata( $user_id );
+		            $user_last_name = $user_data->last_name;
 		        } else {
-		            $user_last_name = get_user_meta( $value->user_id, 'last_name', true );
+		            $user_last_name = $user_last_name_temp;
 		        }
 		    }
 		

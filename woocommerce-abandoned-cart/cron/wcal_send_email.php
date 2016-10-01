@@ -236,22 +236,23 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     							    $user_first_name = '';
     							    //
     							    $user_first_name_temp = get_user_meta( $value->user_id, 'billing_first_name', true );
-    							    if( isset( $user_first_name_temp ) &&  '' != $user_first_name_temp ) {
-    							        $user_first_name = $user_first_name_temp;
+    							    if( isset( $user_first_name_temp ) && "" == $user_first_name_temp ) {
+    							        $user_data  = get_userdata( $user_id );
+    							        $user_first_name = $user_data->first_name;
     							    } else {
-    							        $user_first_name = get_user_meta( $value->user_id, 'first_name', true );
+    							        $user_first_name = $user_first_name_temp;
     							    }
     							    
     							    $email_body          = str_replace( "{{customer.firstname}}", $user_first_name, $email_body );							    
     							    $email_subject       = str_replace( "{{customer.firstname}}", $user_first_name, $email_subject );							    
     							    $user_last_name      = '';
-    							    $user_last_name_temp = get_user_meta( $value->user_id, 'billing_last_name', true);
-    							    if( isset( $user_last_name_temp ) && '' !=  $user_last_name_temp) {
-    							        $user_last_name = $user_last_name_temp;
+    							    $user_last_name_temp = get_user_meta( $value->user_id, 'billing_last_name', true );
+    							    if( isset( $user_last_name_temp ) && "" == $user_last_name_temp ) {
+    							        $user_data  = get_userdata( $user_id );
+    							        $user_last_name = $user_data->last_name;
     							    } else {
-    							        $user_last_name = get_user_meta( $value->user_id, 'last_name', true);;
+    							        $user_last_name = $user_last_name_temp;
     							    }
-    							    
     							    $email_body = str_replace( "{{customer.lastname}}", $user_last_name, $email_body );							    
     							    $email_body = str_replace( "{{customer.fullname}}", $user_first_name." ".$user_last_name, $email_body );
     							}
