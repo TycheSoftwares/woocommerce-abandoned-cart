@@ -186,8 +186,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			//It will used to unsubcribe the emails.
 			add_action( 'template_include',                             array( &$this, 'wcal_email_unsubscribe'),99, 1 );
 			
-			//Discount Coupon Notice
-			add_action ( 'admin_notices',                               array( &$this, 'wcal_coupon_notice' ) );
 			add_action ( 'admin_enqueue_scripts',                       array( &$this, 'wcal_enqueue_scripts_js' ) );
 			add_action ( 'admin_enqueue_scripts',                       array( &$this, 'wcal_enqueue_scripts_css' ) );
 			
@@ -387,16 +385,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			    load_plugin_textdomain( $domain, FALSE, basename( dirname( __FILE__ ) ) . '/i18n/languages/' );
 		      }
 		}
-			
-	    function wcal_coupon_notice() {
-	        if ( isset( $_GET['page'] ) && $_GET['page'] == "woocommerce_ac_page" ) {
-        ?>
-               <div class = "updated">
-                  <p><?php _e( 'You can upgrade to the <a href = "https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/">PRO version of WooCommerce Abandoned Cart plugin</a> at a <b>20% discount</b>. Use the coupon code: <b>ACPRO20</b>.<a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/"> Purchase now </a> & save $24!', 'woocommerce-ac' ); ?></p>
-               </div>   
-        <?php
-            }
-	    }
+	
     	/*-----------------------------------------------------------------------------------*/
     	/* Class Functions */
     	/*-----------------------------------------------------------------------------------*/								
