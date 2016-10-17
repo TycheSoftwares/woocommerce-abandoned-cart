@@ -740,12 +740,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	        $ac_email_admin_recovery = get_option( 'ac_lite_email_admin_on_recovery' );    	
     	        $order                   = new WC_Order( $order_id );
     	        $user_id                 = $order->user_id;
-    	
+    	        $check_abandoned_cart    = get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true );
     	        if( $ac_email_admin_recovery == 'on' ) {
     	            $recovered_email_sent = get_post_meta( $order_id, 'wcap_recovered_email_sent', true );
     	            
     	            // mention here why are we comparing both "yes" and "no" values
-    	            if ( 'yes' != $recovered_email_sent && ( get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "yes" ) || get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "no" ) ) ) { // indicates cart is abandoned
+    	            if ( NULL != $check_abandoned_cart || 'yes' != $recovered_email_sent && $check_abandoned_cart == md5( "yes" ) || $check_abandoned_cart == md5( "no" ) ) ) { // indicates cart is abandoned
     	                $order          = new WC_Order( $order_id );
     	                $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce' );
     	                $blogname       = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
