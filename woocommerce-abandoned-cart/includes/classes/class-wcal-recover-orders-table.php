@@ -189,12 +189,17 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		$start_date = strtotime( $start_date_range." 00:01:01" );
 		$end_date   = strtotime( $end_date_range." 23:59:59" );
 		
+		$ac_cutoff_time          = get_option( 'ac_lite_cart_abandoned_time' );
+		$cut_off_time            = $ac_cutoff_time * 60;
+		$current_time            = current_time( 'timestamp' );
+		$compare_time            = $current_time - $cut_off_time;
+		
 		$query_ac         = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite 
-		                      WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d AND recovered_cart > 0 ORDER BY recovered_cart desc";
+		                      WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d AND recovered_cart > 0 AND abandoned_cart_time <= '$compare_time' ORDER BY recovered_cart desc";
 		$ac_results       = $wpdb->get_results( $wpdb->prepare( $query_ac, $start_date, $end_date ) );
 		
 		$query_ac_carts   = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite 
-		                     WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d ";
+		                     WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d AND abandoned_cart_time <= '$compare_time' ";
 		$ac_carts_results = $wpdb->get_results( $wpdb->prepare( $query_ac_carts, $start_date, $end_date ) );
 		
 		$recovered_item   = $recovered_total = $count_carts = $total_value = $order_total = 0;    		
