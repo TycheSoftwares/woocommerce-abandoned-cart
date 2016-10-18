@@ -2147,7 +2147,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                      <strong>
                                         <?php 
                                             $recovered_total = $wcal_recover_orders_list->total_recover_amount;
-                                            echo $recovered_total; ?>
+                                            echo wc_price( $recovered_total ); ?>
                                      </strong>
                                  </p>
                             </div>
