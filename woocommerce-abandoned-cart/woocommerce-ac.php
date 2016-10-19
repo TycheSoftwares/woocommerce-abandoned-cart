@@ -744,8 +744,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	        if( $ac_email_admin_recovery == 'on' ) {
     	            $recovered_email_sent = get_post_meta( $order_id, 'wcap_recovered_email_sent', true );
     	            $check_abandoned_cart = get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true );
+    	            $created_via   = get_post_meta ( $order_id, '_created_via', true );
+    	            
     	            // mention here why are we comparing both "yes" and "no" values
-    	            if ( NULL != $check_abandoned_cart || 'yes' != $recovered_email_sent && ( $check_abandoned_cart == md5( "yes" ) || $check_abandoned_cart == md5( "no" ) ) ) { // indicates cart is abandoned
+    	            if ( 'checkout' == $created_via && 'yes' != $recovered_email_sent && ( $check_abandoned_cart == md5( "yes" ) || $check_abandoned_cart == md5( "no" ) ) ) { // indicates cart is abandoned
     	                $order          = new WC_Order( $order_id );
     	                $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce' );
     	                $blogname       = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
@@ -785,11 +787,15 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	    $ac_email_admin_recovery = get_option( 'ac_lite_email_admin_on_recovery' );
     	    
     	    if( $ac_email_admin_recovery == 'on' ) {
+    	        $order         = new WC_Order( $order_id );
+    	        $user_id       = $order->user_id;
+    	        
     	        $recovered_email_sent = get_post_meta( $order_id, 'wcap_recovered_email_sent', true );
     	        $check_abandoned_cart = get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true );
+    	        $created_via   = get_post_meta ( $order_id, '_created_via', true );
     	        
-    	        if ( NULL != $check_abandoned_cart || 'yes' != $recovered_email_sent && ( $check_abandoned_cart == md5( "yes" ) || $check_abandoned_cart == md5( "no" ) ) ) { // indicates cart is abandoned
-    	            $order         = new WC_Order( $order_id );    	
+    	        if ( 'checkout' == $created_via && 'yes' != $recovered_email_sent && ( $check_abandoned_cart == md5( "yes" ) || $check_abandoned_cart == md5( "no" ) ) ) { // indicates cart is abandoned
+    	                	
     	            $email_heading = __( 'New Customer Order - Recovered', 'woocommerce-ac' );			
     	            $blogname      = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
     	            $email_subject = "New Customer Order - Recovered";
