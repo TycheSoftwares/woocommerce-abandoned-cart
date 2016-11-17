@@ -728,6 +728,18 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	            $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_abandoned_cart_history_lite ADD `unsubscribe_link` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER  `user_type`;" );
     	        }
     	    }
+    	    
+    	    /*
+    	     * This is used to prevent guest users wrong Id. If guest users id is less then 63000000 then this code will ensure that we will change the id of guest tables so it wont affect on the next guest users.
+    	     */
+    	    
+    	    if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_guest_abandoned_cart_history_lite';" )  && 'yes' != get_option ('wcal_guest_user_id_altered') ) {
+    	        $last_id = $wpdb->get_var( "SELECT max(id) FROM `{$wpdb->prefix}ac_guest_abandoned_cart_history_lite`;" );
+    	        if ( NULL != $last_id && $last_id <= 63000000 ) {
+    	            $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_guest_abandoned_cart_history_lite AUTO_INCREMENT = 63000000;" );
+    	            update_option ( 'wcal_guest_user_id_altered' , 'yes' );
+    	        }
+    	    }
     	}
 	
     	/******
