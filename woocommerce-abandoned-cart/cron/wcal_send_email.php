@@ -10,14 +10,10 @@ if ( ! isset( $wp_load ) ) {
         }
     }
 }
-
 $wcal_root = dirname( dirname(__FILE__) ); // go two level up for directory from this file.
-
 require_once $wp_load;
 require_once $wcal_root.'/includes/classes/class-wcal-aes.php';
 require_once $wcal_root.'/includes/classes/class-wcal-aes-counter.php';
-
-
 /**
  * woocommerce_abandon_cart_cron class
 **/
@@ -30,7 +26,6 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 			$this->cart_settings_cron = get_option( 'ac_lite_cart_abandoned_time' );			
 			$this->cart_abandon_cut_off_time_cron = ( $this->cart_settings_cron ) * 60;				
 		}
-
 		/**
 		 * Function to send emails
 		 */
@@ -39,13 +34,11 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 			// Delete any guest abandoned carts that might be pending because user did not go to Order Received page after payment
 			//search for the guest carts
 			$query_guest_records = "SELECT id,email_id FROM `" . $wpdb->prefix . "ac_guest_abandoned_cart_history_lite`";
-			$results_guest_list  = $wpdb->get_results( $query_guest_records );
-			
+			$results_guest_list  = $wpdb->get_results( $query_guest_records );			
 			// This is to ensure that recovered guest carts are removed from the delete list
 			$query_records = "SELECT user_id FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` 
 			                 WHERE user_type = 'GUEST' AND recovered_cart != '0'";
-			$results_query = $wpdb->get_results( $query_records );
-			
+			$results_query = $wpdb->get_results( $query_records );			
 			foreach ( $results_guest_list as $key => $value ) {
 			    $record_found = "NO";
 			    foreach ( $results_query as $k => $v ) {
@@ -57,23 +50,20 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 			}
 			foreach( $results_guest_list as $key => $value ) {
 			    $query_email_id      = "SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = '_billing_email' AND meta_value = %s";
-			    $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $value->email_id ) );
-			
+			    $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $value->email_id ) );			
 			    //if any orders are found with the same email addr..delete those ac records
 			    if ( $results_query_email ) {
 			        for ( $i = 0; $i < count( $results_query_email ); $i++ ) {
 			            $query_post   = "SELECT post_date,post_status FROM `" . $wpdb->prefix . "posts` 
 			                             WHERE ID = %d";
-			            $results_post = $wpdb->get_results ( $wpdb->prepare( $query_post, $results_query_email[ $i ]->post_id ) );
-			
+			            $results_post = $wpdb->get_results ( $wpdb->prepare( $query_post, $results_query_email[ $i ]->post_id ) );			
 			            if ( $results_post[0]->post_status == "wc-pending" || $results_post[0]->post_status == "wc-failed" ) {
 			                continue;
 			            }
 			            $order_date_time = $results_post[0]->post_date;
 			            $order_date	     = substr( $order_date_time , 0 , 10 );
 			            $current_time    = current_time( 'timestamp' );
-			            $today_date	     = date( 'Y-m-d', $current_time );
-			
+			            $today_date	     = date( 'Y-m-d', $current_time );			
 			            if ( $order_date == $today_date ) {
 			                $query_delete = "DELETE FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` 
 			                                 WHERE user_id = '" . $value->id . "'";
@@ -90,9 +80,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 			// Delete any logged in user carts that might be pending because user did not go to Order Received page after payment
 			$query_records = "SELECT DISTINCT user_id FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` 
 			                 WHERE user_type = 'REGISTERED' AND cart_ignored = '0' AND recovered_cart = '0'";
-			$results_list  = $wpdb->get_results( $query_records );
-			
-				
+			$results_list  = $wpdb->get_results( $query_records );							
 			foreach( $results_list as $key => $value ) {
 			    $user_id            = $value->user_id;
                 $key                = 'billing_email';
@@ -101,39 +89,32 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 if( isset( $user_billing_email ) && $user_billing_email == '' ){
                     $user_id        = $value->user_id;
                     if( is_multisite() ) {
-                        // get main site's table prefix
                         $main_prefix = $wpdb->get_blog_prefix(1);
-                        $query_email = "SELECT user_email FROM `".$main_prefix."users` WHERE ID = %d";
-                         
+                        $query_email = "SELECT user_email FROM `".$main_prefix."users` WHERE ID = %d";                         
                     } else {
-                        // non-multisite - regular table name
                         $query_email = "SELECT user_email FROM `".$wpdb->prefix."users` WHERE ID = %d";
                     }
                     $results_email   = $wpdb->get_results( $wpdb->prepare( $query_email, $user_id ) );
                     if ( isset( $results_guest[0]->user_email ) ) {
                         $user_billing_email  = $results_email[0]->user_email;
                     }
-                }
-			
+                }			
 			    $query_email_id      = "SELECT post_id FROM `" . $wpdb->prefix . "postmeta` 
 			                           WHERE meta_key = '_billing_email' AND meta_value = %s";
-			    $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $user_billing_email ) );
-			
+			    $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $user_billing_email ) );			
 			    //if any orders are found with the same email address then delete those abandoned cart records
 			    if ( is_array( $results_query_email ) && count( $results_query_email ) > 0 ) {			
 			        for ( $i = 0; $i < count( $results_query_email ); $i++ ) {			
 			            $query_post   = "SELECT post_date,post_status FROM `" . $wpdb->prefix . "posts` 
 			                             WHERE ID = %d ";
-			            $results_post = $wpdb->get_results ( $wpdb->prepare( $query_post, $results_query_email[ $i ]->post_id ) );
-			
+			            $results_post = $wpdb->get_results ( $wpdb->prepare( $query_post, $results_query_email[ $i ]->post_id ) );			
 			            if ( $results_post[0]->post_status == "wc-pending" || $results_post[0]->post_status == "wc-failed" ) {
 			                continue;			
 			            }
 			            $order_date_time = $results_post[0]->post_date;
 			            $order_date	     = substr( $order_date_time, 0, 10 );
 			            $current_time    = current_time( 'timestamp' );
-			            $today_date    	 = date( 'Y-m-d', $current_time );
-			
+			            $today_date    	 = date( 'Y-m-d', $current_time );			
 			            if ( $order_date == $today_date ) {
 			                $query_delete = "DELETE FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
                                             WHERE user_id = '" . $user_id . "'
@@ -145,17 +126,14 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 			            }
 			        }
 			    }
-			}
-		
+			}	
 			//Grab the cart abandoned cut-off time from database.
 			$cart_settings             = get_option( 'ac_lite_cart_abandoned_time' );			
-			$cart_abandon_cut_off_time = $cart_settings * 60;
-		
+			$cart_abandon_cut_off_time = $cart_settings * 60;		
 			//Fetch all active templates present in the system
-			$query = "SELECT wpet . * FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet
-        			  WHERE wpet.is_active = '1' ORDER BY `day_or_hour` DESC, `frequency` ASC ";
-			$results = $wpdb->get_results( $query );
-		
+			$query        = "SELECT wpet . * FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet
+        			         WHERE wpet.is_active = '1' ORDER BY `day_or_hour` DESC, `frequency` ASC ";
+			$results      = $wpdb->get_results( $query );		
 			$hour_seconds = 3600;   // 60 * 60
 			$day_seconds  = 86400; // 24 * 60 * 60
 			foreach ( $results as $key => $value ) {
@@ -163,22 +141,26 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 					$time_to_send_template_after = $value->frequency * $day_seconds;
 				} elseif ( $value->day_or_hour == 'Hours' ) {
 					$time_to_send_template_after = $value->frequency * $hour_seconds;
-				}
-				
+				}				
 				$carts               = $this->wcal_get_carts( $time_to_send_template_after, $cart_abandon_cut_off_time );
 				/**
 				 * When there are 3 templates and for cart id 1 all template time has been reached. BUt all templates are deactivated.
 				 * If we activate all 3 template then at a 1 time all 3 email templates send to the users.
 				 * So below function check that after first email is sent time and then from that time it will send the 2nd template time.  ( It will not consider the cart abadoned time in this case. )
 				 */
-				$carts               = $this->wcal_remove_cart_for_mutiple_templates( $carts, $time_to_send_template_after, $value->id );
-					
+				$carts               = $this->wcal_remove_cart_for_mutiple_templates( $carts, $time_to_send_template_after, $value->id );					
 				$email_frequency     = $value->frequency;
 				$email_body_template = $value->body;			
 				$email_subject       = stripslashes  ( $value->subject );
-				$headers             = "From: " . $value->from_name . " <" . $value->from_email . ">" . "\r\n";
-				$headers            .= "Content-Type: text/html"."\r\n";
-				$headers            .= "Reply-To:  " . $value->reply_email . " " . "\r\n";
+			    if( is_plugin_active( 'wp-better-emails/wpbe.php' ) ) {
+				    $headers         = "From: " . $value->from_name . " <" . $value->from_email . ">" . "\r\n";
+				    $headers         .= "Content-Type: text/plain"."\r\n";
+				    $headers         .= "Reply-To:  " . $value->reply_email . " " . "\r\n";
+				} else {
+				    $headers         = "From: " . $value->from_name . " <" . $value->from_email . ">" . "\r\n";
+				    $headers         .= "Content-Type: text/html"."\r\n";
+				    $headers         .= "Reply-To:  " . $value->reply_email . " " . "\r\n";
+				}
 				$template_id         = $value->id;
 				$is_wc_template      = $value->is_wc_template;
 				$wc_template_header_text = $value->wc_email_header != '' ? $value->wc_email_header : __( 'Abandoned cart reminder', 'woocommerce-ac');
@@ -197,9 +179,8 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     				        }
     				        $key                = 'billing_email';
     				        $single             = true;
-    				        $user_biiling_email = get_user_meta( $user_id, $key, $single );
-    				        
-    				        if( isset( $user_biiling_email ) && $user_biiling_email != '' ){
+    				        $user_biiling_email = get_user_meta( $user_id, $key, $single );    				        
+    				        if ( isset( $user_biiling_email ) && $user_biiling_email != '' ) {
     				           $value->user_email = $user_biiling_email;
     				        }
     				    }
@@ -208,12 +189,10 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     				    }
     					if( count( $cart_info_db_field->cart ) > 0 ) {
     						$cart_update_time = $value->abandoned_cart_time;
-    						$new_user         = $this->wcal_check_sent_history( $value->user_id, $cart_update_time, $template_id, $value->id );
-    						
+    						$new_user         = $this->wcal_check_sent_history( $value->user_id, $cart_update_time, $template_id, $value->id );    						
     						if ( $new_user == true ) {
     							$cart_info_db = $value->abandoned_cart_info;
-    							$email_body = $email_body_template;
-    							
+    							$email_body   = $email_body_template;    							
     						     if ( $value->user_type == "GUEST" ) {
     							    if ( isset( $results_guest[0]->billing_first_name ) ) {
     							        $email_body    = str_replace( "{{customer.firstname}}", $results_guest[0]->billing_first_name, $email_body );
@@ -221,8 +200,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     							    }							
     							    if ( isset( $results_guest[0]->billing_last_name ) ) {
     							        $email_body = str_replace( "{{customer.lastname}}", $results_guest[0]->billing_last_name, $email_body );
-    							    }
-    							
+    							    }    							
     							    if ( isset( $results_guest[0]->billing_first_name ) && isset( $results_guest[0]->billing_last_name ) ) {
     							        $email_body = str_replace( "{{customer.fullname}}", $results_guest[0]->billing_first_name." ".$results_guest[0]->billing_last_name, $email_body );
     							    }
@@ -233,16 +211,14 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     							        $email_body = str_replace( "{{customer.fullname}}", $results_guest[0]->billing_last_name, $email_body );
     							    }
     							} else {
-    							    $user_first_name = '';
-    							    //
+    							    $user_first_name      = '';    							    
     							    $user_first_name_temp = get_user_meta( $value->user_id, 'billing_first_name', true );
     							    if( isset( $user_first_name_temp ) && "" == $user_first_name_temp ) {
-    							        $user_data  = get_userdata( $user_id );
+    							        $user_data       = get_userdata( $user_id );
     							        $user_first_name = $user_data->first_name;
     							    } else {
     							        $user_first_name = $user_first_name_temp;
-    							    }
-    							    
+    							    }    							    
     							    $email_body          = str_replace( "{{customer.firstname}}", $user_first_name, $email_body );							    
     							    $email_subject       = str_replace( "{{customer.firstname}}", $user_first_name, $email_subject );							    
     							    $user_last_name      = '';
@@ -255,15 +231,12 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     							    }
     							    $email_body = str_replace( "{{customer.lastname}}", $user_last_name, $email_body );							    
     							    $email_body = str_replace( "{{customer.fullname}}", $user_first_name." ".$user_last_name, $email_body );
-    							}
-    							
+    							}    							
     							$order_date = "";							
     							if( $cart_update_time != "" && $cart_update_time != 0 ) {
     							    $order_date = date( 'd M, Y h:i A', $cart_update_time );
-    							}
-    							
-    							$email_body = str_replace( "{{cart.abandoned_date}}", $order_date, $email_body );
-    							
+    							}    							
+    							$email_body = str_replace( "{{cart.abandoned_date}}", $order_date, $email_body );    							
     							$query_sent = "INSERT INTO `".$wpdb->prefix."ac_sent_history_lite` ( template_id, abandoned_order_id, sent_time, sent_email_id )
     							               VALUES ( %s, %s, '".current_time( 'mysql' )."', %s )";
     								
@@ -273,8 +246,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     							             WHERE template_id = %s AND abandoned_order_id = %s
     							             ORDER BY id DESC
     							             LIMIT 1 ";	
-    							$results_sent = $wpdb->get_results( $wpdb->prepare( $query_id, $template_id, $value->id ) );
-    								
+    							$results_sent  = $wpdb->get_results( $wpdb->prepare( $query_id, $template_id, $value->id ) );    								
     							$email_sent_id = $results_sent[0]->id;
     							
     							if( $woocommerce->version < '2.3' ) {
@@ -297,7 +269,18 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     							$email_body                    = str_replace( "{{cart.unsubscribe}}" , $unsubscribe_link_track , $email_body );
     							$var = '';
     							if( preg_match( "{{products.cart}}", $email_body, $matched ) ) {
-    							    $var = '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
+    							    if( is_plugin_active( 'wp-better-emails/wpbe.php' ) ) {
+    							        $var = '<table width = 100%>
+                    	                        <tr> <td colspan="5"> <h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3> </td></tr>
+                                                <tr>
+                                                <th>'.__( "Item", "woocommerce-ac" ).'</th>
+                                                <th>'.__( "Name", "woocommerce-ac" ).'</th>
+                                                <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
+                                                <th>'.__( "Price", "woocommerce-ac" ).'</th>
+                                                <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
+                                                </tr>';
+    							    } else {
+    							        $var = '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
                                             <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
                                                 <tr>
                                                 <th>'.__( "Item", "woocommerce-ac" ).'</th>
@@ -305,7 +288,8 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                 <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
                                                 <th>'.__( "Price", "woocommerce-ac" ).'</th>
                                                 <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
-                                                </tr>';                    
+                                                </tr>';
+    							    }                   
     							    $cart_details = $cart_info_db_field->cart;
     							    $cart_total = $item_subtotal = $item_total = 0;
     							    $sub_line_prod_name = '';
@@ -323,8 +307,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     							            $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
     							        } else {
     							            $item_subtotal = $item_subtotal + $v->line_total;
-    							        }
-    							
+    							        }    							
     							        //	Line total
     							        $item_total         = $item_subtotal;
     							        $item_subtotal	    = $item_subtotal / $quantity_total;
@@ -332,17 +315,15 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     							        $item_subtotal	    = wc_price( $item_subtotal );
     							        $product            = get_product( $product_id );
     							        $prod_image         = $product->get_image();
-    							        $image_url          = wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );
-    							        
-    							        if ( isset( $v->variation_id ) && '' != $v->variation_id ){
+    							        $image_url          = wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );    							        
+    							        if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
     							            $variation_id               = $v->variation_id;
     							            $variation                  = wc_get_product( $variation_id );
     							            $name                       = $variation->get_formatted_name() ;
     							            $explode_all                = explode ( "&ndash;", $name );
     							            $pro_name_variation         = array_slice( $explode_all, 1, -1 );
     							            $product_name_with_variable = '';
-    							            $explode_many_varaition     = array();
-    							             
+    							            $explode_many_varaition     = array();    							             
     							            foreach ( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ){
     							                $explode_many_varaition = explode ( ",", $pro_name_variation_value );
     							                if ( !empty( $explode_many_varaition ) ) {
@@ -352,8 +333,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     							                } else {
     							                    $product_name_with_variable = $product_name_with_variable . "<br>". html_entity_decode ( $explode_many_varaition_value );
     							                }
-    							            }
-    							             
+    							            }    							             
     							            $product_name = $product_name_with_variable;
     							        }
     							        $var .='<tr align="center">
@@ -430,13 +410,11 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 		    
 		    foreach( $carts as $carts_key => $carts_value ) {		
 		        $wcal_get_last_email_sent_time               = "SELECT * FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE abandoned_order_id = $carts_value->id ORDER BY `sent_time` DESC LIMIT 1";
-		        $wcal_get_last_email_sent_time_results_list  = $wpdb->get_results( $wcal_get_last_email_sent_time );
-		
+		        $wcal_get_last_email_sent_time_results_list  = $wpdb->get_results( $wcal_get_last_email_sent_time );		
 		        if( count( $wcal_get_last_email_sent_time_results_list ) > 0 ) {
 		            $last_template_send_time  = strtotime( $wcal_get_last_email_sent_time_results_list[0]->sent_time );
 		            $second_template_send_time = $last_template_send_time + $time_to_send_template_after ;
-		            $current_time_test         = current_time( 'timestamp' );
-		
+		            $current_time_test         = current_time( 'timestamp' );		
 		            if( $second_template_send_time > $current_time_test ) {
 		                unset( $carts [ $carts_key ] );
 		            }
@@ -460,16 +438,11 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     				  WHERE template_id = %s AND wpcs.abandoned_order_id = %d ORDER BY 'id' DESC LIMIT 1 ";
 				
 			$results = $wpdb->get_results( $wpdb->prepare( $query, $template_id, $id ) );
-			if ( count( $results ) == 0 )
-			{
+			if ( count( $results ) == 0 ) {
 				return true;
-			}
-			elseif ( $results[0]->abandoned_cart_time < $cart_update_time )
-			{
+			} elseif ( $results[0]->abandoned_cart_time < $cart_update_time ) {
 				return true;
-			}
-			else
-			{
+			} else {
 				return false;
 			}		
 		}		
