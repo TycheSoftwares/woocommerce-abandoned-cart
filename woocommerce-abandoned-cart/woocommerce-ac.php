@@ -6,6 +6,8 @@ Description: This plugin captures abandoned carts by logged-in users & emails th
 Version: 3.3
 Author: Tyche Softwares
 Author URI: http://www.tychesoftwares.com/
+Text Domain: woocommerce-ac
+Domain Path: /i18n/languages/
 */
 
 // Deletion Settings
