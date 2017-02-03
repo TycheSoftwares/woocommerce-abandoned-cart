@@ -363,34 +363,35 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 if( $record_found == "YES" ) {
                     unset( $results_guest_list[ $key ] );
                 }
-            }            
-            foreach( $results_guest_list as $key => $value ) {
-                $query_email_id      = "SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = '_billing_email' AND meta_value = %s";
-                $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $value->email_id ) );
-                //if any orders are found with the same email addr..delete those ac records
-                if( $results_query_email ) {
-                    for( $i = 0; $i < count( $results_query_email ); $i++ ) {
-                        $query_post   = "SELECT post_date,post_status FROM `" . $wpdb->prefix . "posts` WHERE ID = %d";
-                        $results_post = $wpdb->get_results ( $wpdb->prepare( $query_post, $results_query_email[ $i ]->post_id ) );
-                        if( $results_post[0]->post_status == "wc-pending" || $results_post[0]->post_status == "wc-failed" ) {
-                            continue;
-                        }
-                        $order_date_time = $results_post[0]->post_date;
-                        $order_date_with_time = $results_post[0]->post_date;
-                        $order_date           = substr( $order_date_with_time, 0, 10 );
-                        $current_time         = current_time( 'timestamp' );
-                        $today_date           = date( 'Y-m-d', $current_time );
-                        if( strtotime( $order_date_time ) > $abandoned_cart_time || $order_date == $today_date ) {
-                            $query_ignored = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE id ='" . $cart_id . "'";
-                            $wpdb->query( $query_ignored );
-                            return 1; //We return here 1 so it indicate that the cart has been modifed so do not sent email and delete from the array.
+            } 
+            if ( ! empty( $results_query ) ) {           
+                foreach( $results_guest_list as $key => $value ) {
+                    $query_email_id      = "SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = '_billing_email' AND meta_value = %s";
+                    $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $value->email_id ) );
+                    //if any orders are found with the same email addr..delete those ac records
+                    if( $results_query_email ) {
+                        for( $i = 0; $i < count( $results_query_email ); $i++ ) {
+                            $query_post   = "SELECT post_date,post_status FROM `" . $wpdb->prefix . "posts` WHERE ID = %d";
+                            $results_post = $wpdb->get_results ( $wpdb->prepare( $query_post, $results_query_email[ $i ]->post_id ) );
+                            if( $results_post[0]->post_status == "wc-pending" || $results_post[0]->post_status == "wc-failed" ) {
+                                continue;
+                            }
+                            $order_date_time = $results_post[0]->post_date;
+                            $order_date_with_time = $results_post[0]->post_date;
+                            $order_date           = substr( $order_date_with_time, 0, 10 );
+                            $current_time         = current_time( 'timestamp' );
+                            $today_date           = date( 'Y-m-d', $current_time );
+                            if( strtotime( $order_date_time ) > $abandoned_cart_time || $order_date == $today_date ) {
+                                $query_ignored = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE id ='" . $cart_id . "'";
+                                $wpdb->query( $query_ignored );
+                                return 1; //We return here 1 so it indicate that the cart has been modifed so do not sent email and delete from the array.
+                            }
                         }
                     }
                 }
+                return 0;
             }
-            return 0;
-        }
-        
+		}
         public static function wcal_update_status_of_loggedin( $cart_id, $abandoned_cart_time , $time_to_send_template_after ) {
             global $wpdb;
             // Update the record of the loggedin user who had paid before the first abandoned cart reminder email send to customer.
