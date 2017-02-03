@@ -2777,7 +2777,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$cart_url              = wc_get_page_permalink( 'cart' );
 				$body_email_preview    = str_replace( '{{cart.link}}', $cart_url, $body_email_preview );
 				$body_email_preview    = str_replace( '{{cart.unsubscribe}}', '<a href=#>unsubscribe</a>', $body_email_preview );				
-				if ( is_plugin_active( 'wp-better-emails/wpbe.php' ) ) {
+				if ( class_exists( 'WP_Better_Emails' ) ) {
 				    $headers           = "From: " . $from_email_name . " <" . $from_email_preview . ">" . "\r\n";
 				    $headers          .= "Content-Type: text/plain" . "\r\n";
 				    $headers          .= "Reply-To:  " . $reply_name_preview . " " . "\r\n";
