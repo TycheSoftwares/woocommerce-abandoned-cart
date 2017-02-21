@@ -137,8 +137,7 @@ class WCAL_Templates_Table extends WP_List_Table {
 		foreach ( $results as $key => $value ) {    		   
 		    $return_templates_data[$i] = new stdClass();    		        		        		  
 		    $id                        = $value->id;    		    
-		    $query_no_emails           = "SELECT * FROM " . $wpdb->prefix . "ac_sent_history_lite WHERE template_id= %d";    		     
-		    $from                      = $value->from_email;
+		    $query_no_emails           = "SELECT * FROM " . $wpdb->prefix . "ac_sent_history_lite WHERE template_id= %d";
 		    $subject                   = $value->subject;
 		    $body                      = $value->body;
 		    $is_active                 = $value->is_active;

@@ -111,8 +111,11 @@ function woocommerce_ac_delete_lite() {
 	delete_option( 'ac_lite_settings_status' );
 	delete_option( 'woocommerce_ac_default_templates_installed' );	
 	delete_option( 'wcal_security_key' );
-	delete_option( 'ac_lite_track_guest_cart_from_cart_page' );	
-	}
+	delete_option( 'ac_lite_track_guest_cart_from_cart_page' );
+	delete_option( 'wcal_from_name' );
+	delete_option( 'wcal_from_email' );
+	delete_option( 'wcal_reply_email' );
+}
 	/**
 	 * woocommerce_abandon_cart_lite class
 	 **/
@@ -392,7 +395,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     				`frequency` int(11) NOT NULL,
     				`day_or_hour` enum('Days','Hours') COLLATE utf8_unicode_ci NOT NULL,
     				`template_name` text COLLATE utf8_unicode_ci NOT NULL,
-    				`from_name` text COLLATE utf8_unicode_ci NOT NULL,
       				PRIMARY KEY (`id`)
     		        ) $wcap_collate AUTO_INCREMENT=1 ";
     	
@@ -405,21 +407,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		 
     		if ( count( $results ) == 0 ) {
     		    $alter_template_table_query = "ALTER TABLE $table_name
-    		    ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `from_name`,
+    		    ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `template_name`,
     		    ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";
     		    
     		    $wpdb->get_results( $alter_template_table_query );
     		}
-            $table_name = $wpdb->prefix . "ac_email_templates_lite";
-    	    $check_email_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'reply_email' ";
-    	    $results_email = $wpdb->get_results( $check_email_template_table_query );
-    	    
-    	    if ( count(  $results_email ) == 0 ) {
-    	        $alter_email_template_table_query = "ALTER TABLE $table_name
-    	        ADD COLUMN `reply_email` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `default_template`,
-    	        ADD COLUMN `from_email` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `reply_email`";
-    	        $wpdb->get_results( $alter_email_template_table_query );
-    	    }
     	    
     		$sent_table_name = $wpdb->prefix . "ac_sent_history_lite";
     	
@@ -505,6 +497,39 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	     * Since @: 4.7
     	     */
     	    
+    	    add_settings_section(
+    	    'ac_email_settings_section',           // ID used to identify this section and with which to register options
+    	    __( 'Settings for abandoned cart emails', 'woocommerce-ac' ),      // Title to be displayed on the administration page
+    	    array($this, 'wcal_email_callback' ),// Callback used to render the description of the section
+    	    'woocommerce_ac_email_page'     // Page on which to add this section of options
+    	    );
+    	    
+    	    add_settings_field(
+    	    'wcal_from_name',
+    	    __( '"From" Name', 'woocommerce-ac'  ),
+    	    array( $this, 'wcal_from_name_callback' ),
+    	    'woocommerce_ac_email_page',
+    	    'ac_email_settings_section',
+    	    array( 'Enter the name that should appear in the email sent.', 'woocommerce-ac' )
+    	    );
+    	    
+    	    add_settings_field(
+    	    'wcal_from_email',
+    	    __( '"From" Address', 'woocommerce-ac'  ),
+    	    array( $this, 'wcal_from_email_callback' ),
+    	    'woocommerce_ac_email_page',
+    	    'ac_email_settings_section',
+    	    array( 'Which email address should be shown in the "From Email" field for the abandoned cart emails.', 'woocommerce-ac' )
+    	    );
+    	    
+    	    add_settings_field(
+    	    'wcal_reply_email',
+    	    __( 'Send Reply Emails to', 'woocommerce-ac'  ),
+    	    array( $this, 'wcal_reply_email_callback' ),
+    	    'woocommerce_ac_email_page',
+    	    'ac_email_settings_section',
+    	    array( 'When a contact receives your email and clicks reply, which email address should that reply be sent to?', 'woocommerce-ac' )
+    	    );
     	    
     	    	
     	    // Finally, we register the fields with WordPress
@@ -524,7 +549,18 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 'ac_lite_track_guest_cart_from_cart_page'
             );
             
-          
+            register_setting(
+                'woocommerce_ac_email_settings',
+                'wcal_from_name'
+                );
+            register_setting(
+                'woocommerce_ac_email_settings',
+                'wcal_from_email'
+            );
+            register_setting(
+                'woocommerce_ac_email_settings',
+                'wcal_reply_email'
+            );
     	}
 	
     	/***************************************************************
@@ -611,7 +647,54 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	    echo $html;
     	}
     	
-    
+    	/***************************************************************
+    	 * WP Settings API callback for Abandoned cart email settings of the plugin
+    	 **************************************************************/
+    	function wcal_email_callback () {
+    	
+    	}
+    	
+    	public static function wcal_from_name_callback( $args ) {
+    	    // First, we read the option
+    	    $wcal_from_name = get_option( 'wcal_from_name' );
+    	    // Next, we update the name attribute to access this element's ID in the context of the display options array
+    	    // We also access the show_header element of the options collection in the call to the checked() helper function
+    	    printf(
+    	    '<input type="text" id="wcal_from_name" name="wcal_from_name" value="%s" />',
+    	    isset( $wcal_from_name ) ? esc_attr( $wcal_from_name ) : ''
+    	        );
+    	        // Here, we'll take the first argument of the array and add it to a label next to the checkbox
+    	        $html = '<label for="wcal_from_name_label"> '  . $args[0] . '</label>';
+    	        echo $html;
+    	}
+    	
+    	public static function wcal_from_email_callback( $args ) {
+    	    // First, we read the option
+    	    $wcal_from_email = get_option( 'wcal_from_email' );
+    	    // Next, we update the name attribute to access this element's ID in the context of the display options array
+    	    // We also access the show_header element of the options collection in the call to the checked() helper function
+    	    printf(
+    	    '<input type="text" id="wcal_from_email" name="wcal_from_email" value="%s" />',
+    	    isset( $wcal_from_email ) ? esc_attr( $wcal_from_email ) : ''
+    	        );
+    	        // Here, we'll take the first argument of the array and add it to a label next to the checkbox
+    	        $html = '<label for="wcal_from_email_label"> '  . $args[0] . '</label>';
+    	        echo $html;
+    	}
+    	
+    	public static function wcal_reply_email_callback( $args ) {
+    	    // First, we read the option
+    	    $wcal_reply_email = get_option( 'wcal_reply_email' );
+    	    // Next, we update the name attribute to access this element's ID in the context of the display options array
+    	    // We also access the show_header element of the options collection in the call to the checked() helper function
+    	    printf(
+    	    '<input type="text" id="wcal_reply_email" name="wcal_reply_email" value="%s" />',
+    	    isset( $wcal_reply_email ) ? esc_attr( $wcal_reply_email ) : ''
+    	        );
+    	        // Here, we'll take the first argument of the array and add it to a label next to the checkbox
+    	        $html = '<label for="wcal_reply_email_label"> '  . $args[0] . '</label>';
+    	        echo $html;
+    	}
     	/**************************************************
     	 * This function is run when the plugin is upgraded
     	 *************************************************/
@@ -669,20 +752,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	     
     	    if ( count( $results ) == 0 ) {
     	        $alter_template_table_query = "ALTER TABLE $table_name
-    	        ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `from_name`,
+    	        ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `template_name`,
     	        ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";
     	        $wpdb->get_results( $alter_template_table_query );
     	    }
-    	    $table_name                       = $wpdb->prefix . "ac_email_templates_lite";
-    	    $check_email_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'reply_email' ";
-    	    $results_email                    = $wpdb->get_results( $check_email_template_table_query );
-    	    
-    	    if ( count(  $results_email ) == 0 ) {
-    	        $alter_email_template_table_query = "ALTER TABLE $table_name
-    	        ADD COLUMN `reply_email` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `default_template`,
-    	        ADD COLUMN `from_email` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `reply_email`";
-    	        $wpdb->get_results( $alter_email_template_table_query );
-    	    }
+    	   
     	    
     	    $table_name                       = $wpdb->prefix . "ac_email_templates_lite";
     	    $check_email_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'wc_email_header' ";
@@ -690,7 +764,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	    
     	    if ( count(  $results_email ) == 0 ) {
     	        $alter_email_template_table_query = "ALTER TABLE $table_name
-    	        ADD COLUMN `wc_email_header` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `from_email`";
+    	        ADD COLUMN `wc_email_header` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `default_template`";
     	        $wpdb->get_results( $alter_email_template_table_query );
     	    }
     	    
@@ -780,6 +854,52 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	            update_option ( 'wcal_guest_user_id_altered', 'yes' );
     	        }
     	    }
+    	    
+    	    /*
+    	     * Since 4.7
+    	     * We have moved email templates fields in the setings section. SO to remove that fields column fro the db we need it.
+    	     * For existing user we need to fill this setting with the first template.
+    	     */
+    	    if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_email_templates_lite';" ) ) {
+    	        if ( $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_email_templates_lite` LIKE 'from_email';" ) ) {
+    	            $get_email_template_query  = "SELECT `from_email` FROM {$wpdb->prefix}ac_email_templates_lite WHERE `is_active` = '1' ORDER BY `id` ASC LIMIT 1";
+    	            $get_email_template_result = $wpdb->get_results ($get_email_template_query);
+    	            $wcal_from_email = '';
+    	            if ( isset( $get_email_template_result ) && count ( $get_email_template_result ) > 0 ){
+    	                $wcal_from_email =  $get_email_template_result[0]->from_email;    	    
+    	                /* Store data in setings api*/
+    	                update_option ( 'wcal_from_email', $wcal_from_email );    	    
+    	                /* Delete table from the Db*/
+    	                $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_email_templates_lite DROP COLUMN `from_email`;" );
+    	            }
+    	        }
+    	    
+    	        if ( $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_email_templates_lite` LIKE 'from_name';" ) ) {
+    	            $get_email_template_from_name_query  = "SELECT `from_name` FROM {$wpdb->prefix}ac_email_templates_lite WHERE `is_active` = '1' ORDER BY `id` ASC LIMIT 1";
+    	            $get_email_template_from_name_result = $wpdb->get_results ($get_email_template_from_name_query);    	    
+    	            $wcal_from_name = '';
+    	            if ( isset( $get_email_template_from_name_result ) && count ( $get_email_template_from_name_result ) > 0 ){
+    	                $wcal_from_name =  $get_email_template_from_name_result[0]->from_name;    	    
+    	                /* Store data in setings api*/
+    	                add_option ( 'wcal_from_name', $wcal_from_name );    	    
+    	                /* Delete table from the Db*/
+    	                $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_email_templates_lite DROP COLUMN `from_name`;" );
+    	            }
+    	        }
+    	    
+    	        if ( $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_email_templates_lite` LIKE 'reply_email';" ) ) {
+    	            $get_email_template_reply_email_query  = "SELECT `reply_email` FROM {$wpdb->prefix}ac_email_templates_lite WHERE `is_active` = '1' ORDER BY `id` ASC LIMIT 1";
+    	            $get_email_template_reply_email_result = $wpdb->get_results ($get_email_template_reply_email_query);    	    
+    	            $wcal_reply_email = '';
+    	            if ( isset( $get_email_template_reply_email_result ) && count ( $get_email_template_reply_email_result ) > 0 ){
+    	                $wcal_reply_email =  $get_email_template_reply_email_result[0]->reply_email;    	    
+    	                /* Store data in setings api*/
+    	                update_option ( 'wcal_reply_email', $wcal_reply_email );    	    
+    	                /* Delete table from the Db*/
+    	                $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_email_templates_lite DROP COLUMN `reply_email`;" );
+    	            }
+    	        }
+    	    }    	   
     	}
 	
     	/******
@@ -962,7 +1082,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		        $user_id = "";
     		    }
     		    
-    		    $query   = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0'";
+    		    $query   = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0' AND user_id != '0'";
     		    $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id ) );
     		    $cart    = array();
     		    $get_cookie = WC()->session->get_session_cookie();
@@ -1016,10 +1136,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                 $wpdb->query( $insert_query );
                             }                        
                         } elseif ( $compare_time > $results[0]->abandoned_cart_time ) {                        
-                            $blank_cart_info  = '[]';    
-                            
-                            if ( $blank_cart_info != $updated_cart_info ) {                        
-                                //wp_mail("chetna@tychesoftwares.com", "update query", print_r($wpdb->query( $insert_query ),true));
+                            $blank_cart_info  = '[]';                                
+                            if ( $blank_cart_info != $updated_cart_info ) { 
                                 if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {                        
                                     $query_ignored = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE session_id ='" . $get_cookie[0] . "'";
                                     $wpdb->query( $query_ignored );
@@ -1671,13 +1789,51 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     ?>
     			    <p><?php _e( 'Change settings for sending email notifications to Customers after X minute.', 'woocommerce-ac' ); ?></p>
                     <div id="content">
+                    <?php 
+                        $wcal_general_settings_class = $wcal_cron_setting = "";
+                        if ( isset( $_GET[ 'wcal_section' ] ) ) {
+                            $section = $_GET[ 'wcal_section' ];
+                        } else {
+                            $section = '';
+                        }                        
+                        if ( $section == 'wcal_general_settings' || $section == '' ) {
+                            $wcal_general_settings_class = "current";
+                        }                        
+                        if( $section == 'wcal_email_settings' ) {
+                            $wcal_email_setting = "current";
+                        }                        
+                        
+                        ?>
+                        <ul class="subsubsub" id="wcal_general_settings_list">
+                            <li>
+                                <a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_general_settings" class="<?php echo $wcal_general_settings_class; ?>"><?php _e( 'General Settings', 'woocommerce-ac' );?> </a> |
+                            </li>
+                               <li>
+                                <a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_email_settings" class="<?php echo $wcal_email_setting; ?>"><?php _e( 'Email Settings', 'woocommerce-ac' );?> </a> 
+                            </li>
+                            
+                        </ul>
+                        <br class="clear">
+                        <?php
+                        if ( $section == 'wcal_general_settings' || $section == '' ) {
+                        ?>
     					<form method="post" action="options.php">
                             <?php settings_fields( 'woocommerce_ac_settings' ); ?>
                             <?php do_settings_sections( 'woocommerce_ac_page' ); ?>
     						<?php settings_errors(); ?>
-    						<?php submit_button(); ?>
-    
+    						<?php submit_button(); ?>    
                         </form>
+                        <?php 
+                        } else if ( $section == 'wcal_email_settings' ) {
+                        ?><form method="post" action="options.php">
+                                <?php settings_fields     ( 'woocommerce_ac_email_settings' ); ?>
+                                <?php do_settings_sections( 'woocommerce_ac_email_page' ); ?>
+                                <?php settings_errors(); ?>
+                                <?php submit_button(); ?>
+                          </form>
+                          <?php 
+                        }
+                        ?>
                     </div>
         		  <?php 
         	      } elseif ( $action == 'listcart' || '' == $action || '-1' == $action || '-1' == $action_two ) {
@@ -1777,7 +1933,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             $wcal_all_abandoned_carts = "";
                         }
                         ?>
-                        <ul class="subsubsub" id="wcap_recovered_orders_list">
+                        <ul class="subsubsub" id="wcal_recovered_orders_list">
                             <li>
                                 <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_abandoned" class="<?php echo $wcal_all_abandoned_carts; ?>"><?php _e( "All ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_all_abandoned_count )" ?> </span></a> 
                             </li>
@@ -1843,13 +1999,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     							     $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
     							     $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
     							     $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-    							     $woocommerce_ac_from_name     = trim( $_POST['woocommerce_ac_from_name'] );
-    							     $woocommerce_ac_email_reply   = trim( $_POST['woocommerce_ac_email_reply'] );
-    							     $woocommerce_ac_email_from    = trim( $_POST['woocommerce_ac_email_from'] );
+    							     
     							     $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
     							     $query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
-    								           (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template, reply_email, from_email, wc_email_header )      
-    								           VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d, %s, %s, %s )";        //It  is fix
+    								           (subject, body, is_active, frequency, day_or_hour, template_name, is_wc_template, default_template, wc_email_header )      
+    								           VALUES ( %s, %s, %s, %d, %s, %s, %s, %d, %s )";        
     							     
     							    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query, 
     							                                  $woocommerce_ac_email_subject,
@@ -1857,12 +2011,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     							                                  $active_post, 
     							                                  $email_frequency, 
     							                                  $day_or_hour, 
-    							                                  $woocommerce_ac_template_name, 
-    							                                  $woocommerce_ac_from_name,
+    							                                  $woocommerce_ac_template_name,
     							                                  $is_wc_template,
     							                                  $default_value,
-    							                                  $woocommerce_ac_email_reply,
-    							                                  $woocommerce_ac_email_from,
     							                                  $woocommerce_ac_email_header)       
                                       );		   
     							} else {
@@ -1877,13 +2028,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     							    $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
     							    $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
     							    $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-    							    $woocommerce_ac_from_name     = trim( $_POST['woocommerce_ac_from_name'] );
-    							    $woocommerce_ac_email_from    = trim( $_POST['woocommerce_ac_email_from'] );
-    							    $woocommerce_ac_email_reply   = trim( $_POST['woocommerce_ac_email_reply'] );
     							    $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
     							    $query_insert_new = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
-    								                    (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template, reply_email, from_email, wc_email_header )
-    								                    VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d, %s, %s, %s )";
+    								                    (subject, body, is_active, frequency, day_or_hour, template_name, is_wc_template, default_template, wc_email_header )
+    								                    VALUES ( %s, %s, %s, %d, %s, %s, %s, %d, %s )";
     											
     							    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query_insert_new, 
     							                                  $woocommerce_ac_email_subject,
@@ -1892,11 +2040,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     							                                  $email_frequency, 
     							                                  $day_or_hour, 
     							                                  $woocommerce_ac_template_name, 
-    							                                  $woocommerce_ac_from_name,
     							                                  $is_wc_template,
     							                                  $default_value,
-    							                                  $woocommerce_ac_email_reply,
-    							                                  $woocommerce_ac_email_from,
     							                                  $woocommerce_ac_email_header )
                                    );
     							}
@@ -1904,9 +2049,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     						    $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
     						    $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
     						    $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-    						    $woocommerce_ac_from_name     = trim( $_POST['woocommerce_ac_from_name'] );  
-    						    $woocommerce_ac_email_reply   = trim( $_POST['woocommerce_ac_email_reply'] );
-    						    $woocommerce_ac_email_from    = trim( $_POST['woocommerce_ac_email_from'] );
     						    $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
     						    $active_post                  = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
     						    $email_frequency              = trim( $_POST['email_frequency'] );
@@ -1915,8 +2057,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     						    $default_value                =  0 ;
     						    
     						    $query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
-    								      (subject, body, is_active, frequency, day_or_hour, template_name, from_name, is_wc_template, default_template, reply_email, from_email, wc_email_header )
-    								      VALUES ( %s, %s, %s, %d, %s, %s, %s, %s, %d, %s, %s, %s )";
+    								      (subject, body, is_active, frequency, day_or_hour, template_name, is_wc_template, default_template, wc_email_header )
+    								      VALUES ( %s, %s, %s, %d, %s, %s, %s, %d, %s )";
     						    
     						    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query,
                         								        $woocommerce_ac_email_subject,
@@ -1925,11 +2067,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         								        $email_frequency,
                         								        $day_or_hour,
                         								        $woocommerce_ac_template_name,
-                        								        $woocommerce_ac_from_name,
                         								        $is_wc_template,
                         								        $default_value,
-                        								        $woocommerce_ac_email_reply,
-    						                                    $woocommerce_ac_email_from,
     						                                    $woocommerce_ac_email_header )        
     						     );								    
     						}
@@ -1958,9 +2097,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     							    $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
     							    $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );									    
     							    $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-    							    $woocommerce_ac_from_name     = trim( $_POST['woocommerce_ac_from_name'] );
-    							    $woocommerce_ac_email_from    = trim( $_POST['woocommerce_ac_email_from'] );
-    							    $woocommerce_ac_email_reply   = trim( $_POST['woocommerce_ac_email_reply'] );
     							    $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
     							    $id                           = trim( $_POST['id'] );
     							    
@@ -1972,11 +2108,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		                                        frequency     = %d,
             										day_or_hour   = %s,
             										template_name = %s,
-            										from_name     = %s,
     				                                is_wc_template = %s,
     						                        default_template = %d,
-    				                                reply_email   = %s,
-    		                                        from_email    = %s,
     			                                    wc_email_header = %s
             										WHERE id      = %d ";
     							    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update,
@@ -1986,11 +2119,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     									         $email_frequency,
                     									         $day_or_hour,
                     									         $woocommerce_ac_template_name,
-                    									         $woocommerce_ac_from_name,
     							                                 $is_wc_template,
     							                                 $default_value,
-    							                                 $woocommerce_ac_email_from,
-    							                                 $woocommerce_ac_email_reply,
     							                                 $woocommerce_ac_email_header,
                     									         $id )
     							        
@@ -2005,9 +2135,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     							    $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
     							    $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );									    
     							    $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-    							    $woocommerce_ac_from_name     = trim( $_POST['woocommerce_ac_from_name'] );
-    							    $woocommerce_ac_email_from    = trim( $_POST['woocommerce_ac_email_from'] );
-    							    $woocommerce_ac_email_reply   = trim( $_POST['woocommerce_ac_email_reply'] );
     							    $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
     							    $id                           = trim( $_POST['id'] );
     							    
@@ -2019,11 +2146,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		                                        frequency     = %d,
             										day_or_hour   = %s,
             										template_name = %s,
-            										from_name     = %s,
     		                                        is_wc_template = %s,
     		                                        default_template = %d,
-    	                                            reply_email   = %s,
-    	                                            from_email    = %s,
     	                                            wc_email_header = %s
             										WHERE id      = %d ";
     							    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update_latest,
@@ -2033,11 +2157,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     									         $email_frequency,
                     									         $day_or_hour,
                     									         $woocommerce_ac_template_name,
-                    									         $woocommerce_ac_from_name,
     							                                 $is_wc_template,
     							                                 $default_value,
-    							                                 $woocommerce_ac_email_reply,
-    							                                 $woocommerce_ac_email_from,
     							                                 $woocommerce_ac_email_header,
                     									         $id )
     							        
@@ -2059,9 +2180,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     						    $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
     						    $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
     						    $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-    						    $woocommerce_ac_from_name     = trim( $_POST['woocommerce_ac_from_name'] );
-    						    $woocommerce_ac_email_from    = trim( $_POST['woocommerce_ac_email_from'] );
-    						    $woocommerce_ac_email_reply   = trim( $_POST['woocommerce_ac_email_reply'] );
     						    $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
     							$id                           = trim( $_POST['id'] );
     						    $check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
@@ -2083,11 +2201,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     			                                        frequency     = %d,
                 										day_or_hour   = %s,
                 										template_name = %s,
-                										from_name     = %s,
     			                                        is_wc_template = %s,
     			                                        default_template = %d,
-    			                                        reply_email   = %s,
-            				                            from_email    = %s,
             				                            wc_email_header = %s
                 										WHERE id      = %d ";
     							    
@@ -2098,11 +2213,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         								        $email_frequency,
                         								        $day_or_hour,
                         								        $woocommerce_ac_template_name,
-                        								        $woocommerce_ac_from_name,
                         								        $is_wc_template,
                         								        $default_value,
-                        								        $woocommerce_ac_email_reply,
-                        								        $woocommerce_ac_email_from,
                         								        $woocommerce_ac_email_header,
                         								        $id )
     						    );   
@@ -2689,51 +2801,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 									
 								    <tr>
 								       <th>
-	    									<label for="woocommerce_ac_from_name"><b><?php _e( 'Send From This Name:', 'woocommerce-ac' ); ?></b></label>
-	    								</th>
-	    								<td>
-    										<?php
-    										$from_name = "Admin";
-    										if ( $mode == 'edittemplate' ) {
-    											$from_name=$results[0]->from_name;
-    										}    										
-    										print'<input type="text" name="woocommerce_ac_from_name" id="woocommerce_ac_from_name" class="regular-text" value="'.$from_name.'">';?>
-    										<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the name that should appear in the email sent', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
-										</td>
-									</tr>
-									
-									<tr>
-                                       <th>
-                                            <label for="woocommerce_ac_email_from"><b><?php _e( 'Send From This Email Address:', 'woocommerce-ac' ); ?></b></label>
-                                        </th>
-                                        <td>
-                                            <?php
-                                            $from_edit = get_option( 'admin_email' );                                            
-                                            if ( $mode == 'edittemplate' && $results[0]->from_email != '') { // this is the fix
-                                                $from_edit = $results[0]->from_email;
-                                            }
-                                           print'<input type="text" name="woocommerce_ac_email_from" id="woocommerce_ac_email_from" class="regular-text" value="' . $from_edit . '">'; ?>
-                                           <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Which email address should be shown in the "From    Email" field for this email?', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
-                                        </td>
-                                    </tr> 
-                                                                                   
-                                    <tr>
-                                       <th>
-                                            <label for="woocommerce_ac_email_reply"><b><?php _e( 'Send Reply Emails to:', 'woocommerce-ac' ); ?></b></label>
-                                        </th>
-                                        <td>
-                                            <?php
-                                            $reply_edit = get_option( 'admin_email' );                                            
-                                            if ( $mode == 'edittemplate' && $results[0]->reply_email != '' ) { // this is the fix
-                                                $reply_edit = $results[0]->reply_email;
-                                            }    
-                                            print'<input type="text" name="woocommerce_ac_email_reply" id="woocommerce_ac_email_reply" class="regular-text" value="' . $reply_edit . '">'; ?>
-                                            <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'When a contact receives your email and clicks reply, which email address should that reply be sent to?', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
-                                        </td>
-                                    </tr>            
-									
-									<tr>
-								       <th>
 	    									<label for="woocommerce_ac_email_subject"><b><?php _e( 'Subject:', 'woocommerce-ac' ); ?></b></label>
 	    								</th>
 	    								<td>
@@ -2955,19 +3022,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             email_body = tinyMCE.get('woocommerce_ac_email_body').getContent();
                         } else {
                             email_body = jQuery('#woocommerce_ac_email_body').val();
-                        }								
-    					var from_name_preview     = $( '#woocommerce_ac_from_name' ).val();
-    					var reply_name_preview    = $( '#woocommerce_ac_email_reply' ).val();
-    					var from_email_preview    = $( '#woocommerce_ac_email_from' ).val();
+                        }
     					var subject_email_preview = $( '#woocommerce_ac_email_subject' ).val();
     					var body_email_preview    = email_body;
     					var send_email_id         = $( '#send_test_email' ).val();	
     					var is_wc_template        = document.getElementById( "is_wc_template" ).checked;	
     					var wc_template_header    = $( '#wcal_wc_email_header' ).val() != '' ? $( '#wcal_wc_email_header' ).val() : 'Abandoned cart reminder';																
-    					var data                  = {
-                										from_name_preview    : from_name_preview,
-                										reply_name_preview   : reply_name_preview,
-                										from_email_preview   : from_email_preview,
+    					var data                  = {                										
                 										subject_email_preview: subject_email_preview,
                 										body_email_preview   : body_email_preview,
                 										send_email_id        : send_email_id,
@@ -2998,9 +3059,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		// Send Test Email  	
 		function wcal_preview_email_sent() {
 		    if ( '' != $_POST['body_email_preview'] ) {
-			    $from_email_name       = $_POST['from_name_preview'];
-				$reply_name_preview    = $_POST['reply_name_preview'];
-				$from_email_preview    = $_POST['from_email_preview'];
+			    $from_email_name       = get_option ( 'wcal_from_name' );
+				$reply_name_preview    = get_option ( 'wcal_from_email' );
+				$from_email_preview    = get_option ( 'wcal_reply_email' );
 				$subject_email_preview = stripslashes ( $_POST['subject_email_preview'] );		 				
 				$body_email_preview    = $_POST['body_email_preview'];
 				$is_wc_template        = $_POST['is_wc_template'];

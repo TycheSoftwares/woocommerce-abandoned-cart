@@ -57,14 +57,17 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 				$email_frequency     = $value->frequency;
 				$email_body_template = $value->body;			
 				$email_subject       = stripslashes  ( $value->subject );
+				$wcal_from_name      = get_option ( 'wcal_from_name' );
+				$wcal_from_email     = get_option ( 'wcal_from_email' );
+				$wcal_reply_email    = get_option ( 'wcal_reply_email' );
 				if ( class_exists( 'WP_Better_Emails' ) ) {
-				    $headers         = "From: " . $value->from_name . " <" . $value->from_email . ">" . "\r\n";
+				    $headers         = "From: " . $wcal_from_name . " <" . $wcal_from_email . ">" . "\r\n";
 				    $headers         .= "Content-Type: text/plain"."\r\n";
-				    $headers         .= "Reply-To:  " . $value->reply_email . " " . "\r\n";
+				    $headers         .= "Reply-To:  " . $wcal_reply_email . " " . "\r\n";
 				} else {
-				    $headers         = "From: " . $value->from_name . " <" . $value->from_email . ">" . "\r\n";
+				    $headers         = "From: " . $wcal_from_name . " <" . $wcal_from_email . ">" . "\r\n";
 				    $headers         .= "Content-Type: text/html"."\r\n";
-				    $headers         .= "Reply-To:  " . $value->reply_email . " " . "\r\n";
+				    $headers         .= "Reply-To:  " . $wcal_reply_email . " " . "\r\n";
 				}
 				$template_id         = $value->id;
 				$is_wc_template      = $value->is_wc_template;
