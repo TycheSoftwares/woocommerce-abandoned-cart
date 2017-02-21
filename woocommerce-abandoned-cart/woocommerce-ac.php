@@ -452,6 +452,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		        update_option( 'woocommerce_ac_default_templates_installed', "yes" );
     		    }
     		}
+    		/**
+    		 * This is add for thos user who Install the plguin first time.
+    		 * So for them this option will be cheked.
+    		 */
+    		if( !get_option( 'ac_lite_track_guest_cart_from_cart_page' ) ) {
+    		    add_option( 'ac_lite_track_guest_cart_from_cart_page', 'on' );
+    		}    	
 	   }     
 	
     	/***************************************************************
