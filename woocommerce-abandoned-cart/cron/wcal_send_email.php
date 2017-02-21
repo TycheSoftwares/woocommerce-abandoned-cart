@@ -72,7 +72,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 				$wc_template_header  = stripslashes( $wc_template_header_text );
 				if ( '' != $email_body_template ) { 
     				foreach ( $carts as $key => $value ) {
-    				    if ( $value->user_type == "GUEST" ) {
+    				    if ( $value->user_type == "GUEST" && $value->user_id != '0' ) {
     				        $value->user_login = "";
     				        $query_guest       = "SELECT billing_first_name, billing_last_name, email_id FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` 
     				                            WHERE id = %d";
@@ -92,7 +92,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     				    if( isset( $value->abandoned_cart_info ) ) {
     					   $cart_info_db_field = json_decode( $value->abandoned_cart_info );
     				    }
-    					if( count( $cart_info_db_field->cart ) > 0 ) {
+    					if( count( $cart_info_db_field->cart ) > 0 && $value->user_id != '0') {
     						$cart_update_time = $value->abandoned_cart_time;
     						$new_user         = $this->wcal_check_sent_history( $value->user_id, $cart_update_time, $template_id, $value->id );    						
     						if ( $new_user == true ) {

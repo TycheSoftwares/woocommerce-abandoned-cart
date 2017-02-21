@@ -160,16 +160,24 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		
 		        if ( isset( $results_guest[0]->email_id ) ) {
 		            $user_email = $results_guest[0]->email_id;
-		        }
+		        } elseif ( $value->user_id == "0" ) {
+		            $user_email = '';
+		        } else {
+		            $user_email = '';
+	            }
 		
 		        if ( isset( $results_guest[0]->billing_first_name ) ) {
 		            $user_first_name = $results_guest[0]->billing_first_name;
+		        } else if( $value->user_id == "0" ) { 
+		            $user_first_name = "Visitor";
 		        } else {
 		            $user_first_name = "";
 		        }
 		
 		        if ( isset( $results_guest[0]->billing_last_name ) ) {
 		            $user_last_name = $results_guest[0]->billing_last_name;
+		        } else if( $value->user_id == "0" ) {
+		            $user_last_name = "";
 		        } else {
 		            $user_last_name = "";
 		        }    		        

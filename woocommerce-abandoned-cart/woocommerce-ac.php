@@ -111,7 +111,8 @@ function woocommerce_ac_delete_lite() {
 	delete_option( 'ac_lite_settings_status' );
 	delete_option( 'woocommerce_ac_default_templates_installed' );	
 	delete_option( 'wcal_security_key' );
-}
+	delete_option( 'ac_lite_track_guest_cart_from_cart_page' );	
+	}
 	/**
 	 * woocommerce_abandon_cart_lite class
 	 **/
@@ -490,7 +491,22 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         	    'ac_lite_general_settings_section',
         	    array( __( 'Sends email to Admin if an Abandoned Cart Order is recovered.', 'woocommerce-ac' ) )
     	    );
-    	
+    	    
+    	    add_settings_field(
+    	    'ac_lite_track_guest_cart_from_cart_page',
+    	    __( 'Enable tracking carts when customer doesn\'t enter details', 'woocommerce-ac' ),
+    	    array( $this, 'wcal_track_guest_cart_from_cart_page_callback' ),
+    	    'woocommerce_ac_page',
+    	    'ac_lite_general_settings_section',
+    	    array( __( 'Enable tracking of abandoned products & carts even if customer does not visit the checkout page or does not enter any details on the checkout page like Name or Email. Tracking will begin as soon as a visitor adds a product to their cart and visits the cart page.', 'woocommerce-ac' ) )
+    	    );
+    	    /*
+    	     * New section for the Adding the abandoned cart setting.
+    	     * Since @: 4.7
+    	     */
+    	    
+    	    
+    	    	
     	    // Finally, we register the fields with WordPress
     	    register_setting(
                 'woocommerce_ac_settings',
@@ -501,7 +517,14 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             register_setting(
                 'woocommerce_ac_settings',
                 'ac_lite_email_admin_on_recovery'
-            );  
+            );
+             
+            register_setting(
+                'woocommerce_ac_settings',
+                'ac_lite_track_guest_cart_from_cart_page'
+            );
+            
+          
     	}
 	
     	/***************************************************************
@@ -564,7 +587,31 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	    $html .= '<label for="ac_lite_email_admin_on_recovery"> '  . $args[0] . '</label>';
     	    echo $html;
     	}
-	
+    	/***************************************************************
+    	 * @since : 2.7
+    	 * WP Settings API callback for capturing guest cart which do not reach the checkout page.
+    	 **************************************************************/
+    	function wcal_track_guest_cart_from_cart_page_callback( $args ) {
+    	    // First, we read the option
+    	    $disable_guest_cart_from_cart_page = get_option( 'ac_lite_track_guest_cart_from_cart_page' );
+    	   
+    	    // This condition added to avoid the notice displyed while Check box is unchecked.
+    	    if ( isset( $disable_guest_cart_from_cart_page ) && $disable_guest_cart_from_cart_page == '' ) {
+    	        $disable_guest_cart_from_cart_page = 'off';
+    	    }
+    	    // Next, we update the name attribute to access this element's ID in the context of the display options array
+    	    // We also access the show_header element of the options collection in the call to the checked() helper function
+    	    $html     = '';
+    	    
+    	    printf(
+    	    '<input type="checkbox" id="ac_lite_track_guest_cart_from_cart_page" name="ac_lite_track_guest_cart_from_cart_page" value="on"
+                '.checked( 'on', $disable_guest_cart_from_cart_page, false ) . ' />' );
+    	    // Here, we'll take the first argument of the array and add it to a label next to the checkbox
+    	    $html .= '<label for="ac_lite_track_guest_cart_from_cart_page"> ' . $args[0] . '</label>';
+    	    echo $html;
+    	}
+    	
+    
     	/**************************************************
     	 * This function is run when the plugin is upgraded
     	 *************************************************/
@@ -697,7 +744,14 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	            add_option( 'ac_lite_email_admin_on_recovery', $woocommerce_ac_settings[0]->email_admin );
     	        } else {
     	            add_option( 'ac_lite_email_admin_on_recovery', "" );
-    	        }    	         
+    	        } 
+    	         
+    	        if( isset( $woocommerce_ac_settings[0]->disable_guest_cart_from_cart_page ) ) {
+    	           add_option( 'ac_lite_track_guest_cart_from_cart_page',  $woocommerce_ac_settings[0]->disable_guest_cart_from_cart_page );
+    	        } else {
+    	           add_option( 'ac_lite_track_guest_cart_from_cart_page', "" );
+    	        }
+    	        
     	        update_option( 'ac_lite_settings_status', 'INDIVIDUAL' );
     	        //Delete the main settings record
     	        delete_option( 'woocommerce_ac_settings' );
@@ -708,6 +762,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	   if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_abandoned_cart_history_lite';" ) ) {
     	        if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_abandoned_cart_history_lite` LIKE 'unsubscribe_link';" ) ) {
     	            $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_abandoned_cart_history_lite ADD `unsubscribe_link` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER  `user_type`;" );
+    	        }
+    	    }
+    	
+    	    if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_abandoned_cart_history_lite';" ) ) {
+    	        if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_abandoned_cart_history_lite` LIKE 'session_id';" ) ) {
+    	            $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_abandoned_cart_history_lite ADD `session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `unsubscribe_link`;" );
     	        }
     	    }    	    
     	    /*
@@ -821,8 +881,15 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	    global $wpdb,$woocommerce;
     	    $current_time   = current_time( 'timestamp' );
     	    $cut_off_time   = get_option( 'ac_lite_cart_abandoned_time' );			    
+    	    $track_guest_cart_from_cart_page = get_option( 'ac_lite_track_guest_cart_from_cart_page' );
     	    $cart_ignored   = 0;
-    	    $recovered_cart = 0;    	    
+    	    $recovered_cart = 0;  
+    	    
+    	    $track_guest_user_cart_from_cart = "";    	    
+    	    if ( isset( $track_guest_cart_from_cart_page ) ) {
+    	        $track_guest_user_cart_from_cart = $track_guest_cart_from_cart_page;
+    	    }
+    	    
     	    if( isset( $cut_off_time ) ) {
     	        $cart_cut_off_time = $cut_off_time * 60;
     	    } else {
@@ -898,7 +965,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		    $query   = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0'";
     		    $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id ) );
     		    $cart    = array();
-    		    
+    		    $get_cookie = WC()->session->get_session_cookie();
     		    if ( function_exists('WC') ) {
                     $cart['cart'] = WC()->session->cart;
                 } else {
@@ -908,7 +975,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		    $updated_cart_info = json_encode($cart);
     		    $updated_cart_info = addslashes ( $updated_cart_info );
     		    
-    		    if ( $results ) {    		        
+    		    if ( count($results) > 0 ) {    		        
 		            if ( $compare_time > $results[0]->abandoned_cart_time ) {    		                	    		               
 		                if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {
 		                    
@@ -931,7 +998,48 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 	                                     WHERE user_id='".$user_id."' AND cart_ignored='0' ";
 		                $wpdb->query( $query_update );
 		            }
-		        }
+		        } else {                   
+                    /***
+                     * @Since: 3.5
+                     * Here we capture the guest cart from the cart page.
+                     */                  
+                    if ( $track_guest_user_cart_from_cart == "on" &&  $get_cookie[0] != '' ) {                    
+                        $query   = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE session_id LIKE %s AND cart_ignored = '0' AND recovered_cart = '0' ";
+                        $results = $wpdb->get_results( $wpdb->prepare( $query, $get_cookie[0] ) ); 
+                        if ( count( $results ) == 0 ) {                        
+                            $cart_info        = $updated_cart_info;
+                            $blank_cart_info  = '[]';                        
+                            if ( $blank_cart_info != $cart_info ) {
+                                $insert_query = "INSERT INTO `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
+                                                ( abandoned_cart_info , abandoned_cart_time , cart_ignored , recovered_cart, user_type, session_id  )
+                                                VALUES ( '" . $cart_info."' , '" . $current_time . "' , '0' , '0' , 'GUEST', '". $get_cookie[0] ."' )";
+                                $wpdb->query( $insert_query );
+                            }                        
+                        } elseif ( $compare_time > $results[0]->abandoned_cart_time ) {                        
+                            $blank_cart_info  = '[]';    
+                            
+                            if ( $blank_cart_info != $updated_cart_info ) {                        
+                                //wp_mail("chetna@tychesoftwares.com", "update query", print_r($wpdb->query( $insert_query ),true));
+                                if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {                        
+                                    $query_ignored = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE session_id ='" . $get_cookie[0] . "'";
+                                    $wpdb->query( $query_ignored );
+                                    $query_update = "INSERT INTO `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
+                                                    ( abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type, session_id )
+                                                    VALUES ( '" . $updated_cart_info . "', '" . $current_time . "', '0', '0', 'GUEST', '". $get_cookie[0] ."' )";
+                                    $wpdb->query( $query_update );
+                                }
+                            }
+                        } else {                        
+                            $blank_cart_info   = '[]';                        
+                            if ( $blank_cart_info != $updated_cart_info ) {                        
+                                if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {
+                                    $query_update = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET abandoned_cart_info = '" . $updated_cart_info . "', abandoned_cart_time  = '" . $current_time . "' WHERE session_id ='" . $get_cookie[0] . "' AND cart_ignored='0' ";
+                                    $wpdb->query( $query_update );
+                                }
+                            }
+                        }
+                    }
+                }		        		        
 		    }
     	}
     	
@@ -2132,7 +2240,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                     $shipping_charges = 0;
                                     $currency_symbol  = get_woocommerce_currency_symbol();
                                     $number_decimal   = wc_get_price_decimals();                                    
-                                    if ( $results[0]->user_type == "GUEST" ) {
+                                    if ( $results[0]->user_type == "GUEST" && "0" != $results[0]->user_id ) {
                                         $query_guest            = "SELECT * FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d";  
                                         $results_guest          = $wpdb->get_results( $wpdb->prepare( $query_guest, $results[0]->user_id ) );
                                         $user_email             = $results_guest[0]->email_id;
@@ -2143,6 +2251,16 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         $shipping_charges       = $results_guest[0]->shipping_charges;
                                         $user_billing_company   = $user_billing_address_1 = $user_billing_address_2 = $user_billing_city = $user_billing_state = $user_billing_country  = $user_billing_phone = "";
                                         $user_shipping_company  = $user_shipping_address_1 = $user_shipping_address_2 = $user_shipping_city = $user_shipping_state = $user_shipping_country = "";  
+                                    } else if ( $results[0]->user_type == "GUEST" && $results[0]->user_id == "0" ) {
+                                        $user_email             = '';
+                                        $user_first_name        = "Visitor";
+                                        $user_last_name         = "";
+                                        $user_billing_postcode  = '';
+                                        $user_shipping_postcode = '';
+                                        $shipping_charges       = '';
+                                        $user_billing_phone     = '';
+                                        $user_billing_company   = $user_billing_address_1 = $user_billing_address_2 = $user_billing_city = $user_billing_state = $user_billing_country  = "";
+                                        $user_shipping_company  = $user_shipping_address_1 = $user_shipping_address_2 = $user_shipping_city = $user_shipping_state = $user_shipping_country = "";                                       
                                     } else {
                                         $user_id                = $results[0]->user_id;                                
                                         if ( isset( $results[0]->user_login ) ) {
