@@ -1684,8 +1684,127 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	          ?>	
                     	<p> <?php _e( 'The list below shows all Abandoned Carts which have remained in cart for a time higher than the "Cart abandoned cut-off time" setting.', 'woocommerce-ac' );?> </p>
                     	<?php
-                        global $wpdb;
                         
+                        
+                        function wcal_get_abandoned_order_count( $get_section_result ){
+                            global $wpdb;
+                            $return_abandoned_count = 0;
+                        
+                            $blank_cart_info         = '{"cart":[]}';
+                            $blank_cart_info_guest   = '[]';
+                        
+                            $ac_cutoff_time          = get_option( 'ac_lite_cart_abandoned_time' );
+                            $cut_off_time            = $ac_cutoff_time * 60;
+                            $current_time            = current_time( 'timestamp' );
+                            $compare_time            = $current_time - $cut_off_time;
+                        
+                            switch ( $get_section_result ) {
+                                case 'wcal_all_abandoned':
+                        
+                                    $query_ac        = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE ( user_type = 'REGISTERED' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_time <= '$compare_time' AND recovered_cart = 0 ) OR ( user_type = 'GUEST' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND recovered_cart = 0  ) ORDER BY recovered_cart desc ";
+                                    $ac_results      = $wpdb->get_results( $query_ac );
+                                    $return_abandoned_count = count( $ac_results );
+                                    break;
+                        
+                                case 'wcal_all_registered':
+                        
+                                    $query_ac        = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE ( user_type = 'REGISTERED' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_time <= '$compare_time' AND recovered_cart = 0 ) ORDER BY recovered_cart desc ";
+                                    $ac_results      = $wpdb->get_results( $query_ac );
+                                    $return_abandoned_count = count( $ac_results );
+                                    break;
+                        
+                                case 'wcal_all_guest':
+                                    $query_ac        = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE ( user_type = 'GUEST' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_time <= '$compare_time' AND recovered_cart = 0 AND user_id >= 63000000 ) ORDER BY recovered_cart desc ";
+                                    $ac_results      = $wpdb->get_results( $query_ac );
+                                    $return_abandoned_count = count( $ac_results );
+                        
+                                    break;
+                        
+                                case 'wcal_all_visitor':
+                                    $query_ac        = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE ( user_type = 'GUEST' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_time <= '$compare_time' AND recovered_cart = 0  AND user_id = 0 ) ORDER BY recovered_cart desc ";
+                                    $ac_results      = $wpdb->get_results( $query_ac );
+                                    $return_abandoned_count = count( $ac_results );
+                        
+                                    break;
+                        
+                                default:
+                                    # code...
+                                    break;
+                            }
+                        
+                            return $return_abandoned_count;
+                        }
+                        $get_all_abandoned_count      = wcal_get_abandoned_order_count( 'wcal_all_abandoned' );
+                        $get_registered_user_ac_count = wcal_get_abandoned_order_count( 'wcal_all_registered' );
+                        $get_guest_user_ac_count      = wcal_get_abandoned_order_count( 'wcal_all_guest' );
+                        $get_visitor_user_ac_count    = wcal_get_abandoned_order_count( 'wcal_all_visitor' );
+                        
+            	        $wcal_user_reg_text = 'User';
+                        if ( $get_registered_user_ac_count > 1){
+                            $wcal_user_reg_text = 'Users';
+                        }                    
+                        $wcal_user_gus_text = 'User';
+                        if ( $get_guest_user_ac_count > 1){
+                            $wcal_user_gus_text = 'Users';
+                        }                    
+                        $wcal_user_vis_text = 'User';
+                        if ( $get_visitor_user_ac_count > 1){
+                            $wcal_user_vis_text = 'Users';
+                        }
+                        
+                        $wcal_all_abandoned_carts  = $section = $wcal_all_registered = $wcal_all_guest = $wcal_all_visitor = "" ;
+                        
+                        if ( isset( $_GET[ 'wcal_section' ] ) ) {
+                            $section = $_GET[ 'wcal_section' ];
+                        } else {
+                            $section = '';
+                        }
+                        if ( $section == 'wcal_all_abandoned' || $section == '' ) {
+                            $wcal_all_abandoned_carts = "current";
+                        }
+                        
+                        if( $section == 'wcal_all_registered' ) {
+                            $wcal_all_registered = "current";
+                            $wcal_all_abandoned_carts = "";
+                        }
+                        if( $section == 'wcal_all_guest' ) {
+                            $wcal_all_guest = "current";
+                            $wcal_all_abandoned_carts = "";
+                        }
+                        
+                        if( $section == 'wcal_all_visitor' ) {
+                            $wcal_all_visitor = "current";
+                            $wcal_all_abandoned_carts = "";
+                        }
+                        ?>
+                        <ul class="subsubsub" id="wcap_recovered_orders_list">
+                            <li>
+                                <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_abandoned" class="<?php echo $wcal_all_abandoned_carts; ?>"><?php _e( "All ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_all_abandoned_count )" ?> </span></a> 
+                            </li>
+    
+                            <?php if ($get_registered_user_ac_count > 0 ) { ?>
+                            <li>
+                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_registered" class="<?php echo $wcal_all_registered; ?>"><?php _e( " Registered $wcal_user_reg_text ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_registered_user_ac_count )" ?> </span></a> 
+                            </li>
+                            <?php } ?>
+    
+                            <?php if ($get_guest_user_ac_count > 0 ) { ?>
+                            <li>
+                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_guest" class="<?php echo $wcal_all_guest; ?>"><?php _e( " Non-Registered $wcal_user_gus_text ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_guest_user_ac_count )" ?> </span></a> 
+                            </li>
+                            <?php } ?>
+    
+                            <?php if ($get_visitor_user_ac_count > 0 ) { ?>
+                            <li>
+                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_visitor" class="<?php echo $wcal_all_visitor; ?>"><?php _e( " Visitor $wcal_user_vis_text ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_visitor_user_ac_count )" ?> </span></a> 
+                            </li>
+                            <?php } ?>
+    
+    
+                        </ul>
+                        
+                        <?php 
+                        global $wpdb;
                         include_once( 'includes/classes/class-wcal-abandoned-orders-table.php' );
                         $wcal_abandoned_order_list = new WCAL_Abandoned_Orders_Table();
                         $wcal_abandoned_order_list->wcal_abandoned_order_prepare_items();

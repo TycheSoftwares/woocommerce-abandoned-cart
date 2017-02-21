@@ -138,13 +138,84 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		$results                 = array();    	 
 		$blank_cart_info         = '{"cart":[]}';
 		$blank_cart_info_guest   = '[]';
+
+		$get_section_of_page   = WCAL_Abandoned_Orders_Table::wcal_get_current_section ();
 		
-		// non-multisite - regular table name
-		$query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
-				  LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
-				  WHERE recovered_cart = '0'
-				  AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' ORDER BY wpac.abandoned_cart_time DESC";        
-        $results = $wpdb->get_results($query);			
+		$results 			   = array();
+		
+		switch ( $get_section_of_page ) {
+		    case 'wcal_all_abandoned':
+		        # code...
+		        if( is_multisite() ) {
+		            // get main site's table prefix
+		            $main_prefix = $wpdb->get_blog_prefix(1);
+		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$main_prefix."users AS wpu ON wpac.user_id = wpu.id
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' ORDER BY wpac.abandoned_cart_time DESC";
+		            $results = $wpdb->get_results($query);
+		        } else {
+		            // non-multisite - regular table name
+		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' ORDER BY wpac.abandoned_cart_time DESC ";
+		
+		            $results = $wpdb->get_results($query);
+		        }
+		        break;
+		         
+		    case 'wcal_all_registered':
+		        # code...
+		        if( is_multisite() ) {
+		            // get main site's table prefix
+		            $main_prefix = $wpdb->get_blog_prefix(1);
+		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$main_prefix."users AS wpu ON wpac.user_id = wpu.id
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' ORDER BY wpac.abandoned_cart_time DESC ";
+		            $results = $wpdb->get_results($query);
+		        } else {
+		            // non-multisite - regular table name
+		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.user_type = 'REGISTERED' ORDER BY wpac.abandoned_cart_time DESC ";
+		
+		
+		            $results = $wpdb->get_results($query);
+		        }
+		        break;
+		
+		    case 'wcal_all_guest':
+		        # code...
+		        if( is_multisite() ) {
+		            // get main site's table prefix
+		            $main_prefix = $wpdb->get_blog_prefix(1);
+		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$main_prefix."users AS wpu ON wpac.user_id = wpu.id
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' wpac.user_id >= 63000000  ORDER BY wpac.abandoned_cart_time DESC ";
+		            $results = $wpdb->get_results($query);
+		        } else {
+		            // non-multisite - regular table name
+		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.user_id >= 63000000 ORDER BY wpac.abandoned_cart_time DESC ";
+		            $results = $wpdb->get_results($query);
+		        }
+		        break;
+		
+		    case 'wcal_all_visitor':
+		     			# code...
+		        if( is_multisite() ) {
+		            // get main site's table prefix
+		            $main_prefix = $wpdb->get_blog_prefix(1);
+		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$main_prefix."users AS wpu ON wpac.user_id = wpu.id
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' wpac.user_id >= 63000000  ORDER BY wpac.abandoned_cart_time DESC ";
+		            $results = $wpdb->get_results($query);
+		        } else {
+		            // non-multisite - regular table name
+		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.user_id = 0 ORDER BY wpac.abandoned_cart_time DESC ";
+		            $results = $wpdb->get_results($query);
+		        }
+		        break;
+		
+		
+		    default:
+		        # code...
+		        break;
+		}
 		$i = 0;
 	   		
 		foreach( $results as $key => $value ) {        		
@@ -395,6 +466,14 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    return array(
 	        'wcal_delete' => __( 'Delete', 'woocommerce-ac' )
 	    );
+	}
+	
+	public function wcal_get_current_section () {
+	    $section = 'wcal_all_abandoned';
+	    if ( isset( $_GET[ 'wcal_section' ] ) ) {
+	        $section = $_GET[ 'wcal_section' ];
+	    }
+	    return $section	;
 	}
 }
 ?>
