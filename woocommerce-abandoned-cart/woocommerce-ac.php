@@ -506,7 +506,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	    
     	    add_settings_section(
     	    'ac_email_settings_section',           // ID used to identify this section and with which to register options
-    	    __( 'Settings for abandoned cart emails', 'woocommerce-ac' ),      // Title to be displayed on the administration page
+    	    __( 'Settings for abandoned cart recovery emails', 'woocommerce-ac' ),      // Title to be displayed on the administration page
     	    array($this, 'wcal_email_callback' ),// Callback used to render the description of the section
     	    'woocommerce_ac_email_page'     // Page on which to add this section of options
     	    );
@@ -1794,7 +1794,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         		 if ( $action == 'emailsettings' ) {
         	     // Save the field values
                     ?>
-    			    <p><?php _e( 'Change settings for sending email notifications to Customers after X minute.', 'woocommerce-ac' ); ?></p>
+    			    <p><?php _e( 'Change settings for sending email notifications to Customers, to Admin etc.', 'woocommerce-ac' ); ?></p>
                     <div id="content">
                     <?php 
                         $wcal_general_settings_class = $wcal_cron_setting = "";
@@ -1816,7 +1816,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                 <a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_general_settings" class="<?php echo $wcal_general_settings_class; ?>"><?php _e( 'General Settings', 'woocommerce-ac' );?> </a> |
                             </li>
                                <li>
-                                <a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_email_settings" class="<?php echo $wcal_email_setting; ?>"><?php _e( 'Email Settings', 'woocommerce-ac' );?> </a> 
+                                <a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_email_settings" class="<?php echo $wcal_email_setting; ?>"><?php _e( 'Email Sending Settings', 'woocommerce-ac' );?> </a> 
                             </li>
                             
                         </ul>
@@ -1859,12 +1859,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         $wcal_user_gus_text = 'User';
                         if ( $get_guest_user_ac_count > 1){
                             $wcal_user_gus_text = 'Users';
-                        }                    
-                        $wcal_user_vis_text = 'User';
-                        if ( $get_visitor_user_ac_count > 1){
-                            $wcal_user_vis_text = 'Users';
-                        }
-                        
+                        }                                                                    
                         $wcal_all_abandoned_carts  = $section = $wcal_all_registered = $wcal_all_guest = $wcal_all_visitor = "" ;
                         
                         if ( isset( $_GET[ 'wcal_section' ] ) ) {
@@ -1903,13 +1898,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     
                             <?php if ($get_guest_user_ac_count > 0 ) { ?>
                             <li>
-                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_guest" class="<?php echo $wcal_all_guest; ?>"><?php _e( " Non-Registered $wcal_user_gus_text ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_guest_user_ac_count )" ?> </span></a> 
+                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_guest" class="<?php echo $wcal_all_guest; ?>"><?php _e( " Guest $wcal_user_gus_text ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_guest_user_ac_count )" ?> </span></a> 
                             </li>
                             <?php } ?>
     
                             <?php if ($get_visitor_user_ac_count > 0 ) { ?>
                             <li>
-                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_visitor" class="<?php echo $wcal_all_visitor; ?>"><?php _e( " Visitor $wcal_user_vis_text ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_visitor_user_ac_count )" ?> </span></a> 
+                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_visitor" class="<?php echo $wcal_all_visitor; ?>"><?php _e( " Carts without Customer Details ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_visitor_user_ac_count )" ?> </span></a> 
                             </li>
                             <?php } ?>
                         </ul>
