@@ -1,7 +1,7 @@
 <?php
 
 class wcal_common {    
-    function wcal_get_abandoned_order_count( $get_section_result ){
+    public static function wcal_get_abandoned_order_count( $get_section_result ){
         global $wpdb;
         $return_abandoned_count = 0;    
         $blank_cart_info        = '{"cart":[]}';
