@@ -212,11 +212,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			
 			add_action( 'admin_init',                                                  array( $this,   'wcal_preview_emails' ) );
 			add_action( 'init',                                                        array( $this,   'wcal_app_output_buffer') );
-			add_action( 'admin_init',                                                  array( &$this,  'wcal_check_pro_activated' ) );
-			
-			add_action( 'woocommerce_checkout_order_processed',                        array( &$this,  'wcal_order_placed' ), 10 , 1 );
-			
-			add_filter( 'woocommerce_payment_complete_order_status',                   array( &$this , 'wcal_order_complete_action' ), 10 , 2 );
+			add_action( 'admin_init',                                                  array( &$this,  'wcal_check_pro_activated' ) );			
+			add_action( 'woocommerce_checkout_order_processed',                        array( &$this,  'wcal_order_placed' ), 10 , 1 );			
+			add_filter( 'woocommerce_payment_complete_order_status',                   array( &$this , 'wcal_order_complete_action' ), 10 , 2 );		
+			add_filter( 'admin_footer_text',                                           array( $this,   'wcal_admin_footer_text' ), 1 );
 		}
 			
 		public static function wcal_order_placed( $order_id ) {
@@ -2944,7 +2943,40 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		 <?php 																			
     		}	
     	}
-
+    	function wcal_admin_footer_text( $footer_text ) {
+    	    if ( ! current_user_can( 'manage_woocommerce' ) ) {
+    	        return;
+    	    }
+    	    $current_screen = get_current_screen();
+    	    $wc_pages       = wc_get_screen_ids();
+    	    // Set only wc pages
+    	    $wc_pages       = array_flip( $wc_pages );    	    	
+    	    if ( isset( $wc_pages['profile'] ) ) {
+    	        unset( $wc_pages['profile'] );
+    	    }
+    	    if ( isset( $wc_pages['user-edit'] ) ) {
+    	        unset( $wc_pages['user-edit'] );
+    	    }
+    	    $wc_pages   = array_flip( $wc_pages );
+    	    $wc_pages[] = 'woocommerce_page_woocommerce_ac_page';
+    	    // Check to make sure we're on a WooCommerce admin page    	    	
+    	    if ( isset( $current_screen->id ) && apply_filters( 'woocommerce_display_admin_footer_text', in_array( $current_screen->id, $wc_pages ) ) ) {    	         
+    	        // Change the footer text
+    	        if ( ! get_option( 'woocommerce_admin_footer_text_rated' ) ) {
+    	            $footer_text = sprintf( __( 'If you like <strong>Abandoned Cart Lite for WooCommerce</strong> then please <a href="https://wordpress.org/support/plugin/woocommerce-abandoned-cart/reviews/">leave a review </a> for us and let us know how we are doing. A review will help us immensely.', 'woocommerce-ac' ) );
+    	            wc_enqueue_js( "
+					jQuery( 'a.wc-rating-link' ).click( function() {
+						jQuery.post( '" . WC()->ajax_url() . "', { action: 'woocommerce_rated' } );
+						jQuery( this ).parent().text( jQuery( this ).data( 'rated' ) );
+					});
+				" );
+                } else {
+                    $footer_text = __( 'Thank you for selling with Abandoned Cart Lite for WooCommerce.', 'woocommerce-ac' );
+                }
+    	    }    	     
+    	    return $footer_text;
+    	}
+    	
         function bubble_sort_function( $unsort_array, $order ) {        
             $temp = array();
             foreach ( $unsort_array as $key => $value )
