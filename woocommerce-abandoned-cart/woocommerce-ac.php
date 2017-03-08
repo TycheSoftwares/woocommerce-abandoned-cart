@@ -817,7 +817,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	        if( isset( $woocommerce_ac_settings[0]->cart_time ) ) {
     	            add_option( 'ac_lite_cart_abandoned_time', $woocommerce_ac_settings[0]->cart_time );
     	        } else {
-    	            add_option( 'ac_lite_cart_abandoned_time', '60' );
+    	            add_option( 'ac_lite_cart_abandoned_time', '10' );
     	        }
     	    
     	        if( isset( $woocommerce_ac_settings[0]->email_admin ) ) {
