@@ -525,7 +525,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	    array( $this, 'wcal_from_email_callback' ),
     	    'woocommerce_ac_email_page',
     	    'ac_email_settings_section',
-    	    array( 'Which email address should be shown in the "From Email" field for the abandoned cart emails.', 'woocommerce-ac' )
+    	    array( 'Email address from which the reminder emails should be sent.', 'woocommerce-ac' )
     	    );
     	    
     	    add_settings_field(
