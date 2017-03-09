@@ -45,66 +45,68 @@ function wcal_send_email_cron() {
 
 function woocommerce_ac_delete_lite() {	
 	global $wpdb;
-	$table_name_ac_abandoned_cart_history = $wpdb->prefix . "ac_abandoned_cart_history_lite";
-	$sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_abandoned_cart_history ;
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	$wpdb->get_results( $sql_ac_abandoned_cart_history );
-
-	$table_name_ac_email_templates = $wpdb->prefix . "ac_email_templates_lite";
-	$sql_ac_email_templates = "DROP TABLE " . $table_name_ac_email_templates ;
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	$wpdb->get_results( $sql_ac_email_templates );
-
-	$table_name_ac_sent_history = $wpdb->prefix . "ac_sent_history_lite";
-	$sql_ac_sent_history = "DROP TABLE " . $table_name_ac_sent_history ;
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	$wpdb->get_results( $sql_ac_sent_history );
-	
-	$table_name_ac_guest_abandoned_cart_history = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
-	$sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_guest_abandoned_cart_history ;
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	$wpdb->get_results( $sql_ac_abandoned_cart_history );
-	
-	$sql_table_user_meta_cart = "DELETE FROM `" . $wpdb->prefix . "usermeta` WHERE meta_key = '_woocommerce_persistent_cart'";
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	$wpdb->get_results( $sql_table_user_meta_cart );
-	
-	$sql_table_user_meta_cart_modified = "DELETE FROM `" . $wpdb->prefix . "usermeta` WHERE meta_key = '_woocommerce_ac_modified_cart'";
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	$wpdb->get_results( $sql_table_user_meta_cart_modified );
-	
-	$query   = "SELECT blog_id FROM `".$wpdb->prefix."blogs`";
-	$results = $wpdb->get_results( $query );
-	
-	foreach( $results as $key => $value ) {	     
-	    $table_name_ac_abandoned_cart_history = $wpdb->prefix .$value->blog_id."_"."ac_abandoned_cart_history_lite";
-	    $sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_abandoned_cart_history ;
-	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	    $wpdb->get_results( $sql_ac_abandoned_cart_history );
-	     
-	    $table_name_ac_email_templates = $wpdb->prefix .$value->blog_id."_"."ac_email_templates_lite";
-	    $sql_ac_email_templates = "DROP TABLE " . $table_name_ac_email_templates ;
-	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	    $wpdb->get_results( $sql_ac_email_templates );
-	     
-	    $table_name_ac_sent_history = $wpdb->prefix .$value->blog_id."_"."ac_sent_history_lite";
-	    $sql_ac_sent_history = "DROP TABLE " . $table_name_ac_sent_history ;
-	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	    $wpdb->get_results( $sql_ac_sent_history );
-	    
-	    $table_name_ac_guest_abandoned_cart_history = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
-	    $sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_guest_abandoned_cart_history ;
-	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	    $wpdb->get_results( $sql_ac_abandoned_cart_history );
-	    
-	    $sql_table_user_meta_cart = "DELETE FROM `" . $wpdb->prefix.$value->blog_id."_"."usermeta` WHERE meta_key = '_woocommerce_persistent_cart'";
-	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	    $wpdb->get_results( $sql_table_user_meta_cart );
-	    
-	    $sql_table_user_meta_cart_modified = "DELETE FROM `" . $wpdb->prefix.$value->blog_id."_"."usermeta` WHERE meta_key = '_woocommerce_ac_modified_cart'";
-	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	    $wpdb->get_results( $sql_table_user_meta_cart_modified );	     
-	}	
+	if ( ! is_multisite() ) {
+    	$table_name_ac_abandoned_cart_history = $wpdb->prefix . "ac_abandoned_cart_history_lite";
+    	$sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_abandoned_cart_history ;
+    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	$wpdb->get_results( $sql_ac_abandoned_cart_history );
+    
+    	$table_name_ac_email_templates = $wpdb->prefix . "ac_email_templates_lite";
+    	$sql_ac_email_templates = "DROP TABLE " . $table_name_ac_email_templates ;
+    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	$wpdb->get_results( $sql_ac_email_templates );
+    
+    	$table_name_ac_sent_history = $wpdb->prefix . "ac_sent_history_lite";
+    	$sql_ac_sent_history = "DROP TABLE " . $table_name_ac_sent_history ;
+    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	$wpdb->get_results( $sql_ac_sent_history );
+    	
+    	$table_name_ac_guest_abandoned_cart_history = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
+    	$sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_guest_abandoned_cart_history ;
+    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	$wpdb->get_results( $sql_ac_abandoned_cart_history );
+    	
+    	$sql_table_user_meta_cart = "DELETE FROM `" . $wpdb->prefix . "usermeta` WHERE meta_key = '_woocommerce_persistent_cart'";
+    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	$wpdb->get_results( $sql_table_user_meta_cart );
+    	
+    	$sql_table_user_meta_cart_modified = "DELETE FROM `" . $wpdb->prefix . "usermeta` WHERE meta_key = '_woocommerce_ac_modified_cart'";
+    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	$wpdb->get_results( $sql_table_user_meta_cart_modified ); 	
+    } else {	
+    	$query   = "SELECT blog_id FROM `".$wpdb->prefix."blogs`";
+    	$results = $wpdb->get_results( $query );
+    	
+    	foreach( $results as $key => $value ) {	     
+    	    $table_name_ac_abandoned_cart_history = $wpdb->prefix .$value->blog_id."_"."ac_abandoned_cart_history_lite";
+    	    $sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_abandoned_cart_history ;
+    	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	    $wpdb->get_results( $sql_ac_abandoned_cart_history );
+    	     
+    	    $table_name_ac_email_templates = $wpdb->prefix .$value->blog_id."_"."ac_email_templates_lite";
+    	    $sql_ac_email_templates = "DROP TABLE " . $table_name_ac_email_templates ;
+    	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	    $wpdb->get_results( $sql_ac_email_templates );
+    	     
+    	    $table_name_ac_sent_history = $wpdb->prefix .$value->blog_id."_"."ac_sent_history_lite";
+    	    $sql_ac_sent_history = "DROP TABLE " . $table_name_ac_sent_history ;
+    	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	    $wpdb->get_results( $sql_ac_sent_history );
+    	    
+    	    $table_name_ac_guest_abandoned_cart_history = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
+    	    $sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_guest_abandoned_cart_history ;
+    	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	    $wpdb->get_results( $sql_ac_abandoned_cart_history );
+    	    
+    	    $sql_table_user_meta_cart = "DELETE FROM `" . $wpdb->prefix.$value->blog_id."_"."usermeta` WHERE meta_key = '_woocommerce_persistent_cart'";
+    	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	    $wpdb->get_results( $sql_table_user_meta_cart );
+    	    
+    	    $sql_table_user_meta_cart_modified = "DELETE FROM `" . $wpdb->prefix.$value->blog_id."_"."usermeta` WHERE meta_key = '_woocommerce_ac_modified_cart'";
+    	    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    	    $wpdb->get_results( $sql_table_user_meta_cart_modified );	     
+    	}
+    }	
 	delete_option( 'woocommerce_ac_email_body' );
 	delete_option( 'ac_lite_cart_abandoned_time' );
 	delete_option( 'ac_lite_email_admin_on_recovery' );
