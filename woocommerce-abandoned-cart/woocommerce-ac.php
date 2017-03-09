@@ -1796,7 +1796,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     			    <p><?php _e( 'Change settings for sending email notifications to Customers, to Admin etc.', 'woocommerce-ac' ); ?></p>
                     <div id="content">
                     <?php 
-                        $wcal_general_settings_class = $wcal_email_setting = "";
+                        $wcal_general_settings_class = $wcal_cron_setting = "";
                         if ( isset( $_GET[ 'wcal_section' ] ) ) {
                             $section = $_GET[ 'wcal_section' ];
                         } else {
