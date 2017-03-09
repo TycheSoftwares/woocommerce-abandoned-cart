@@ -457,7 +457,18 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		 */
     		if( !get_option( 'ac_lite_track_guest_cart_from_cart_page' ) ) {
     		    add_option( 'ac_lite_track_guest_cart_from_cart_page', 'on' );
-    		}    	
+    		} 
+    		if( !get_option( 'wcal_from_name' ) ) {
+    		    add_option( 'wcal_from_name', 'Admin' );
+    		}
+    		$wcal_get_admin_email = get_option( 'admin_email' );
+    		if( !get_option( 'wcal_from_email' ) ) {
+    		    add_option( 'wcal_from_email', $wcal_get_admin_email );
+    		}
+    		
+    		if( !get_option( 'wcal_reply_email' ) ) {
+    		    add_option( 'wcal_reply_email', $wcal_get_admin_email );
+    		}
 	   }     
 	
     	/***************************************************************
