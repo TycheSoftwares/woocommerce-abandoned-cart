@@ -144,7 +144,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	}
     	
 	public function wcal_recovered_orders_data() { 
-		global $wpdb;    		
+		global $wpdb, $woocommerce;    		
 		$wcal_class      = new woocommerce_abandon_cart_lite ();
 		$number_decimal  = wc_get_price_decimals();
 		
