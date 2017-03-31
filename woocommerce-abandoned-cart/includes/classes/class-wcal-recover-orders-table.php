@@ -335,10 +335,27 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	}
 	
 	function wcal_class_recovered_date_asc( $value1,$value2 ) {
+
+		global $woocommerce;
+		if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
+			$value1						= $value1->recover_order_date;
+			$value2						= $value2->recover_order_date;
+			
+			$value1->recover_order_date = $value1->getTimestamp();
+			$value2->recover_order_date = $value2->getTimestamp();
+		}
 	    return $value1->recover_order_date - $value2->recover_order_date;
 	}
 	
 	function wcal_class_recovered_date_dsc( $value1,$value2 ) {
+		global $woocommerce;
+		if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
+			$value1						= $value1->recover_order_date;
+			$value2						= $value2->recover_order_date;
+			
+			$value1->recover_order_date = $value1->getTimestamp();
+			$value2->recover_order_date = $value2->getTimestamp();
+		}
 	    return $value2->recover_order_date - $value1->recover_order_date;
 	}
 	
