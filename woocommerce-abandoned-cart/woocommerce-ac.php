@@ -1489,8 +1489,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	        //session has not started
     	        session_start();
     	    } 
-    		global $wpdb;
-    		$order_id = $order->id;
+    		global $wpdb, $woocommerce;
+    		if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
+	            $order_id                   = $order->get_id(); 
+	        }else{
+	            $order_id                   = $order->id; 
+	        }
     		$get_abandoned_id_of_order  = '';
     		$get_sent_email_id_of_order = '';
     		$get_abandoned_id_of_order  = get_post_meta( $order_id, 'wcal_recover_order_placed', true );   		 
@@ -1533,7 +1537,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     		    if ( get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "yes" ) || 
     				get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "no" ) ) {
     				     
-			        $order_id             = $order->id;
+			        if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
+		                $order_id                   = $order->get_id(); 
+		            }else{
+		                $order_id                   = $order->id; 
+		            }
 			        $updated_cart_ignored = 1;
 					$query_order = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
                 					SET recovered_cart = %d,
@@ -1548,7 +1556,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		            $wpdb->query( $wpdb->prepare( $delete_query, $results[0]->id ) );
 				}
     	    } else {
-                $email_id   = $order->billing_email;
+                if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
+                    
+                    $email_id   = $order->get_billing_email();
+                }else{
+                    $email_id   = $order->billing_email;
+                }
                 $query      = "SELECT * FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE email_id = %s";
                 $results_id = $wpdb->get_results( $wpdb->prepare( $query, $email_id ) );
                 
@@ -1561,7 +1574,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         if ( get_user_meta( $results_id[0]->id, '_woocommerce_ac_modified_cart', true ) == md5("yes") ||
                                 get_user_meta( $results_id[0]->id, '_woocommerce_ac_modified_cart', true ) == md5("no") ) {
                                 
-                            $order_id = $order->id;
+                            if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
+				                $order_id                   = $order->get_id(); 
+				            }else{
+				                $order_id                   = $order->id; 
+				            }
                             $query_order = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
     		                                SET recovered_cart= '".$order_id."', cart_ignored = '1' 
     		                                WHERE id='".$results_status[0]->id."' ";
