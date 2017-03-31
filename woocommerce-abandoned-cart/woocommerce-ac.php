@@ -1347,7 +1347,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	            $c['variation']         = $b['variation'];
     	            $c['quantity']          = $b['quantity'];
     	            $product_id             = $b['product_id'];
-    	            $c['data']              = get_product($product_id);
+    	            $c['data']              = wc_get_product($product_id);
     	            $c['line_total']        = $b['line_total'];
     	            $c['line_tax']          = $cart_contents_tax;
     	            $c['line_subtotal']     = $b['line_subtotal'];
@@ -2635,7 +2635,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             $item_subtotal = $item_subtotal / $quantity_total;
                                             $item_total    = wc_price( $item_total );
                                             $item_subtotal = wc_price( $item_subtotal );                               
-                                            $product       = get_product( $product_id );
+                                            $product       = wc_get_product( $product_id );
                                             $prod_image    = $product->get_image();
                                         ?>                   
                                         <tr>
