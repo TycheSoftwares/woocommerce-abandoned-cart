@@ -926,11 +926,16 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	 * @since 2.9 version
     	 */
     	public static function wcal_email_admin_recovery_for_paypal ( $order_id, $old, $new_status ) {    	     
-    	    if ( 'pending' == $old && 'processing' == $new_status ) {    	
+    	    if ( 'pending' == $old && 'processing' == $new_status ) {
+    	    	global $wpdb, $woocommerce;
     	        $user_id                 = get_current_user_id();
     	        $ac_email_admin_recovery = get_option( 'ac_lite_email_admin_on_recovery' );    	
     	        $order                   = new WC_Order( $order_id );
-    	        $user_id                 = $order->user_id;
+    	        if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
+                	$user_id              = $order->get_user_id();	        
+	            }else{
+	                $user_id              = $order->user_id; 
+	            }
     	       
     	        if( $ac_email_admin_recovery == 'on' ) {
     	            $recovered_email_sent = get_post_meta( $order_id, 'wcap_recovered_email_sent', true );
@@ -940,7 +945,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	            // mention here why are we comparing both "yes" and "no" values
     	            if ( 'checkout' == $created_via && 'yes' != $recovered_email_sent && ( $check_abandoned_cart == md5( "yes" ) || $check_abandoned_cart == md5( "no" ) ) ) { // indicates cart is abandoned
     	                $order          = new WC_Order( $order_id );
-    	                $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce' );
+    	                $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce-ac' );
     	                $blogname       = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
     	                $email_subject  = "New Customer Order - Recovered";
     	                $user_email     = get_option( 'admin_email' );
@@ -949,7 +954,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	                // Buffer
     	                ob_start();
     	                // Get mail template
-    	                woocommerce_get_template( 'emails/admin-new-order.php', array(
+    	                wc_get_template( 'emails/admin-new-order.php', array(
     		                'order'         => $order,
     		                'email_heading' => $email_heading,
     		                'sent_to_admin' => false,
@@ -959,7 +964,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	                );
        	                // Get contents
     	                $email_body = ob_get_clean();
-    	                woocommerce_mail( $user_email, $email_subject, $email_body, $headers );    	                
+    	                wc_mail( $user_email, $email_subject, $email_body, $headers );    	                
     	                update_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );    	                
     	            }
     	        }
@@ -970,12 +975,19 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	 * Send email to admin when cart is recovered via any other payment gateway other than PayPal.
     	 * @since 2.3 version
     	 */
-    	function wcal_email_admin_recovery ( $order_id ) {    	
+    	function wcal_email_admin_recovery ( $order_id ) { 
+    		global $wpdb, $woocommerce;
+    		   	
     	    $user_id                 = get_current_user_id();  
     	    $ac_email_admin_recovery = get_option( 'ac_lite_email_admin_on_recovery' );    	    
     	    if( $ac_email_admin_recovery == 'on' ) {
     	        $order                = new WC_Order( $order_id );
-    	        $user_id              = $order->user_id;	        
+    	        
+    	        if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
+                	$user_id              = $order->get_user_id();	        
+	            }else{
+	                $user_id              = $order->user_id; 
+	            }
     	        $recovered_email_sent = get_post_meta( $order_id, 'wcap_recovered_email_sent', true );
     	        $check_abandoned_cart = get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true );
     	        $created_via          = get_post_meta( $order_id, '_created_via', true );    	        
@@ -989,7 +1001,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	            // Buffer
     	            ob_start();
     	            // Get mail template
-    	            woocommerce_get_template( 'emails/admin-new-order.php', array(
+    	            wc_get_template( 'emails/admin-new-order.php', array(
     	            'order'         => $order,
     	            'email_heading' => $email_heading,
     	            'sent_to_admin' => false,
@@ -998,7 +1010,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     	            ) );
     	            // Get contents
     	            $email_body = ob_get_clean();
-    	            woocommerce_mail( $user_email, $email_subject, $email_body, $headers );
+    	            
+    	            wc_mail( $user_email, $email_subject, $email_body, $headers );
     	            
     	            update_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );
     	        }
