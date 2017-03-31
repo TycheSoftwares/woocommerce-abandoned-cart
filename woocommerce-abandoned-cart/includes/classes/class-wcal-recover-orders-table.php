@@ -242,8 +242,14 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		        $recovered_id       = $value->recovered_cart;
 		        $rec_order          = get_post_meta( $recovered_id );
 		        $woo_order          = new WC_Order( $recovered_id );
-		        $recovered_date     = strtotime( $woo_order->order_date );
-		        $recovered_date_new = date( 'd M, Y h:i A', $recovered_date );
+		        if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
+    	        	$recovered_date     = $woo_order->get_date_created();
+					$recovered_date_new = $recovered_date->format( 'd M, Y h:i A');
+    	        }else{
+    	        	$recovered_date     = strtotime( $woo_order->order_date );
+    	        	$recovered_date_new = date( 'd M, Y h:i A', $recovered_date );
+    	    	}
+
 		        $recovered_item    += 1;
 		
 		        if ( isset( $rec_order ) && $rec_order != false ) {
