@@ -241,54 +241,61 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		        
 		        $recovered_id       = $value->recovered_cart;
 		        $rec_order          = get_post_meta( $recovered_id );
-		        $woo_order          = new WC_Order( $recovered_id );
-		        if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
-    	        	$recovered_date     = $woo_order->get_date_created();
-					$recovered_date_new = $recovered_date->format( 'd M, Y h:i A');
-    	        }else{
-    	        	$recovered_date     = strtotime( $woo_order->order_date );
-    	        	$recovered_date_new = date( 'd M, Y h:i A', $recovered_date );
-    	    	}
+		        $woo_order = array();
+		        try{
+		        	$woo_order          = new WC_Order( $recovered_id );
+		    	
+					if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
+	    	        	$recovered_date     = $woo_order->get_date_created();
+						$recovered_date_new = $recovered_date->format( 'd M, Y h:i A');
+	    	        }else{
+	    	        	$recovered_date     = strtotime( $woo_order->order_date );
+	    	        	$recovered_date_new = date( 'd M, Y h:i A', $recovered_date );
+	    	    	}
 
-		        $recovered_item    += 1;
-		
-		        if ( isset( $rec_order ) && $rec_order != false ) {
-		            $recovered_total += $rec_order['_order_total'][0];
-		        }
-		        $abandoned_date        = date( 'd M, Y h:i A', $value->abandoned_cart_time );
-		        $abandoned_order_id    = $value->id;
-		        $billing_first_name    = $billing_last_name = $billing_email = '';
-		        $recovered_order_total = 0;
-		
-		        if ( isset( $rec_order['_billing_first_name'][0] ) ) {
-		            $billing_first_name = $rec_order['_billing_first_name'][0];
-		        }
-		
-		        if ( isset( $rec_order['_billing_last_name'][0] ) ) {
-		            $billing_last_name = $rec_order['_billing_last_name'][0];
-		        }
-		
-		        if ( isset( $rec_order['_billing_email'][0] ) ) {
-		            $billing_email = $rec_order['_billing_email'][0];
-		        }
-		
-		        if ( isset( $rec_order['_order_total'][0] ) ) {
-		            $recovered_order_total = $rec_order['_order_total'][0];
-		        }
-		        
-		        $return_recovered_orders[ $i ]->user_name          = $billing_first_name . " " . $billing_last_name ;
-		        $return_recovered_orders[ $i ]->user_email_id      = $billing_email;
-		        $return_recovered_orders[ $i ]->created_on         = $abandoned_date;
-		        $return_recovered_orders[ $i ]->recovered_date     = $recovered_date_new;
-		        $return_recovered_orders[ $i ]->recovered_id       = $recovered_id;
-		        $return_recovered_orders[ $i ]->recover_order_date = $recovered_date;
-		        $return_recovered_orders[ $i ]->abandoned_date     = $value->abandoned_cart_time;
-		        $return_recovered_orders[ $i ]->order_total        = wc_price($recovered_order_total);
-		            		        
-		        $this->recovered_item = $recovered_item;
-		        $this->total_recover_amount = round( ( $recovered_order_total + $this->total_recover_amount ) , $number_decimal );    		        
-		        $i++;
-		    }    		    
+			        $recovered_item    += 1;
+			
+			        if ( isset( $rec_order ) && $rec_order != false ) {
+			            $recovered_total += $rec_order['_order_total'][0];
+			        }
+			        $abandoned_date        = date( 'd M, Y h:i A', $value->abandoned_cart_time );
+			        $abandoned_order_id    = $value->id;
+			        $billing_first_name    = $billing_last_name = $billing_email = '';
+			        $recovered_order_total = 0;
+			
+			        if ( isset( $rec_order['_billing_first_name'][0] ) ) {
+			            $billing_first_name = $rec_order['_billing_first_name'][0];
+			        }
+			
+			        if ( isset( $rec_order['_billing_last_name'][0] ) ) {
+			            $billing_last_name = $rec_order['_billing_last_name'][0];
+			        }
+			
+			        if ( isset( $rec_order['_billing_email'][0] ) ) {
+			            $billing_email = $rec_order['_billing_email'][0];
+			        }
+			
+			        if ( isset( $rec_order['_order_total'][0] ) ) {
+			            $recovered_order_total = $rec_order['_order_total'][0];
+			        }
+			        
+			        $return_recovered_orders[ $i ]->user_name          = $billing_first_name . " " . $billing_last_name ;
+			        $return_recovered_orders[ $i ]->user_email_id      = $billing_email;
+			        $return_recovered_orders[ $i ]->created_on         = $abandoned_date;
+			        $return_recovered_orders[ $i ]->recovered_date     = $recovered_date_new;
+			        $return_recovered_orders[ $i ]->recovered_id       = $recovered_id;
+			        $return_recovered_orders[ $i ]->recover_order_date = $recovered_date;
+			        $return_recovered_orders[ $i ]->abandoned_date     = $value->abandoned_cart_time;
+			        $return_recovered_orders[ $i ]->order_total        = wc_price($recovered_order_total);
+			            		        
+			        $this->recovered_item = $recovered_item;
+			        $this->total_recover_amount = round( ( $recovered_order_total + $this->total_recover_amount ) , $number_decimal );    		        
+			        $i++;
+			    }catch (Exception $e){
+			    	
+			    } 
+
+		    }   		    
 		}
 		$templates_count   = count( $return_recovered_orders );
 		$this->total_count = $templates_count;
