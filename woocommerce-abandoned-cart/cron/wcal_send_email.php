@@ -229,7 +229,17 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                             $variation                  = wc_get_product( $variation_id );
                                             $name                       = $variation->get_formatted_name() ;
                                             $explode_all                = explode ( "&ndash;", $name );
-                                            $pro_name_variation         = array_slice( $explode_all, 1, -1 );
+                                            if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
+                                                    
+                                                $attributes         = $explode_all[1];
+                                                $explode_attributes = explode( "(#" , $attributes) ;
+                                                if (isset($explode_attributes [0])){
+                                                    $add_product_name   = $product_name . "," . $explode_attributes[0];
+                                                    $pro_name_variation = (array) $add_product_name;
+                                                }
+                                            }else{
+                                                $pro_name_variation         = array_slice( $explode_all, 1, -1 );
+                                            }
                                             $product_name_with_variable = '';
                                             $explode_many_varaition     = array();                                           
                                             foreach ( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ){
