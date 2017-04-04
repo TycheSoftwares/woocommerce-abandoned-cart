@@ -235,7 +235,49 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		        
 		        update_post_meta( $order_id , 'wcal_recover_order_placed',         $abandoned_order_id );
 		        update_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $email_sent_id );		        		        			
-		    } else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] !='' ) {
+		    } else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] != '' &&
+		        isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
+		    
+	            global $woocommerce, $wpdb;
+	            $results_sent      = array();
+	            $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
+	            $wcap_user_id_of_guest      = $_SESSION['user_id'];
+	            /* delete the guest record. As it become the logged in user */
+	            $table_name = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
+	            $wpdb->delete( $table_name , array( 'user_id' => $wcap_user_id_of_guest ) );
+	    
+	            $table_name = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
+	            $wpdb->delete( $table_name , array( 'id' => $wcap_user_id_of_guest ) );
+	    
+	            /* Check if for the logged in user we have sent any abandoned cart reminder email */
+	            $get_email_sent_for_abandoned_id = "SELECT * FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE abandoned_order_id = %d ";
+	            $results_sent      = $wpdb->get_results( $wpdb->prepare( $get_email_sent_for_abandoned_id, $abandoned_cart_id_new_user ) );
+	    
+	            if ( empty( $results_sent ) && count( $results_sent ) == 0 ) {
+	    
+	                /*
+	                 * If logged in user place the order once it is displyed under the abandoned orders tab.
+	                 * But the email has been not sent to the user. And order is placed successfuly
+	                 * Then We are deleteing those order. But for those orders Recovered email has been set to the Admin.
+	                 * Below code ensure that admin recovery email wil not be sent for tose orders.
+	                 */
+	                $get_user_id_of_abandoned_cart = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history` WHERE id = %d ";
+	                $get_results_of_user_id        = $wpdb->get_results ( $wpdb->prepare( $get_user_id_of_abandoned_cart, $abandoned_cart_id_new_user ) );
+	                $user_id                       = $get_results_of_user_id[0]->user_id;
+	    
+	                delete_user_meta( $user_id, '_woocommerce_ac_modified_cart' );
+	                /*
+	                 * It will delete the order from history table if the order is placed before any email sent to the user.
+	                 *
+	                */
+	                $table_name = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
+	                $wpdb->delete( $table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+	            } else {
+	                $email_sent_id = $results_sent[0]->id;
+	                update_post_meta( $order_id , 'wcal_recover_order_placed', $abandoned_cart_id_new_user );
+	                update_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $email_sent_id );
+	            }
+	        } else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] !='' ) {
 		        global $woocommerce, $wpdb;		
 		        $results_sent      = array();		
 		        $abandoned_cart_id = $_SESSION['abandoned_cart_id_lite'];		
