@@ -3140,8 +3140,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			    $from_email_name       = get_option ( 'wcal_from_name' );
 				$reply_name_preview    = get_option ( 'wcal_from_email' );
 				$from_email_preview    = get_option ( 'wcal_reply_email' );
-				$subject_email_preview = stripslashes ( $_POST['subject_email_preview'] );		 				
-				$body_email_preview    = $_POST['body_email_preview'];
+				$subject_email_preview = stripslashes ( $_POST['subject_email_preview'] );
+				$subject_email_preview = convert_smilies ( $subject_email_preview );		 				
+				$body_email_preview    = convert_smilies ( $_POST['body_email_preview'] );
 				$is_wc_template        = $_POST['is_wc_template'];
 				$wc_template_header    = stripslashes( $_POST['wc_template_header'] );													
 				$body_email_preview    = str_replace( '{{customer.firstname}}', 'John', $body_email_preview );

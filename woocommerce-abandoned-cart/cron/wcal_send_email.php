@@ -57,6 +57,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 $email_frequency     = $value->frequency;
                 $email_body_template = $value->body;            
                 $email_subject       = stripslashes  ( $value->subject );
+                $email_subject       = convert_smilies ( $email_subject );
                 $wcal_from_name      = get_option ( 'wcal_from_name' );
                 $wcal_from_email     = get_option ( 'wcal_from_email' );
                 $wcal_reply_email    = get_option ( 'wcal_reply_email' );
@@ -280,7 +281,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                 
                                 $user_email       = $value->user_email;
                                 $email_body_final = stripslashes( $email_body );
-                                
+                                $email_body_final = convert_smilies( $email_body_final );
                                 if ( isset( $is_wc_template ) && "1" == $is_wc_template ){
                                     ob_start();
                                                     
