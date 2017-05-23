@@ -134,8 +134,7 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		
 		foreach( $recover_query as $recovered_cart_key => $recovered_cart_value ) {
 		    $recovered_cart_info = json_decode( $recovered_cart_value->abandoned_cart_info );
-		    $recovered_cart_dat  = json_decode( $recovered_cart_value->recovered_cart);
-		    $order_date          = "";
+		    $recovered_cart_dat  = json_decode( $recovered_cart_value->recovered_cart);		    
 		    $cart_update_time    = $recovered_cart_value->abandoned_cart_time;
 		    $quantity_total      = 0;
 		    $cart_details        = array();
@@ -147,10 +146,7 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		            $quantity_total = $quantity_total + $v->quantity;
 		        }
 		    }
-		    	
-		    if ( $cart_update_time != "" && $cart_update_time != 0 ) {
-		        $order_date = date( 'd M, Y h:i A', $cart_update_time );
-		    }
+		    			  
 		    $ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 		    $cut_off_time   = $ac_cutoff_time * 60 ;
 		    $current_time   = current_time( 'timestamp' );
