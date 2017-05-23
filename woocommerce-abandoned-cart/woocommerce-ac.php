@@ -3149,7 +3149,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$body_email_preview    = str_replace( '{{customer.lastname}}', 'Doe', $body_email_preview );
 				$body_email_preview    = str_replace( '{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview );
 				$current_time_stamp    = current_time( 'timestamp' );
-				$test_date             = date( 'd M, Y h:i A', $current_time_stamp );
+				$date_format      	   = get_option( 'date_format' );
+                $time_format      	   = get_option( 'time_format' );
+				$test_date             = date_i18n( $date_format . ' ' . $time_format, $current_time_stamp );
 				$body_email_preview    = str_replace( '{{cart.abandoned_date}}', $test_date, $body_email_preview );				
 				$cart_url              = wc_get_page_permalink( 'cart' );
 				$body_email_preview    = str_replace( '{{cart.link}}', $cart_url, $body_email_preview );
