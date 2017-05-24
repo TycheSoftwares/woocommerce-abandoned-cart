@@ -282,10 +282,11 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		    $cart_info        = json_decode( $value->abandoned_cart_info );
 		    $order_date       = "";
 		    $cart_update_time = $value->abandoned_cart_time;
-			$date_format      = get_option( 'date_format' );
-            $time_format      = get_option( 'time_format' );
+			
 		    if ( $cart_update_time != "" && $cart_update_time != 0 ) {
-		        $order_date = date_i18n(  $date_format . ' ' . $time_format, $cart_update_time );
+		    	$date_format = date_i18n( get_option( 'date_format' ), $cart_update_time );
+            	$time_format = date_i18n( get_option( 'time_format' ), $cart_update_time );
+		        $order_date  = $date_format . ' ' . $time_format;
 		    }
 		
 		    $ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );

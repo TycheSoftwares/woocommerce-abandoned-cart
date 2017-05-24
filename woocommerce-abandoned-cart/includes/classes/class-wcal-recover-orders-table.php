@@ -205,9 +205,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		$recovered_item   = $recovered_total = $count_carts = $total_value = $order_total = 0;    		
 		$return_recovered_orders = array();
 		$per_page         = $this->per_page;
-		$i                = 0;
-		$date_format      = get_option( 'date_format' );
-        $time_format 	  = get_option( 'time_format' );      		
+		$i                = 0;		
 		foreach ( $ac_carts_results as $key => $value ) {    		  
 	        $count_carts += 1;
 	        $cart_detail = json_decode( $value->abandoned_cart_info );
@@ -247,11 +245,17 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		        	$woo_order          = new WC_Order( $recovered_id );
 		    	
 					if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
-	    	        	$recovered_date     = $woo_order->get_date_created();
-						$recovered_date_new = $recovered_date->date_i18n( $date_format . ' ' . $time_format );
+	    	        	$order = get_post( $recovered_id );
+						$recovered_date = strtotime ( $order->post_date );
+						$recovered_date_format    = date_i18n( get_option( 'date_format' ), $recovered_date );
+        				$recovered_time_format 	= date_i18n( get_option( 'time_format' ), $recovered_date ); 
+        						
+						$recovered_date_new = $recovered_date_format . ' ' . $recovered_time_format;
 	    	        }else{
 	    	        	$recovered_date     = strtotime( $woo_order->order_date );
-	    	        	$recovered_date_new = date_i18n( $date_format . ' ' . $time_format, $recovered_date );
+	    	        	$recovered_date_format        = date_i18n( get_option( 'date_format' ), $recovered_date );
+        				$recovered_time_format 	    = date_i18n( get_option( 'time_format' ), $recovered_date ); 
+	    	        	$recovered_date_new = $recovered_date_format . ' ' . $recovered_time_format;
 	    	    	}
 
 			        $recovered_item    += 1;
@@ -259,7 +263,9 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 			        if ( isset( $rec_order ) && $rec_order != false ) {
 			            $recovered_total += $rec_order['_order_total'][0];
 			        }
-			        $abandoned_date        = date_i18n( $date_format . ' ' . $time_format, $value->abandoned_cart_time );
+			        $date_format      	   = date_i18n( get_option( 'date_format' ), $value->abandoned_cart_time );
+        			$time_format 	  	   = date_i18n( get_option( 'time_format' ), $value->abandoned_cart_time ); 
+			        $abandoned_date        = $date_format . ' ' . $time_format;
 			        $abandoned_order_id    = $value->id;
 			        $billing_first_name    = $billing_last_name = $billing_email = '';
 			        $recovered_order_total = 0;
