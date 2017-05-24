@@ -145,7 +145,9 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                 $date_format = get_option( 'date_format' );
                                 $time_format = get_option( 'time_format' );                         
                                 if( $cart_update_time != "" && $cart_update_time != 0 ) {
-                                    $order_date = date_i18n( $date_format . ' ' . $time_format, $cart_update_time );
+                                	$date_format = date_i18n( get_option( 'date_format' ), $cart_update_time );
+            						$time_format = date_i18n( get_option( 'time_format' ), $cart_update_time );
+                                    $order_date = $date_format . ' ' . $time_format;
                                 }                               
                                 $email_body = str_replace( "{{cart.abandoned_date}}", $order_date, $email_body );                               
                                 $query_sent = "INSERT INTO `".$wpdb->prefix."ac_sent_history_lite` ( template_id, abandoned_order_id, sent_time, sent_email_id )
