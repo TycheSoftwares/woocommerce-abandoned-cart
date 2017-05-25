@@ -208,8 +208,8 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
                 $results   = $wpdb->get_results( $wpdb->prepare( $query, $get_cookie[0] ) );
                 
                 if ( count( $results ) == 0 ) {
-                    $insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type )
-                                     VALUES ( '".$user_id."', '".$cart_info."', '".$current_time."', '0', '0', 'GUEST' )";
+                    $insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type, session_id )
+                                     VALUES ( '".$user_id."', '".$cart_info."', '".$current_time."', '0', '0', 'GUEST', '".$get_cookie[0] ."' )";
                     $wpdb->query( $insert_query );
                     
                     $abandoned_cart_id                  = $wpdb->insert_id;
