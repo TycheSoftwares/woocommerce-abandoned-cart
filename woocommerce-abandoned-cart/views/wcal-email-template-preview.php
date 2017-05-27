@@ -5,6 +5,10 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+$current_time_stamp    = current_time( 'timestamp' );
+$date_format           = date_i18n( get_option( 'date_format' ), $current_time_stamp );
+$time_format           = date_i18n( get_option( 'time_format' ), $current_time_stamp );
+$test_date             = $date_format . ' ' . $time_format;
 ?>
 <html>
     <head>
@@ -13,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     <body>   
         <p align="center"> Hello John Carter, </p>
         <p> &nbsp; </p>
-        <p align="center"> We're following up with you, because we noticed that on 12-12-2015 you attempted to purchase the following products on <?php echo get_option( 'blogname' );?>. </p>
+        <p align="center"> We're following up with you, because we noticed that on <?php echo "$test_date"; ?> you attempted to purchase the following products on <?php echo get_option( 'blogname' );?>. </p>
         <p> &nbsp; </p>
         <p>        
         <table border="0" cellspacing="5" align="center"><caption><b>Cart Details</b></caption>
