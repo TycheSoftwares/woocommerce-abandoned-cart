@@ -1,6 +1,6 @@
 <?php
 /**
- * Order Delivery Date Tracker
+ * Abandoned cart data tracker
  *
  * The Abandoned Cart lite tracker class adds functionality to track Abandoned Cart lite Date usage based on if the customer opted in.
  * No personal information is tracked, only general Abandoned Cart lite settings, abandoned orders and recovered orders, abandoned orders amount, recovred orders amount, total templates, total email sent, logged-in users abandoned & recovered amount, guest users abandoned and admin email for discount code.
@@ -37,11 +37,6 @@ class Class_Wcal_Ts_Tracker {
 	 */
 	public static function wcal_ts_send_tracking_data( $override = false ) {
 		
-		// Don't trigger this on AJAX Requests
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			return;
-		}
-
 		if ( ! apply_filters( 'wcal_ts_tracker_send_override', $override ) ) {
 			// Send a maximum of once per week by default.
 			$wcal_last_send = self::wcal_ts_get_last_send_time();
@@ -76,7 +71,6 @@ class Class_Wcal_Ts_Tracker {
 			$params   = self::wcal_ts_get_tracking_data();
 		}
 
-		
 		wp_safe_remote_post( self::$wcal_api_url, array(
 				'method'      => 'POST',
 				'timeout'     => 45,
@@ -439,7 +433,7 @@ class Class_Wcal_Ts_Tracker {
 
 		foreach ($wcal_data as $wcal_data_key => $wcal_data_value) {
 
-			$wcal_order_total 			 = get_post_meta( $wcal_data_value , '_order_total', true);
+			$wcal_order_total 			 = get_post_meta( $wcal_data_value->recovered_cart , '_order_total', true);
 			$wcal_recovered_orders_amount = $wcal_recovered_orders_amount + $wcal_order_total;
 		}
 		return $wcal_recovered_orders_amount;

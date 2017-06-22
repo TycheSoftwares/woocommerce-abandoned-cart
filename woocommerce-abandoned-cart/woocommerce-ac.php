@@ -3,7 +3,7 @@
 Plugin Name: Abandoned Cart Lite for WooCommerce
 Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
 Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
-Version: 3.9
+Version: 3.9.3
 Author: Tyche Softwares
 Author URI: http://www.tychesoftwares.com/
 Text Domain: woocommerce-ac
@@ -19,6 +19,8 @@ require_once( "includes/wcal_actions.php" );
 require_once( "includes/classes/class-wcal-aes.php" );
 require_once( "includes/classes/class-wcal-aes-counter.php" );
 require_once( "includes/wcal-common.php" );
+require_once( "includes/wcal_ts_tracking.php");
+
 // Add a new interval of 15 minutes
 add_filter( 'cron_schedules', 'wcal_add_cron_schedule' );
 
@@ -32,6 +34,22 @@ function wcal_add_cron_schedule( $schedules ) {
 // Schedule an action if it's not already scheduled
 if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
     wp_schedule_event( time(), '15_minutes_lite', 'woocommerce_ac_send_email_action' );
+}
+
+/**
+ * Run a cron once in week to delete old records for lockout
+ */
+function wcal_add_tracking_cron_schedule( $schedules ) {
+    $schedules[ 'daily_once' ] = array(
+        'interval' => 604800,  // one week in seconds
+        'display'  => __( 'Once in a Week', 'woocommerce-ac' )
+    );
+    return $schedules;
+}
+
+/* To capture the data from the client site */
+if ( ! wp_next_scheduled( 'wcal_ts_tracker_send_event' ) ) {
+    wp_schedule_event( time(), 'daily_once', 'wcal_ts_tracker_send_event' );
 }
 
 // Hook into that action that'll fire every 15 minutes
