@@ -2287,6 +2287,14 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     					        $active = "0";
     					    } else {
     					        $active = "1";
+
+    					        $query_update                 = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite` WHERE id ='" . $template_id . "'";
+                                $get_selected_template_result = $wpdb->get_results( $query_update );
+                                $email_frequncy                = $get_selected_template_result[0]->frequency;
+                                $email_day_or_hour             = $get_selected_template_result[0]->day_or_hour;
+                                
+                                $query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite` SET is_active='0' WHERE frequency='" . $email_frequncy . "' AND day_or_hour='" . $email_day_or_hour . "' ";
+                                $wcap_updated = $wpdb->query( $query_update );
     					    }
     					    $query_update = "UPDATE `" . $wpdb->prefix . "ac_email_templates_lite`
                                     SET
