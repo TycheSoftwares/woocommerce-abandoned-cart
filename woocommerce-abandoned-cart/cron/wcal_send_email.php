@@ -96,7 +96,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                         if( isset( $value->abandoned_cart_info ) ) {
                            $cart_info_db_field = json_decode( $value->abandoned_cart_info );
                         }
-                        if( count( $cart_info_db_field->cart ) > 0 && $value->user_id != '0') {
+                        if( count( $cart_info_db_field->cart ) > 0 && isset( $value->user_id ) && $value->user_id != '0') {
                             $cart_update_time = $value->abandoned_cart_time;
                             $new_user         = $this->wcal_check_sent_history( $value->user_id, $cart_update_time, $template_id, $value->id );                         
                             if ( $new_user == true ) {
