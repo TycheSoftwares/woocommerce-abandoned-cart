@@ -20,6 +20,7 @@ require_once( "includes/classes/class-wcal-aes.php" );
 require_once( "includes/classes/class-wcal-aes-counter.php" );
 require_once( "includes/wcal-common.php" );
 require_once( "includes/wcal_ts_tracking.php");
+require_once( "includes/wcal_admin_notice.php");
 
 // Add a new interval of 15 minutes
 add_filter( 'cron_schedules', 'wcal_add_cron_schedule' );
@@ -236,6 +237,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             add_action( 'woocommerce_checkout_order_processed',                        array( &$this,  'wcal_order_placed' ), 10 , 1 );         
             add_filter( 'woocommerce_payment_complete_order_status',                   array( &$this , 'wcal_order_complete_action' ), 10 , 2 );        
             add_filter( 'admin_footer_text',                                           array( $this,   'wcal_admin_footer_text' ), 1 );
+
+            add_action( 'admin_notices',                                                array( 'Wcal_Admin_Notice',   'wcal_pro_notice' ) );
+            add_action( 'admin_init',                                                  array( 'Wcal_Admin_Notice',   'wcal_pro_notice_ignore' ) );
         }
             
         public static function wcal_order_placed( $order_id ) {
