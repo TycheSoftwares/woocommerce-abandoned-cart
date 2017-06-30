@@ -1118,7 +1118,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $results = $wpdb->get_results($wpdb->prepare( $query, $user_id, $cart_ignored, $recovered_cart ) );
                 
                 if ( count($results) == 0 ) {                   
-                    
                     $wcal_woocommerce_persistent_cart =version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ;
                                     
                     $cart_info = json_encode( get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true ) );                 
