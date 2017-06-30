@@ -8,7 +8,12 @@ class Wcal_Admin_Notice {
 
     public static function wcal_pro_notice (){
         
-        if( !is_plugin_active( 'woocommerce-abandon-cart-pro/woocommerce-ac.php' ) ) {
+        $wcal_activate_time = get_option ( 'wcal_activate_time' );
+        $wcal_sixty_days    = strtotime( '+60 Days', $wcal_activate_time );
+        $wcal_current_time  = current_time( 'timestamp' );
+
+        if( !is_plugin_active( 'woocommerce-abandon-cart-pro/woocommerce-ac.php' ) && 
+            ( false === $wcal_activate_time || ( $wcal_activate_time > 0 && $wcal_current_time >= $wcal_sixty_days ) ) ) {
             global $current_user ;
             $user_id = $current_user->ID;
             $wcal_current_time = current_time( 'timestamp' );
@@ -109,7 +114,7 @@ class Wcal_Admin_Notice {
 
                     $wcal_pro_diff = 'https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/';
 
-                    $message = wp_kses_post ( __( 'Using Abandoned Cart Pro plugin, you can add more merge tags, one-click Cart & Checkout page button, send customised abandoned cart reminder email to specific customers & <strong><a target="_blank" href= "'.$wcal_pro_diff.'">much more</a></strong>. <br>Grab 20% discount on the purchase using ACPRO20 discount code and save $24. Coupon is limited to first 20 customers only. <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'">Purchase now</a></strong>.', 'woocommerce-ac' ) );
+                    $message = wp_kses_post ( __( 'Using Abandoned Cart Pro plugin, you can add more merge tags, one-click Cart & Checkout page button, send customised abandoned cart reminder email to specific customers & <strong><a target="_blank" href= "'.$wcal_pro_diff.'">much more</a></strong>. <br>Grab 20% discount on the purchase using ABPRO20 discount code and save $24. Coupon is limited to first 20 customers only. <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'">Purchase now</a></strong>.', 'woocommerce-ac' ) );
 
                     $add_query_arguments = add_query_arg( 'wcal_pro_fourth_notice_ignore', '0' );
                     

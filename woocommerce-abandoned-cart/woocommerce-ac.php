@@ -535,6 +535,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             if( !get_option( 'wcal_reply_email' ) ) {
                 add_option( 'wcal_reply_email', $wcal_get_admin_email );
             }
+
+            if( !get_option( 'wcal_activate_time' ) ) {
+                add_option( 'wcal_activate_time', current_time( 'timestamp' ) );
+            }
        }     
     
         /***************************************************************
