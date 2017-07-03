@@ -54,7 +54,8 @@ class Wcal_Admin_Notice {
             if ( get_user_meta( get_current_user_id(), 'wcal_pro_first_notice_ignore' ) &&
                  get_user_meta( get_current_user_id(), 'wcal_pro_second_notice_ignore' ) &&
                  ! get_user_meta( get_current_user_id(), 'wcal_pro_third_notice_ignore' ) &&
-                 ! is_plugin_active( 'order-delivery-date/order_delivery_date.php' ) ) {
+                 ! is_plugin_active( 'order-delivery-date/order_delivery_date.php' )  && 
+                 ! is_plugin_active( 'order-delivery-date-for-woocommerce/order_delivery_date.php' ) ) {
 
                 $wcal_second_ignore_time = get_user_meta( get_current_user_id(), 'wcal_pro_second_notice_ignore_time' );
                 $wcal_seven_days         = strtotime( '+7 Days', $wcal_second_ignore_time[0] );
@@ -75,7 +76,8 @@ class Wcal_Admin_Notice {
             if (  get_user_meta( get_current_user_id(), 'wcal_pro_first_notice_ignore' ) &&
                  get_user_meta( get_current_user_id(), 'wcal_pro_second_notice_ignore' ) &&
                  ! get_user_meta( get_current_user_id(), 'wcal_pro_fourth_notice_ignore' ) &&
-                 is_plugin_active( 'order-delivery-date/order_delivery_date.php' ) ){
+                 ( is_plugin_active( 'order-delivery-date/order_delivery_date.php' ) ||
+                 is_plugin_active( 'order-delivery-date-for-woocommerce/order_delivery_date.php' ) ) ){
 
                 $wcal_third_ignore_time = get_user_meta( get_current_user_id(), 'wcal_pro_second_notice_ignore_time' );
                 $wcal_seven_days        = strtotime( '+15 Days', $wcal_third_ignore_time[0] );
@@ -100,7 +102,8 @@ class Wcal_Admin_Notice {
                  get_user_meta( get_current_user_id(), 'wcal_pro_second_notice_ignore' ) &&
                  get_user_meta( get_current_user_id(), 'wcal_pro_third_notice_ignore' ) &&
                  ! get_user_meta( get_current_user_id(), 'wcal_pro_fourth_notice_ignore' ) &&
-                 ! is_plugin_active( 'order-delivery-date/order_delivery_date.php' ) ) {
+                 ( ! is_plugin_active( 'order-delivery-date/order_delivery_date.php' ) || 
+                   ! is_plugin_active( 'order-delivery-date-for-woocommerce/order_delivery_date.php' ) ) ) {
 
                 $wcal_third_ignore_time = get_user_meta( get_current_user_id(), 'wcal_pro_third_notice_ignore_time' );
                 $wcal_seven_days        = strtotime( '+7 Days', $wcal_third_ignore_time[0] );
