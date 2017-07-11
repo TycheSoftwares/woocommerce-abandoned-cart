@@ -178,6 +178,12 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 4.1 (11.07.2017) =
+
+* This version has 1 bug fix.
+
+* Bug Fixed - Some warnings were displayed in the Debug log file. This has been fixed.
+
 = 4.0 (04.07.2017) =
 
 * This version has 1 bug fix.
@@ -444,6 +450,12 @@ For existing users, this setting will remain unchecked. For new users of the plu
 * Initial release.
 
 == Upgrade Notice ==
+
+= 4.1 (11.07.2017) =
+
+* This version has 1 bug fix.
+
+* Bug Fixed - Some warnings were displayed in the Debug log file. This has been fixed.
 
 = 4.0 (04.07.2017) =
 
