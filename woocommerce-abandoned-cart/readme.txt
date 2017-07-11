@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares
 Tags: abandon cart, cart recovery, increase woocommerce conversion rate , recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 4.7.5
+Tested up to: 4.8
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -177,6 +177,12 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 6. Product Report Tab.
 
 == Changelog ==
+
+= 4.0 (04.07.2017) =
+
+* This version has 1 bug fix.
+
+* Bug Fixed - Logged-in user's carts were not captured with the WooCommerce version 3.1. This issue has been fixed.
 
 = 3.9.3 (09.06.2017) =
 
@@ -438,6 +444,12 @@ For existing users, this setting will remain unchecked. For new users of the plu
 * Initial release.
 
 == Upgrade Notice ==
+
+= 4.0 (04.07.2017) =
+
+* This version has 1 bug fix.
+
+* Bug Fixed - Logged-in user's carts were not captured with the WooCommerce version 3.1. This issue has been fixed.
 
 = 3.9.3 (09.06.2017) =
 

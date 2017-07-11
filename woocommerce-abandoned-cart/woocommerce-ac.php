@@ -283,7 +283,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                      * Then We are deleteing those order. But for those orders Recovered email has been set to the Admin.
                      * Below code ensure that admin recovery email wil not be sent for tose orders.
                      */
-                    $get_user_id_of_abandoned_cart = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history` WHERE id = %d ";
+                    $get_user_id_of_abandoned_cart = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE id = %d ";
                     $get_results_of_user_id        = $wpdb->get_results ( $wpdb->prepare( $get_user_id_of_abandoned_cart, $abandoned_cart_id_new_user ) );
                     $user_id                       = $get_results_of_user_id[0]->user_id;
         
