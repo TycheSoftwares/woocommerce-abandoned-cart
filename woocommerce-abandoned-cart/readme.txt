@@ -178,6 +178,15 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 4.2 (25.07.2017) =
+
+* This version has 1 bug fix.
+
+* Bug Fixed - When WooCommerce is deactivated and “Allow” button is clicked from the user tracking data notice. It was redirecting to a blank page.
+
+Now, if WooCommerce is deactivated then Abandoned cart lite plugin will be automatically deactivated & 
+display the notice.
+
 = 4.1 (11.07.2017) =
 
 * This version has 1 bug fix.
@@ -450,6 +459,15 @@ For existing users, this setting will remain unchecked. For new users of the plu
 * Initial release.
 
 == Upgrade Notice ==
+
+= 4.2 (25.07.2017) =
+
+* This version has 1 bug fix.
+
+* Bug Fixed - When WooCommerce is deactivated and “Allow” button is clicked from the user tracking data notice. It was redirecting to a blank page.
+
+Now, if WooCommerce is deactivated then Abandoned cart lite plugin will be automatically deactivated & 
+display the notice.
 
 = 4.1 (11.07.2017) =
 
