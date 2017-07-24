@@ -240,6 +240,57 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             add_action( 'admin_notices',                                                array( 'Wcal_Admin_Notice',   'wcal_pro_notice' ) );
             add_action( 'admin_init',                                                  array( 'Wcal_Admin_Notice',   'wcal_pro_notice_ignore' ) );
+
+            /* @since: 4.2 
+            *  Check if WC is enabled or not. 
+            */
+            add_action( 'admin_init',                                                  array( &$this,  'wcal_wc_check_compatibility' ) ); 
+        }
+
+        /**
+         * @since: 4.2
+         * Check if WC is active or not.
+         */
+        public static function wcal_wc_check_ac_installed() {
+        
+            if ( is_plugin_active( 'woocommerce/woocommerce.php' ) && class_exists( 'WooCommerce' ) ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+            
+        /**
+         * @since: 4.2
+         * Ensure that the Abandoned cart lite get deactivated when WC is deactivated.
+         */
+        public static function wcal_wc_check_compatibility() {
+                
+            if ( ! self::wcal_wc_check_ac_installed() ) {
+                    
+                if ( is_plugin_active( plugin_basename( __FILE__ ) ) ) {
+                    deactivate_plugins( plugin_basename( __FILE__ ) );
+                        
+                    add_action( 'admin_notices', array( 'woocommerce_abandon_cart_lite', 'wcal_wc_disabled_notice' ) );
+                    if ( isset( $_GET['activate'] ) ) {
+                        unset( $_GET['activate'] );
+                    }
+                        
+                }
+                    
+            }
+        }
+        /**
+         * @since: 4.2
+         * Display a notice in the admin Plugins page if the Abandoned cart lite is
+         * activated while WC is deactivated.
+         */
+        public static function wcal_wc_disabled_notice() {
+                
+            $class = 'notice notice-error is-dismissible';
+            $message = __( 'Abandoned Cart Lite for WooCommerce requires WooCommerce installed and activate.', 'woocommerce-ac' );
+                
+            printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
         }
             
         public static function wcal_order_placed( $order_id ) {
@@ -3080,37 +3131,40 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
              <?php                                                                          
             }   
         }
+        
         function wcal_admin_footer_text( $footer_text ) {
             if ( ! current_user_can( 'manage_woocommerce' ) ) {
                 return;
             }
-            $current_screen = get_current_screen();
-            $wc_pages       = wc_get_screen_ids();
-            // Set only wc pages
-            $wc_pages       = array_flip( $wc_pages );              
-            if ( isset( $wc_pages['profile'] ) ) {
-                unset( $wc_pages['profile'] );
-            }
-            if ( isset( $wc_pages['user-edit'] ) ) {
-                unset( $wc_pages['user-edit'] );
-            }
-            $wc_pages   = array_flip( $wc_pages );
-            $wc_pages[] = 'woocommerce_page_woocommerce_ac_page';
-            // Check to make sure we're on a WooCommerce admin page             
-            if ( isset( $current_screen->id ) && apply_filters( 'woocommerce_display_admin_footer_text', in_array( $current_screen->id, $wc_pages ) ) ) {                
-                // Change the footer text
-                if ( ! get_option( 'woocommerce_admin_footer_text_rated' ) ) {
-                    $footer_text = sprintf( __( 'If you like <strong>Abandoned Cart Lite for WooCommerce</strong> then please <a href="https://wordpress.org/support/plugin/woocommerce-abandoned-cart/reviews/">leave a review </a> for us and let us know how we are doing. A review will help us immensely.', 'woocommerce-ac' ) );
-                    wc_enqueue_js( "
-                    jQuery( 'a.wc-rating-link' ).click( function() {
-                        jQuery.post( '" . WC()->ajax_url() . "', { action: 'woocommerce_rated' } );
-                        jQuery( this ).parent().text( jQuery( this ).data( 'rated' ) );
-                    });
-                " );
-                } else {
-                    $footer_text = __( 'Thank you for selling with Abandoned Cart Lite for WooCommerce.', 'woocommerce-ac' );
+            if ( self::wcal_wc_check_ac_installed() ) {
+                $current_screen = get_current_screen();
+                $wc_pages       = wc_get_screen_ids();
+                // Set only wc pages
+                $wc_pages       = array_flip( $wc_pages );              
+                if ( isset( $wc_pages['profile'] ) ) {
+                    unset( $wc_pages['profile'] );
                 }
-            }            
+                if ( isset( $wc_pages['user-edit'] ) ) {
+                    unset( $wc_pages['user-edit'] );
+                }
+                $wc_pages   = array_flip( $wc_pages );
+                $wc_pages[] = 'woocommerce_page_woocommerce_ac_page';
+                // Check to make sure we're on a WooCommerce admin page             
+                if ( isset( $current_screen->id ) && apply_filters( 'woocommerce_display_admin_footer_text', in_array( $current_screen->id, $wc_pages ) ) ) {                
+                    // Change the footer text
+                    if ( ! get_option( 'woocommerce_admin_footer_text_rated' ) ) {
+                        $footer_text = sprintf( __( 'If you like <strong>Abandoned Cart Lite for WooCommerce</strong> then please <a href="https://wordpress.org/support/plugin/woocommerce-abandoned-cart/reviews/">leave a review </a> for us and let us know how we are doing. A review will help us immensely.', 'woocommerce-ac' ) );
+                        wc_enqueue_js( "
+                        jQuery( 'a.wc-rating-link' ).click( function() {
+                            jQuery.post( '" . WC()->ajax_url() . "', { action: 'woocommerce_rated' } );
+                            jQuery( this ).parent().text( jQuery( this ).data( 'rated' ) );
+                        });
+                    " );
+                    } else {
+                        $footer_text = __( 'Thank you for selling with Abandoned Cart Lite for WooCommerce.', 'woocommerce-ac' );
+                    }
+                }            
+            }
             return $footer_text;
         }
         
