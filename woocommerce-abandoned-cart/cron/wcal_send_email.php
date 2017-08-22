@@ -233,14 +233,27 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                             $name                       = $variation->get_formatted_name() ;
                                             $explode_all                = explode ( "&ndash;", $name );
                                             if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
-                                                    
-                                                $attributes         = $explode_all[1];
+                                                $attributes         = $explode_all[0];
                                                 $explode_attributes = explode( "(#" , $attributes) ;
-                                                if (isset($explode_attributes [0])){
-                                                    $add_product_name   = $product_name . "," . $explode_attributes[0];
-                                                    $pro_name_variation = (array) $add_product_name;
+                                                if( isset( $explode_attributes[0] ) ) {                                                    
+                                                    $add_product_name =  $explode_attributes[0];
+                                                    $add_product_name = rtrim( $add_product_name );                                                    
+                                                    if ( $product_name == $add_product_name ) {                                                    
+                                                        $wcal_selected_variation = '';
+                                                        $wcal_all_attribute      = $v->variation;
+                                                        $variation_id_only       = $v->variation_id;
+                                                        foreach ($wcal_all_attribute as $wcal_all_attribute_key => $wcal_all_attribute_value) {
+                                                            $taxonomy            = explode( 'attribute_', $wcal_all_attribute_key );
+                                                            $meta                = get_post_meta( $variation_id_only, $wcal_all_attribute_key, true );
+                                                            $term                = get_term_by( 'slug', $meta, $taxonomy[1] );
+                                                            $variation_name_only = $term->name;
+                                                            $wcal_selected_variation .= $variation_name_only . "<br>";
+                                                        }
+                                                        $add_product_name = $product_name . ' - ' . $wcal_selected_variation;
+                                                    }
+                                                    $pro_name_variation   = (array) $add_product_name;                                                    
                                                 }
-                                            }else{
+                                            } else {
                                                 $pro_name_variation         = array_slice( $explode_all, 1, -1 );
                                             }
                                             $product_name_with_variable = '';
