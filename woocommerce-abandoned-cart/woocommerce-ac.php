@@ -299,109 +299,222 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 session_start();
             }
             
+            /**
+             * When user comes from the abandoned cart reminder email this conditon will be executed.
+             * It will check the guest uers data in further 3 conditions.
+             * 1. When WC setting mandatory to become the logged in users. And places the order
+             * 2. When WC setting is non - mandatory to become the logged in users. And user choose to be the loggedin 
+             * to the site And places the order
+             * 3. When user places the orde as guest user. 
+             * It will consider the old cart of the customer as the recovered order and delete the unwanted new records.
+             */
             if ( isset( $_SESSION['email_sent_id'] ) && $_SESSION['email_sent_id'] !='' ) {
-                global $woocommerce, $wpdb;     
-                $email_sent_id      = $_SESSION['email_sent_id'];               
-                $get_ac_id_query    = "SELECT abandoned_order_id FROM `" . $wpdb->prefix."ac_sent_history_lite` WHERE id = %d";
-                $get_ac_id_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );         
-                $abandoned_order_id = $get_ac_id_results[0]->abandoned_order_id;                
-                
-                update_post_meta( $order_id , 'wcal_recover_order_placed',         $abandoned_order_id );
-                update_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $email_sent_id );                                            
-            } else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] != '' &&
-                isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
-            
                 global $woocommerce, $wpdb;
-                $results_sent      = array();
-                $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
-                $wcap_user_id_of_guest      = $_SESSION['user_id'];
-                /* delete the guest record. As it become the logged in user */
-                $table_name = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
-                $wpdb->delete( $table_name , array( 'user_id' => $wcap_user_id_of_guest ) );
-        
-                $table_name = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
-                $wpdb->delete( $table_name , array( 'id' => $wcap_user_id_of_guest ) );
-        
-                /* Check if for the logged in user we have sent any abandoned cart reminder email */
-                $get_email_sent_for_abandoned_id = "SELECT * FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE abandoned_order_id = %d ";
-                $results_sent      = $wpdb->get_results( $wpdb->prepare( $get_email_sent_for_abandoned_id, $abandoned_cart_id_new_user ) );
-        
-                if ( empty( $results_sent ) && count( $results_sent ) == 0 ) {
-        
-                    /*
-                     * If logged in user place the order once it is displyed under the abandoned orders tab.
-                     * But the email has been not sent to the user. And order is placed successfuly
-                     * Then We are deleteing those order. But for those orders Recovered email has been set to the Admin.
-                     * Below code ensure that admin recovery email wil not be sent for tose orders.
-                     */
-                    $get_user_id_of_abandoned_cart = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE id = %d ";
-                    $get_results_of_user_id        = $wpdb->get_results ( $wpdb->prepare( $get_user_id_of_abandoned_cart, $abandoned_cart_id_new_user ) );
-                    $user_id                       = $get_results_of_user_id[0]->user_id;
-        
-                    delete_user_meta( $user_id, '_woocommerce_ac_modified_cart' );
-                    /*
-                     * It will delete the order from history table if the order is placed before any email sent to the user.
-                     *
-                    */
-                    $table_name = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
-                    $wpdb->delete( $table_name , array( 'id' => $abandoned_cart_id_new_user ) );
-                } else {
-                    $email_sent_id = $results_sent[0]->id;
-                    update_post_meta( $order_id , 'wcal_recover_order_placed', $abandoned_cart_id_new_user );
-                    update_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $email_sent_id );
+
+                $wcal_history_table_name    = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
+                $wcal_guest_table_name      = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
+                $wcal_sent_email_table_name = $wpdb->prefix . 'ac_sent_history_lite';
+
+                $email_sent_id      = $_SESSION['email_sent_id'];
+                
+                $get_ac_id_query    = "SELECT abandoned_order_id FROM ". $wcal_sent_email_table_name ." WHERE id = %d";
+                $get_ac_id_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
+                
+                $abandoned_order_id = $get_ac_id_results[0]->abandoned_order_id;
+
+                $wcal_account_password_check = 'no';
+
+                /*if user becomes the registered user */
+                if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
+
+                    $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
+                    $wcal_user_id_of_guest      = $_SESSION['user_id'];
+
+                    /* delete the guest record. As it become the logged in user */
+
+                    $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
+                    $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
+                
+                    
+                    if ( count ($get_ac_id_guest_results) > 1 ) {
+                        $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;
+                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_order_id_of_guest ) );
+                    }
+                    /* it is the new registered users cart id */
+                    $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+
+                    $wcal_account_password_check = 'yes';
                 }
-            } else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] !='' ) {
-                global $woocommerce, $wpdb;     
-                $results_sent      = array();       
-                $abandoned_cart_id = $_SESSION['abandoned_cart_id_lite'];       
-                $get_email_sent_for_abandoned_id = "SELECT * FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE abandoned_order_id = %d ";      
-                $results_sent  = $wpdb->get_results ( $wpdb->prepare( $get_email_sent_for_abandoned_id, $abandoned_cart_id ) );     
-                if ( empty( $results_sent ) && count( $results_sent ) == 0 ) {
-                    /*
-                     * If logeged in user place the order once it isdisplyed under the abandoned orders tab.
-                     * But the email has been not sent to the user. And order is placed successfuly
-                     * Then We are deleteing those order. But for those orders Recovered email has been set to the Admin.
-                     * Below code ensure that admin recovery email will not be sent for those orders.
+
+                $wcap_create_account = 'no';
+                /*if user becomes the registred user */
+                if ( isset( $_POST['createaccount'] ) && 
+                     $_POST['createaccount'] != ''    && 
+                     'no' == $wcal_account_password_check ) {
+
+                    $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
+                    $wcal_user_id_of_guest      = $_SESSION['user_id'];
+
+                    /* delete the guest record. As it become the logged in user */
+
+                    $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
+                    $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
+                
+                    if ( count ($get_ac_id_guest_results) > 1 ){
+                        $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;
+                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_order_id_of_guest ) );
+                    }
+
+                    /* it is the new registered users cart id */
+                    $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+
+                    $wcap_create_account = 'yes';
+                }
+
+                if ( 'no' == $wcal_account_password_check && 'no' == $wcap_create_account ) {
+                    
+                    $wcal_user_id_of_guest    = $_SESSION['user_id'];
+
+                    $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
+                    $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
+
+                    if ( count ($get_ac_id_guest_results) > 1 ) {
+                        $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;            
+                        $wpdb->delete( $wcal_history_table_name, array( 'id' => $abandoned_order_id_of_guest ) );
+                    }
+                }
+
+                add_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $email_sent_id );
+                add_post_meta( $order_id , 'wcal_recover_order_placed', $abandoned_order_id );
+
+            }else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] != '' ) {
+
+                    /**
+                     * In this codition we are cheking that if the order is placed before the cart cut off time then we 
+                     * will delete the abandond cart records.
+                     * If the order is placed after the cart cutoff time then we will create the post meta with 
+                     * the abandoned cart id. So we will refer this abandoned cart id when order staus is changed
+                     * while placing the order.
                      */
-                    $get_user_id_of_abandoned_cart = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE id = %d ";      
-                    $get_results_of_user_id        = $wpdb->get_results ( $wpdb->prepare( $get_user_id_of_abandoned_cart, $abandoned_cart_id ) );
-                    $user_id                       = $get_results_of_user_id[0]->user_id;
-                    delete_user_meta( $user_id, '_woocommerce_ac_modified_cart' );
-                    /*
-                     * It will delete the order from history table if the order is placed before any email sent to the user.
-                     *
-                    */
-                    $table_name = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
-                    $wpdb->delete( $table_name , array( 'id' => $abandoned_cart_id ) );
-                } else {
-                    $email_sent_id = $results_sent[0]->id;
-                    update_post_meta( $order_id , 'wcal_recover_order_placed', $abandoned_cart_id );
-                    update_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $email_sent_id );
-                }           
-            }   
+                    if( session_id() === '' ){
+                        //session has not started
+                        session_start();
+                    }
+
+                    global $woocommerce, $wpdb;
+
+                    $wcal_history_table_name    = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
+                    $wcal_guest_table_name      = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
+                    $wcal_sent_email_table_name = $wpdb->prefix . 'ac_sent_history_lite';
+
+                    $current_time   = current_time( 'timestamp' );
+                    $wcal_cart_abandoned_time = '';
+                    $wcal_abandoned_cart_id   = $_SESSION['abandoned_cart_id_lite'];
+              
+
+                    $get_abandoned_cart_query   = "SELECT abandoned_cart_time FROM `" . $wcal_history_table_name . "` WHERE id = %d ";
+                    $get_abandoned_cart_results = $wpdb->get_results( $wpdb->prepare( $get_abandoned_cart_query, $wcal_abandoned_cart_id ) );
+
+                    if ( count( $get_abandoned_cart_results ) > 0 ){
+                        $wcal_cart_abandoned_time = $get_abandoned_cart_results[0]->abandoned_cart_time;
+                    }
+
+                    $ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
+                    $cut_off_time   = $ac_cutoff_time * 60;
+                    $compare_time   = $current_time - $cut_off_time;
+                
+
+                    if ( $compare_time >  $wcal_cart_abandoned_time ) {
+                        /* cart is declared as adandoned */
+
+                        add_post_meta( $order_id , 'wcal_recover_order_placed', $wcal_abandoned_cart_id );
+                    }else {
+                    /* cart order is placed within the cutoff time.
+                    we will delete that abandoned cart */
+                  
+                    /* if user becomes the registred user */
+                    if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
+
+                        $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
+                        $wcal_user_id_of_guest      = $_SESSION['user_id'];
+
+                        /* delete the guest record. As it become the logged in user */
+
+                        $wpdb->delete( $wcal_history_table_name , array( 'user_id' => $wcal_user_id_of_guest ) );
+                        $wpdb->delete( $wcal_guest_table_name ,   array( 'id' => $wcal_user_id_of_guest ) );
+
+                        /* it is the new registered users cart id */
+                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+                    }else {
+
+                        /**
+                         * It will delete the order from history table if the order is placed before any email sent to
+                         * the user.
+                         */
+                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $wcap_abandoned_cart_id ) );
+
+                        /* this user id is set for the guest uesrs. */
+                        if ( isset( $_SESSION['user_id'] ) && $_SESSION['user_id'] != '' ) {
+
+                            $wcal_user_id_of_guest = $_SESSION['user_id'];
+                            $wpdb->delete( $wcal_guest_table_name,  array( 'id' => $wcal_user_id_of_guest ) );
+                        }
+                    } 
+                }
+            }
         }
         
         public function wcal_order_complete_action( $order_status, $order_id ) {                    
-            if ( 'failed' != $order_status  ) {
+            
+            /**
+             * If the order status is not pending or failed then we will check the order and its respective abandoned
+             * cart data. 
+             */
+            if ( 'pending' != $order_status && 'failed' != $order_status ) {
                 global $woocommerce, $wpdb;
-                $order                      = new WC_Order( $order_id );                 
-                $get_abandoned_id_of_order  = '';
-                $get_sent_email_id_of_order = '';
+                $order = new WC_Order( $order_id );
+
                 $get_abandoned_id_of_order  = get_post_meta( $order_id, 'wcal_recover_order_placed', true );
-                 
-                if ( isset( $get_abandoned_id_of_order ) && $get_abandoned_id_of_order != '' ){                  
-                    $get_abandoned_id_of_order  =   get_post_meta( $order_id, 'wcal_recover_order_placed', true );
-                    $get_sent_email_id_of_order = get_post_meta( $order_id, 'wcal_recover_order_placed_sent_id', true );
-    
-                    $query_order = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET recovered_cart= '" . $order_id . "', cart_ignored = '1'
-                                    WHERE id = '".$get_abandoned_id_of_order."' ";
+                $get_sent_email_id_of_order = get_post_meta( $order_id, 'wcal_recover_order_placed_sent_id', true );
+
+                $wcal_ac_table_name                 = $wpdb->prefix . "ac_abandoned_cart_history_lite";
+                $wcal_email_sent_history_table_name = $wpdb->prefix . "ac_sent_history_lite";
+                $wcal_guest_ac_table_name           = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
+                
+                /**
+                 * Here, in this condition we are checking that if abadoned cart id has any record for the reminder
+                 * email is sent or not.
+                 * If the reminde email is sent to the abandoned cart id the mark that cart as a recovered.
+                 */
+                if ( isset( $get_sent_email_id_of_order ) && '' != $get_sent_email_id_of_order ) {
+
+                    $query_order = "UPDATE $wcal_ac_table_name SET recovered_cart = '" . $order_id . "', cart_ignored = '1' WHERE id = '".$get_abandoned_id_of_order."' ";
                     $wpdb->query( $query_order );
         
                     $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-ac' ) );
-                     
-                    delete_post_meta( $order_id, 'wcal_recover_order_placed', $get_abandoned_id_of_order );
-                    delete_post_meta( $order_id, 'wcal_recover_order_placed_sent_id', $get_sent_email_id_of_order );
-                    delete_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );
+
+                    delete_post_meta( $order_id,  'wcal_recover_order_placed',         $get_abandoned_id_of_order );
+                    delete_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $get_sent_email_id_of_order );
+                } else if ( isset( $get_abandoned_id_of_order ) && '' != $get_abandoned_id_of_order ) {
+                    
+                    /**
+                     * If the recover email has not sent then we will delete the abandoned cart data.
+                     */
+                    $get_abandoned_cart_user_id_query   = "SELECT user_id FROM  $wcal_ac_table_name  WHERE id = %d ";
+                    $get_abandoned_cart_user_id_results = $wpdb->get_results( $wpdb->prepare( $get_abandoned_cart_user_id_query, $get_abandoned_id_of_order ) );
+
+                    $var = $wpdb->prepare( $get_abandoned_cart_user_id_query, $get_abandoned_id_of_order );
+                  
+                    if ( count( $get_abandoned_cart_user_id_results ) > 0 ) {
+                        $wcap_user_id = $get_abandoned_cart_user_id_results[0]->user_id;
+
+                        if ( $wcap_user_id >= 63000000 ){
+                            $wpdb->delete( $wcal_guest_ac_table_name ,   array( 'id' => $wcap_user_id ) );
+                        }
+
+                        $wpdb->delete( $wcal_ac_table_name  , array( 'id' => $get_abandoned_id_of_order ) );
+                        delete_post_meta( $order_id,  'wcap_recover_order_placed', $get_abandoned_id_of_order );
+                    }
                 }
             }
             return $order_status;
@@ -1317,9 +1430,14 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         }
         
         // Decrypt Function
-        function wcal_decrypt_validate( $validate ) {                
-            $cryptKey         = get_option( 'wcal_security_key' );
-            $validate_decoded = rtrim( mcrypt_decrypt( MCRYPT_RIJNDAEL_256, md5( $cryptKey ), base64_decode( $validate ), MCRYPT_MODE_CBC, md5( md5( $cryptKey ) ) ), "\0");
+        function wcal_decrypt_validate( $validate ) {
+            $validate_decoded = '';
+            if( function_exists( "mcrypt_encrypt" ) ) {                
+                $cryptKey         = get_option( 'wcal_security_key' );
+                $validate_decoded = rtrim( mcrypt_decrypt( MCRYPT_RIJNDAEL_256, md5( $cryptKey ), base64_decode( $validate ), MCRYPT_MODE_CBC, md5( md5( $cryptKey ) ) ), "\0");
+            }else {
+                $validate_decoded = base64_decode ( $validate );
+            }
             return( $validate_decoded );
         }
 
