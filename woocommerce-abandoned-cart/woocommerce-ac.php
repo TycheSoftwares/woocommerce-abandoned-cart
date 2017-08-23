@@ -737,7 +737,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             
             add_settings_field(
             'ac_lite_track_guest_cart_from_cart_page',
-            __( 'Enable tracking carts when customer doesn\'t enter details', 'woocommerce-ac' ),
+            __( 'Start tracking from Cart Page', 'woocommerce-ac' ),
             array( $this, 'wcal_track_guest_cart_from_cart_page_callback' ),
             'woocommerce_ac_page',
             'ac_lite_general_settings_section',
