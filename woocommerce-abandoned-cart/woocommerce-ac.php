@@ -3157,34 +3157,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         </td>
                                     </tr> 
                                      
-                                     <tr>
-                                        <th>
-                                            <label for="is_active"><b><?php _e( 'Active:', 'woocommerce-ac' );  ?></b></label>
-                                        </th>
-                                        <td>
-                                            <?php
-                                            $is_active_edit="";                                            
-                                            if ( $mode == 'edittemplate' ) {
-                                                $active_edit = $results[0]->is_active;                                                
-                                                if ( $active_edit == '1' ) {
-                                                    $is_active_edit = "checked";
-                                                } else {
-                                                    $is_active_edit = "";
-                                                }
-                                            }
-                                            if ( $mode == 'copytemplate' ) {
-                                                $active_edit = $results_copy[0]->is_active;                                                
-                                                if( $active_edit == '1' ) {
-                                                    $is_active_edit = "checked";
-                                                } else {
-                                                    $is_active_edit = "";
-                                                }
-                                            }
-                                            print'<input type="checkbox" name="is_active" id="is_active" ' . $is_active_edit . '>  </input>'; ?>
-                                            <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'The email template will be sent to customers only if the "Active" checkbox is enabled. Leave this unchecked if you want to add the email template but not send it to customers.', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /></p>
-                                        </td>
-                                    </tr>
-                                     
                                     <tr>
                                         <th>
                                             <label for="woocommerce_ac_email_frequency"><b><?php _e( 'Send this email:', 'woocommerce-ac' ); ?></b></label>
