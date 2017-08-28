@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares
 Tags: abandon cart, cart recovery, increase woocommerce conversion rate , recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 4.8
+Tested up to: 4.8.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -177,6 +177,18 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 6. Product Report Tab.
 
 == Changelog ==
+
+= 4.3 (29.08.2017) =
+
+* This version has 1 bug fix along with 3 Enhancements.
+
+* Bug Fixed - When abandoned cart will have a variable product which has 3 attributes or more than that.  Then the slug name of selected variations were showing in the abandoned cart reminder emails and on the abandoned cart details page. This has been fixed.
+
+* Enhancement - If the abandoned cart total is zero then abandoned cart reminder emails will not be sent to the customers.
+
+* Enhancement - When the email sending script is executed on the server, it was running a large number of MySQL queries for guest users. That was causing an increase in the server load. In this version, we have optimised the queries. Initially, it used to query even those guest user records for which emails were already sent. Now, it will only query those records where email is yet to be sent.
+
+* Enhancement - Removed the Active field from the add / edit email template page. Admin can activate or deactivate the templates from the Email templates page.
 
 = 4.2 (25.07.2017) =
 
@@ -459,6 +471,19 @@ For existing users, this setting will remain unchecked. For new users of the plu
 * Initial release.
 
 == Upgrade Notice ==
+
+= 4.3 (29.08.2017) =
+
+* This version has 1 bug fix along with 3 Enhancements.
+
+* Bug Fixed - When abandoned cart will have a variable product which has 3 attributes or more than that.  Then the slug name of selected variations were showing in the abandoned cart reminder emails and on the abandoned cart details page. This has been fixed.
+
+* Enhancement - If the abandoned cart total is zero then abandoned cart reminder emails will not be sent to the customers.
+
+* Enhancement - When the email sending script is executed on the server, it was running a large number of MySQL queries for guest users. That was causing an increase in the server load. In this version, we have optimised the queries. Initially, it used to query even those guest user records for which emails were already sent. Now, it will only query those records where email is yet to be sent.
+
+* Enhancement - Removed the Active field from the add / edit email template page. Admin can activate or deactivate the templates from the Email templates page.
+
 
 = 4.2 (25.07.2017) =
 

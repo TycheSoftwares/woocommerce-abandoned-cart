@@ -3,7 +3,7 @@
 Plugin Name: Abandoned Cart Lite for WooCommerce
 Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
 Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
-Version: 4.2
+Version: 4.3
 Author: Tyche Softwares
 Author URI: http://www.tychesoftwares.com/
 Text Domain: woocommerce-ac
@@ -423,16 +423,16 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $cut_off_time   = $ac_cutoff_time * 60;
                     $compare_time   = $current_time - $cut_off_time;
                 
-
                     if ( $compare_time >  $wcal_cart_abandoned_time ) {
                         /* cart is declared as adandoned */
-
+                        
                         add_post_meta( $order_id , 'wcal_recover_order_placed', $wcal_abandoned_cart_id );
                     }else {
                     /* cart order is placed within the cutoff time.
                     we will delete that abandoned cart */
                   
                     /* if user becomes the registred user */
+
                     if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
 
                         $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
