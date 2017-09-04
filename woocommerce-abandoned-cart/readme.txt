@@ -52,20 +52,26 @@ You can check the detailed difference between Pro and Lite version **[here](http
 
 **[Abandoned Cart Pro for WooCommerce](http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite "Abandoned Cart Pro for WooCommerce")** enables to do the following additional things:
 
-1. Works off-the-shelf as it comes with **3 default email templates**.
-2. Offer **incentives to customers** to return and complete their checkout with **discounts and coupons**.
-3. Add custom variables like **Customer Name, Product Information, Coupons**, etc. in the email template.
-4. Embed WooCommerce coupons & also **generate unique coupons** in the emails being sent to customers.
-5. Track whether **expired coupons** are causing cart abandonment.
-6. Track **emails sent, emails opened, links clicked** for each template/email.
-7. **Product report** allows you to see which products are being abandoned & which are being recovered the most.
-8. Start sending email templates **within minutes** of cart being abandoned.
-9. Admin can send the customer emails to specific abandoned cart(s) using **'Send Custom Email'** feature.
-10. If the store is using **WPML** then admin can translate all the abandoned cart reminder email templates using WPML. Then the emails will be sent to the customers in the **same language in which they have abandoned the cart**.
-11. Admin can **Print** or export the Abandoned Orders to **CSV** format.
-12. Admin can send **different email templates** to **'Registered Users', 'Guest Users', 'For carts Abandoned with one product' or 'with more than one product' or to 'All'**.
-13. Admin can **restrict** the abandoned carts based on the **'Email address'**, **'IP address'** & **'Domain name'**.
-14. Admin can take a **glimpse** of **abandoned carts**, **recovered orders**, and the **states of the email template** from the **Dashboard** tab.
+1. Super powerful feature, **Add To Cart Popup Modal** - Grab your visitors' attention and build your mailing list. It offers an innovative, exclusive Add to Cart Popup Modal to abandoners to re-engage and capture emails from more of your guest customers before the checkout page.
+
+ It is simple, effective & a highly customizable popup using Live Preview when customizing it in the Add to Cart Popup Editor.
+
+ When guest customers clicks on the **Add to Cart** button on the shop or product page, the popup modal will appear immediately and ask for the email address. You can  choose to prevent users from proceeding without submitting their email, or allow them to checkout as a guest.
+2. Works off-the-shelf as it comes with **3 default email templates**.
+3. Offer **incentives to customers** to return and complete their checkout with **discounts and coupons**.
+4. Add custom variables like **Customer Name, Product Information, Coupons**, etc. in the email template.
+5. Embed WooCommerce coupons & also **generate unique coupons** in the emails being sent to customers.
+6. Track whether **expired coupons** are causing cart abandonment.
+7. Track **emails sent, emails opened, links clicked** for each template/email.
+8. **Product report** allows you to see which products are being abandoned & which are being recovered the most.
+9. Start sending email templates **within minutes** of cart being abandoned.
+10. Admin can send the customer emails to specific abandoned cart(s) using **'Send Custom Email'** feature.
+11. If the store is using **WPML** then admin can translate all the abandoned cart reminder email templates using WPML. Then the emails will be sent to the customers in the **same language in which they have abandoned the cart**.
+12. Admin can **Print** or export the Abandoned Orders to **CSV** format.
+13. Admin can send **different email templates** to **'Registered Users', 'Guest Users', 'For carts Abandoned with one product' or 'with more than one product' or to 'All'**.
+14. Admin can **restrict** the abandoned carts based on the **'Email address'**, **'IP address'** & **'Domain name'**.
+15. Admin can take a **glimpse** of **abandoned carts**, **recovered orders**, and the **states of the email template** from the **Dashboard** tab.
+16. The plugin will consider the **taxation** which is set in the WooCommerce. The abandoned cart total will be displayed as per the selected tax setting.
 
 You can check the detailed difference between Pro and Lite version **[here](https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/?utm_source=wprepo&utm_medium=prolink&utm_campaign=AbandonedCartLite "Lite and Pro version Difference")**
 
