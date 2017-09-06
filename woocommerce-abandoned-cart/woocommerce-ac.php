@@ -2878,41 +2878,62 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                 if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
                                                     $attributes         = $explode_all[0];
                                                     $explode_attributes = explode( "(#" , $attributes) ;
-                                                    if( isset( $explode_attributes[0] ) ) {                                                    
-                                                        $add_product_name =  $explode_attributes[0];
-                                                        $add_product_name = rtrim( $add_product_name );                                                    
-                                                        if ( $product_name == $add_product_name ) {                                                    
-                                                            $wcal_selected_variation = '';
-                                                            $wcal_all_attribute      = $v->variation;
-                                                            $variation_id_only       = $v->variation_id;
-                                                            foreach ($wcal_all_attribute as $wcal_all_attribute_key => $wcal_all_attribute_value) {
-                                                                $taxonomy            = explode( 'attribute_', $wcal_all_attribute_key );
-                                                                $meta                = get_post_meta( $variation_id_only, $wcal_all_attribute_key, true );
-                                                                $term                = get_term_by( 'slug', $meta, $taxonomy[1] );
-                                                                $variation_name_only = $term->name;
-                                                                $wcal_selected_variation .= $variation_name_only . "<br>";
-                                                            }
-                                                            $add_product_name = $product_name . ' - ' . $wcal_selected_variation;
+
+                                                    /**
+                                                     * When we have SKU name then we do not have # in the $attributes
+                                                     */
+
+                                                    if ( count( $explode_attributes ) == 1 ) {
+                                                        if ( isset( $explode_attributes [0] ) ) {
+                                                            $add_product_name =  $explode_attributes[0];
+
+                                                            $explode_sku_atrributes = explode ( "(", $add_product_name );
+
+                                                            $wcap_get_sku_of_attributes = explode(")", $explode_sku_atrributes[1]);
+
+                                                            $wcap_sku = "SKU: " . $wcap_get_sku_of_attributes[0];
+                                                            
+                                                            $add_product_name = $product_name . ' - ' . $wcap_sku . '<br>'. $wcap_get_sku_of_attributes[1];
+                                                            
+                                                            $pro_name_variation = (array) $add_product_name;
                                                         }
-                                                        $pro_name_variation   = (array) $add_product_name;                                                    
+                                                    }elseif ( count( $explode_attributes ) == 2 ) {
+
+                                                        
+                                                        if( isset( $explode_attributes[0] )  && isset( $explode_attributes[1] ) ) {                                                    
+                                                            $add_product_name =  $explode_attributes[0];
+                                                            $add_product_name = rtrim( $add_product_name );
+
+                                                            $wcap_variation_names = explode(")", $explode_attributes[1]);
+
+                                                            $wcap_all_selected_varaitions = '';
+                                                            if ( count( $wcap_variation_names ) > 0 && isset( $wcap_variation_names [1] )){
+                                                                $wcap_all_selected_varaitions = $wcap_variation_names [1];
+                                                            }
+                                                            $add_product_name = $product_name . ' - ' . $wcap_all_selected_varaitions;  
+                                                            $pro_name_variation   = (array) $add_product_name;                                                    
+                                                        }
                                                     }
                                                 }else{
-                                                    $pro_name_variation       = array_slice( $explode_all, 1, -1 );
+                                                    $pro_name_variation = array_slice( $explode_all, 1, -1 );
                                                 }
                                                 $product_name_with_variable = '';
-                                                $explode_many_varaition     = array();                                                
-                                                foreach ( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ){
+                                                $explode_many_varaition     = array();
+                                                foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
                                                     $explode_many_varaition = explode ( ",", $pro_name_variation_value );
-                                                    if ( !empty( $explode_many_varaition ) ) {
-                                                        foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ){
-                                                            $product_name_with_variable = $product_name_with_variable . "<br>". html_entity_decode ( $explode_many_varaition_value );
+                                                    if( !empty( $explode_many_varaition ) ) {
+                                                        foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
+                                                            $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
                                                         }
                                                     } else {
-                                                        $product_name_with_variable = $product_name_with_variable . "<br>". html_entity_decode ( $explode_many_varaition_value );
+                                                        $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
                                                     }
-                                                }                                                 
+                                                }
                                                 $product_name = $product_name_with_variable;
-                                            }                                            
+                                            }
+
+
+
                                             // Item subtotal is calculated as product total including taxes
                                             if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
                                                 $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
