@@ -69,34 +69,38 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 $wc_template_header  = stripslashes( $wc_template_header_text );
                 if ( '' != $email_body_template ) { 
                     foreach ( $carts as $key => $value ) {
-                        if ( $value->user_type == "GUEST" && $value->user_id != '0' ) {
-                            $value->user_login = "";
-                            $query_guest       = "SELECT billing_first_name, billing_last_name, email_id FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` 
-                                                WHERE id = %d";
-                            $results_guest     = $wpdb->get_results( $wpdb->prepare( $query_guest, $value->user_id ) );
-                            $value->user_email = $results_guest[0]->email_id;
-                        } else {
-                            if( isset( $value->user_id ) ) {
-                                $user_id            = $value->user_id;
+
+                        $wcal_is_guest_id_correct = $this->wcal_get_is_guest_valid ( $value->user_id, $value->user_type ) ;
+                        if ( true === $wcal_is_guest_id_correct ) {
+
+                            if ( $value->user_type == "GUEST" && $value->user_id != '0' ) {
+                                $value->user_login = "";
+                                $query_guest       = "SELECT billing_first_name, billing_last_name, email_id FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` 
+                                                    WHERE id = %d";
+                                $results_guest     = $wpdb->get_results( $wpdb->prepare( $query_guest, $value->user_id ) );
+                                $value->user_email = $results_guest[0]->email_id;
+                            } else {
+                                if( isset( $value->user_id ) ) {
+                                    $user_id            = $value->user_id;
+                                }
+                                $key                = 'billing_email';
+                                $single             = true;
+                                $user_biiling_email = get_user_meta( $user_id, $key, $single );                         
+                                if ( isset( $user_biiling_email ) && $user_biiling_email != '' ) {
+                                   $value->user_email = $user_biiling_email;
+                                }
                             }
-                            $key                = 'billing_email';
-                            $single             = true;
-                            $user_biiling_email = get_user_meta( $user_id, $key, $single );                         
-                            if ( isset( $user_biiling_email ) && $user_biiling_email != '' ) {
-                               $value->user_email = $user_biiling_email;
+                            if( isset( $value->abandoned_cart_info ) ) {
+                               $cart_info_db_field = json_decode( $value->abandoned_cart_info );
                             }
-                        }
-                        if( isset( $value->abandoned_cart_info ) ) {
-                           $cart_info_db_field = json_decode( $value->abandoned_cart_info );
-                        }
-                        $cart = array();
-                        if( !empty( $cart_info_db_field ) ) {
-                            $cart           = $cart_info_db_field->cart;
-                        }
-                        if( count( $cart_info_db_field->cart ) > 0 && isset( $value->user_id ) && $value->user_id != '0') {
-                            $cart_update_time = $value->abandoned_cart_time;
-                            $new_user         = $this->wcal_check_sent_history( $value->user_id, $cart_update_time, $template_id, $value->id );                         
-                            if ( $new_user == true ) {
+                            $cart = array();
+                            if( !empty( $cart_info_db_field ) ) {
+                                $cart           = $cart_info_db_field->cart;
+                            }
+                            if( count( $cart_info_db_field->cart ) > 0 && isset( $value->user_id ) && $value->user_id != '0') {
+                                $cart_update_time = $value->abandoned_cart_time;
+                                $new_user         = $this->wcal_check_sent_history( $value->user_id, $cart_update_time, $template_id, $value->id );                         
+                                if ( $new_user == true ) {
 
                                  /**
                                  * When there are 3 templates and for cart id 1 all template time has been reached. BUt all templates are deactivated.
@@ -374,6 +378,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                             wp_mail( $user_email, $email_subject, __( $email_body_final, 'woocommerce-ac' ), $headers );
                                         }
                                     }                                       
+                                    }
                                 }
                             }
                         }
@@ -381,9 +386,29 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 }
             }                   
         }
+
+
+        /**
+         * This function will check if the user type is Guest and the id is greater than 63000000
+         * Then conider that as a correct guest user, if is not then do not send the emails
+         */
+        public static function wcal_get_is_guest_valid ( $wcal_user_id, $wcal_user_type ) {
+
+            if ( 'REGISTERED' == $wcal_user_type ){
+                return true;
+            }
+
+            if ( 'GUEST' == $wcal_user_type && $wcal_user_id >= 63000000 ) {
+                return true;
+            }
+
+            /**
+             * It indicates that the user type is guest but the id for them is wrong.
+             */
+            return false;
+        }
         function wcal_check_cart_total ( $cart ){
             foreach( $cart as $k => $v ) {
-                //wc_mail("chetna@tychesoftwares.com", "line total", print_r($cart,true));
                 if( $v->line_total != 0 && $v->line_total > 0 ) {
                     return true;
                 }
