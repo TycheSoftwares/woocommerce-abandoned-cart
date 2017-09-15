@@ -3378,7 +3378,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $cart_url              = wc_get_page_permalink( 'cart' );
                 $body_email_preview    = str_replace( '{{cart.link}}', $cart_url, $body_email_preview );
                 $body_email_preview    = str_replace( '{{cart.unsubscribe}}', '<a href=#>unsubscribe</a>', $body_email_preview );               
-                if ( class_exists( 'WP_Better_Emails' ) ) {
+                $wcal_price 		   = wc_price( '100' );
+				$wcal_total_price 	   = wc_price( '200' );
+				if ( class_exists( 'WP_Better_Emails' ) ) {
                     $headers           = "From: " . $from_email_name . " <" . $from_email_preview . ">" . "\r\n";
                     $headers          .= "Content-Type: text/plain" . "\r\n";
                     $headers          .= "Reply-To:  " . $reply_name_preview . " " . "\r\n";
@@ -3395,22 +3397,22 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/shoes.jpg"/></td>
                                                <td>'.__( "Men\'\s Formal Shoes", "woocommerce-ac" ).'</td>
                                                <td>1</td>
-                                               <td>$100</td>
-                                               <td>$100</td>
+                                               <td>' . $wcal_price . '</td>
+                                               <td>' . $wcal_price . '</td>
                                             </tr>
                                             <tr align="center">
                                                <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/handbag.jpg"/></td>
                                                <td>'.__( "Woman\'\s Hand Bags", "woocommerce-ac" ).'</td>
                                                <td>1</td>
-                                               <td>$100</td>
-                                               <td>$100</td>
+                                               <td>' . $wcal_price . '</td>
+                                               <td>' . $wcal_price . '</td>
                                             </tr>
                                             <tr align="center">
                                                <td></td>
                                                <td></td>
                                                <td></td>
                                                <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
-                                               <td>$200</td>
+                                               <td>' . $wcal_total_price . '</td>
                                             </tr>
                                         </table>';
                 } else {
@@ -3430,22 +3432,22 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/shoes.jpg"/></td>
                                                <td>'.__( "Men\'\s Formal Shoes", "woocommerce-ac" ).'</td>
                                                <td>1</td>
-                                               <td>$100</td>
-                                               <td>$100</td>
+                                               <td>' . $wcal_price . '</td>
+                                               <td>' . $wcal_price . '</td>
                                             </tr>
                                             <tr align="center">
                                                <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/handbag.jpg"/></td>
                                                <td>'.__( "Woman\'\s Hand Bags", "woocommerce-ac" ).'</td>
                                                <td>1</td>
-                                               <td>$100</td>
-                                               <td>$100</td>
+                                               <td>' . $wcal_price . '</td>
+                                               <td>' . $wcal_price . '</td>
                                             </tr>
                                             <tr align="center">
                                                <td></td>
                                                <td></td>
                                                <td></td>
                                                <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
-                                               <td>$200</td>
+                                               <td>' . $wcal_total_price . '</td>
                                             </tr>
                                          </table>';
                 }                       

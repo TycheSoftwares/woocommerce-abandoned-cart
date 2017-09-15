@@ -5,10 +5,12 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-$current_time_stamp    = current_time( 'timestamp' );
-$date_format           = date_i18n( get_option( 'date_format' ), $current_time_stamp );
-$time_format           = date_i18n( get_option( 'time_format' ), $current_time_stamp );
-$test_date             = $date_format . ' ' . $time_format;
+$current_time_stamp = current_time( 'timestamp' );
+$date_format        = date_i18n( get_option( 'date_format' ), $current_time_stamp );
+$time_format        = date_i18n( get_option( 'time_format' ), $current_time_stamp );
+$test_date          = $date_format . ' ' . $time_format;
+$wcal_price 		= wc_price( '150' );
+$wcal_total_price 	= wc_price( '300' );
 ?>
 <html>
     <head>
@@ -30,14 +32,14 @@ $test_date             = $date_format . ' ' . $time_format;
                     <th>Total</th>
                 </tr>
                 <tr style="background-color:#f4f5f4;">
-                    <td><img src = "<?php echo plugins_url();?>/woocommerce-abandoned-cart/assets/images/spectre.jpg" height="40px" width="40px"></td><td>Spectre</td><td>$150</td><td>2</td><td>$300</td>
+                    <td><img src = "<?php echo plugins_url();?>/woocommerce-abandoned-cart/assets/images/spectre.jpg" height="40px" width="40px"></td><td>Spectre</td><td> <?php echo "$wcal_price"; ?></td><td>2</td><td><?php echo "$wcal_total_price"; ?> </td>
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <th>Cart Total:</th>
-                    <td>$300</td>
+                    <td><?php echo "$wcal_total_price"; ?></td>
                 </tr>
             </tbody>
         </table> 
