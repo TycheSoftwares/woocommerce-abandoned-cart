@@ -139,7 +139,7 @@ Method 3:
 
 = How is the email address of the customers captured? =
 
-Our plugin captures visitor emails in real-time as they’re typing it in to the email address field on the checkout page, so you don’t need to worry about them changing their mind at the last second.
+Our plugin captures visitor emails in real-time as they're typing it in to the email address field on the checkout page, so you don't need to worry about them changing their mind at the last second.
 
 When logged-in user add the product to the cart we capture the email address from the user's profile.
 
