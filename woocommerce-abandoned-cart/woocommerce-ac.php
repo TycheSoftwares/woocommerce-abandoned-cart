@@ -2879,44 +2879,15 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                 $name                       = $variation->get_formatted_name() ;
                                                 $explode_all                = explode ( "&ndash;", $name );
                                                 if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
-                                                    $attributes         = $explode_all[0];
-                                                    $explode_attributes = explode( "(#" , $attributes) ;
-
-                                                    /**
-                                                     * When we have SKU name then we do not have # in the $attributes
-                                                     */
-
-                                                    if ( count( $explode_attributes ) == 1 ) {
-                                                        if ( isset( $explode_attributes [0] ) ) {
-                                                            $add_product_name =  $explode_attributes[0];
-
-                                                            $explode_sku_atrributes = explode ( "(", $add_product_name );
-
-                                                            $wcap_get_sku_of_attributes = explode(")", $explode_sku_atrributes[1]);
-
-                                                            $wcap_sku = "SKU: " . $wcap_get_sku_of_attributes[0];
-                                                            
-                                                            $add_product_name = $product_name . ' - ' . $wcap_sku . '<br>'. $wcap_get_sku_of_attributes[1];
-                                                            
-                                                            $pro_name_variation = (array) $add_product_name;
-                                                        }
-                                                    }elseif ( count( $explode_attributes ) == 2 ) {
-
-                                                        
-                                                        if( isset( $explode_attributes[0] )  && isset( $explode_attributes[1] ) ) {                                                    
-                                                            $add_product_name =  $explode_attributes[0];
-                                                            $add_product_name = rtrim( $add_product_name );
-
-                                                            $wcap_variation_names = explode(")", $explode_attributes[1]);
-
-                                                            $wcap_all_selected_varaitions = '';
-                                                            if ( count( $wcap_variation_names ) > 0 && isset( $wcap_variation_names [1] )){
-                                                                $wcap_all_selected_varaitions = $wcap_variation_names [1];
-                                                            }
-                                                            $add_product_name = $product_name . ' - ' . $wcap_all_selected_varaitions;  
-                                                            $pro_name_variation   = (array) $add_product_name;                                                    
-                                                        }
+                                                    $wcap_sku = '';
+                                                    if ( $variation->get_sku() ) {
+                                                        $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
                                                     }
+                                                    $wcap_get_formatted_variation  =  wc_get_formatted_variation( $variation, true );
+
+                                                    $add_product_name = $prod_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
+                                                            
+                                                    $pro_name_variation = (array) $add_product_name;
                                                 }else{
                                                     $pro_name_variation = array_slice( $explode_all, 1, -1 );
                                                 }
