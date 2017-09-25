@@ -97,6 +97,8 @@ Abandoned Cart Plugin relies on a function called WP-Cron, and this function onl
 
 4. **[Product Delivery Date Pro for WooCommerce](https://www.tychesoftwares.com/store/premium-plugins/product-delivery-date-pro-for-woocommerce/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite "Product Delivery Date Pro for WooCommerce")**
 
+5. **[Deposits For WooCommerce](https://www.tychesoftwares.com/store/premium-plugins/deposits-for-woocommerce/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite "Deposits For WooCommerce")**
+
 
 **Some of our other free plugins:**
 
