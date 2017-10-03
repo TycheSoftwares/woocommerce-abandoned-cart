@@ -290,7 +290,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		    }
 		
 		    $ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
-		    $cut_off_time   = $ac_cutoff_time * 60;
+		    $cut_off_time   = intval( $ac_cutoff_time ) * 60;
 		    $current_time   = current_time( 'timestamp' );
 		    $compare_time   = $current_time - $cart_update_time;
 		    $cart_details   = array();

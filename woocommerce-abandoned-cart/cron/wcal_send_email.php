@@ -1,5 +1,4 @@
 <?php 
-
 static $wp_load; // Since this will be called twice, hold onto it.
 if ( ! isset( $wp_load ) ) {
     $wp_load = false;
@@ -78,7 +77,9 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                 $query_guest       = "SELECT billing_first_name, billing_last_name, email_id FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` 
                                                     WHERE id = %d";
                                 $results_guest     = $wpdb->get_results( $wpdb->prepare( $query_guest, $value->user_id ) );
-                                $value->user_email = $results_guest[0]->email_id;
+                                if ( count( $results_guest ) > 0 && isset( $results_guest[0]->email_id ) ) {
+                                    $value->user_email = $results_guest[0]->email_id;
+                                }
                             } else {
                                 if( isset( $value->user_id ) ) {
                                     $user_id            = $value->user_id;
@@ -103,10 +104,12 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                 if ( $new_user == true ) {
 
                                  /**
-                                 * When there are 3 templates and for cart id 1 all template time has been reached. BUt all templates are deactivated.
-                                 * If we activate all 3 template then at a 1 time all 3 email templates send to the users.
-                                 * So below function check that after first email is sent time and then from that time it will send the 2nd template time.  ( It will not consider the cart abadoned time in this case. )
-                                 */
+                                  * When there are 3 templates and for cart id 1 all template time has been reached. BUt all templates 
+                                  * are deactivated.
+                                  * If we activate all 3 template then at a 1 time all 3 email templates send to the users.
+                                  * So below function check that after first email is sent time and then from that time it will send the 
+                                  * 2nd template time.  ( It will not consider the cart abadoned time in this case. )
+                                  */
 
                                 $wcal_check_cart_needed_for_multiple_template = $this->wcal_remove_cart_for_mutiple_templates( $value->id, $time_to_send_template_after, $template_id );
 
@@ -168,7 +171,11 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                             $user_first_name_temp = get_user_meta( $value->user_id, 'billing_first_name', true );
                                             if( isset( $user_first_name_temp ) && "" == $user_first_name_temp ) {
                                                 $user_data       = get_userdata( $user_id );
-                                                $user_first_name = $user_data->first_name;
+                                                if ( isset( $user_data->first_name ) ) {
+                                                    $user_first_name = $user_data->first_name;
+                                                } else {
+                                                    $user_first_name = '';
+                                                }
                                             } else {
                                                 $user_first_name = $user_first_name_temp;
                                             }                                   
@@ -178,7 +185,11 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                             $user_last_name_temp = get_user_meta( $value->user_id, 'billing_last_name', true );
                                             if( isset( $user_last_name_temp ) && "" == $user_last_name_temp ) {
                                                 $user_data  = get_userdata( $user_id );
-                                                $user_last_name = $user_data->last_name;
+                                                if ( isset( $user_data->last_name) ) {
+                                                    $user_last_name = $user_data->last_name;
+                                                } else {
+                                                    $user_last_name = '';
+                                                }
                                             } else {
                                                 $user_last_name = $user_last_name_temp;
                                             }
@@ -201,154 +212,163 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                      WHERE template_id = %s AND abandoned_order_id = %s
                                                      ORDER BY id DESC
                                                      LIMIT 1 "; 
-                                        $results_sent  = $wpdb->get_results( $wpdb->prepare( $query_id, $template_id, $value->id ) );                                   
-                                        $email_sent_id = $results_sent[0]->id;
-                                        
-                                        if( $woocommerce->version < '2.3' ) {
-                                            $cart_page_link = $woocommerce->cart->get_cart_url();
+                                        $results_sent  = $wpdb->get_results( $wpdb->prepare( $query_id, $template_id, $value->id ) );         
+                                        if ( count( $results_sent ) > 0 ) {                           
+                                            $email_sent_id = $results_sent[0]->id;
                                         } else {
-                                            $cart_page_id   = wc_get_page_id( 'cart' );
-                                            $cart_page_link = $cart_page_id ? get_permalink( $cart_page_id ) : '';
+                                            $email_sent_id = '';
                                         }
-                                        
-                                        $encoding_cart   = $email_sent_id.'&url='.$cart_page_link;
-                                        $validate_cart   = $this->wcal_encrypt_validate( $encoding_cart );
-                                        $cart_link_track = get_option('siteurl').'/?wcal_action=track_links&validate=' . $validate_cart;
-                                        $email_body      = str_replace( "{{cart.link}}", $cart_link_track, $email_body );
-                                        
-                                        $validate_unsubscribe          = $this->wcal_encrypt_validate( $email_sent_id );
-                                        $email_sent_id_address         = $results_sent[0]->sent_email_id;
-                                        $encrypt_email_sent_id_address = hash( 'sha256', $email_sent_id_address );
-                                        $plugins_url                   = get_option( 'siteurl' ) . "/?wcal_track_unsubscribe=wcal_unsubscribe&validate=" . $validate_unsubscribe . "&track_email_id=" . $encrypt_email_sent_id_address;
-                                        $unsubscribe_link_track        = $plugins_url;
-                                        $email_body                    = str_replace( "{{cart.unsubscribe}}" , $unsubscribe_link_track , $email_body );
-                                        $var = '';
-                                        if( preg_match( "{{products.cart}}", $email_body, $matched ) ) {
-                                            if ( class_exists( 'WP_Better_Emails' ) ) {
-                                                $var = '<table width = 100%>
-                                                        <tr> <td colspan="5"> <h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3> </td></tr>
-                                                        <tr>
-                                                        <th>'.__( "Item", "woocommerce-ac" ).'</th>
-                                                        <th>'.__( "Name", "woocommerce-ac" ).'</th>
-                                                        <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
-                                                        <th>'.__( "Price", "woocommerce-ac" ).'</th>
-                                                        <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
-                                                        </tr>';
-                                            } else {
-                                                $var = '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
-                                                    <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
-                                                        <tr>
-                                                        <th>'.__( "Item", "woocommerce-ac" ).'</th>
-                                                        <th>'.__( "Name", "woocommerce-ac" ).'</th>
-                                                        <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
-                                                        <th>'.__( "Price", "woocommerce-ac" ).'</th>
-                                                        <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
-                                                        </tr>';
-                                            }                   
-                                            $cart_details = $cart_info_db_field->cart;
-                                            $cart_total = $item_subtotal = $item_total = 0;
-                                            $sub_line_prod_name = '';
-                                            foreach ( $cart_details as $k => $v ) {
-                                                $quantity_total     = $v->quantity;
-                                                $product_id         = $v->product_id;
-                                                $prod_name          = get_post( $product_id );
-                                                $product_link_track = get_permalink( $product_id );
-                                                $product_name = $prod_name->post_title;
-                                                if( $sub_line_prod_name == '' ) {
-                                                    $sub_line_prod_name = $product_name;
-                                                }
-                                                // Item subtotal is calculated as product total including taxes
-                                                if( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
-                                                    $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
-                                                } else {
-                                                    $item_subtotal = $item_subtotal + $v->line_total;
-                                                }                               
-                                                //  Line total
-                                                $item_total         = $item_subtotal;
-                                                $item_subtotal      = $item_subtotal / $quantity_total;
-                                                $item_total_display = wc_price( $item_total );
-                                                $item_subtotal      = wc_price( $item_subtotal );
-                                                $product            = wc_get_product( $product_id );
-                                                $prod_image         = $product->get_image();
-                                                $image_url          = wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );                                        
-                                                if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
-                                                    $variation_id               = $v->variation_id;
-                                                    $variation                  = wc_get_product( $variation_id );
-                                                    $name                       = $variation->get_formatted_name() ;
-                                                    $explode_all                = explode ( "&ndash;", $name );
-                                                    if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
-                                                        $wcap_sku = '';
-                                                        if ( $variation->get_sku() ) {
-                                                            $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
-                                                        }
-                                                        $wcap_get_formatted_variation  =  wc_get_formatted_variation( $variation, true );
 
-                                                        $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
-                                                                
-                                                        $pro_name_variation = (array) $add_product_name;    
-                                                    }else{
-                                                        $pro_name_variation = array_slice( $explode_all, 1, -1 );
-                                                    }
-                                                    $product_name_with_variable = '';
-                                                    $explode_many_varaition     = array();
-                                                    foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
-                                                        $explode_many_varaition = explode ( ",", $pro_name_variation_value );
-                                                        if( !empty( $explode_many_varaition ) ) {
-                                                            foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
-                                                                $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
-                                                            }
-                                                        } else {
-                                                            $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
-                                                        }
-                                                    }
-                                                    $product_name = $product_name_with_variable;
-                                                }
-                                                $var .='<tr align="center">
-                                                            <td> <a href="'.$cart_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
-                                                            <td> <a href="'.$cart_link_track.'">'.__( $product_name, "woocommerce-ac" ).'</a></td>
-                                                            <td> '.$quantity_total.'</td>
-                                                            <td> '.$item_subtotal.'</td>
-                                                            <td> '.$item_total_display.'</td>
-                                                        </tr>';
-                                                $cart_total += $item_total;
-                                                $item_subtotal = $item_total = 0;
+                                        if ( '' != $email_sent_id ) {
+                                        
+                                            if( $woocommerce->version < '2.3' ) {
+                                                $cart_page_link = $woocommerce->cart->get_cart_url();
+                                            } else {
+                                                $cart_page_id   = wc_get_page_id( 'cart' );
+                                                $cart_page_link = $cart_page_id ? get_permalink( $cart_page_id ) : '';
                                             }
-                                            $cart_total = wc_price( $cart_total );
-                                            $var .= '<tr align="center">
-                                                        <td> </td>
-                                                        <td> </td>
-                                                        <td> </td>
-                                                        <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
-                                                        <td> '.$cart_total.'</td>
-                                                    </tr>';
-                                            $var .= '</table>
-                                                                        ';
-                                            $email_body    = str_replace( "{{products.cart}}", $var, $email_body );
-                                            $email_subject = str_replace( "{{product.name}}", __( $sub_line_prod_name, "woocommerce-ac" ), $email_subject );
-                                        }
-                                        
-                                        $user_email       = $value->user_email;
-                                        $email_body_final = stripslashes( $email_body );
-                                        $email_body_final = convert_smilies( $email_body_final );
-                                        if ( isset( $is_wc_template ) && "1" == $is_wc_template ){
-                                            ob_start();
-                                                            
-                                            wc_get_template( 'emails/email-header.php', array( 'email_heading' => $wc_template_header ) );
-                                            $email_body_template_header = ob_get_clean();
-                                        
-                                            ob_start();
-                                        
-                                            wc_get_template( 'emails/email-footer.php' );  
-                                            $email_body_template_footer = ob_get_clean();
-                                        
-                                            $final_email_body =  $email_body_template_header . $email_body_final . $email_body_template_footer;
-                                        
-                                            wc_mail( $user_email, $email_subject, $final_email_body, $headers );
-                                        
-                                        } else {
-                                            wp_mail( $user_email, $email_subject, __( $email_body_final, 'woocommerce-ac' ), $headers );
-                                        }
-                                    }                                       
+                                                
+                                            $encoding_cart   = $email_sent_id.'&url='.$cart_page_link;
+                                            $validate_cart   = $this->wcal_encrypt_validate( $encoding_cart );
+                                            $cart_link_track = get_option('siteurl').'/?wcal_action=track_links&validate=' . $validate_cart;
+                                            $email_body      = str_replace( "{{cart.link}}", $cart_link_track, $email_body );
+                                            
+                                            $validate_unsubscribe          = $this->wcal_encrypt_validate( $email_sent_id );
+                                            if ( count( $results_sent ) > 0 && isset( $results_sent[0]->sent_email_id ) ) {
+                                                $email_sent_id_address         = $results_sent[0]->sent_email_id;
+                                            }
+                                            $encrypt_email_sent_id_address = hash( 'sha256', $email_sent_id_address );
+                                            $plugins_url                   = get_option( 'siteurl' ) . "/?wcal_track_unsubscribe=wcal_unsubscribe&validate=" . $validate_unsubscribe . "&track_email_id=" . $encrypt_email_sent_id_address;
+                                            $unsubscribe_link_track        = $plugins_url;
+                                            $email_body                    = str_replace( "{{cart.unsubscribe}}" , $unsubscribe_link_track , $email_body );
+                                            $var = '';
+                                            if( preg_match( "{{products.cart}}", $email_body, $matched ) ) {
+                                                if ( class_exists( 'WP_Better_Emails' ) ) {
+                                                    $var = '<table width = 100%>
+                                                            <tr> <td colspan="5"> <h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3> </td></tr>
+                                                            <tr>
+                                                            <th>'.__( "Item", "woocommerce-ac" ).'</th>
+                                                            <th>'.__( "Name", "woocommerce-ac" ).'</th>
+                                                            <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
+                                                            <th>'.__( "Price", "woocommerce-ac" ).'</th>
+                                                            <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
+                                                            </tr>';
+                                                } else {
+                                                    $var = '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
+                                                        <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
+                                                            <tr>
+                                                            <th>'.__( "Item", "woocommerce-ac" ).'</th>
+                                                            <th>'.__( "Name", "woocommerce-ac" ).'</th>
+                                                            <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
+                                                            <th>'.__( "Price", "woocommerce-ac" ).'</th>
+                                                            <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
+                                                            </tr>';
+                                                }                   
+                                                $cart_details = $cart_info_db_field->cart;
+                                                $cart_total = $item_subtotal = $item_total = 0;
+                                                $sub_line_prod_name = '';
+                                                foreach ( $cart_details as $k => $v ) {
+                                                    $quantity_total     = $v->quantity;
+                                                    $product_id         = $v->product_id;
+                                                    $prod_name          = get_post( $product_id );
+                                                    $product_link_track = get_permalink( $product_id );
+                                                    $product_name = $prod_name->post_title;
+                                                    if( $sub_line_prod_name == '' ) {
+                                                        $sub_line_prod_name = $product_name;
+                                                    }
+                                                    // Item subtotal is calculated as product total including taxes
+                                                    if( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
+                                                        $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
+                                                    } else {
+                                                        $item_subtotal = $item_subtotal + $v->line_total;
+                                                    }                               
+                                                    //  Line total
+                                                    $item_total         = $item_subtotal;
+                                                    $item_subtotal      = $item_subtotal / $quantity_total;
+                                                    $item_total_display = wc_price( $item_total );
+                                                    $item_subtotal      = wc_price( $item_subtotal );
+                                                    $product            = wc_get_product( $product_id );
+                                                    $prod_image         = $product->get_image();
+                                                    $image_url          = wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );                                        
+                                                    if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
+                                                        $variation_id               = $v->variation_id;
+                                                        $variation                  = wc_get_product( $variation_id );
+                                                        $name                       = $variation->get_formatted_name() ;
+                                                        $explode_all                = explode ( "&ndash;", $name );
+                                                        if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
+                                                                $wcap_sku = '';
+                                                                if ( $variation->get_sku() ) {
+                                                                    $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
+                                                                }
+                                                                $wcap_get_formatted_variation  =  wc_get_formatted_variation( $variation, true );
+
+                                                                $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
+                                                                    
+                                                                $pro_name_variation = (array) $add_product_name;    
+                                                            }else{
+                                                                $pro_name_variation = array_slice( $explode_all, 1, -1 );
+                                                            }
+                                                            $product_name_with_variable = '';
+                                                            $explode_many_varaition     = array();
+                                                            foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
+                                                            $explode_many_varaition = explode ( ",", $pro_name_variation_value );
+                                                                if( !empty( $explode_many_varaition ) ) {
+                                                                    foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
+                                                                        $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
+                                                                    }
+                                                                } else {
+                                                                    $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
+                                                                }
+                                                            }
+                                                            $product_name = $product_name_with_variable;
+                                                        }
+                                                        $var .='<tr align="center">
+                                                                <td> <a href="'.$cart_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
+                                                                <td> <a href="'.$cart_link_track.'">'.__( $product_name, "woocommerce-ac" ).'</a></td>
+                                                                <td> '.$quantity_total.'</td>
+                                                                <td> '.$item_subtotal.'</td>
+                                                                <td> '.$item_total_display.'</td>
+                                                            </tr>';
+                                                        $cart_total += $item_total;
+                                                        $item_subtotal = $item_total = 0;
+                                                    }
+                                                    $cart_total = wc_price( $cart_total );
+                                                    $var .= '<tr align="center">
+                                                            <td> </td>
+                                                            <td> </td>
+                                                            <td> </td>
+                                                            <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
+                                                            <td> '.$cart_total.'</td>
+                                                        </tr>';
+                                                    $var .= '</table>
+                                                                            ';
+                                                    $email_body    = str_replace( "{{products.cart}}", $var, $email_body );
+                                                    $email_subject = str_replace( "{{product.name}}", __( $sub_line_prod_name, "woocommerce-ac" ), $email_subject );
+                                                }
+                                            
+                                                $user_email       = $value->user_email;
+                                                $email_body_final = stripslashes( $email_body );
+                                                $email_body_final = convert_smilies( $email_body_final );
+                                                if ( isset( $is_wc_template ) && "1" == $is_wc_template ){
+                                                    ob_start();
+                                                                
+                                                    wc_get_template( 'emails/email-header.php', array( 'email_heading' => $wc_template_header ) );
+                                                    $email_body_template_header = ob_get_clean();
+                                            
+                                                    ob_start();
+                                            
+                                                    wc_get_template( 'emails/email-footer.php' );  
+                                                    $email_body_template_footer = ob_get_clean();
+                                            
+                                                    $final_email_body =  $email_body_template_header . $email_body_final . $email_body_template_footer;
+                                            
+                                                    wc_mail( $user_email, $email_subject, $final_email_body, $headers );
+                                            
+                                                } else {
+                                                    wp_mail( $user_email, $email_subject, __( $email_body_final, 'woocommerce-ac' ), $headers );
+                                                }
+                                            }
+                                        }                                       
                                     }
                                 }
                             }
@@ -357,7 +377,6 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 }
             }                   
         }
-
 
         /**
          * This function will check if the user type is Guest and the id is greater than 63000000
@@ -493,22 +512,22 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 
             $results_query_email = $wpdb->get_results( $wpdb->prepare( $query_email_id, $user_billing_email  ) );
 
-            if ( count ( $results_query_email ) > 0 ){
+            if ( count ( $results_query_email ) > 0 ) {
                 $current_time     = current_time( 'timestamp' );
                 $todays_date      = date( 'Y-m-d', $current_time );
-                $order_date_time = $results_query_email[0]->post_date;
-                $order_date      = substr( $order_date_time, 0, 10 );
+                $order_date_time  = $results_query_email[0]->post_date;
+                $order_date       = substr( $order_date_time, 0, 10 );
 
                 if ( $order_date == $todays_date ){
 
                     $wcal_check_email_sent_to_cart = woocommerce_abandon_cart_cron::wcal_get_cart_sent_data ( $cart_id );
 
-                    if ( 0 != $wcal_check_email_sent_to_cart ){
+                    if ( 0 != $wcal_check_email_sent_to_cart ) {
 
                         $wcal_query   = "SELECT `post_id` FROM `" . $wpdb->prefix . "postmeta` WHERE  meta_value = %s";
                         $wcal_results = $wpdb->get_results ( $wpdb->prepare( $wcal_query , $cart_id ) );
 
-                        if ( count( $wcal_results ) > 0 ){
+                        if ( count( $wcal_results ) > 0 ) {
 
                             $order_id = $wcal_results[0]->post_id;
 
@@ -517,14 +536,12 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                             $query_order = "UPDATE `" . $wpdb->prefix."ac_abandoned_cart_history_lite` SET recovered_cart= '" . $order_id . "', cart_ignored = '1' WHERE id = '".$cart_id."' ";
                             $wpdb->query( $query_order );
 
-                            
-
                             $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-ac' ) );
 
                             delete_post_meta( $order_id,  'wcap_recover_order_placed',         $cart_id );
                             delete_post_meta( $order_id , 'wcap_recover_order_placed_sent_id', $wcal_check_email_sent_to_cart );
                         }
-                    }else{
+                    }else {
 
                         $query_ignored = "UPDATE `" . $wpdb->prefix."ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE id ='" . $cart_id . "'";
                         $wpdb->query( $query_ignored );
@@ -554,7 +571,6 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
             return 0;
         }
 
-        
         public static function wcal_remove_cart_for_mutiple_templates( $wcal_cart_id, $time_to_send_template_after, $template_id ) {
             global $wpdb;
             

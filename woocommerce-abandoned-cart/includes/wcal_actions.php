@@ -41,6 +41,5 @@ class wcal_delete_bulk_action_handler {
         $wpdb->query( $query_remove );
          
         wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=emailtemplates&wcal_template_deleted=YES' ) );
-    
     }
 }

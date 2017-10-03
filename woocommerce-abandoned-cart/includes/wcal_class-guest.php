@@ -18,9 +18,7 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 	function load_ac_ajax() {
         if ( ! is_user_logged_in() ) {
 			add_action( 'wp_ajax_nopriv_save_data', 'save_data' );
-		} else {
-			add_action( 'wp_ajax_save_data', 'save_data' );
-		}
+		} 
 	}
 
 	function user_side_js() {
@@ -143,7 +141,7 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
                               WHERE  user_id = %d AND recovered_cart = '0'" ;
                     $result = $wpdb->get_results( $wpdb->prepare( $query, $value->id ) );  
                     
-                    if ( $result ) {
+                    if ( count( $result ) ) {
                         $delete_sent_email = "DELETE FROM `".$wpdb->prefix."ac_sent_history_lite` 
                                               WHERE abandoned_order_id = '".$result[0]->id."'";
                         $wpdb->query( $delete_sent_email );						
@@ -225,8 +223,10 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
                                                 WHERE user_id ='" . $user_id . "' AND cart_ignored='0' AND session_id ='" . $get_cookie[0] . "' ";
                     $get_abandoned_record = $wpdb->get_results( $query_update_get );
                     
-                    $abandoned_cart_id                  = $get_abandoned_record[0]->id;
-                    $_SESSION['abandoned_cart_id_lite'] = $abandoned_cart_id;
+                    if ( count( $get_abandoned_record ) > 0 ) {
+                        $abandoned_cart_id                  = $get_abandoned_record[0]->id;
+                        $_SESSION['abandoned_cart_id_lite'] = $abandoned_cart_id;
+                    }
                     
                     $insert_persistent_cart = "INSERT INTO `".$wpdb->prefix."usermeta`( user_id, meta_key, meta_value )
                                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
