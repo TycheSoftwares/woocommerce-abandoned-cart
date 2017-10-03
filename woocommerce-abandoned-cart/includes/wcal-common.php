@@ -7,7 +7,7 @@ class wcal_common {
         $blank_cart_info        = '{"cart":[]}';
         $blank_cart_info_guest  = '[]';    
         $ac_cutoff_time         = get_option( 'ac_lite_cart_abandoned_time' );
-        $cut_off_time           = $ac_cutoff_time * 60;
+        $cut_off_time           = intval( $ac_cutoff_time ) * 60;
         $current_time           = current_time( 'timestamp' );
         $compare_time           = $current_time - $cut_off_time;
     

@@ -241,12 +241,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             add_filter( 'woocommerce_payment_complete_order_status',                   array( &$this , 'wcal_order_complete_action' ), 10 , 2 );        
             add_filter( 'admin_footer_text',                                           array( $this,   'wcal_admin_footer_text' ), 1 );
 
-            add_action( 'admin_notices',                                                array( 'Wcal_Admin_Notice',   'wcal_pro_notice' ) );
+            add_action( 'admin_notices',                                               array( 'Wcal_Admin_Notice',   'wcal_pro_notice' ) );
             add_action( 'admin_init',                                                  array( 'Wcal_Admin_Notice',   'wcal_pro_notice_ignore' ) );
 
-            /* @since: 4.2 
-            *  Check if WC is enabled or not. 
-            */
+            /** 
+             *  @since: 4.2 
+             *  Check if WC is enabled or not. 
+             */
             add_action( 'admin_init',                                                  array( &$this,  'wcal_wc_check_compatibility' ) ); 
         }
 
@@ -323,28 +324,42 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $get_ac_id_query    = "SELECT abandoned_order_id FROM ". $wcal_sent_email_table_name ." WHERE id = %d";
                 $get_ac_id_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
                 
-                $abandoned_order_id = $get_ac_id_results[0]->abandoned_order_id;
+                $abandoned_order_id = '';
+                if ( count( $get_ac_id_results ) > 0 ) {
+                	$abandoned_order_id = $get_ac_id_results[0]->abandoned_order_id;
+            	}
 
                 $wcal_account_password_check = 'no';
 
                 /*if user becomes the registered user */
                 if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
 
-                    $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
-                    $wcal_user_id_of_guest      = $_SESSION['user_id'];
+                	$abandoned_cart_id_new_user = '';
+                	if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && '' != $_SESSION['abandoned_cart_id_lite'] ) { 
+                    	$abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
+                	}
+
+                	$wcal_user_id_of_guest = '';
+                	if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
+                    	$wcal_user_id_of_guest      = $_SESSION['user_id'];
+                	}
 
                     /* delete the guest record. As it become the logged in user */
 
-                    $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
-                    $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
-                
+                    $get_ac_id_guest_results = array();
+                    if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) { 
+               	 		$get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
+                    	$get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
+            		}
                     
                     if ( count ($get_ac_id_guest_results) > 1 ) {
                         $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;
                         $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_order_id_of_guest ) );
                     }
-                    /* it is the new registered users cart id */
-                    $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+                    if ( isset( $abandoned_cart_id_new_user ) && '' != $abandoned_cart_id_new_user ) {
+                    	/* it is the new registered users cart id */
+                    	$wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+                	}
 
                     $wcal_account_password_check = 'yes';
                 }
@@ -355,67 +370,81 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                      $_POST['createaccount'] != ''    && 
                      'no' == $wcal_account_password_check ) {
 
-                    $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
-                    $wcal_user_id_of_guest      = $_SESSION['user_id'];
+                	$abandoned_cart_id_new_user = '';
+                	if ( isset ( $_SESSION['abandoned_cart_id_lite'] ) && '' != $_SESSION['abandoned_cart_id_lite'] ) {
+                    	$abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
+                	}
+                	$wcal_user_id_of_guest = '';
+                	if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
+                    	$wcal_user_id_of_guest      = $_SESSION['user_id'];
+                	}
+
 
                     /* delete the guest record. As it become the logged in user */
-
-                    $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
-                    $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
-                
+                    $get_ac_id_guest_results = array();
+                    if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) {
+                    	$get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
+                    	$get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
+                	}
                     if ( count ($get_ac_id_guest_results) > 1 ){
                         $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;
                         $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_order_id_of_guest ) );
                     }
 
                     /* it is the new registered users cart id */
-                    $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+                    if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) {
+                    	$wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+                	}
 
                     $wcap_create_account = 'yes';
                 }
 
                 if ( 'no' == $wcal_account_password_check && 'no' == $wcap_create_account ) {
                     
-                    $wcal_user_id_of_guest    = $_SESSION['user_id'];
+                    $wcal_user_id_of_guest = '';
+                    if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
+                    	$wcal_user_id_of_guest    = $_SESSION['user_id'];
+                    	$get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
+	                    $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
 
-                    $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
-                    $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
-
-                    if ( count ($get_ac_id_guest_results) > 1 ) {
-                        $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;            
-                        $wpdb->delete( $wcal_history_table_name, array( 'id' => $abandoned_order_id_of_guest ) );
-                    }
-                }
+	                    if ( count ($get_ac_id_guest_results) > 1 ) {
+	                        $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;            
+	                        $wpdb->delete( $wcal_history_table_name, array( 'id' => $abandoned_order_id_of_guest ) );
+	                    }
+                	}
+				}
 
                 add_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $email_sent_id );
-                add_post_meta( $order_id , 'wcal_recover_order_placed', $abandoned_order_id );
+                if ( isset( $abandoned_order_id ) && '' != $abandoned_order_id ) {
+                	add_post_meta( $order_id , 'wcal_recover_order_placed', $abandoned_order_id );
+            	}
 
             }else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] != '' ) {
 
-                    /**
-                     * In this codition we are cheking that if the order is placed before the cart cut off time then we 
-                     * will delete the abandond cart records.
-                     * If the order is placed after the cart cutoff time then we will create the post meta with 
-                     * the abandoned cart id. So we will refer this abandoned cart id when order staus is changed
-                     * while placing the order.
-                     */
-                    if( session_id() === '' ){
-                        //session has not started
-                        session_start();
-                    }
+                /**
+                 * In this codition we are cheking that if the order is placed before the cart cut off time then we 
+                 * will delete the abandond cart records.
+                 * If the order is placed after the cart cutoff time then we will create the post meta with 
+                 * the abandoned cart id. So we will refer this abandoned cart id when order staus is changed
+                 * while placing the order.
+                 */
+                if( session_id() === '' ){
+                    //session has not started
+                    session_start();
+                }
 
-                    global $woocommerce, $wpdb;
+                global $woocommerce, $wpdb;
 
-                    $wcal_history_table_name    = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
-                    $wcal_guest_table_name      = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
-                    $wcal_sent_email_table_name = $wpdb->prefix . 'ac_sent_history_lite';
+                $wcal_history_table_name    = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
+                $wcal_guest_table_name      = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
+                $wcal_sent_email_table_name = $wpdb->prefix . 'ac_sent_history_lite';
 
-                    $current_time   = current_time( 'timestamp' );
-                    $wcal_cart_abandoned_time = '';
-                    $wcal_abandoned_cart_id   = $_SESSION['abandoned_cart_id_lite'];
-              
+                $current_time   = current_time( 'timestamp' );
+                $wcal_cart_abandoned_time = '';
+                if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && '' != $_SESSION['abandoned_cart_id_lite'] ) {
+                	$wcal_abandoned_cart_id   = $_SESSION['abandoned_cart_id_lite'];
 
-                    $get_abandoned_cart_query   = "SELECT abandoned_cart_time FROM `" . $wcal_history_table_name . "` WHERE id = %d ";
+                	$get_abandoned_cart_query   = "SELECT abandoned_cart_time FROM `" . $wcal_history_table_name . "` WHERE id = %d ";
                     $get_abandoned_cart_results = $wpdb->get_results( $wpdb->prepare( $get_abandoned_cart_query, $wcal_abandoned_cart_id ) );
 
                     if ( count( $get_abandoned_cart_results ) > 0 ){
@@ -428,42 +457,42 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 
                     if ( $compare_time >  $wcal_cart_abandoned_time ) {
                         /* cart is declared as adandoned */
-                        
                         add_post_meta( $order_id , 'wcal_recover_order_placed', $wcal_abandoned_cart_id );
                     }else {
-                    /* cart order is placed within the cutoff time.
-                    we will delete that abandoned cart */
+                    	/* cart order is placed within the cutoff time.
+                    	we will delete that abandoned cart */
                   
-                    /* if user becomes the registred user */
+                    	/* if user becomes the registred user */
 
-                    if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
+	                    if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
 
-                        $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
-                        $wcal_user_id_of_guest      = $_SESSION['user_id'];
+	                        $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
+	                        $wcal_user_id_of_guest      = $_SESSION['user_id'];
 
-                        /* delete the guest record. As it become the logged in user */
+	                        /* delete the guest record. As it become the logged in user */
 
-                        $wpdb->delete( $wcal_history_table_name , array( 'user_id' => $wcal_user_id_of_guest ) );
-                        $wpdb->delete( $wcal_guest_table_name ,   array( 'id' => $wcal_user_id_of_guest ) );
+	                        $wpdb->delete( $wcal_history_table_name , array( 'user_id' => $wcal_user_id_of_guest ) );
+	                        $wpdb->delete( $wcal_guest_table_name ,   array( 'id' => $wcal_user_id_of_guest ) );
 
-                        /* it is the new registered users cart id */
-                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
-                    }else {
+	                        /* it is the new registered users cart id */
+	                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+	                    }else {
 
-                        /**
-                         * It will delete the order from history table if the order is placed before any email sent to
-                         * the user.
-                         */
-                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $wcap_abandoned_cart_id ) );
+	                        /**
+	                         * It will delete the order from history table if the order is placed before any email sent to
+	                         * the user.
+	                         */
+	                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $wcap_abandoned_cart_id ) );
 
-                        /* this user id is set for the guest uesrs. */
-                        if ( isset( $_SESSION['user_id'] ) && $_SESSION['user_id'] != '' ) {
+	                        /* this user id is set for the guest uesrs. */
+	                        if ( isset( $_SESSION['user_id'] ) && $_SESSION['user_id'] != '' ) {
 
-                            $wcal_user_id_of_guest = $_SESSION['user_id'];
-                            $wpdb->delete( $wcal_guest_table_name,  array( 'id' => $wcal_user_id_of_guest ) );
-                        }
-                    } 
-                }
+	                            $wcal_user_id_of_guest = $_SESSION['user_id'];
+	                            $wpdb->delete( $wcal_guest_table_name,  array( 'id' => $wcal_user_id_of_guest ) );
+	                        }
+	                    } 
+	                }
+            	}
             }
         }
         
@@ -537,7 +566,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          * activated with PRO version is activated.
          */
         public static function wcal_check_pro_notice() {
-            $class = 'notice notice-error is-dismissible';
+            $class   = 'notice notice-error is-dismissible';
             $message = __( 'The Lite & Pro version of Abandoned Cart plugin for WooCommerce (from Tyche Softwares) are active on your website. <br> In this case, the abandoned carts will be captured in both plugins & email reminders will also be sent from both plugins. <br> It is recommended that you deactivate the Lite version & keep the Pro version active.', 'woocommerce-ac' );      
             printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
         }
@@ -565,7 +594,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     include( 'views/wcal-wc-email-template-preview.php' );
                     $mailer        = WC()->mailer();
                     $message       = ob_get_clean();
-                    $email_heading = __( 'HTML Email Template', 'woocommerce' );
+                    $email_heading = __( 'HTML Email Template', 'woocommerce-ac' );
                     $message       =  $mailer->wrap_message( $email_heading, $message );
                 } else {
                     // load the mailer class
@@ -785,7 +814,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             array( 'When a contact receives your email and clicks reply, which email address should that reply be sent to?', 'woocommerce-ac' )
             );
             
-                
             // Finally, we register the fields with WordPress
             register_setting(
                 'woocommerce_ac_settings',
@@ -1098,8 +1126,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_abandoned_cart_history_lite ADD `session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `unsubscribe_link`;" );
                 }
             }           
-            /*
-             * This is used to prevent guest users wrong Id. If guest users id is less then 63000000 then this code will ensure that we will change the id of guest tables so it wont affect on the next guest users.
+            /**
+             *  
+             * This is used to prevent guest users wrong Id. If guest users id is less then 63000000 then this code will ensure that we 
+             * will change the id of guest tables so it wont affect on the next guest users.
              */         
             if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_guest_abandoned_cart_history_lite';" )  && 'yes' != get_option( 'wcal_guest_user_id_altered' ) ) {
                 $last_id = $wpdb->get_var( "SELECT max(id) FROM `{$wpdb->prefix}ac_guest_abandoned_cart_history_lite`;" );
@@ -1109,10 +1139,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 }
             }
             
-            /*
-             * Since 4.7
+            /**
              * We have moved email templates fields in the setings section. SO to remove that fields column fro the db we need it.
-             * For existing user we need to fill this setting with the first template.
+             * For existing user we need to fill this setting with the first template. 
+             * @since 4.7
              */
             if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_email_templates_lite';" ) ) {
                 if ( $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_email_templates_lite` LIKE 'from_email';" ) ) {
@@ -1156,7 +1186,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }          
         }
     
-        /******
+        /**
          * Send email to admin when cart is recovered only via PayPal.
          * @since 2.9 version
          */
@@ -1177,7 +1207,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $check_abandoned_cart = get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true );
                     $created_via   = get_post_meta ( $order_id, '_created_via', true );
                     
-                    // mention here why are we comparing both "yes" and "no" values
                     if ( 'checkout' == $created_via && 'yes' != $recovered_email_sent && ( $check_abandoned_cart == md5( "yes" ) || $check_abandoned_cart == md5( "no" ) ) ) { // indicates cart is abandoned
                         $order          = new WC_Order( $order_id );
                         $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce-ac' );
@@ -1206,7 +1235,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
         }
     
-        /******
+        /**
          * Send email to admin when cart is recovered via any other payment gateway other than PayPal.
          * @since 2.3 version
          */
@@ -1278,7 +1307,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
             
             if( isset( $cut_off_time ) ) {
-                $cart_cut_off_time = $cut_off_time * 60;
+                $cart_cut_off_time = intval( $cut_off_time ) * 60;
             } else {
                 $cart_cut_off_time = 60 * 60;
             }           
@@ -1305,7 +1334,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $abandoned_cart_id              = $wpdb->insert_id;                 
                     $_SESSION['abandoned_cart_id_lite'] = $abandoned_cart_id;
                 } elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {
-                    $wcal_woocommerce_persistent_cart =version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ; 
+                    
+                    $wcal_woocommerce_persistent_cart = version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ; 
                     $updated_cart_info = json_encode( get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true ) );
                     
                     if ( ! $this->wcal_compare_carts( $user_id, $results[0]->abandoned_cart_info ) ) {                          
@@ -1323,7 +1353,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         
                         update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "yes" ) );
                         
-                        $abandoned_cart_id              = $wpdb->insert_id;                     
+                        $abandoned_cart_id                  = $wpdb->insert_id;                     
                         $_SESSION['abandoned_cart_id_lite'] = $abandoned_cart_id;                       
                     } else {    
                         update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "no" ) );
@@ -1341,9 +1371,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     
                     $query_update        = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_id ='" . $user_id . "' AND cart_ignored='0' ";                   
                     $get_abandoned_record = $wpdb->get_results( $query_update );
-                    $abandoned_cart_id   = $get_abandoned_record[0]->id;
-                    
-                    $_SESSION['abandoned_cart_id_lite'] = $abandoned_cart_id;
+                    if ( count( $get_abandoned_record ) > 0 ) {
+                        $abandoned_cart_id   = $get_abandoned_record[0]->id;
+                        $_SESSION['abandoned_cart_id_lite'] = $abandoned_cart_id;
+                    }
                 }
             } else { 
                 //start here guest user                 
@@ -1390,9 +1421,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         $wpdb->query( $query_update );
                     }
                 } else {                   
-                    /***
-                     * @Since: 3.5
+                    /**
                      * Here we capture the guest cart from the cart page.
+                     * @since: 3.5
+                     * 
                      */                  
                     if ( $track_guest_user_cart_from_cart == "on" &&  $get_cookie[0] != '' ) {                    
                         $query   = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE session_id LIKE %s AND cart_ignored = '0' AND recovered_cart = '0' ";
@@ -1474,7 +1506,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 if( isset( $results_sent[0] ) ) {
                     $email_address =  $results_sent[0]->sent_email_id;
                 }        
-                if( $validate_email_address_string == hash( 'sha256', $email_address ) ) {  
+                if( $validate_email_address_string == hash( 'sha256', $email_address ) && '' != $email_address ) {  
                     $email_sent_id     = $validate_email_id_decode;
                     $get_ac_id_query   = "SELECT abandoned_order_id FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE id = %d";
                     $get_ac_id_results = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query , $email_sent_id ) );
@@ -1488,7 +1520,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     }
                      
                     $unsubscribe_query = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
-                                            SET unsubscribe_link = '1'
+                                            SET unsubscribe_link = '1' 
                                             WHERE user_id= %d AND cart_ignored='0' ";
                     $wpdb->query( $wpdb->prepare( $unsubscribe_query , $user_id ) ); 
                     echo "Unsubscribed Successfully";
@@ -1545,8 +1577,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $url               = substr( $link_decode, $url_pos );             
                 $get_ac_id_query   = "SELECT abandoned_order_id FROM `".$wpdb->prefix."ac_sent_history_lite` WHERE id = %d";
                 $get_ac_id_results = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
-                $get_user_id_query = "SELECT user_id FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE id = %d";
-                $get_user_results  = $wpdb->get_results( $wpdb->prepare( $get_user_id_query, $get_ac_id_results[0]->abandoned_order_id ) );
+                $get_user_results  = array();
+                if ( count( $get_ac_id_results ) > 0 ) {
+                    $get_user_id_query = "SELECT user_id FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE id = %d";
+                    $get_user_results  = $wpdb->get_results( $wpdb->prepare( $get_user_id_query, $get_ac_id_results[0]->abandoned_order_id ) );
+                }
                 $user_id           = 0;     
                 if ( isset( $get_user_results ) && count( $get_user_results ) > 0 ) { 
                     $user_id = $get_user_results[0]->user_id;
@@ -1709,33 +1744,35 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $current_woo_cart   = $abandoned_cart_arr;
                 $abandoned_cart_arr = $temp_variable;
             }
-            foreach ( $current_woo_cart as $key => $value ) {
-                
-                foreach ( $value as $item_key => $item_value ) {
-                    $current_cart_product_id   = $item_value['product_id'];
-                    $current_cart_variation_id = $item_value['variation_id'];
-                    $current_cart_quantity     = $item_value['quantity'];
-    
-                    if ( isset( $abandoned_cart_arr[$key][$item_key]['product_id'] ) ) {
-                        $abandoned_cart_product_id = $abandoned_cart_arr[$key][$item_key]['product_id'];
-                    } else {
-                        $abandoned_cart_product_id = "";
-                    }
-                    if ( isset( $abandoned_cart_arr[$key][$item_key]['variation_id'] ) ) {
-                         $abandoned_cart_variation_id = $abandoned_cart_arr[$key][$item_key]['variation_id']; 
-                    } else {
-                        $abandoned_cart_variation_id = "";
-                    }
-                    if ( isset( $abandoned_cart_arr[$key][$item_key]['quantity'] ) ) {
-                         $abandoned_cart_quantity = $abandoned_cart_arr[$key][$item_key]['quantity'];
-                    } else {
-                         $abandoned_cart_quantity = "";
-                    }
-                    if ( ( $current_cart_product_id != $abandoned_cart_product_id ) ||
-                         ( $current_cart_variation_id != $abandoned_cart_variation_id ) ||
-                         ( $current_cart_quantity != $abandoned_cart_quantity ) )
-                    {
-                        return false;
+            if ( is_array( $current_woo_cart ) && is_array( $abandoned_cart_arr ) ) {
+                foreach ( $current_woo_cart as $key => $value ) {
+                    
+                    foreach ( $value as $item_key => $item_value ) {
+                        $current_cart_product_id   = $item_value['product_id'];
+                        $current_cart_variation_id = $item_value['variation_id'];
+                        $current_cart_quantity     = $item_value['quantity'];
+        
+                        if ( isset( $abandoned_cart_arr[$key][$item_key]['product_id'] ) ) {
+                            $abandoned_cart_product_id = $abandoned_cart_arr[$key][$item_key]['product_id'];
+                        } else {
+                            $abandoned_cart_product_id = "";
+                        }
+                        if ( isset( $abandoned_cart_arr[$key][$item_key]['variation_id'] ) ) {
+                             $abandoned_cart_variation_id = $abandoned_cart_arr[$key][$item_key]['variation_id']; 
+                        } else {
+                            $abandoned_cart_variation_id = "";
+                        }
+                        if ( isset( $abandoned_cart_arr[$key][$item_key]['quantity'] ) ) {
+                             $abandoned_cart_quantity = $abandoned_cart_arr[$key][$item_key]['quantity'];
+                        } else {
+                             $abandoned_cart_quantity = "";
+                        }
+                        if ( ( $current_cart_product_id != $abandoned_cart_product_id ) ||
+                             ( $current_cart_variation_id != $abandoned_cart_variation_id ) ||
+                             ( $current_cart_quantity != $abandoned_cart_quantity ) )
+                        {
+                            return false;
+                        }
                     }
                 }
             }
@@ -2113,20 +2150,21 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         <?php
                         if ( $section == 'wcal_general_settings' || $section == '' ) {
                         ?>
-                        <form method="post" action="options.php">
-                            <?php settings_fields( 'woocommerce_ac_settings' ); ?>
-                            <?php do_settings_sections( 'woocommerce_ac_page' ); ?>
-                            <?php settings_errors(); ?>
-                            <?php submit_button(); ?>    
-                        </form>
+                            <form method="post" action="options.php">
+                                <?php settings_fields( 'woocommerce_ac_settings' ); ?>
+                                <?php do_settings_sections( 'woocommerce_ac_page' ); ?>
+                                <?php settings_errors(); ?>
+                                <?php submit_button(); ?>    
+                            </form>
                         <?php 
                         } else if ( $section == 'wcal_email_settings' ) {
-                        ?><form method="post" action="options.php">
+                        ?>
+                            <form method="post" action="options.php">
                                 <?php settings_fields     ( 'woocommerce_ac_email_settings' ); ?>
                                 <?php do_settings_sections( 'woocommerce_ac_email_page' ); ?>
                                 <?php settings_errors(); ?>
                                 <?php submit_button(); ?>
-                          </form>
+                            </form>
                           <?php 
                         }
                         ?>
@@ -2142,11 +2180,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         $get_visitor_user_ac_count    = wcal_common::wcal_get_abandoned_order_count( 'wcal_all_visitor' );                      
                         
                         $wcal_user_reg_text = 'User';
-                        if ( $get_registered_user_ac_count > 1){
+                        if ( $get_registered_user_ac_count > 1 ) {
                             $wcal_user_reg_text = 'Users';
                         }                    
                         $wcal_user_gus_text = 'User';
-                        if ( $get_guest_user_ac_count > 1){
+                        if ( $get_guest_user_ac_count > 1 ) {
                             $wcal_user_gus_text = 'Users';
                         }                                                                    
                         $wcal_all_abandoned_carts  = $section = $wcal_all_registered = $wcal_all_guest = $wcal_all_visitor = "" ;
@@ -2282,7 +2320,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                                   $is_wc_template,
                                                                   $default_value,
                                                                   $woocommerce_ac_email_header )
-                                   );
+                                    );
                                 }
                             } else {
                                 $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
@@ -2309,7 +2347,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                                 $is_wc_template,
                                                                 $default_value,
                                                                 $woocommerce_ac_email_header )        
-                                 );                                 
+                                );                                 
                             }
                         }
                         
@@ -2352,18 +2390,17 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                     wc_email_header = %s
                                                     WHERE id      = %d ";
                                     $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update,
-                                                                 $woocommerce_ac_email_subject,
-                                                                 $woocommerce_ac_email_body,
-                                                                 $active,
-                                                                 $email_frequency,
-                                                                 $day_or_hour,
-                                                                 $woocommerce_ac_template_name,
-                                                                 $is_wc_template,
-                                                                 $default_value,
-                                                                 $woocommerce_ac_email_header,
-                                                                 $id )
-                                        
-                                     );
+                                                                $woocommerce_ac_email_subject,
+                                                                $woocommerce_ac_email_body,
+                                                                $active,
+                                                                $email_frequency,
+                                                                $day_or_hour,
+                                                                $woocommerce_ac_template_name,
+                                                                $is_wc_template,
+                                                                $default_value,
+                                                                $woocommerce_ac_email_header,
+                                                                $id )
+                                    );
                                 } else {  
                                     $updated_is_active = 0;
                                     $query_update_new  = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
@@ -2390,18 +2427,17 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                     wc_email_header = %s
                                                     WHERE id      = %d ";
                                     $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update_latest,
-                                                                 $woocommerce_ac_email_subject,
-                                                                 $woocommerce_ac_email_body,
-                                                                 $active,
-                                                                 $email_frequency,
-                                                                 $day_or_hour,
-                                                                 $woocommerce_ac_template_name,
-                                                                 $is_wc_template,
-                                                                 $default_value,
-                                                                 $woocommerce_ac_email_header,
-                                                                 $id )
-                                        
-                                     );
+                                                                $woocommerce_ac_email_subject,
+                                                                $woocommerce_ac_email_body,
+                                                                $active,
+                                                                $email_frequency,
+                                                                $day_or_hour,
+                                                                $woocommerce_ac_template_name,
+                                                                $is_wc_template,
+                                                                $default_value,
+                                                                $woocommerce_ac_email_header,
+                                                                $id )
+                                    );
                                 }
                             } else { 
                                 $updated_is_active            = '0';
@@ -2493,24 +2529,49 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         }
                         
                         if( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'save' && ( isset( $insert_template_successfuly ) && $insert_template_successfuly != '' ) ) { ?>
-                            <div id="message" class="updated fade"><p><strong><?php _e( 'The Email Template has been successfully added.', 'woocommerce-ac' ); ?></strong></p></div>
+                            <div id="message" class="updated fade">
+                                <p>
+                                    <strong>
+                                        <?php _e( 'The Email Template has been successfully added.', 'woocommerce-ac' ); ?>
+                                    </strong>
+                                </p>
+                            </div>
                             <?php } else if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'save' && ( isset( $insert_template_successfuly ) && $insert_template_successfuly == '' ) ) {
                                 ?>
-                               <div id="message" class="error fade"><p><strong><?php _e( ' There was a problem adding the email template. Please contact the plugin author via <a href= "https://wordpress.org/support/plugin/woocommerce-abandoned-cart">support forum</a>.', 'woocommerce-ac' ); ?></strong></p></div>
+                                <div id="message" class="error fade">
+                                    <p>
+                                        <strong>
+                                            <?php _e( ' There was a problem adding the email template. Please contact the plugin author via <a href= "https://wordpress.org/support/plugin/woocommerce-abandoned-cart">support forum</a>.', 'woocommerce-ac' ); ?>
+                                        </strong>
+                                    </p>
+                                </div>
                              <?php   
                         }
 
                         if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'update'  && isset($update_template_successfuly) && $update_template_successfuly >= 0 ) { ?>
-                            <div id="message" class="updated fade"><p><strong><?php _e( 'The Email Template has been successfully updated.', 'woocommerce-ac' ); ?></strong></p></div>
+                                <div id="message" class="updated fade">
+                                    <p>
+                                        <strong>
+                                            <?php _e( 'The Email Template has been successfully updated.', 'woocommerce-ac' ); ?>
+                                        </strong>
+                                    </p>
+                                </div>
                             <?php } else if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'update'  && isset($update_template_successfuly) && $update_template_successfuly === false ){
                                 ?>
-                               <div id="message" class="error fade"><p><strong><?php _e( ' There was a problem updating the email template. Please contact the plugin author via <a href= "https://wordpress.org/support/plugin/woocommerce-abandoned-cart">support forum</a>.', 'woocommerce-ac' ); ?></strong></p></div>
+                                    <div id="message" class="error fade">
+                                        <p>
+                                            <strong>
+                                                <?php _e( ' There was a problem updating the email template. Please contact the plugin author via <a href= "https://wordpress.org/support/plugin/woocommerce-abandoned-cart">support forum</a>.', 'woocommerce-ac' ); ?>
+                                            </strong>
+                                        </p>
+                                    </div>
                             <?php   
                         }
                         ?>
                         <div class="tablenav">
                             <p style="float:left;">
-                               <a cursor: pointer; href="<?php echo "admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=addnewtemplate"; ?>" class="button-secondary"><?php _e( 'Add New Template', 'woocommerce-ac' ); ?></a>                           
+                               <a cursor: pointer; href="<?php echo "admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=addnewtemplate"; ?>" class="button-secondary"><?php _e( 'Add New Template', 'woocommerce-ac' ); ?>
+                               </a>                           
                             </p>
                     
                             <?php
@@ -2532,46 +2593,31 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         ?>
                         <p>
                         <script language='javascript'>
-                            jQuery( document ).ready( function()
-                            {
-                                jQuery( '#duration_select' ).change( function()
-                                {
+                            jQuery( document ).ready( function() {
+                                jQuery( '#duration_select' ).change( function() {
                                     var group_name = jQuery( '#duration_select' ).val();
                                     var today      = new Date();
                                     var start_date = "";
                                     var end_date   = "";
-                                    if ( group_name == "yesterday" )
-                                    {
+                                    if ( group_name == "yesterday" ) {
                                         start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 1 );
                                         end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 1 );
-                                    }
-                                    else if ( group_name == "today")
-                                    {
+                                    } else if ( group_name == "today") {
                                         start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
                                         end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
-                                    }
-                                    else if ( group_name == "last_seven" )
-                                    {
+                                    } else if ( group_name == "last_seven" ) {
                                         start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 7 );
                                         end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
-                                    }
-                                    else if ( group_name == "last_fifteen" )
-                                    {
+                                    } else if ( group_name == "last_fifteen" ) {
                                         start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 15 );
                                         end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
-                                    }
-                                    else if ( group_name == "last_thirty" )
-                                    {
+                                    } else if ( group_name == "last_thirty" ) {
                                         start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 30 );
                                         end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
-                                    }
-                                    else if ( group_name == "last_ninety" )
-                                    {
+                                    } else if ( group_name == "last_ninety" ) {
                                         start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 90 );
                                         end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
-                                    }
-                                    else if ( group_name == "last_year_days" )
-                                    {
+                                    } else if ( group_name == "last_year_days" ) {
                                         start_date = new Date( today.getFullYear(), today.getMonth(), today.getDate() - 365 );
                                         end_date   = new Date( today.getFullYear(), today.getMonth(), today.getDate() );
                                     }
@@ -2584,8 +2630,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             
                                     jQuery( '#start_date' ).val( start_date_value );
                                     jQuery( '#end_date' ).val( end_date_value );
-                                    
-                                });
+                               } );
                             });
                         </script>
                         <?php
@@ -2602,7 +2647,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         }
                         if ($duration_range == "") $duration_range = "last_seven";
                         
-                        _e( 'The Report below shows how many Abandoned Carts we were able to recover for you by sending automatic emails to encourage shoppers.', 'woocommerce-ac');
+                            _e( 'The Report below shows how many Abandoned Carts we were able to recover for you by sending automatic emails to     encourage shoppers.', 'woocommerce-ac');
                         ?>
                         <div id="recovered_stats" class="postbox" style="display:block">
                             <div class="inside">
@@ -2722,12 +2767,16 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                     if ( $results[0]->user_type == "GUEST" && "0" != $results[0]->user_id ) {
                                         $query_guest            = "SELECT * FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = %d";  
                                         $results_guest          = $wpdb->get_results( $wpdb->prepare( $query_guest, $results[0]->user_id ) );
-                                        $user_email             = $results_guest[0]->email_id;
-                                        $user_first_name        = $results_guest[0]->billing_first_name;
-                                        $user_last_name         = $results_guest[0]->billing_last_name;
-                                        $user_billing_postcode  = $results_guest[0]->billing_zipcode;
-                                        $user_shipping_postcode = $results_guest[0]->shipping_zipcode;
-                                        $shipping_charges       = $results_guest[0]->shipping_charges;
+                                        $user_email = $user_first_name = $user_last_name = $user_billing_postcode = $user_shipping_postcode = '';
+                                        $shipping_charges = '';
+                                        if ( count( $results_guest ) > 0 ) {
+                                            $user_email             = $results_guest[0]->email_id;
+                                            $user_first_name        = $results_guest[0]->billing_first_name;
+                                            $user_last_name         = $results_guest[0]->billing_last_name;
+                                            $user_billing_postcode  = $results_guest[0]->billing_zipcode;
+                                            $user_shipping_postcode = $results_guest[0]->shipping_zipcode;
+                                            $shipping_charges       = $results_guest[0]->shipping_charges;
+                                        }
                                         $user_billing_company   = $user_billing_address_1 = $user_billing_address_2 = $user_billing_city = $user_billing_state = $user_billing_country  = $user_billing_phone = "";
                                         $user_shipping_company  = $user_shipping_address_1 = $user_shipping_address_2 = $user_shipping_city = $user_shipping_state = $user_shipping_country = "";  
                                     } else if ( $results[0]->user_type == "GUEST" && $results[0]->user_id == "0" ) {
@@ -2748,14 +2797,22 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         $user_email             = get_user_meta( $results[0]->user_id, 'billing_email', true );                                        
                                         if( "" == $user_email ) {
                                             $user_data          = get_userdata( $results[0]->user_id );
-                                            $user_email         = $user_data->user_email;
+                                            if ( isset( $user_data->user_email ) ) {
+                                                $user_email         = $user_data->user_email;
+                                            } else {
+                                                $user_email = '';
+                                            }
                                         }
                                         
                                         $user_first_name        = "";
                                         $user_first_name_temp   = get_user_meta( $user_id, 'billing_first_name', true );
                                         if( isset( $user_first_name_temp ) && "" == $user_first_name_temp ) {
                                             $user_data          = get_userdata( $user_id );
-                                            $user_first_name    = $user_data->first_name;
+                                            if ( isset( $user_data->first_name ) ) {
+                                                $user_first_name    = $user_data->first_name;
+                                            } else {
+                                                $user_first_name = '';
+                                            }
                                         } else {
                                             $user_first_name    = $user_first_name_temp;
                                         }                                        
@@ -2763,7 +2820,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         $user_last_name_temp    = get_user_meta( $user_id, 'billing_last_name', true );
                                         if( isset( $user_last_name_temp ) && "" == $user_last_name_temp ) {
                                             $user_data          = get_userdata( $user_id );
-                                            $user_last_name     = $user_data->last_name;
+                                            if ( isset( $user_data->last_name ) ) {
+                                                $user_last_name = $user_data->last_name;
+                                            } else {
+                                                $user_last_name = '';
+                                            }
                                         } else {
                                             $user_last_name     = $user_last_name_temp;
                                         }                                        
@@ -2905,9 +2966,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                 }
                                                 $product_name = $product_name_with_variable;
                                             }
-
-
-
                                             // Item subtotal is calculated as product total including taxes
                                             if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
                                                 $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
@@ -3003,7 +3061,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             <form id="wcal-sent-emails" method="get" >
                                 <input type="hidden" name="page" value="woocommerce_ac_page" />
                                 <input type="hidden" name="action" value="report" />
-                                        <?php $wcal_product_report_list->display(); ?>
+                                <?php $wcal_product_report_list->display(); ?>
                             </form>
                         </div>                           
             <?php }
@@ -3017,32 +3075,36 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                    $mode = $_GET['mode'];
             }
             if ( $action == 'emailtemplates' && ( $mode == 'addnewtemplate' || $mode == 'edittemplate' ) ) {                
-                if ( $mode=='edittemplate' ) { 
-                    $edit_id = $_GET['id'];
-                    $query   = "SELECT wpet . *  FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet WHERE id = %d ";
-                    $results = $wpdb->get_results( $wpdb->prepare( $query, $edit_id ) );
+                if ( $mode=='edittemplate' ) {
+                    $results = array();
+                    if ( isset( $_GET['id'] ) ) { 
+                        $edit_id = $_GET['id'];
+
+                        $query   = "SELECT wpet . *  FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet WHERE id = %d ";
+                        $results = $wpdb->get_results( $wpdb->prepare( $query, $edit_id ) );
+                    }
                 }
                 $active_post = ( empty( $_POST['is_active'] ) ) ? '0' : '1';    
                 ?>
                 <div id="content">
                   <form method="post" action="admin.php?page=woocommerce_ac_page&action=emailtemplates" id="ac_settings">
                     <input type="hidden" name="mode" value="<?php echo $mode;?>" />
-                      <?php
-                      $id_by = "";
-                      if ( isset( $_GET['id'] ) ) {
+                        <?php
+                        $id_by = "";
+                        if ( isset( $_GET['id'] ) ) {
                             $id_by = $_GET['id'];
-                      }       
-                      ?>                              
-                      <input type="hidden" name="id" value="<?php echo $id_by ;?>" />
-                      <?php
-                      $button_mode     = "save";
-                      $display_message = "Add Email Template";
-                      if ( $mode == 'edittemplate' ) {
-                        $button_mode     = "update";
-                        $display_message = "Edit Email Template";
-                      }
-                      print'<input type="hidden" name="ac_settings_frm" value="'.$button_mode.'">';?>
-                      <div id="poststuff">
+                        }       
+                        ?>                              
+                        <input type="hidden" name="id" value="<?php echo $id_by ;?>" />
+                        <?php
+                        $button_mode     = "save";
+                        $display_message = "Add Email Template";
+                        if ( $mode == 'edittemplate' ) {
+                            $button_mode     = "update";
+                            $display_message = "Edit Email Template";
+                        }
+                        print'<input type="hidden" name="ac_settings_frm" value="'.$button_mode.'">';?>
+                        <div id="poststuff">
                             <div> <!-- <div class="postbox" > -->
                                 <h3 class="hndle"><?php _e( $display_message, 'woocommerce-ac' ); ?></h3>
                                 <div>
@@ -3054,7 +3116,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         <td>
                                             <?php
                                             $template_name = "";
-                                            if( $mode == 'edittemplate' ) {
+                                            if( $mode == 'edittemplate' && count( $results ) > 0 && isset( $results[0]->template_name ) ) {
                                                 $template_name = $results[0]->template_name;
                                             }                                           
                                             print'<input type="text" name="woocommerce_ac_template_name" id="woocommerce_ac_template_name" class="regular-text" value="'.$template_name.'">';?>
@@ -3069,7 +3131,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         <td>
                                             <?php
                                             $subject_edit = "";
-                                            if ( $mode == 'edittemplate' ) {
+                                            if ( $mode == 'edittemplate' && count( $results ) > 0 && isset( $results[0]->subject ) ) {
                                                 $subject_edit= stripslashes ( $results[0]->subject );
                                             }                                           
                                             print'<input type="text" name="woocommerce_ac_email_subject" id="woocommerce_ac_email_subject" class="regular-text" value="'.$subject_edit.'">';?>
@@ -3084,7 +3146,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         <td>            
                                             <?php
                                             $initial_data = "";
-                                            if ( $mode == 'edittemplate' ) {
+                                            if ( $mode == 'edittemplate' && count( $results ) > 0 && isset( $results[0]->body ) ) {
                                                 $initial_data = stripslashes( $results[0]->body );
                                             }
                                             
@@ -3117,7 +3179,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         <td>
                                             <?php
                                             $is_wc_template = "";                                        
-                                            if ( $mode == 'edittemplate' ) {
+                                            if ( $mode == 'edittemplate' && count( $results ) > 0 && isset( $results[0]->is_wc_template ) ) {
                                                 $use_wc_template = $results[0]->is_wc_template;
                                                 
                                                 if ( $use_wc_template == '1' ) {
@@ -3141,7 +3203,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         <?php
                                         
                                         $wcal_wc_email_header = "";  
-                                        if ( $mode == 'edittemplate'  ) {
+                                        if ( $mode == 'edittemplate' && count( $results ) > 0 && isset( $results[0]->wc_email_header ) ) {
                                             $wcal_wc_email_header = $results[0]->wc_email_header;
                                         }                                           
                                         if ( $wcal_wc_email_header == "" ) {
@@ -3160,7 +3222,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             <select name="email_frequency" id="email_frequency">
                                             <?php
                                                 $frequency_edit = "";
-                                                if( $mode == 'edittemplate' ) {
+                                                if( $mode == 'edittemplate' && count( $results ) > 0 && isset( $results[0]->frequency ) ) {
                                                     $frequency_edit = $results[0]->frequency;
                                                 }                                               
                                                 for ( $i = 1; $i < 4; $i++ ) {
@@ -3176,7 +3238,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             <select name="day_or_hour" id="day_or_hour">            
                                                 <?php
                                                 $days_or_hours_edit = "";
-                                                if ( $mode == 'edittemplate')
+                                                if ( $mode == 'edittemplate' && count( $results ) > 0 && isset( $results[0]->day_or_hour ) )
                                                 {
                                                     $days_or_hours_edit = $results[0]->day_or_hour;
                                                 }                                               
@@ -3306,19 +3368,18 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                         is_wc_template       : is_wc_template,
                                                         wc_template_header   : wc_template_header,
                                                         action               : 'wcal_preview_email_sent'
-                        };                                  
+                                                    };                                  
                         
                         // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-                        $.post( ajaxurl, data, function( response )
-                        {
+                        $.post( ajaxurl, data, function( response ) {
                             if ( 'not sent' == response ) {
-                                 $( "#preview_email_sent_msg" ).html( "Test email is not sent as the Email body is empty." );
-                                 $( "#preview_email_sent_msg" ).fadeIn();
-                                     setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 4000 );
+                                $( "#preview_email_sent_msg" ).html( "Test email is not sent as the Email body is empty." );
+                                $( "#preview_email_sent_msg" ).fadeIn();
+                                    setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 4000 );
                              } else {
-                                 $( "#preview_email_sent_msg" ).html( "<img src='<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/assets/images/check.jpg'>&nbsp;Email has been sent successfully." );
-                                     $( "#preview_email_sent_msg" ).fadeIn();
-                                     setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 3000 );
+                                $( "#preview_email_sent_msg" ).html( "<img src='<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/assets/images/check.jpg'>&nbsp;Email has been sent successfully." );
+                                    $( "#preview_email_sent_msg" ).fadeIn();
+                                    setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 3000 );
                              }
                             //alert('Got this from the server: ' + response);
                         });

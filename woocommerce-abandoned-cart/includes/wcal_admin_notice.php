@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Wcal_Admin_Notice {
 
-    public static function wcal_pro_notice (){
+    public static function wcal_pro_notice () {
         
         $wcal_activate_time = get_option ( 'wcal_activate_time' );
         $wcal_sixty_days    = strtotime( '+60 Days', $wcal_activate_time );
@@ -32,7 +32,7 @@ class Wcal_Admin_Notice {
                 printf( '<div class="%1$s" style="%2$s"><p>%3$s %4$s</p></div>', $class, $style, $message, $cancel_button );
             }
 
-            if ( get_user_meta( get_current_user_id(), 'wcal_pro_first_notice_ignore' ) &&  ! get_user_meta( get_current_user_id(), 'wcal_pro_second_notice_ignore' )) {
+            if ( get_user_meta( get_current_user_id(), 'wcal_pro_first_notice_ignore' ) &&  ! get_user_meta( get_current_user_id(), 'wcal_pro_second_notice_ignore' ) ) {
 
                 $wcal_first_ignore_time = get_user_meta( get_current_user_id(), 'wcal_pro_first_notice_ignore_time' );
                 $wcal_fifteen_days      = strtotime( '+15 Days', $wcal_first_ignore_time[0]);
@@ -77,7 +77,7 @@ class Wcal_Admin_Notice {
                  get_user_meta( get_current_user_id(), 'wcal_pro_second_notice_ignore' ) &&
                  ! get_user_meta( get_current_user_id(), 'wcal_pro_fourth_notice_ignore' ) &&
                  ( is_plugin_active( 'order-delivery-date/order_delivery_date.php' ) ||
-                 is_plugin_active( 'order-delivery-date-for-woocommerce/order_delivery_date.php' ) ) ){
+                 is_plugin_active( 'order-delivery-date-for-woocommerce/order_delivery_date.php' ) ) ) {
 
                 $wcal_third_ignore_time = get_user_meta( get_current_user_id(), 'wcal_pro_second_notice_ignore_time' );
                 $wcal_seven_days        = strtotime( '+15 Days', $wcal_third_ignore_time[0] );
@@ -109,7 +109,7 @@ class Wcal_Admin_Notice {
                 $wcal_seven_days        = strtotime( '+7 Days', $wcal_third_ignore_time[0] );
                 
 
-                if ( $wcal_current_time >= $wcal_seven_days ){
+                if ( $wcal_current_time >= $wcal_seven_days ) {
                     $class = 'updated notice-info point-notice';
                     $style = 'position:relative';
 
