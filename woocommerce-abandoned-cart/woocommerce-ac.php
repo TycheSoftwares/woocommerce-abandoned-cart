@@ -326,40 +326,40 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 
                 $abandoned_order_id = '';
                 if ( count( $get_ac_id_results ) > 0 ) {
-                	$abandoned_order_id = $get_ac_id_results[0]->abandoned_order_id;
-            	}
+                    $abandoned_order_id = $get_ac_id_results[0]->abandoned_order_id;
+                }
 
                 $wcal_account_password_check = 'no';
 
                 /*if user becomes the registered user */
                 if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
 
-                	$abandoned_cart_id_new_user = '';
-                	if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && '' != $_SESSION['abandoned_cart_id_lite'] ) { 
-                    	$abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
-                	}
+                    $abandoned_cart_id_new_user = '';
+                    if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && '' != $_SESSION['abandoned_cart_id_lite'] ) { 
+                        $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
+                    }
 
-                	$wcal_user_id_of_guest = '';
-                	if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
-                    	$wcal_user_id_of_guest      = $_SESSION['user_id'];
-                	}
+                    $wcal_user_id_of_guest = '';
+                    if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
+                        $wcal_user_id_of_guest      = $_SESSION['user_id'];
+                    }
 
                     /* delete the guest record. As it become the logged in user */
 
                     $get_ac_id_guest_results = array();
                     if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) { 
-               	 		$get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
-                    	$get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
-            		}
+                        $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
+                        $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
+                    }
                     
                     if ( count ($get_ac_id_guest_results) > 1 ) {
                         $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;
                         $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_order_id_of_guest ) );
                     }
                     if ( isset( $abandoned_cart_id_new_user ) && '' != $abandoned_cart_id_new_user ) {
-                    	/* it is the new registered users cart id */
-                    	$wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
-                	}
+                        /* it is the new registered users cart id */
+                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+                    }
 
                     $wcal_account_password_check = 'yes';
                 }
@@ -370,22 +370,22 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                      $_POST['createaccount'] != ''    && 
                      'no' == $wcal_account_password_check ) {
 
-                	$abandoned_cart_id_new_user = '';
-                	if ( isset ( $_SESSION['abandoned_cart_id_lite'] ) && '' != $_SESSION['abandoned_cart_id_lite'] ) {
-                    	$abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
-                	}
-                	$wcal_user_id_of_guest = '';
-                	if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
-                    	$wcal_user_id_of_guest      = $_SESSION['user_id'];
-                	}
+                    $abandoned_cart_id_new_user = '';
+                    if ( isset ( $_SESSION['abandoned_cart_id_lite'] ) && '' != $_SESSION['abandoned_cart_id_lite'] ) {
+                        $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
+                    }
+                    $wcal_user_id_of_guest = '';
+                    if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
+                        $wcal_user_id_of_guest      = $_SESSION['user_id'];
+                    }
 
 
                     /* delete the guest record. As it become the logged in user */
                     $get_ac_id_guest_results = array();
                     if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) {
-                    	$get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
-                    	$get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
-                	}
+                        $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
+                        $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
+                    }
                     if ( count ($get_ac_id_guest_results) > 1 ){
                         $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;
                         $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_order_id_of_guest ) );
@@ -393,8 +393,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
                     /* it is the new registered users cart id */
                     if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) {
-                    	$wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
-                	}
+                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+                    }
 
                     $wcap_create_account = 'yes';
                 }
@@ -403,21 +403,21 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     
                     $wcal_user_id_of_guest = '';
                     if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
-                    	$wcal_user_id_of_guest    = $_SESSION['user_id'];
-                    	$get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
-	                    $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
+                        $wcal_user_id_of_guest    = $_SESSION['user_id'];
+                        $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
+                        $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
 
-	                    if ( count ($get_ac_id_guest_results) > 1 ) {
-	                        $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;            
-	                        $wpdb->delete( $wcal_history_table_name, array( 'id' => $abandoned_order_id_of_guest ) );
-	                    }
-                	}
-				}
+                        if ( count ($get_ac_id_guest_results) > 1 ) {
+                            $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;            
+                            $wpdb->delete( $wcal_history_table_name, array( 'id' => $abandoned_order_id_of_guest ) );
+                        }
+                    }
+                }
 
                 add_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $email_sent_id );
                 if ( isset( $abandoned_order_id ) && '' != $abandoned_order_id ) {
-                	add_post_meta( $order_id , 'wcal_recover_order_placed', $abandoned_order_id );
-            	}
+                    add_post_meta( $order_id , 'wcal_recover_order_placed', $abandoned_order_id );
+                }
 
             }else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] != '' ) {
 
@@ -442,9 +442,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $current_time   = current_time( 'timestamp' );
                 $wcal_cart_abandoned_time = '';
                 if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && '' != $_SESSION['abandoned_cart_id_lite'] ) {
-                	$wcal_abandoned_cart_id   = $_SESSION['abandoned_cart_id_lite'];
+                    $wcal_abandoned_cart_id   = $_SESSION['abandoned_cart_id_lite'];
 
-                	$get_abandoned_cart_query   = "SELECT abandoned_cart_time FROM `" . $wcal_history_table_name . "` WHERE id = %d ";
+                    $get_abandoned_cart_query   = "SELECT abandoned_cart_time FROM `" . $wcal_history_table_name . "` WHERE id = %d ";
                     $get_abandoned_cart_results = $wpdb->get_results( $wpdb->prepare( $get_abandoned_cart_query, $wcal_abandoned_cart_id ) );
 
                     if ( count( $get_abandoned_cart_results ) > 0 ){
@@ -459,40 +459,40 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         /* cart is declared as adandoned */
                         add_post_meta( $order_id , 'wcal_recover_order_placed', $wcal_abandoned_cart_id );
                     }else {
-                    	/* cart order is placed within the cutoff time.
-                    	we will delete that abandoned cart */
+                        /* cart order is placed within the cutoff time.
+                        we will delete that abandoned cart */
                   
-                    	/* if user becomes the registred user */
+                        /* if user becomes the registred user */
 
-	                    if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
+                        if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
 
-	                        $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
-	                        $wcal_user_id_of_guest      = $_SESSION['user_id'];
+                            $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
+                            $wcal_user_id_of_guest      = $_SESSION['user_id'];
 
-	                        /* delete the guest record. As it become the logged in user */
+                            /* delete the guest record. As it become the logged in user */
 
-	                        $wpdb->delete( $wcal_history_table_name , array( 'user_id' => $wcal_user_id_of_guest ) );
-	                        $wpdb->delete( $wcal_guest_table_name ,   array( 'id' => $wcal_user_id_of_guest ) );
+                            $wpdb->delete( $wcal_history_table_name , array( 'user_id' => $wcal_user_id_of_guest ) );
+                            $wpdb->delete( $wcal_guest_table_name ,   array( 'id' => $wcal_user_id_of_guest ) );
 
-	                        /* it is the new registered users cart id */
-	                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
-	                    }else {
+                            /* it is the new registered users cart id */
+                            $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
+                        }else {
 
-	                        /**
-	                         * It will delete the order from history table if the order is placed before any email sent to
-	                         * the user.
-	                         */
-	                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $wcap_abandoned_cart_id ) );
+                            /**
+                             * It will delete the order from history table if the order is placed before any email sent to
+                             * the user.
+                             */
+                            $wpdb->delete( $wcal_history_table_name , array( 'id' => $wcap_abandoned_cart_id ) );
 
-	                        /* this user id is set for the guest uesrs. */
-	                        if ( isset( $_SESSION['user_id'] ) && $_SESSION['user_id'] != '' ) {
+                            /* this user id is set for the guest uesrs. */
+                            if ( isset( $_SESSION['user_id'] ) && $_SESSION['user_id'] != '' ) {
 
-	                            $wcal_user_id_of_guest = $_SESSION['user_id'];
-	                            $wpdb->delete( $wcal_guest_table_name,  array( 'id' => $wcal_user_id_of_guest ) );
-	                        }
-	                    } 
-	                }
-            	}
+                                $wcal_user_id_of_guest = $_SESSION['user_id'];
+                                $wpdb->delete( $wcal_guest_table_name,  array( 'id' => $wcal_user_id_of_guest ) );
+                            }
+                        } 
+                    }
+                }
             }
         }
         
@@ -2257,243 +2257,81 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         // Save the field values
                         $insert_template_successfuly = $update_template_successfuly = ''; 
                         if( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'save' ) {                                                                  
-                           $active_post    = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
-                           $is_wc_template = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';                                    
-                            if ( $active_post == 1 ) {                                                                                                  
-                                $is_active       = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
-                                $email_frequency = trim( $_POST['email_frequency'] );
-                                $day_or_hour     = trim( $_POST['day_or_hour'] );
-                                
-                                $check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
-                                                WHERE is_active = %s 
-                                                AND frequency   = %d 
-                                                AND day_or_hour = %s ";
-                                $check_results = $wpdb->get_results( $wpdb->prepare( $check_query, $is_active, $email_frequency, $day_or_hour ) ); 
-                                $default_value =  0 ;
-                                 
-                                if ( count( $check_results ) == 0 ) {                                   
-                                     $active_post                  = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
-                                     $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
-                                     $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
-                                     $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-                                     
-                                     $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
-                                     $query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
-                                               (subject, body, is_active, frequency, day_or_hour, template_name, is_wc_template, default_template, wc_email_header )      
-                                               VALUES ( %s, %s, %s, %d, %s, %s, %s, %d, %s )";        
-                                     
-                                    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query, 
-                                                                  $woocommerce_ac_email_subject,
-                                                                  $woocommerce_ac_email_body, 
-                                                                  $active_post, 
-                                                                  $email_frequency, 
-                                                                  $day_or_hour, 
-                                                                  $woocommerce_ac_template_name,
-                                                                  $is_wc_template,
-                                                                  $default_value,
-                                                                  $woocommerce_ac_email_header)       
-                                      );           
-                                } else {
-                                    $update_is_active = 0;
-                                    $query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
-                                                     SET
-                                                     is_active       = %s
-                                                     WHERE frequency = %d
-                                                     AND day_or_hour = %s ";
-                                    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update, $update_is_active, $email_frequency, $day_or_hour ) );
-                                    
-                                    $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
-                                    $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
-                                    $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-                                    $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
-                                    $query_insert_new = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
-                                                        (subject, body, is_active, frequency, day_or_hour, template_name, is_wc_template, default_template, wc_email_header )
-                                                        VALUES ( %s, %s, %s, %d, %s, %s, %s, %d, %s )";
-                                                
-                                    $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query_insert_new, 
-                                                                  $woocommerce_ac_email_subject,
-                                                                  $woocommerce_ac_email_body, 
-                                                                  $active_post, 
-                                                                  $email_frequency, 
-                                                                  $day_or_hour, 
-                                                                  $woocommerce_ac_template_name, 
-                                                                  $is_wc_template,
-                                                                  $default_value,
-                                                                  $woocommerce_ac_email_header )
-                                    );
-                                }
-                            } else {
-                                $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
-                                $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
-                                $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-                                $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
-                                $active_post                  = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
-                                $email_frequency              = trim( $_POST['email_frequency'] );
-                                $day_or_hour                  = trim( $_POST['day_or_hour'] );
-                                $is_wc_template               = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
-                                $default_value                =  0 ;
-                                
-                                $query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
-                                          (subject, body, is_active, frequency, day_or_hour, template_name, is_wc_template, default_template, wc_email_header )
-                                          VALUES ( %s, %s, %s, %d, %s, %s, %s, %d, %s )";
-                                
-                                $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query,
-                                                                $woocommerce_ac_email_subject,
-                                                                $woocommerce_ac_email_body,
-                                                                $active_post,
-                                                                $email_frequency,
-                                                                $day_or_hour,
-                                                                $woocommerce_ac_template_name,
-                                                                $is_wc_template,
-                                                                $default_value,
-                                                                $woocommerce_ac_email_header )        
-                                );                                 
-                            }
+                            $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
+                            $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
+                            $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
+                            $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
+                           
+                            $email_frequency              = trim( $_POST['email_frequency'] );
+                            $day_or_hour                  = trim( $_POST['day_or_hour'] );
+                            $is_wc_template               = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
+                            $default_value                =  0 ;
+                            
+                            $query = "INSERT INTO `".$wpdb->prefix."ac_email_templates_lite`
+                                      (subject, body, frequency, day_or_hour, template_name, is_wc_template, default_template, wc_email_header )
+                                      VALUES ( %s, %s, %d, %s, %s, %s, %d, %s )";
+                            
+                            $insert_template_successfuly = $wpdb->query( $wpdb->prepare( $query,
+                                                            $woocommerce_ac_email_subject,
+                                                            $woocommerce_ac_email_body,
+                                                            $email_frequency,
+                                                            $day_or_hour,
+                                                            $woocommerce_ac_template_name,
+                                                            $is_wc_template,
+                                                            $default_value,
+                                                            $woocommerce_ac_email_header )        
+                            );                                 
                         }
                         
                         if( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'update' ) { 
-                            $active         = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
-                            $is_wc_template = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
+                             
+                            $updated_is_active            = '0';
                             
-                            if ( $active == 1 ) {   
-                                $is_active       = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
-                                $email_frequency = trim( $_POST['email_frequency'] );
-                                $day_or_hour     = trim( $_POST['day_or_hour'] );
-                                $check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
-                                                WHERE is_active= %s 
-                                                AND frequency  = %d 
-                                                AND day_or_hour= %s ";
-                                $check_results = $wpdb->get_results( $wpdb->prepare( $check_query, $is_active, $email_frequency, $day_or_hour ) );
-                                $default_value = '';
-                                
-                                foreach( $check_results as $result_key => $result_value ) {
-                                    $default_value = ( empty( $result_value->default_template ) ) ? 0 : $result_value->default_template;    
-                                } 
-                                
-                                if( count( $check_results ) == 0 ) {
-                                    $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
-                                    $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );                                        
-                                    $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-                                    $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
-                                    $id                           = trim( $_POST['id'] );
-                                    
-                                    $query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
-                                                    SET
-                                                    subject       = %s,
-                                                    body          = %s,
-                                                    is_active     = %s, 
-                                                    frequency     = %d,
-                                                    day_or_hour   = %s,
-                                                    template_name = %s,
-                                                    is_wc_template = %s,
-                                                    default_template = %d,
-                                                    wc_email_header = %s
-                                                    WHERE id      = %d ";
-                                    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update,
-                                                                $woocommerce_ac_email_subject,
-                                                                $woocommerce_ac_email_body,
-                                                                $active,
-                                                                $email_frequency,
-                                                                $day_or_hour,
-                                                                $woocommerce_ac_template_name,
-                                                                $is_wc_template,
-                                                                $default_value,
-                                                                $woocommerce_ac_email_header,
-                                                                $id )
-                                    );
-                                } else {  
-                                    $updated_is_active = 0;
-                                    $query_update_new  = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
-                                                         SET is_active   = %s
-                                                         WHERE frequency = %d
-                                                         AND day_or_hour = %s ";
-                                    $update_template_successfuly = $wpdb->query( $wpdb->prepare( $query_update_new, $updated_is_active, $email_frequency, $day_or_hour ) );
-                                    $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
-                                    $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );                                        
-                                    $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-                                    $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
-                                    $id                           = trim( $_POST['id'] );
-                                    
-                                    $query_update_latest = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
-                                                    SET
-                                                    subject       = %s,
-                                                    body          = %s,
-                                                    is_active     = %s, 
-                                                    frequency     = %d,
-                                                    day_or_hour   = %s,
-                                                    template_name = %s,
-                                                    is_wc_template = %s,
-                                                    default_template = %d,
-                                                    wc_email_header = %s
-                                                    WHERE id      = %d ";
-                                    $update_template_successfuly = $wpdb->query($wpdb->prepare( $query_update_latest,
-                                                                $woocommerce_ac_email_subject,
-                                                                $woocommerce_ac_email_body,
-                                                                $active,
-                                                                $email_frequency,
-                                                                $day_or_hour,
-                                                                $woocommerce_ac_template_name,
-                                                                $is_wc_template,
-                                                                $default_value,
-                                                                $woocommerce_ac_email_header,
-                                                                $id )
-                                    );
+                            $email_frequency              = trim( $_POST['email_frequency'] );
+                            $day_or_hour                  = trim( $_POST['day_or_hour'] );
+                            $is_wc_template               = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
+                            
+                            $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
+                            $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
+                            $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
+                            $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
+                            $id                           = trim( $_POST['id'] );
+                            
+                            $check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
+                                            WHERE id = %d ";
+                            $check_results = $wpdb->get_results( $wpdb->prepare( $check_query, $id ) );
+                            $default_value = '';
+
+                            if ( count( $check_results ) > 0 ) { 
+                                if ( isset( $check_results[0]->default_template ) && $check_results[0]->default_template == '1' ) {
+                                    $default_value = '1';
                                 }
-                            } else { 
-                                $updated_is_active            = '0';
-                                $is_active                    = ( empty( $_POST['is_active'] ) ) ? '0' : '1';
-                                $email_frequency              = trim( $_POST['email_frequency'] );
-                                $day_or_hour                  = trim( $_POST['day_or_hour'] );
-                                $is_wc_template               = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
-                                
-                                $query_update_new = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
-                                                     SET is_active   = %s
-                                                     WHERE frequency = %d
-                                                     AND day_or_hour = %s ";
-                                $wpdb->query( $wpdb->prepare( $query_update_new, $updated_is_active, $email_frequency, $day_or_hour ) );
-                                
-                                $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
-                                $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
-                                $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-                                $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
-                                $id                           = trim( $_POST['id'] );
-                                $check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
-                                                WHERE is_active= %s
-                                                AND frequency  = %d
-                                                AND day_or_hour= %s ";
-                                $check_results = $wpdb->get_results( $wpdb->prepare( $check_query, $is_active, $email_frequency, $day_or_hour ) );
-                                $default_value = '';
-                                
-                                foreach( $check_results as $result_key => $result_value ) {
-                                    $default_value = ( empty( $result_value->default_template ) ) ? 0 : $result_value->default_template;     
-                                }
-                                    
-                                $query_update_latest = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
-                                                        SET
-                                                        subject       = %s,
-                                                        body          = %s,
-                                                        is_active     = %s,
-                                                        frequency     = %d,
-                                                        day_or_hour   = %s,
-                                                        template_name = %s,
-                                                        is_wc_template = %s,
-                                                        default_template = %d,
-                                                        wc_email_header = %s
-                                                        WHERE id      = %d ";
-                                    
-                                $update_template_successfuly = $wpdb->query( $wpdb->prepare( $query_update_latest,
-                                                                $woocommerce_ac_email_subject,
-                                                                $woocommerce_ac_email_body,
-                                                                $is_active,
-                                                                $email_frequency,
-                                                                $day_or_hour,
-                                                                $woocommerce_ac_template_name,
-                                                                $is_wc_template,
-                                                                $default_value,
-                                                                $woocommerce_ac_email_header,
-                                                                $id )
-                                );   
                             }
+                            
+                            $query_update_latest = "UPDATE `".$wpdb->prefix."ac_email_templates_lite`
+                                                    SET
+                                                    subject       = %s,
+                                                    body          = %s,
+                                                    frequency     = %d,
+                                                    day_or_hour   = %s,
+                                                    template_name = %s,
+                                                    is_wc_template = %s,
+                                                    default_template = %d,
+                                                    wc_email_header = %s
+                                                    WHERE id      = %d ";
+                                
+                            $update_template_successfuly = $wpdb->query( $wpdb->prepare( $query_update_latest,
+                                                            $woocommerce_ac_email_subject,
+                                                            $woocommerce_ac_email_body,
+                                                            $email_frequency,
+                                                            $day_or_hour,
+                                                            $woocommerce_ac_template_name,
+                                                            $is_wc_template,
+                                                            $default_value,
+                                                            $woocommerce_ac_email_header,
+                                                            $id )
+                            );   
+                            
                         }
                         
                         if ( $action == 'emailtemplates' && $mode == 'removetemplate' ) {
@@ -3410,9 +3248,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $cart_url              = wc_get_page_permalink( 'cart' );
                 $body_email_preview    = str_replace( '{{cart.link}}', $cart_url, $body_email_preview );
                 $body_email_preview    = str_replace( '{{cart.unsubscribe}}', '<a href=#>unsubscribe</a>', $body_email_preview );               
-                $wcal_price 		   = wc_price( '100' );
-				$wcal_total_price 	   = wc_price( '200' );
-				if ( class_exists( 'WP_Better_Emails' ) ) {
+                $wcal_price            = wc_price( '100' );
+                $wcal_total_price      = wc_price( '200' );
+                if ( class_exists( 'WP_Better_Emails' ) ) {
                     $headers           = "From: " . $from_email_name . " <" . $from_email_preview . ">" . "\r\n";
                     $headers          .= "Content-Type: text/plain" . "\r\n";
                     $headers          .= "Reply-To:  " . $reply_name_preview . " " . "\r\n";
