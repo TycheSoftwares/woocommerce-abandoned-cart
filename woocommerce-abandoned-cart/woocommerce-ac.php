@@ -2787,7 +2787,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                     }
                                                     $wcap_get_formatted_variation  =  wc_get_formatted_variation( $variation, true );
 
-                                                    $add_product_name = $prod_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
+                                                    $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
                                                             
                                                     $pro_name_variation = (array) $add_product_name;
                                                 }else{
