@@ -1,0 +1,47 @@
+ /* To display the toggle button on the template page*/
+
+  .wcal-switch {
+    cursor: pointer;
+    text-indent: -999em;
+    display: block;
+    width: 38px;
+    height: 22px;
+    border-radius: 30px;
+    border: none;
+    position: relative;
+    box-sizing: border-box;
+    -webkit-transition: all .3s ease;
+            transition: all .3s ease;
+    box-shadow: inset 0 0 0 0 transparent; 
+  }
+  .wcal-switch:focus {
+    outline: none; 
+  }
+  .wcal-switch:before {
+    border-radius: 50%;
+    background: #ffffff;
+    content: '';
+    position: absolute;
+    display: block;
+    width: 18px;
+    height: 18px;
+    top: 2px;
+    left: 2px;
+    -webkit-transition: all .15s ease;
+            transition: all .15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); 
+  }
+  .wcal-switch[wcal-template-switch="on"] {
+    box-shadow: inset 0 0 0 11px #008000; 
+  }
+  .wcal-switch[wcal-template-switch="on"]:before {
+      -webkit-transform: translateX(16px);
+              transform: translateX(16px); 
+  }
+  .wcal-switch[wcal-template-switch="off"] {
+    background: #ccc; 
+  }
+  .wcal-switch.wcap-loading {
+    cursor: default;
+    opacity: 0.5; 
+  }

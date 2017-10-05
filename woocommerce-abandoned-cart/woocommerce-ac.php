@@ -222,7 +222,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             if ( is_admin() ) {
                 // Load "admin-only" scripts here               
                 add_action ( 'admin_head',                              array( &$this, 'wcal_action_send_preview' ) );
-                add_action ( 'wp_ajax_wcal_preview_email_sent',         array( &$this, 'wcal_preview_email_sent' ) );   
+                add_action ( 'wp_ajax_wcal_preview_email_sent',         array( &$this, 'wcal_preview_email_sent' ) );
+                add_action ( 'wp_ajax_wcal_toggle_template_status',     array( &$this, 'wcal_toggle_template_status' ) );   
             }
                 
             // Send Email on order recovery
@@ -232,13 +233,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             add_action( 'woocommerce_order_status_failed_to_processing_notification',  array( &$this, 'wcal_email_admin_recovery' ) );
             add_action( 'woocommerce_order_status_failed_to_completed_notification',   array( &$this, 'wcal_email_admin_recovery' ) );
             
-            add_action('woocommerce_order_status_changed',                             array( &$this,  'wcal_email_admin_recovery_for_paypal' ), 10, 3);
+            add_action('woocommerce_order_status_changed',                             array( &$this, 'wcal_email_admin_recovery_for_paypal' ), 10, 3);
             
             add_action( 'admin_init',                                                  array( $this,   'wcal_preview_emails' ) );
             add_action( 'init',                                                        array( $this,   'wcal_app_output_buffer') );
             add_action( 'admin_init',                                                  array( &$this,  'wcal_check_pro_activated' ) );          
             add_action( 'woocommerce_checkout_order_processed',                        array( &$this,  'wcal_order_placed' ), 10 , 1 );         
-            add_filter( 'woocommerce_payment_complete_order_status',                   array( &$this , 'wcal_order_complete_action' ), 10 , 2 );        
+            add_filter( 'woocommerce_payment_complete_order_status',                   array( &$this,  'wcal_order_complete_action' ), 10 , 2 );        
             add_filter( 'admin_footer_text',                                           array( $this,   'wcal_admin_footer_text' ), 1 );
 
             add_action( 'admin_notices',                                               array( 'Wcal_Admin_Notice',   'wcal_pro_notice' ) );
@@ -2003,6 +2004,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $js_src = includes_url('js/tinymce/') . 'tinymce.min.js'; 
                 wp_enqueue_script( 'tinyMce_ac',$js_src );
                 wp_enqueue_script( 'ac_email_variables', plugins_url() . '/woocommerce-abandoned-cart/assets/js/abandoncart_plugin_button.js' ); 
+                wp_enqueue_script( 'wcal_activate_template', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_template_activate.js' ); 
             }
         }
     
@@ -2039,6 +2041,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 wp_enqueue_style( 'woocommerce_admin_styles', plugins_url() . '/woocommerce/assets/css/admin.css' );
                 wp_enqueue_style( 'jquery-ui-style', '//ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
                 wp_enqueue_style( 'abandoned-orders-list', plugins_url() . '/woocommerce-abandoned-cart/assets/css/view.abandoned.orders.style.css' );
+                wp_enqueue_style( 'wcal_email_template', plugins_url() . '/woocommerce-abandoned-cart/assets/css/wcal_template_activate.css' );
             
             }
         }       
@@ -3225,6 +3228,46 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 });
             </script>
                 <?php
+        }
+        public static function wcal_toggle_template_status () {
+            global $wpdb;
+            $template_id             = $_POST['wcal_template_id'];
+            $current_template_status = $_POST['current_state'];
+
+            if( "on" == $current_template_status ) {
+                $query_update                 = "SELECT * FROM `" . $wpdb->prefix . "ac_email_templates_lite` WHERE id ='" . $template_id . "'";
+                $get_selected_template_result = $wpdb->get_results( $query_update );
+                $email_frequncy                = $get_selected_template_result[0]->frequency;
+                $email_day_or_hour             = $get_selected_template_result[0]->day_or_hour;
+                $query_update = "UPDATE `" . $wpdb->prefix . "ac_email_templates_lite` SET is_active='0' WHERE frequency='" . $email_frequncy . "' AND day_or_hour='" . $email_day_or_hour . "' ";
+                $wcal_updated = $wpdb->query( $query_update );
+
+                if ( 1 == $wcal_updated ){
+                    $query_update_get_id = "SELECT id FROM  `" . $wpdb->prefix . "ac_email_templates_lite` WHERE id != $template_id AND frequency='" . $email_frequncy . "' AND day_or_hour='" . $email_day_or_hour . "' ";
+                    $wcal_updated_get_id = $wpdb->get_results( $query_update_get_id );
+                    $wcal_all_ids = '';
+                    foreach ($wcal_updated_get_id as $wcal_updated_get_id_key => $wcal_updated_get_id_value ) {
+                        # code...
+                        if ( '' == $wcal_all_ids ){
+                            $wcal_all_ids =  $wcal_updated_get_id_value->id;
+                        }else{
+                            $wcal_all_ids = $wcal_all_ids . ',' .$wcal_updated_get_id_value->id;
+                        }
+                    }
+                    echo 'wcal-template-updated:'. $wcal_all_ids ;
+                }
+
+                $active = "1";
+            } else {
+                $active = "0";
+            }
+            $query_update = "UPDATE `" . $wpdb->prefix . "ac_email_templates_lite`
+                    SET
+                    is_active = '" . $active . "'
+                    WHERE id  = '" . $template_id . "' ";
+            $wpdb->query( $query_update );
+            wp_die();
+
         }
         // Send Test Email      
         function wcal_preview_email_sent() {

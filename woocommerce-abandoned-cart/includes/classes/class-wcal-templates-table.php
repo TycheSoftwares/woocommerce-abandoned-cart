@@ -235,12 +235,16 @@ class WCAL_Templates_Table extends WP_List_Table {
 			       $is_active = $wcal_abandoned_orders->is_active;			       
 			       $active    = ''; 
 			       if ( $is_active == '1' ) {
-			           $active = "Deactivate";
+			           $active = "on";
 			       } else {
-			           $active = "Activate";
+			           $active = "off";
 			       }
 			       $active_text   = __( $active, 'woocommerce-ac' ); 
-			       $value   = '<a href="#" onclick="wcal_activate_email_template('. $id.', '.$is_active.' )"> '.$active_text.'</a>'; 			      
+			       //$value   = '<a href="#" onclick="wcal_activate_email_template('. $id.', '.$is_active.' )"> '.$active_text.'</a>'; 				
+			       $value =  '<button type="button" class="wcal-switch wcal-toggle-template-status" '
+					. 'wcal-template-id="'. $id .'" '
+					. 'wcal-template-switch="'. ( $active ) . '">'
+					. $active_text . '</button>';      
 			    }
 				break;			
 		    default:			    
