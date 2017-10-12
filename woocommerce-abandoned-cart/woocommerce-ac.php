@@ -1633,27 +1633,29 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             $c          = array();
             $cart_contents_total = $cart_contents_weight = $cart_contents_count = $cart_contents_tax = $total = $subtotal = $subtotal_ex_tax = $tax_total = 0;
         
-            foreach ( $saved_cart as $key => $value ) {
-                foreach ( $value as $a => $b ) {  
-                    $c['product_id']        = $b['product_id'];
-                    $c['variation_id']      = $b['variation_id'];
-                    $c['variation']         = $b['variation'];
-                    $c['quantity']          = $b['quantity'];
-                    $product_id             = $b['product_id'];
-                    $c['data']              = wc_get_product($product_id);
-                    $c['line_total']        = $b['line_total'];
-                    $c['line_tax']          = $cart_contents_tax;
-                    $c['line_subtotal']     = $b['line_subtotal'];
-                    $c['line_subtotal_tax'] = $cart_contents_tax;
-                    $value_new[ $a ]        = $c;
-                    $cart_contents_total    = $b['line_subtotal'] + $cart_contents_total;
-                    $cart_contents_count    = $cart_contents_count + $b['quantity'];
-                    $total                  = $total + $b['line_total'];
-                    $subtotal               = $subtotal + $b['line_subtotal'];
-                    $subtotal_ex_tax        = $subtotal_ex_tax + $b['line_subtotal'];
+            if ( count( $saved_cart ) > 0 ) {
+                foreach ( $saved_cart as $key => $value ) {
+                    foreach ( $value as $a => $b ) {  
+                        $c['product_id']        = $b['product_id'];
+                        $c['variation_id']      = $b['variation_id'];
+                        $c['variation']         = $b['variation'];
+                        $c['quantity']          = $b['quantity'];
+                        $product_id             = $b['product_id'];
+                        $c['data']              = wc_get_product($product_id);
+                        $c['line_total']        = $b['line_total'];
+                        $c['line_tax']          = $cart_contents_tax;
+                        $c['line_subtotal']     = $b['line_subtotal'];
+                        $c['line_subtotal_tax'] = $cart_contents_tax;
+                        $value_new[ $a ]        = $c;
+                        $cart_contents_total    = $b['line_subtotal'] + $cart_contents_total;
+                        $cart_contents_count    = $cart_contents_count + $b['quantity'];
+                        $total                  = $total + $b['line_total'];
+                        $subtotal               = $subtotal + $b['line_subtotal'];
+                        $subtotal_ex_tax        = $subtotal_ex_tax + $b['line_subtotal'];
+                    }
+                    $saved_cart_data[ $key ]    = $value_new;
+                    $woocommerce_cart_hash      = $a;
                 }
-                $saved_cart_data[ $key ]    = $value_new;
-                $woocommerce_cart_hash      = $a;
             }
         
             if( $saved_cart ) {
