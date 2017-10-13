@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares
 Tags: abandon cart, cart recovery, increase woocommerce conversion rate , recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 4.8.1
+Tested up to: 4.8.2
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -108,6 +108,8 @@ Abandoned Cart Plugin relies on a function called WP-Cron, and this function onl
 
 3. **[Prevent Customers To Cancel WooCommerce Orders](https://wordpress.org/plugins/woo-prevent-cancel-order/ "Prevent Customers To Cancel WooCommerce Orders")**
 
+4. **[WooCommerce Print Invoice & Delivery Note](https://wordpress.org/plugins/woocommerce-delivery-notes/ "WooCommerce Print Invoice & Delivery Note")**
+
 
 == Installation ==
 
@@ -141,7 +143,7 @@ Method 3:
 
 = How is the email address of the customers captured? =
 
-Our plugin captures visitor emails in real-time as they're typing it in to the email address field on the checkout page, so you don't need to worry about them changing their mind at the last second.
+Our plugin captures visitor emails in real-time as they’re typing it in to the email address field on the checkout page, so you don’t need to worry about them changing their mind at the last second.
 
 When logged-in user add the product to the cart we capture the email address from the user's profile.
 
@@ -186,6 +188,19 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 4.4 (13.10-2017) =
+
+* This version has 3 bugs fixes along with 1 Enhancement.
+
+* Bug Fixed - If the guest user's id is wrong then the abandoned cart email will not be sent to the customers.
+
+* Bug Fixed - If the variable products have a special character was not displaying the correct attributes. This has been fixed.
+
+* Bug Fixed - Some error notices of debug log file are fixed.
+
+* Enhancement - We have removed the "Active" field from the add/edit email template page. Now, admin can activate the email templates using toggle button from the Email Templates page.
+
+
 = 4.3 (29.08.2017) =
 
 * This version has 1 bug fix along with 3 Enhancements.
@@ -202,16 +217,13 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 * This version has 1 bug fix.
 
-* Bug Fixed - When WooCommerce is deactivated and “Allow” button is clicked from the user tracking data notice. It was redirecting to a blank page.
-
-Now, if WooCommerce is deactivated then Abandoned cart lite plugin will be automatically deactivated & 
-display the notice.
+* Bug Fixed - When WooCommerce is deactivated and "Allow" button is clicked from the user tracking data notice. It was redirecting to a blank page. Now, if WooCommerce is deactivated then Abandoned cart lite plugin will be automatically deactivated & display the notice.
 
 = 4.1 (11.07.2017) =
 
 * This version has 1 bug fix.
 
-* Bug Fixed - Some warnings were displayed in the Debug log file. This has been fixed.
+* Bug Fixed - Some warning was displayed in the Debug log file. This has been fixed.
 
 = 4.0 (04.07.2017) =
 
@@ -480,6 +492,18 @@ For existing users, this setting will remain unchecked. For new users of the plu
 
 == Upgrade Notice ==
 
+= 4.4 (13.10-2017) =
+
+* This version has 3 bugs fixes along with 1 Enhancement.
+
+* Bug Fixed - If the guest user's id is wrong then the abandoned cart email will not be sent to the customers.
+
+* Bug Fixed - If the variable products have a special character was not displaying the correct attributes. This has been fixed.
+
+* Bug Fixed - Some error notices of debug log file are fixed.
+
+* Enhancement - We have removed the "Active" field from the add/edit email template page. Now, admin can activate the email templates using toggle button from the Email Templates page.
+
 = 4.3 (29.08.2017) =
 
 * This version has 1 bug fix along with 3 Enhancements.
@@ -497,16 +521,13 @@ For existing users, this setting will remain unchecked. For new users of the plu
 
 * This version has 1 bug fix.
 
-* Bug Fixed - When WooCommerce is deactivated and “Allow” button is clicked from the user tracking data notice. It was redirecting to a blank page.
-
-Now, if WooCommerce is deactivated then Abandoned cart lite plugin will be automatically deactivated & 
-display the notice.
+* Bug Fixed - When WooCommerce is deactivated and "Allow" button is clicked from the user tracking data notice. It was redirecting to a blank page. Now, if WooCommerce is deactivated then Abandoned cart lite plugin will be automatically deactivated & display the notice.
 
 = 4.1 (11.07.2017) =
 
 * This version has 1 bug fix.
 
-* Bug Fixed - Some warnings were displayed in the Debug log file. This has been fixed.
+* Bug Fixed - Some warning was displayed in the Debug log file. This has been fixed.
 
 = 4.0 (04.07.2017) =
 
