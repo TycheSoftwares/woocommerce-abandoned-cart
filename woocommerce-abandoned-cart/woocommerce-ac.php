@@ -1212,7 +1212,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         $order          = new WC_Order( $order_id );
                         $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce-ac' );
                         $blogname       = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-                        $email_subject  = "New Customer Order - Recovered";
+                        $email_subject  = __( 'New Customer Order - Recovered', 'woocommerce-ac' );
                         $user_email     = get_option( 'admin_email' );
                         $headers[]      = "From: Admin <".$user_email.">";
                         $headers[]      = "Content-Type: text/html";
@@ -1259,7 +1259,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 if ( 'checkout' == $created_via && 'yes' != $recovered_email_sent && ( $check_abandoned_cart == md5( "yes" ) || $check_abandoned_cart == md5( "no" ) ) ) { // indicates cart is abandoned                           
                     $email_heading = __( 'New Customer Order - Recovered', 'woocommerce-ac' );          
                     $blogname      = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-                    $email_subject = "New Customer Order - Recovered";
+                    $email_subject = __( 'New Customer Order - Recovered', 'woocommerce-ac' );
                     $user_email    = get_option( 'admin_email' );
                     $headers[]     = "From: Admin <".$user_email.">";
                     $headers[]     = "Content-Type: text/html";
