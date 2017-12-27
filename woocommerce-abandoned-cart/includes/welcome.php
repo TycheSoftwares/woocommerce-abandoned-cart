@@ -1,9 +1,3 @@
-<style>
-	.feature-section .feature-section-item {
-		float:left;
-		width:48%;
-	}
-</style>
 <?php 
 
 /**
@@ -38,13 +32,12 @@ class Wcal_Welcome {
 	 */
 	public function __construct() {
 
-		if( !get_option( 'wcal_welcome_page_shown' ) ) {
-			add_action( 'admin_menu', array( $this, 'admin_menus' ) );
-			add_action( 'admin_head', array( $this, 'admin_head' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menus' ) );
+		add_action( 'admin_head', array( $this, 'admin_head' ) );
 
-			if ( isset( $_GET ) && $_GET[ 'page' ] != 'wcal-about' ) {
-				add_action( 'admin_init', array( $this, 'welcome' ) );
-			}
+		if ( !isset( $_GET[ 'page' ] ) || 
+			( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] != 'wcal-about' ) ) {
+			add_action( 'admin_init', array( $this, 'welcome' ) );
 		}
 	}
 
@@ -93,6 +86,12 @@ class Wcal_Welcome {
 		// Badge for welcome page
 		$badge_url = WCAL_PLUGIN_URL . 'assets/images/icon-256x256.png';		
 		?>
+		<style>
+			.feature-section .feature-section-item {
+				float:left;
+				width:48%;
+			}
+		</style>
         <div class="wrap about-wrap">
 
 			<?php $this->get_welcome_header() ?>
@@ -320,8 +319,10 @@ class Wcal_Welcome {
 			return;
 		}
 
-		wp_safe_redirect( admin_url( 'index.php?page=wcal-about' ) );
-		exit;
+		if( !get_option( 'wcal_welcome_page_shown' ) ) {
+			wp_safe_redirect( admin_url( 'index.php?page=wcal-about' ) );
+			exit;
+		}
 	}
 
 }
