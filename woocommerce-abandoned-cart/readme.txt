@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares
 Tags: abandon cart, cart recovery, increase woocommerce conversion rate , recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 4.8.2
+Tested up to: 4.9.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,12 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 4.5 (27.12-2017) =
+
+* This version has 1 bug fix.
+
+* Bug Fixed - Made some performance optimizations so the plugin occupies less CPU resources. We will continue working on this so the resource usage stays low.
+
 = 4.4 (13.10-2017) =
 
 * This version has 3 bugs fixes along with 1 Enhancement.
@@ -198,8 +204,7 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 * Bug Fixed - Some error notices of debug log file are fixed.
 
-* Enhancement - We have removed the "Active" field from the add/edit email template page. Now, admin can activate the email templates using toggle button from the Email Templates page.
-
+* Enhancement - Now, admin can activate the email templates using toggle button from the Email Templates page.
 
 = 4.3 (29.08.2017) =
 
@@ -492,6 +497,12 @@ For existing users, this setting will remain unchecked. For new users of the plu
 
 == Upgrade Notice ==
 
+= 4.5 (27.12-2017) =
+
+* This version has 1 bug fix.
+
+* Bug Fixed - Made some performance optimizations so the plugin occupies less CPU resources. We will continue working on this so the resource usage stays low.
+
 = 4.4 (13.10-2017) =
 
 * This version has 3 bugs fixes along with 1 Enhancement.
@@ -502,7 +513,7 @@ For existing users, this setting will remain unchecked. For new users of the plu
 
 * Bug Fixed - Some error notices of debug log file are fixed.
 
-* Enhancement - We have removed the "Active" field from the add/edit email template page. Now, admin can activate the email templates using toggle button from the Email Templates page.
+* Enhancement - Now, admin can activate the email templates using toggle button from the Email Templates page.
 
 = 4.3 (29.08.2017) =
 
