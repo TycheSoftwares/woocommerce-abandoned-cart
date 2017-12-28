@@ -188,7 +188,7 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
-= 4.5 (27.12-2017) =
+= 4.5 (28.12-2017) =
 
 * This version has 1 bug fix.
 
@@ -497,7 +497,7 @@ For existing users, this setting will remain unchecked. For new users of the plu
 
 == Upgrade Notice ==
 
-= 4.5 (27.12-2017) =
+= 4.5 (28.12-2017) =
 
 * This version has 1 bug fix.
 
