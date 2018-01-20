@@ -41,7 +41,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		parent::__construct( array(
 		        'singular' => __( 'abandoned_order_id', 'woocommerce-ac' ), //singular name of the listed records
 		        'plural'   => __( 'abandoned_order_ids', 'woocommerce-ac' ), //plural name of the listed records
-				'ajax'      => false             			// Does this table support ajax?
+				'ajax'     => false             			// Does this table support ajax?
 		) );
 		$this->process_bulk_action();
         $this->base_url = admin_url( 'admin.php?page=woocommerce_ac_page' );
@@ -117,16 +117,15 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	 * This function used for individual delete of row, It is for hover effect delete.
 	 */
 	public function column_email( $abandoned_row_info ) {	
-	    $row_actions = array();
-	    $value = '';
-	    $abandoned_order_id = 0;
-	    
+	    $row_actions 			= array();
+	    $value 					= '';
+	    $abandoned_order_id 	= 0;
 	    if( isset( $abandoned_row_info->email ) ) {	    
-	    $abandoned_order_id    = $abandoned_row_info->id ; 
-	    $row_actions['edit']   = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'orderdetails', 'id' => $abandoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'View order', 'woocommerce-ac' ) . '</a>';
-	    $row_actions['delete'] = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'wcal_delete', 'abandoned_order_id' => $abandoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'Delete', 'woocommerce-ac' ) . '</a>';	
-	    $email                 = $abandoned_row_info->email;
-	    $value                 = $email . $this->row_actions( $row_actions );	    
+		    $abandoned_order_id    = $abandoned_row_info->id ; 
+		    $row_actions['edit']   = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'orderdetails', 'id' => $abandoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'View order', 'woocommerce-ac' ) . '</a>';
+		    $row_actions['delete'] = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'wcal_delete', 'abandoned_order_id' => $abandoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'Delete', 'woocommerce-ac' ) . '</a>';	
+		    $email                 = $abandoned_row_info->email;
+		    $value                 = $email . $this->row_actions( $row_actions );	    
 	    }	
 	    return apply_filters( 'wcal_abandoned_orders_single_column', $value, $abandoned_order_id, 'email' );
 	}
@@ -138,11 +137,9 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		$results                 = array();    	 
 		$blank_cart_info         = '{"cart":[]}';
 		$blank_cart_info_guest   = '[]';
-
-		$get_section_of_page   = WCAL_Abandoned_Orders_Table::wcal_get_current_section ();
-		
-		$results 			   = array();
-		
+		$blank_cart         	 = '""';
+		$get_section_of_page     = WCAL_Abandoned_Orders_Table::wcal_get_current_section();
+		$results 			     = array();	
 		switch ( $get_section_of_page ) {
 		    case 'wcal_all_abandoned':
 		        # code...
@@ -150,14 +147,14 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		            // get main site's table prefix
 		            $main_prefix = $wpdb->get_blog_prefix(1);
 		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$main_prefix."users AS wpu ON wpac.user_id = wpu.id
-		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' ORDER BY wpac.abandoned_cart_time DESC";
-		            $results = $wpdb->get_results($query);
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart%' ORDER BY wpac.abandoned_cart_time DESC";
+		            $results = $wpdb->get_results( $query );
 		        } else {
 		            // non-multisite - regular table name
 		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
-		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' ORDER BY wpac.abandoned_cart_time DESC ";
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart%' ORDER BY wpac.abandoned_cart_time DESC ";
 		
-		            $results = $wpdb->get_results($query);
+		            $results = $wpdb->get_results( $query );
 		        }
 		        break;
 		         
@@ -166,16 +163,14 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		        if( is_multisite() ) {
 		            // get main site's table prefix
 		            $main_prefix = $wpdb->get_blog_prefix(1);
-		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$main_prefix."users AS wpu ON wpac.user_id = wpu.id
-		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' ORDER BY wpac.abandoned_cart_time DESC ";
-		            $results = $wpdb->get_results($query);
+		            $query 	 = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$main_prefix."users AS wpu ON wpac.user_id = wpu.id
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart%' ORDER BY wpac.abandoned_cart_time DESC ";
+		            $results = $wpdb->get_results( $query );
 		        } else {
 		            // non-multisite - regular table name
-		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
-		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.user_type = 'REGISTERED' ORDER BY wpac.abandoned_cart_time DESC ";
-		
-		
-		            $results = $wpdb->get_results($query);
+		            $query 	 = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND wpac.user_type = 'REGISTERED' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart%' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart%' ORDER BY wpac.abandoned_cart_time DESC ";
+		            $results = $wpdb->get_results( $query );
 		        }
 		        break;
 		
@@ -186,12 +181,12 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		            $main_prefix = $wpdb->get_blog_prefix(1);
 		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$main_prefix."users AS wpu ON wpac.user_id = wpu.id
 		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' wpac.user_id >= 63000000  ORDER BY wpac.abandoned_cart_time DESC ";
-		            $results = $wpdb->get_results($query);
+		            $results = $wpdb->get_results( $query );
 		        } else {
 		            // non-multisite - regular table name
 		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
 		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.user_id >= 63000000 ORDER BY wpac.abandoned_cart_time DESC ";
-		            $results = $wpdb->get_results($query);
+		            $results = $wpdb->get_results( $query );
 		        }
 		        break;
 		
@@ -202,12 +197,12 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		            $main_prefix = $wpdb->get_blog_prefix(1);
 		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$main_prefix."users AS wpu ON wpac.user_id = wpu.id
 		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' wpac.user_id >= 63000000  ORDER BY wpac.abandoned_cart_time DESC ";
-		            $results = $wpdb->get_results($query);
+		            $results = $wpdb->get_results( $query );
 		        } else {
 		            // non-multisite - regular table name
 		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
 		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.user_id = 0 ORDER BY wpac.abandoned_cart_time DESC ";
-		            $results = $wpdb->get_results($query);
+		            $results = $wpdb->get_results( $query );
 		        }
 		        break;
 		
