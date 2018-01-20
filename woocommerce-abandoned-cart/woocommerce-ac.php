@@ -254,8 +254,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             add_action('woocommerce_order_status_changed',                             array( &$this, 'wcal_email_admin_recovery_for_paypal' ), 10, 3);
             
             add_action( 'admin_init',                                                  array( $this,   'wcal_preview_emails' ) );
-            add_action( 'init',                                                        array( $this,   'wcal_app_output_buffer') );
-            add_action( 'admin_init',                                                  array( &$this,  'wcal_check_pro_activated' ) );          
+            add_action( 'init',                                                        array( $this,   'wcal_app_output_buffer') );         
             add_action( 'woocommerce_checkout_order_processed',                        array( &$this,  'wcal_order_placed' ), 10 , 1 );         
             add_filter( 'woocommerce_payment_complete_order_status',                   array( &$this,  'wcal_order_complete_action' ), 10 , 2 );        
             add_filter( 'admin_footer_text',                                           array( $this,   'wcal_admin_footer_text' ), 1 );
@@ -569,26 +568,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 }
             }
             return $order_status;
-        }
-            
-        /**
-         * Check If Pro is activated along with Lite version.
-         */
-        public static function wcal_check_pro_activated() {
-            if( is_plugin_active( 'woocommerce-abandon-cart-pro/woocommerce-ac.php' ) && class_exists( 'woocommerce_abandon_cart' ) ) {
-                 add_action( 'admin_notices', array( 'woocommerce_abandon_cart_lite', 'wcal_check_pro_notice' ) );
-            }
-        }
-            
-        /**
-         * Display a notice in the admin Plugins page if the LITE version is
-         * activated with PRO version is activated.
-         */
-        public static function wcal_check_pro_notice() {
-            $class   = 'notice notice-error is-dismissible';
-            $message = __( 'The Lite & Pro version of Abandoned Cart plugin for WooCommerce (from Tyche Softwares) are active on your website. <br> In this case, the abandoned carts will be captured in both plugins & email reminders will also be sent from both plugins. <br> It is recommended that you deactivate the Lite version & keep the Pro version active.', 'woocommerce-ac' );      
-            printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
-        }
+        }          
             
         /*-----------------------------------------------------------------------------------*/
         /* Class Functions */
@@ -601,7 +581,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         public function wcal_preview_emails() {
             global $woocommerce;
             if( isset( $_GET['wcal_preview_woocommerce_mail'] ) ) {
-                if( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-ac') ) {
+                if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-ac' ) ) {
                     die( 'Security check' );
                 }
                 $message = '';
@@ -634,7 +614,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
         
             if ( isset( $_GET['wcal_preview_mail'] ) ) {
-                if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-ac') ) {
+                if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-ac' ) ) {
                     die( 'Security check' );
                 }
                 // get the preview email content
@@ -664,7 +644,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         function wcal_activate() {
             global $wpdb; 
             $wcap_collate = '';
-            if ( $wpdb->has_cap( 'collation' ) ) {
+            if( $wpdb->has_cap( 'collation' ) ) {
                 $wcap_collate = $wpdb->get_charset_collate();
             }
             $table_name = $wpdb->prefix . "ac_email_templates_lite";            
@@ -722,10 +702,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                      
             require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $history_query );
-            
             // Default templates:  function call to create default templates.
             $check_table_empty  = $wpdb->get_var( "SELECT COUNT(*) FROM `" . $wpdb->prefix . "ac_email_templates_lite`" );
-            
+    
             if( !get_option( 'woocommerce_ac_default_templates_installed' ) ) {         
                 if( 0 == $check_table_empty ) {
                     $default_template = new wcal_default_template_settings;
@@ -736,10 +715,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             $guest_table        = $wpdb->prefix."ac_guest_abandoned_cart_history_lite" ;
             $query_guest_table  = "SHOW TABLES LIKE '$guest_table' ";
-            $result_guest_table = $wpdb->get_results( $query_guest_table );
+            $result_guest_table = $wpdb->get_results( $query_guest_table );          
             
-            if ( count( $result_guest_table ) == 0 ) {
-                
+            if ( count( $result_guest_table ) == 0 ) {   
                 $ac_guest_history_table_name = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
                 $ac_guest_history_query = "CREATE TABLE IF NOT EXISTS $ac_guest_history_table_name (
                 `id` int(15) NOT NULL AUTO_INCREMENT,
@@ -960,7 +938,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                     );
              
             // Here, we'll take the first argument of the array and add it to a label next to the checkbox
-            $html .= '<label for="ac_lite_email_admin_on_recovery"> '  . $args[0] . '</label>';
+            $html .= '<label for="ac_lite_email_admin_on_recovery"> ' . $args[0] . '</label>';
             echo $html;
         }
         /***************************************************************
@@ -1042,7 +1020,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             global $wpdb;
             
             if( get_option( 'ac_lite_alter_table_queries' ) != 'yes' ) {
-
                 $ac_history_table_name = $wpdb->prefix."ac_abandoned_cart_history_lite";
                 $check_table_query     = "SHOW COLUMNS FROM $ac_history_table_name LIKE 'user_type'";
                 $results               = $wpdb->get_results( $check_table_query );
@@ -1062,7 +1039,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";
                     $wpdb->get_results( $alter_template_table_query );
                 }
-               
                 
                 $table_name                       = $wpdb->prefix . "ac_email_templates_lite";
                 $check_email_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'wc_email_header' ";
@@ -1166,14 +1142,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     add_option( 'ac_lite_email_admin_on_recovery', $woocommerce_ac_settings[0]->email_admin );
                 } else {
                     add_option( 'ac_lite_email_admin_on_recovery', "" );
-                } 
-                 
+                }    
                 if( isset( $woocommerce_ac_settings[0]->disable_guest_cart_from_cart_page ) ) {
                    add_option( 'ac_lite_track_guest_cart_from_cart_page',  $woocommerce_ac_settings[0]->disable_guest_cart_from_cart_page );
                 } else {
                    add_option( 'ac_lite_track_guest_cart_from_cart_page', "" );
-                }
-                
+                } 
                 update_option( 'ac_lite_settings_status', 'INDIVIDUAL' );
                 //Delete the main settings record
                 delete_option( 'woocommerce_ac_settings' );
@@ -1184,7 +1158,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          * Send email to admin when cart is recovered only via PayPal.
          * @since 2.9 version
          */
-        public static function wcal_email_admin_recovery_for_paypal ( $order_id, $old, $new_status ) {           
+        public static function wcal_email_admin_recovery_for_paypal( $order_id, $old, $new_status ) {           
             if ( 'pending' == $old && 'processing' == $new_status ) {
                 global $wpdb, $woocommerce;
                 $user_id                 = get_current_user_id();
@@ -1192,7 +1166,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $order                   = new WC_Order( $order_id );
                 if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
                     $user_id              = $order->get_user_id();          
-                }else{
+                } else {
                     $user_id              = $order->user_id; 
                 }
                
