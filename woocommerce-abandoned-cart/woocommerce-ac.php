@@ -2864,7 +2864,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                 </div>
                             </div>
                         </div>                
-            <?php } elseif ( $action == 'report' ) {
+            <?php   } elseif ( $action == 'report' ) {
                         include_once('includes/classes/class-wcal-product-report-table.php');
                         $wcal_product_report_list = new WCAL_Product_Report_Table();
                         $wcal_product_report_list->wcal_product_report_prepare_items(); 
@@ -2876,7 +2876,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                 <?php $wcal_product_report_list->display(); ?>
                             </form>
                         </div>                           
-            <?php }
+            <?php   }
             }
             echo( "</table>" );
                         
@@ -2898,7 +2898,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 }
                 $active_post = ( empty( $_POST['is_active'] ) ) ? '0' : '1';    
                 ?>
-                <div id="content">
+                <div id="wcal_content">
                   <form method="post" action="admin.php?page=woocommerce_ac_page&action=emailtemplates" id="ac_settings">
                     <input type="hidden" name="mode" value="<?php echo $mode;?>" />
                         <?php
