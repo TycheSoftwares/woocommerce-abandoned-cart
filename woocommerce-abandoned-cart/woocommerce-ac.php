@@ -1659,44 +1659,45 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             $abandoned_cart_arr = array();
             $abandoned_cart_arr = json_decode( $last_abandoned_cart, true );
             $temp_variable      = "";
-        
-            if ( count( $current_woo_cart['cart'] ) >= count( $abandoned_cart_arr['cart'] ) ) {
-                //do nothing
-            } else {
-                $temp_variable      = $current_woo_cart;
-                $current_woo_cart   = $abandoned_cart_arr;
-                $abandoned_cart_arr = $temp_variable;
-            }
-            if ( is_array( $current_woo_cart ) || is_object( $current_woo_cart ) ) {
-                foreach( $current_woo_cart as $key => $value ) {
-                    foreach( $value as $item_key => $item_value ) {
-                        $current_cart_product_id   = $item_value['product_id'];
-                        $current_cart_variation_id = $item_value['variation_id'];
-                        $current_cart_quantity     = $item_value['quantity'];
-        
-                        if ( isset( $abandoned_cart_arr[$key][$item_key]['product_id'] ) ){
-                            $abandoned_cart_product_id = $abandoned_cart_arr[$key][$item_key]['product_id'];
-                        } else {
-                            $abandoned_cart_product_id = "";
-                        }
-                        if ( isset( $abandoned_cart_arr[$key][$item_key]['variation_id'] ) ) {
-                            $abandoned_cart_variation_id = $abandoned_cart_arr[$key][$item_key]['variation_id'];
-                        } else {
-                            $abandoned_cart_variation_id = "";
-                        }
-                        if ( isset( $abandoned_cart_arr[$key][$item_key]['quantity'] ) ) {
-                            $abandoned_cart_quantity = $abandoned_cart_arr[$key][$item_key]['quantity'];
-                        } else {
-                            $abandoned_cart_quantity = "";
-                        }
-                        if ( ( $current_cart_product_id   != $abandoned_cart_product_id ) ||
-                            ( $current_cart_variation_id != $abandoned_cart_variation_id ) ||
-                            ( $current_cart_quantity     != $abandoned_cart_quantity ) ) {
-                                return false;
+            if ( isset( $current_woo_cart['cart'] ) && isset( $abandoned_cart_arr['cart'] ) ) {                 
+                if ( count( $current_woo_cart['cart'] ) >= count( $abandoned_cart_arr['cart'] ) ) {
+                    //do nothing
+                } else {
+                    $temp_variable      = $current_woo_cart;
+                    $current_woo_cart   = $abandoned_cart_arr;
+                    $abandoned_cart_arr = $temp_variable;
+                }
+                if ( is_array( $current_woo_cart ) || is_object( $current_woo_cart ) ) {
+                    foreach( $current_woo_cart as $key => $value ) {
+                        foreach( $value as $item_key => $item_value ) {
+                            $current_cart_product_id   = $item_value['product_id'];
+                            $current_cart_variation_id = $item_value['variation_id'];
+                            $current_cart_quantity     = $item_value['quantity'];
+            
+                            if ( isset( $abandoned_cart_arr[$key][$item_key]['product_id'] ) ){
+                                $abandoned_cart_product_id = $abandoned_cart_arr[$key][$item_key]['product_id'];
+                            } else {
+                                $abandoned_cart_product_id = "";
+                            }
+                            if ( isset( $abandoned_cart_arr[$key][$item_key]['variation_id'] ) ) {
+                                $abandoned_cart_variation_id = $abandoned_cart_arr[$key][$item_key]['variation_id'];
+                            } else {
+                                $abandoned_cart_variation_id = "";
+                            }
+                            if ( isset( $abandoned_cart_arr[$key][$item_key]['quantity'] ) ) {
+                                $abandoned_cart_quantity = $abandoned_cart_arr[$key][$item_key]['quantity'];
+                            } else {
+                                $abandoned_cart_quantity = "";
+                            }
+                            if ( ( $current_cart_product_id   != $abandoned_cart_product_id ) ||
+                                ( $current_cart_variation_id != $abandoned_cart_variation_id ) ||
+                                ( $current_cart_quantity     != $abandoned_cart_quantity ) ) {
+                                    return false;
+                            }
                         }
                     }
                 }
-            }
+            }    
             return true;
         }
 
@@ -1708,46 +1709,48 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             $wcal_woocommerce_persistent_cart =version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ;         
             $current_woo_cart   = get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true );
             $abandoned_cart_arr = json_decode( $last_abandoned_cart, true );
-            $temp_variable      = "";       
-            if ( count( $current_woo_cart['cart'] ) >= count( $abandoned_cart_arr['cart'] ) ) {
-                //do nothing
-            } else {
-                $temp_variable      = $current_woo_cart;
-                $current_woo_cart   = $abandoned_cart_arr;
-                $abandoned_cart_arr = $temp_variable;
-            }
-            if ( is_array( $current_woo_cart ) && is_array( $abandoned_cart_arr ) ) {
-                foreach ( $current_woo_cart as $key => $value ) {
-                    
-                    foreach ( $value as $item_key => $item_value ) {
-                        $current_cart_product_id   = $item_value['product_id'];
-                        $current_cart_variation_id = $item_value['variation_id'];
-                        $current_cart_quantity     = $item_value['quantity'];
-        
-                        if ( isset( $abandoned_cart_arr[$key][$item_key]['product_id'] ) ) {
-                            $abandoned_cart_product_id = $abandoned_cart_arr[$key][$item_key]['product_id'];
-                        } else {
-                            $abandoned_cart_product_id = "";
-                        }
-                        if ( isset( $abandoned_cart_arr[$key][$item_key]['variation_id'] ) ) {
-                             $abandoned_cart_variation_id = $abandoned_cart_arr[$key][$item_key]['variation_id']; 
-                        } else {
-                            $abandoned_cart_variation_id = "";
-                        }
-                        if ( isset( $abandoned_cart_arr[$key][$item_key]['quantity'] ) ) {
-                             $abandoned_cart_quantity = $abandoned_cart_arr[$key][$item_key]['quantity'];
-                        } else {
-                             $abandoned_cart_quantity = "";
-                        }
-                        if ( ( $current_cart_product_id != $abandoned_cart_product_id ) ||
-                             ( $current_cart_variation_id != $abandoned_cart_variation_id ) ||
-                             ( $current_cart_quantity != $abandoned_cart_quantity ) )
-                        {
-                            return false;
+            $temp_variable      = "";
+            if( isset( $current_woo_cart['cart'] ) && isset( $abandoned_cart_arr['cart'] ) ) {        
+                if ( count( $current_woo_cart['cart'] ) >= count( $abandoned_cart_arr['cart'] ) ) {
+                    //do nothing
+                } else {
+                    $temp_variable      = $current_woo_cart;
+                    $current_woo_cart   = $abandoned_cart_arr;
+                    $abandoned_cart_arr = $temp_variable;
+                }
+                if ( is_array( $current_woo_cart ) && is_array( $abandoned_cart_arr ) ) {
+                    foreach ( $current_woo_cart as $key => $value ) {
+                        
+                        foreach ( $value as $item_key => $item_value ) {
+                            $current_cart_product_id   = $item_value['product_id'];
+                            $current_cart_variation_id = $item_value['variation_id'];
+                            $current_cart_quantity     = $item_value['quantity'];
+            
+                            if ( isset( $abandoned_cart_arr[$key][$item_key]['product_id'] ) ) {
+                                $abandoned_cart_product_id = $abandoned_cart_arr[$key][$item_key]['product_id'];
+                            } else {
+                                $abandoned_cart_product_id = "";
+                            }
+                            if ( isset( $abandoned_cart_arr[$key][$item_key]['variation_id'] ) ) {
+                                 $abandoned_cart_variation_id = $abandoned_cart_arr[$key][$item_key]['variation_id']; 
+                            } else {
+                                $abandoned_cart_variation_id = "";
+                            }
+                            if ( isset( $abandoned_cart_arr[$key][$item_key]['quantity'] ) ) {
+                                 $abandoned_cart_quantity = $abandoned_cart_arr[$key][$item_key]['quantity'];
+                            } else {
+                                 $abandoned_cart_quantity = "";
+                            }
+                            if ( ( $current_cart_product_id != $abandoned_cart_product_id ) ||
+                                 ( $current_cart_variation_id != $abandoned_cart_variation_id ) ||
+                                 ( $current_cart_quantity != $abandoned_cart_quantity ) )
+                            {
+                                return false;
+                            }
                         }
                     }
                 }
-            }
+            }    
             return true;
         }
     
