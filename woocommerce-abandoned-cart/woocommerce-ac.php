@@ -1172,6 +1172,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                
                 if( $ac_email_admin_recovery == 'on' ) {
                     $recovered_email_sent          = get_post_meta( $order_id, 'wcap_recovered_email_sent', true );
+                    $created_via                   = get_post_meta( $order_id, '_created_via', true );
                     $wcal_check_order_is_recovered = woocommerce_abandon_cart_lite::wcal_check_order_is_recovered( $order_id );
                     
                     if ( 'checkout' == $created_via && 'yes' != $recovered_email_sent && true === $wcal_check_order_is_recovered ) { // indicates cart is abandoned
