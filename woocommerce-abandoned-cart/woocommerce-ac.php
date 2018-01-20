@@ -1729,7 +1729,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         // Compare the existing cart with new cart
         function wcal_compare_carts( $user_id, $last_abandoned_cart ) { 
             global $woocommerce;
-            
+            $current_woo_cart   = array();
+            $abandoned_cart_arr = array();
             $wcal_woocommerce_persistent_cart =version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ;         
             $current_woo_cart   = get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true );
             $abandoned_cart_arr = json_decode( $last_abandoned_cart, true );
