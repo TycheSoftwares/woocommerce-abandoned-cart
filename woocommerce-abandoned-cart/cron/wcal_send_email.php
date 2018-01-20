@@ -95,10 +95,10 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                $cart_info_db_field = json_decode( $value->abandoned_cart_info );
                             }
                             $cart = array();
-                            if( !empty( $cart_info_db_field ) ) {
+                            if( !empty( $cart_info_db_field->cart ) ) {
                                 $cart           = $cart_info_db_field->cart;
                             }
-                            if( count( $cart_info_db_field->cart ) > 0 && isset( $value->user_id ) && $value->user_id != '0') {
+                            if( count( $cart ) > 0 && isset( $value->user_id ) && '0' != $value->user_id && isset( $value->id ) ) {
                                 $cart_update_time = $value->abandoned_cart_time;
                                 $new_user         = $this->wcal_check_sent_history( $value->user_id, $cart_update_time, $template_id, $value->id );                         
                                 if ( $new_user == true ) {
@@ -179,8 +179,8 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                             } else {
                                                 $user_first_name = $user_first_name_temp;
                                             }                                   
-                                            $email_body          = str_replace( "{{customer.firstname}}", $user_first_name, $email_body );                              
-                                            $email_subject       = str_replace( "{{customer.firstname}}", $user_first_name, $email_subject );                               
+                                            $email_body          = str_replace( "{{customer.firstname}}", $user_first_name, $email_body );                     
+                                            $email_subject       = str_replace( "{{customer.firstname}}", $user_first_name, $email_subject );                      
                                             $user_last_name      = '';
                                             $user_last_name_temp = get_user_meta( $value->user_id, 'billing_last_name', true );
                                             if( isset( $user_last_name_temp ) && "" == $user_last_name_temp ) {
