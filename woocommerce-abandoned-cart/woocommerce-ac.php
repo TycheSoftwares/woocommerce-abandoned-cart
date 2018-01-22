@@ -1581,7 +1581,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         $_SESSION['guest_email']      = $results_guest[0]->email_id;
                         $_SESSION['user_id']          = $user_id;
                     } else {
-                        wp_redirect( get_permalink( woocommerce_get_page_id( 'shop' ) ) );
+                        if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
+                            wp_redirect( get_permalink( wc_get_page_id( 'shop' ) ) );
+                        } else {
+                            wp_redirect( get_permalink( woocommerce_get_page_id( 'shop' ) ) );
+                        }
                     }
                 }
         
