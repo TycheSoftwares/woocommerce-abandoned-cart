@@ -1442,43 +1442,21 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 }                               
             }
         }
-        
-        // Decrypt Function
-        function wcal_decrypt_validate( $validate ) {
-            $validate_decoded = '';
-            if( function_exists( "mcrypt_encrypt" ) ) {                
-                $cryptKey         = get_option( 'wcal_security_key' );
-                $validate_decoded = rtrim( mcrypt_decrypt( MCRYPT_RIJNDAEL_256, md5( $cryptKey ), base64_decode( $validate ), MCRYPT_MODE_CBC, md5( md5( $cryptKey ) ) ), "\0");
-            }else {
-                $validate_decoded = base64_decode ( $validate );
-            }
-            return( $validate_decoded );
-        }
-
+       
         function wcal_email_unsubscribe( $args ) {
             global $wpdb;
             
             if ( isset( $_GET['wcal_track_unsubscribe'] ) && $_GET['wcal_track_unsubscribe'] == 'wcal_unsubscribe' ) {
                 $encoded_email_id              = rawurldecode( $_GET['validate'] );
-                $validate_email_id_string      = str_replace( " " , "+", $encoded_email_id);
+                $validate_email_id_string      = str_replace( " " , "+", $encoded_email_id );
                 $validate_email_address_string = '';
-                $validate_email_id_decode      = 0;        
+                $validate_email_id_decode      = 0;
+                $cryptKey                      = get_option( 'wcal_security_key' );
+                $validate_email_id_decode      = Wcal_Aes_Ctr::decrypt( $validate_email_id_string, $cryptKey, 256 );        
                 if( isset( $_GET['track_email_id'] ) ) {
                     $encoded_email_address         = rawurldecode( $_GET['track_email_id'] );
                     $validate_email_address_string = str_replace( " " , "+", $encoded_email_address );
-                    if( isset( $validate_email_id_string ) ) {
-                        if( function_exists( "mcrypt_encrypt" ) ) {
-                            $validate_email_id_decode  = $this->wcal_decrypt_validate( $validate_email_id_string );                    
-                        } else {
-                            $validate_email_id_decode = base64_decode( $validate_email_id_string );
-                        }
-                    }   
-                    $validate_email_address_string = $validate_email_address_string;
-                }       
-                if( !preg_match('/^[1-9][0-9]*$/', $validate_email_id_decode ) ) { // This will decrypt more security
-                    $cryptKey                 = get_option( 'wcal_security_key' );
-                    $validate_email_id_decode = Wcal_Aes_Ctr::decrypt( $validate_email_id_string, $cryptKey, 256 );
-                }        
+                }             
                 $query_id      = "SELECT * FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE id = %d ";
                 $results_sent  = $wpdb->get_results ( $wpdb->prepare( $query_id, $validate_email_id_decode ) );
                 $email_address = '';        
@@ -1532,31 +1510,18 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 global $wpdb;
                 $validate_server_string  = rawurldecode( $_GET ['validate'] );
                 $validate_server_string  = str_replace( " " , "+", $validate_server_string );
-                $validate_encoded_string = $validate_server_string;
-                $link_decode_test        = base64_decode( $validate_encoded_string );       
-                // it will check if any old email have open the link
-                if ( preg_match( '/&url=/', $link_decode_test ) ) {                         
-                    $link_decode = $link_decode_test;
-                } else {
-                    if( function_exists( "mcrypt_encrypt" ) ) {                     
-                        $link_decode = $this->wcal_decrypt_validate( $validate_encoded_string );
-                    } else {
-                        $link_decode = base64_decode( $validate_encoded_string );
-                    }
-                }               
-                if ( !preg_match( '/&url=/', $link_decode ) ) { // This will decrypt more security
-                    $cryptKey    = get_option( 'wcal_security_key' );
-                    $link_decode = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $cryptKey, 256 );
-                }                             
-                $sent_email_id_pos = strpos( $link_decode, '&' );               
-                $email_sent_id     = substr( $link_decode , 0, $sent_email_id_pos );
+                $validate_encoded_string = $validate_server_string;       
+                $cryptKey                = get_option( 'wcal_security_key' );
+                $link_decode             = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $cryptKey, 256 );                          
+                $sent_email_id_pos       = strpos( $link_decode, '&' );               
+                $email_sent_id           = substr( $link_decode , 0, $sent_email_id_pos );
                 $_SESSION['email_sent_id'] = $email_sent_id;
-                $url_pos           = strpos( $link_decode, '=' );
-                $url_pos           = $url_pos + 1;
-                $url               = substr( $link_decode, $url_pos );             
-                $get_ac_id_query   = "SELECT abandoned_order_id FROM `".$wpdb->prefix."ac_sent_history_lite` WHERE id = %d";
-                $get_ac_id_results = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
-                $get_user_results  = array();
+                $url_pos                 = strpos( $link_decode, '=' );
+                $url_pos                 = $url_pos + 1;
+                $url                     = substr( $link_decode, $url_pos );             
+                $get_ac_id_query         = "SELECT abandoned_order_id FROM `".$wpdb->prefix."ac_sent_history_lite` WHERE id = %d";
+                $get_ac_id_results       = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
+                $get_user_results        = array();
                 if ( count( $get_ac_id_results ) > 0 ) {
                     $get_user_id_query = "SELECT user_id FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE id = %d";
                     $get_user_results  = $wpdb->get_results( $wpdb->prepare( $get_user_id_query, $get_ac_id_results[0]->abandoned_order_id ) );
