@@ -180,12 +180,12 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		            // get main site's table prefix
 		            $main_prefix = $wpdb->get_blog_prefix(1);
 		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$main_prefix."users AS wpu ON wpac.user_id = wpu.id
-		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' wpac.user_id >= 63000000  ORDER BY wpac.abandoned_cart_time DESC ";
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart%' AND wpac.user_id >= 63000000  ORDER BY wpac.abandoned_cart_time DESC ";
 		            $results = $wpdb->get_results( $query );
 		        } else {
 		            // non-multisite - regular table name
 		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
-		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.user_id >= 63000000 ORDER BY wpac.abandoned_cart_time DESC ";
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart%' AND wpac.user_id >= 63000000 ORDER BY wpac.abandoned_cart_time DESC ";
 		            $results = $wpdb->get_results( $query );
 		        }
 		        break;
@@ -196,12 +196,12 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		            // get main site's table prefix
 		            $main_prefix = $wpdb->get_blog_prefix(1);
 		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$main_prefix."users AS wpu ON wpac.user_id = wpu.id
-		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' wpac.user_id >= 63000000  ORDER BY wpac.abandoned_cart_time DESC ";
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart%' AND wpac.user_id >= 63000000 ORDER BY wpac.abandoned_cart_time DESC ";
 		            $results = $wpdb->get_results( $query );
 		        } else {
 		            // non-multisite - regular table name
 		            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac LEFT JOIN ".$wpdb->prefix."users AS wpu ON wpac.user_id = wpu.id
-		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.user_id = 0 ORDER BY wpac.abandoned_cart_time DESC ";
+		            WHERE wpac.recovered_cart='0' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND wpac.abandoned_cart_info NOT LIKE '$blank_cart_info' AND wpac.abandoned_cart_info NOT LIKE '%$blank_cart%' AND wpac.user_id = 0 ORDER BY wpac.abandoned_cart_time DESC ";
 		            $results = $wpdb->get_results( $query );
 		        }
 		        break;
