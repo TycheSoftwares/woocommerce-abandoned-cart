@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares
 Tags: abandon cart, cart recovery, increase woocommerce conversion rate , recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 4.9.1
+Tested up to: 4.9.2
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -187,6 +187,24 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 6. Product Report Tab.
 
 == Changelog ==
+
+= 4.6 (31.01-2018) =
+
+* This version has 7 bugs fixes.
+
+* Bug Fixed - When the guest user places the order after the "Cart abandoned cut off time" then the plugin was capturing the blank records on Abandoned Orders tab. This has been fixed.
+
+* Bug Fixed - Compatibility issues pertaining to PHP 7.2 has been fixed.
+
+* Bug Fixed - Fixed some minor bugs related to notices coming in Debug Log.
+
+* Bug Fixed - Fixed issue related to error occurring when clicked on cart link from abandoned cart reminder email.
+
+* Bug Fixed - When the user places an order and goes to the order received page, blank carts were added in the database. So, twice entries had been created under Recovered Orders tab. This issue has been fixed.
+
+* Bug Fixed - If "Email admin On Order Recovery" setting is enabled and admin of the store create manual order from WooCommerce -> Orders page then Recovery  Email was getting sent to the Admin. This has been fixed.
+
+* Bug Fixed - With the PHP 7.1.7, Abandoned cart reminder emails were not being sent. This issue has been fixed now.
 
 = 4.5 (28.12-2017) =
 
