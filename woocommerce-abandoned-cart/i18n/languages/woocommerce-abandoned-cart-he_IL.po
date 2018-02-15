@@ -1,0 +1,281 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-08-11 18:39+0300\n"
+"PO-Revision-Date: 2015-08-11 19:03+0300\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.4\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: he_IL\n"
+
+#: woocommerce-ac.php:22
+msgid "Once Every Five Minutes"
+msgstr "פעם אחת כל חמש דקות"
+
+#: woocommerce-ac.php:204
+#, php-format
+msgid ""
+"You can upgrade to the <a href=\"https://www.tychesoftwares.com/store/"
+"premium-plugins/woocommerce-abandoned-cart-pro/\">PRO version of WooCommerce "
+"Abandoned Cart plugin</a> at a <b>20% discount</b>. Use the coupon code: "
+"<b>ACPRO20</b>.<a href=\"https://www.tychesoftwares.com/store/premium-"
+"plugins/woocommerce-abandoned-cart-pro/\"> Purchase now </a> & save $24!"
+msgstr ""
+"‏You can upgrade to the <a href=\"https://www.tychesoftwares.com/store/"
+"premium-plugins/woocommerce-abandoned-cart-pro/\">PRO version of WooCommerce "
+"Abandoned Cart plugin</a> at a <b>20% discount</b>. Use the coupon code: "
+"<b>ACPRO20</b>.<a href=\"https://www.tychesoftwares.com/store/premium-"
+"plugins/woocommerce-abandoned-cart-pro/\"> Purchase now </a> & save $24!"
+
+#: woocommerce-ac.php:314
+msgid "Abandoned Carts"
+msgstr "עגלות שננטשו"
+
+#: woocommerce-ac.php:516
+msgid "Abandoned Orders"
+msgstr "הזמנות שננטשו"
+
+#: woocommerce-ac.php:517
+msgid "Email Templates"
+msgstr "תבניות אימייל"
+
+#: woocommerce-ac.php:518 woocommerce-ac.php:712
+msgid "Settings"
+msgstr "הגדרות"
+
+#: woocommerce-ac.php:519
+msgid "Recovered Orders"
+msgstr "הזמנות ששוחזרו"
+
+#: woocommerce-ac.php:661
+msgid "You do not have sufficient permissions to access this page."
+msgstr "אין לך הרשאה מתאימה לגשת לעמוד זה."
+
+#: woocommerce-ac.php:670
+msgid "WooCommerce - Abandon Cart Lite"
+msgstr "‏Woocommerce - עגלות נטושות לייט"
+
+#: woocommerce-ac.php:696
+msgid "Your settings have been saved."
+msgstr "ההגדרות שלך נשמרו"
+
+#: woocommerce-ac.php:718
+msgid "Cart abandoned cut-off time"
+msgstr "זמן חישוב עגלה כנטושה"
+
+#: woocommerce-ac.php:741
+msgid "minutes"
+msgstr "דקות"
+
+#: woocommerce-ac.php:742 woocommerce-ac.php:743
+msgid ""
+"Consider cart abandoned after X minutes of item being added to cart & order "
+"not placed"
+msgstr ""
+"החשב עגלה כנטושה אחרי X דקות מאז הפריט הוסף לעגלת הקניות וההזמנה לא בוצעה"
+
+#: woocommerce-ac.php:753
+msgid "Save Changes"
+msgstr "שמור שינויים"
+
+#: woocommerce-ac.php:763
+msgid ""
+"The list below shows all Abandoned Carts which have remained in cart for a "
+"time higher than the \"Cart abandoned cut-off time\" setting."
+msgstr ""
+"רשימה זו מציגה את כל העגלות שננטשו אשר נותרו בעגלה לפרק זמן העולה על ״זמן "
+"חישוב עגלה כנטושה״."
+
+#: woocommerce-ac.php:858 woocommerce-ac.php:1501
+msgid "Customer"
+msgstr "לקוח"
+
+#: woocommerce-ac.php:859 woocommerce-ac.php:1514
+msgid "Order Total"
+msgstr "סה״כ להזמנה"
+
+#: woocommerce-ac.php:862
+msgid "Date"
+msgstr "תאריך"
+
+#: woocommerce-ac.php:868
+msgid "Status"
+msgstr "סטטוס"
+
+#: woocommerce-ac.php:872 woocommerce-ac.php:1159
+msgid "Actions"
+msgstr "פעולות"
+
+#: woocommerce-ac.php:953
+msgid ""
+"Add email templates at different intervals to maximize the possibility of "
+"recovering your abandoned carts."
+msgstr ""
+"הוסף תבניות אימייל בפרקי זמן שונים כדי למקסם את האפשרות לשחזר עגלות נטושות "
+"שלך."
+
+#: woocommerce-ac.php:1054
+msgid "The Email Template has been successfully added."
+msgstr "תבנית אימייל התווספה בהצלחה."
+
+#: woocommerce-ac.php:1057
+msgid "The Email Template has been successfully updated."
+msgstr "תבנית אימייל עודכנה בהצלחה."
+
+#: woocommerce-ac.php:1145
+msgid "Sr"
+msgstr "‏Sr"
+
+#: woocommerce-ac.php:1148
+msgid "Template Name"
+msgstr "שם תבנית"
+
+#: woocommerce-ac.php:1154
+msgid "Sent"
+msgstr "נשלח"
+
+#: woocommerce-ac.php:1158
+msgid "Active ?"
+msgstr "פעיל?"
+
+#: woocommerce-ac.php:1276
+msgid ""
+"The Report below shows how many Abandoned Carts we were able to recover for "
+"you by sending automatic emails to encourage shoppers."
+msgstr ""
+"הדו״ח שלהלן מציג כמה עגלות שננטשו שוחזרו עבורך על ידי שליחה אוטומטית של "
+"אימיילים לטובת עידוד קונים."
+
+#: woocommerce-ac.php:1331
+msgid "Start Date:"
+msgstr "תאריך התחלה:"
+
+#: woocommerce-ac.php:1334
+msgid "End Date:"
+msgstr "תאריך סיום:"
+
+#: woocommerce-ac.php:1337
+msgid "Go"
+msgstr "שלח"
+
+#: woocommerce-ac.php:1495
+msgid "During the selected range"
+msgstr "במהלך התקופה הנקובה"
+
+#: woocommerce-ac.php:1495
+msgid "carts totaling"
+msgstr "עגלות בסך"
+
+#: woocommerce-ac.php:1495
+msgid "were abandoned. We were able to recover"
+msgstr "ננטשו. הצלחנו לשחזר"
+
+#: woocommerce-ac.php:1495
+msgid "of them, which led to an extra"
+msgstr "מתוכן, אשר הוביל לתוספת של"
+
+#: woocommerce-ac.php:1495
+msgid "in sales"
+msgstr "במכירות"
+
+#: woocommerce-ac.php:1504
+msgid "Created On"
+msgstr "נוצר ב"
+
+#: woocommerce-ac.php:1510
+msgid "Recovered Date"
+msgstr "תאריך שחזור"
+
+#: woocommerce-ac.php:1561
+msgid "Template Name:"
+msgstr "שם תבנית:"
+
+#: woocommerce-ac.php:1572
+msgid "Enter a template name for reference"
+msgstr "הכנס שם לתבנית לטובת סימוכין"
+
+#: woocommerce-ac.php:1577
+msgid "Send From This Name:"
+msgstr "מאת:"
+
+#: woocommerce-ac.php:1588
+msgid "Enter the name that should appear in the email sent"
+msgstr "הכנס את השם אשר יופיע באימייל שיישלח"
+
+#: woocommerce-ac.php:1594
+msgid "Subject:"
+msgstr "נושא:"
+
+#: woocommerce-ac.php:1605
+msgid "Enter the subject that should appear in the email sent"
+msgstr "הכנס את הנושא אשר יופיע באימייל שיישלח"
+
+#: woocommerce-ac.php:1611
+msgid "Email Body:"
+msgstr "גוף האימייל:"
+
+#: woocommerce-ac.php:1627
+msgid "Message to be sent in the reminder email."
+msgstr "הודעה אשר תישלח באימייל תזכורת."
+
+#: woocommerce-ac.php:1634
+msgid "Send this email:"
+msgstr "שלח אימייל זה:"
+
+#: woocommerce-ac.php:1686
+msgid "after cart is abandoned."
+msgstr "אחרי שננטשת עגלה."
+
+#: woocommerce-ac.php:1693
+msgid "Send a test email to:"
+msgstr "שלח מייל בדיקה אל:"
+
+#: woocommerce-ac.php:1699
+msgid "Enter the email id to which the test email needs to be sent."
+msgstr "הכנס את כתובת האימייל אליה יישלח מייל בדיקה."
+
+#: woocommerce-ac.php:1835 send_email.php:109
+msgid "Your Shopping Cart"
+msgstr "עגלת הקניות שלך"
+
+#: woocommerce-ac.php:1838 send_email.php:112
+msgid "Item"
+msgstr "פריט"
+
+#: woocommerce-ac.php:1839 send_email.php:113
+msgid "Name"
+msgstr "שם"
+
+#: woocommerce-ac.php:1840 send_email.php:114
+msgid "Quantity"
+msgstr "כמות"
+
+#: woocommerce-ac.php:1841 send_email.php:115
+msgid "Price"
+msgstr "מחיר"
+
+#: woocommerce-ac.php:1842 send_email.php:116
+msgid "Line Subtotal"
+msgstr "סכום ביניים"
+
+#: woocommerce-ac.php:1846
+msgid "Men\\'\\s Formal Shoes"
+msgstr "נעלי גברים"
+
+#: woocommerce-ac.php:1853
+msgid "Woman\\'\\s Hand Bags"
+msgstr "תיקי יד של נשים"
+
+#: woocommerce-ac.php:1862 send_email.php:160
+msgid "Cart Total:"
+msgstr "סה״כ בעגלה:"

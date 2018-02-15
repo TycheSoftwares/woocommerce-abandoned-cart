@@ -1,0 +1,283 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: woocommerce-ac\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-07-08 16:30+0530\n"
+"PO-Revision-Date: 2015-12-16 10:00+0100\n"
+"Last-Translator: \n"
+"Language-Team: Mauro <marek9.danko@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.1\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"Language: sk_SK\n"
+
+#: woocommerce-ac.php:22
+msgid "Once Every Five Minutes"
+msgstr "Po každých piatich minútach"
+
+#: woocommerce-ac.php:204
+msgid ""
+"You can upgrade to the <a href=\"https://www.tychesoftwares.com/store/"
+"premium-plugins/woocommerce-abandoned-cart-pro/\">PRO version of WooCommerce "
+"Abandoned Cart plugin</a> at a <b>20% discount</b>. Use the coupon code: "
+"<b>ACPRO20</b>.<a href=\"https://www.tychesoftwares.com/store/premium-"
+"plugins/woocommerce-abandoned-cart-pro/\"> Purchase now </a> & save $24!"
+msgstr ""
+"Môžete upgradovať na <a href=\"https://www.tychesoftwares.com/store/premium-"
+"plugins/woocommerce-abandoned-cart-pro/\">PRO verziu WooCommerce Abandoned "
+"Cart plugin</a> s <b>20% zľavou</b>. Použite kód: <b>ACPRO20</b>.<a href="
+"\"https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-"
+"cart-pro/\"> Zakúpte teraz </a> a ušetrite 24$ !"
+
+#: woocommerce-ac.php:314
+msgid "Abandoned Carts"
+msgstr "Opustené Košíky"
+
+#: woocommerce-ac.php:516
+msgid "Abandoned Orders"
+msgstr "Opustené Objednávky"
+
+#: woocommerce-ac.php:517
+msgid "Email Templates"
+msgstr "E-mailové šablóny"
+
+#: woocommerce-ac.php:518 woocommerce-ac.php:712
+msgid "Settings"
+msgstr "Nastavenia"
+
+#: woocommerce-ac.php:519
+msgid "Recovered Orders"
+msgstr "Spätne získaná objednávka "
+
+#: woocommerce-ac.php:661
+msgid "You do not have sufficient permissions to access this page."
+msgstr "Nemáte dostatočné oprávnenia k prístupu na túto stránku."
+
+#: woocommerce-ac.php:670
+msgid "WooCommerce - Abandon Cart Lite"
+msgstr ""
+
+#: woocommerce-ac.php:696
+msgid "Your settings have been saved."
+msgstr "Vaše nastavenia boli uložené."
+
+#: woocommerce-ac.php:718
+msgid "Cart abandoned cut-off time"
+msgstr "Limit pre opustený košík"
+
+#: woocommerce-ac.php:741
+msgid "minutes"
+msgstr "minút"
+
+#: woocommerce-ac.php:742 woocommerce-ac.php:743
+msgid ""
+"Consider cart abandoned after X minutes of item being added to cart & order "
+"not placed"
+msgstr ""
+"Košík je opustený po X minútach potom čo bola položka vložená do košíka ale "
+"objednávka nebola odoslaná"
+
+#: woocommerce-ac.php:753
+msgid "Save Changes"
+msgstr "Uložiť zmeny"
+
+#: woocommerce-ac.php:763
+msgid ""
+"The list below shows all Abandoned Carts which have remained in cart for a "
+"time higher than the \"Cart abandoned cut-off time\" setting."
+msgstr ""
+"Tento zoznam ukazuje všetky opustené košíky, pri ktorých nebol zmenený stav "
+"dlhší čas ako je nastavený \"Limit pre opustený košík\"."
+
+#: woocommerce-ac.php:858 woocommerce-ac.php:1501
+msgid "Customer"
+msgstr "Zákazník"
+
+#: woocommerce-ac.php:859 woocommerce-ac.php:1514
+msgid "Order Total"
+msgstr "Objednávka Celkom"
+
+#: woocommerce-ac.php:862
+msgid "Date"
+msgstr "Dátum"
+
+#: woocommerce-ac.php:868
+msgid "Status"
+msgstr "Stav"
+
+#: woocommerce-ac.php:872 woocommerce-ac.php:1159
+msgid "Actions"
+msgstr "Akcie"
+
+#: woocommerce-ac.php:953
+msgid ""
+"Add email templates at different intervals to maximize the possibility of "
+"recovering your abandoned carts."
+msgstr ""
+"Add email templates at different intervals to maximize the possibility of "
+"recovering your abandoned carts."
+
+#: woocommerce-ac.php:1054
+msgid "The Email Template has been successfully added."
+msgstr "Emailová šablóna bola úspešne pridaná."
+
+#: woocommerce-ac.php:1057
+msgid "The Email Template has been successfully updated."
+msgstr "Emailová šablóna bola úspešne uložená."
+
+#: woocommerce-ac.php:1145
+msgid "Sr"
+msgstr ""
+
+#: woocommerce-ac.php:1148
+msgid "Template Name"
+msgstr "Názov šablóny"
+
+#: woocommerce-ac.php:1154
+msgid "Sent"
+msgstr "Odoslané"
+
+#: woocommerce-ac.php:1158
+msgid "Active ?"
+msgstr "Aktívne ?"
+
+#: woocommerce-ac.php:1276
+msgid ""
+"The Report below shows how many Abandoned Carts we were able to recover for "
+"you by sending automatic emails to encourage shoppers."
+msgstr ""
+"Tento report ukazuje koľko Opustených košíkov sme boli schopný znovuzískať "
+"pre Vás po odoslaní automatického emailu pre povzbudenie nakupujúceho."
+
+#: woocommerce-ac.php:1331
+msgid "Start Date:"
+msgstr "Začiatočný dátum:"
+
+#: woocommerce-ac.php:1334
+msgid "End Date:"
+msgstr "Dátum ukončenia:"
+
+#: woocommerce-ac.php:1337
+msgid "Go"
+msgstr "Spustiť"
+
+#: woocommerce-ac.php:1495
+msgid "During the selected range"
+msgstr "Vo vybranom intarvale: "
+
+#: woocommerce-ac.php:1495
+msgid "carts totaling"
+msgstr "(v celkovej výške: "
+
+#: woocommerce-ac.php:1495
+msgid "were abandoned. We were able to recover"
+msgstr ") opustených košíkov. Objednávku sme spätne získali z"
+
+#: woocommerce-ac.php:1495
+msgid "of them, which led to an extra"
+msgstr ",čo viedlo k "
+
+#: woocommerce-ac.php:1495
+msgid "in sales"
+msgstr "obratu."
+
+#: woocommerce-ac.php:1504
+msgid "Created On"
+msgstr "Vytvorené"
+
+#: woocommerce-ac.php:1510
+msgid "Recovered Date"
+msgstr "Dátum znovuzískania"
+
+#: woocommerce-ac.php:1561
+msgid "Template Name:"
+msgstr "Názov šablóny:"
+
+#: woocommerce-ac.php:1572
+msgid "Enter a template name for reference"
+msgstr "Zadajte názov šablóny pre priradenie"
+
+#: woocommerce-ac.php:1577
+msgid "Send From This Name:"
+msgstr "Meno odosielateľa:"
+
+#: woocommerce-ac.php:1588
+msgid "Enter the name that should appear in the email sent"
+msgstr "Zadajte meno ktoré sa zobrazí ako odosielateľ"
+
+#: woocommerce-ac.php:1594
+msgid "Subject:"
+msgstr "Predmet:"
+
+#: woocommerce-ac.php:1605
+msgid "Enter the subject that should appear in the email sent"
+msgstr "Zadajte predmet, ktorý by sa mal objaviť v odolsanom emaile"
+
+#: woocommerce-ac.php:1611
+msgid "Email Body:"
+msgstr "Telo emailu:"
+
+#: woocommerce-ac.php:1627
+msgid "Message to be sent in the reminder email."
+msgstr "Správa odoslaná ako pripomienkobý email."
+
+#: woocommerce-ac.php:1634
+msgid "Send this email:"
+msgstr "Odoslat tento email."
+
+#: woocommerce-ac.php:1686
+msgid "after cart is abandoned."
+msgstr "po opustení košíka."
+
+#: woocommerce-ac.php:1693
+msgid "Send a test email to:"
+msgstr "Odoslať testovací email na:"
+
+#: woocommerce-ac.php:1699
+msgid "Enter the email id to which the test email needs to be sent."
+msgstr "Zadajte email na ktorý sa ma testovací email odoslať."
+
+#: woocommerce-ac.php:1835 send_email.php:109
+msgid "Your Shopping Cart"
+msgstr "Váš nakúpný košík"
+
+#: woocommerce-ac.php:1838 send_email.php:112
+msgid "Item"
+msgstr "Položka"
+
+#: woocommerce-ac.php:1839 send_email.php:113
+msgid "Name"
+msgstr "Meno"
+
+#: woocommerce-ac.php:1840 send_email.php:114
+msgid "Quantity"
+msgstr "Množstvo"
+
+#: woocommerce-ac.php:1841 send_email.php:115
+msgid "Price"
+msgstr "Cena"
+
+#: woocommerce-ac.php:1842 send_email.php:116
+msgid "Line Subtotal"
+msgstr "Subtotal"
+
+#: woocommerce-ac.php:1846
+msgid "Men\\'\\s Formal Shoes"
+msgstr ""
+
+#: woocommerce-ac.php:1853
+msgid "Woman\\'\\s Hand Bags"
+msgstr ""
+
+#: woocommerce-ac.php:1862 send_email.php:160
+msgid "Cart Total:"
+msgstr "Košík spolu:"
