@@ -73,8 +73,8 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		global $status, $page;
 		// Set parent defaults
 		parent::__construct( array(
-		        'singular' => __( 'rec_abandoned_id', 'woocommerce-ac' ), //singular name of the listed records
-		        'plural'   => __( 'rec_abandoned_ids', 'woocommerce-ac' ), //plural name of the listed records
+		        'singular' => __( 'rec_abandoned_id', 'woocommerce-abandoned-cart' ), //singular name of the listed records
+		        'plural'   => __( 'rec_abandoned_ids', 'woocommerce-abandoned-cart' ), //plural name of the listed records
 				'ajax'     => false             			// Does this table support ajax?
 		) );			
         $this->base_url = admin_url( 'admin.php?page=woocommerce_ac_page&action=stats' );
@@ -102,11 +102,11 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	
 	public function get_columns() {	    
 	    $columns = array( 		        
-                'user_name'       => __( 'Customer Name', 'woocommerce-ac' ),
-		        'user_email_id'   => __( 'Email Address', 'woocommerce-ac' ),
-				'created_on'      => __( 'Cart Abandoned Date', 'woocommerce-ac' ),				
-	            'recovered_date'  => __( 'Cart Recovered Date' , 'woocommerce-ac'),
-	            'order_total'     => __( 'Order Total', 'woocommerce-ac' )				
+                'user_name'       => __( 'Customer Name', 'woocommerce-abandoned-cart' ),
+		        'user_email_id'   => __( 'Email Address', 'woocommerce-abandoned-cart' ),
+				'created_on'      => __( 'Cart Abandoned Date', 'woocommerce-abandoned-cart' ),				
+	            'recovered_date'  => __( 'Cart Recovered Date' , 'woocommerce-abandoned-cart'),
+	            'order_total'     => __( 'Order Total', 'woocommerce-abandoned-cart' )				
 		);		
 	   return apply_filters( 'wcal_recovered_orders_columns', $columns );
 	}
@@ -136,7 +136,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	    
 	    if( isset( $recovered_orders_row_info->user_name ) ) {
     	    $recovered_id                = $recovered_orders_row_info->recovered_id ;
-    	    $row_actions['view_details'] = "<a target=_blank href = post.php?post=$recovered_id&action=edit>". __( 'View Details', 'woocommerce-ac' )."</a>";
+    	    $row_actions['view_details'] = "<a target=_blank href = post.php?post=$recovered_id&action=edit>". __( 'View Details', 'woocommerce-abandoned-cart' )."</a>";
     	    $user_name                   = $recovered_orders_row_info->user_name;
             $value                       = $user_name . $this->row_actions( $row_actions );
 	    }	

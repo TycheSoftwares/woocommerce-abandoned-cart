@@ -39,8 +39,8 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		global $status, $page;
 		// Set parent defaults
 		parent::__construct( array(
-		        'singular' => __( 'abandoned_order_id', 'woocommerce-ac' ), //singular name of the listed records
-		        'plural'   => __( 'abandoned_order_ids', 'woocommerce-ac' ), //plural name of the listed records
+		        'singular' => __( 'abandoned_order_id', 'woocommerce-abandoned-cart' ), //singular name of the listed records
+		        'plural'   => __( 'abandoned_order_ids', 'woocommerce-abandoned-cart' ), //plural name of the listed records
 				'ajax'     => false             			// Does this table support ajax?
 		) );
 		$this->process_bulk_action();
@@ -73,12 +73,12 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    $columns = array();
 		$columns = array(
  		        'cb'          => '<input type="checkbox" />',
-                'id'          => __( 'Id', 'woocommerce-ac' ),
-                'email'       => __( 'Email Address', 'woocommerce-ac' ),
-				'customer'    => __( 'Customer', 'woocommerce-ac' ),
-				'order_total' => __( 'Order Total', 'woocommerce-ac' ),		        
-				'date'        => __( 'Abandoned Date', 'woocommerce-ac' ),
-				'status'      => __( 'Status of Cart', 'woocommerce-ac' )
+                'id'          => __( 'Id', 'woocommerce-abandoned-cart' ),
+                'email'       => __( 'Email Address', 'woocommerce-abandoned-cart' ),
+				'customer'    => __( 'Customer', 'woocommerce-abandoned-cart' ),
+				'order_total' => __( 'Order Total', 'woocommerce-abandoned-cart' ),		        
+				'date'        => __( 'Abandoned Date', 'woocommerce-abandoned-cart' ),
+				'status'      => __( 'Status of Cart', 'woocommerce-abandoned-cart' )
 		);
 		return apply_filters( 'wcal_abandoned_orders_columns', $columns );
 	}
@@ -122,8 +122,8 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    $abandoned_order_id 	= 0;
 	    if( isset( $abandoned_row_info->email ) ) {	    
 		    $abandoned_order_id    = $abandoned_row_info->id ; 
-		    $row_actions['edit']   = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'orderdetails', 'id' => $abandoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'View order', 'woocommerce-ac' ) . '</a>';
-		    $row_actions['delete'] = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'wcal_delete', 'abandoned_order_id' => $abandoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'Delete', 'woocommerce-ac' ) . '</a>';	
+		    $row_actions['edit']   = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'orderdetails', 'id' => $abandoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'View order', 'woocommerce-abandoned-cart' ) . '</a>';
+		    $row_actions['delete'] = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'wcal_delete', 'abandoned_order_id' => $abandoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'Delete', 'woocommerce-abandoned-cart' ) . '</a>';	
 		    $email                 = $abandoned_row_info->email;
 		    $value                 = $email . $this->row_actions( $row_actions );	    
 	    }	
@@ -314,15 +314,15 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		    }
 		
 		    if ( 1 == $quantity_total ) {
-		        $item_disp = __("item", "woocommerce-ac");
+		        $item_disp = __("item", "woocommerce-abandoned-cart");
 		    } else {
-		        $item_disp = __("items", "woocommerce-ac");
+		        $item_disp = __("items", "woocommerce-abandoned-cart");
 		    }
 		    
 		    if( $value->cart_ignored == 0 && $value->recovered_cart == 0 ) {
-		        $ac_status = __( "Abandoned", "woocommerce-ac" );
+		        $ac_status = __( "Abandoned", "woocommerce-abandoned-cart" );
 		    } elseif( $value->cart_ignored == 1 && $value->recovered_cart == 0 ) {
-		        $ac_status = __( "Abandoned but new","woocommerce-ac" )."</br>". __( "cart created after this", "woocommerce-ac" );
+		        $ac_status = __( "Abandoned but new","woocommerce-abandoned-cart" )."</br>". __( "cart created after this", "woocommerce-abandoned-cart" );
 		    } else {
 		        $ac_status = "";
 		    }
@@ -461,7 +461,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	
 	public function get_bulk_actions() {
 	    return array(
-	        'wcal_delete' => __( 'Delete', 'woocommerce-ac' )
+	        'wcal_delete' => __( 'Delete', 'woocommerce-abandoned-cart' )
 	    );
 	}
 	
