@@ -40,8 +40,8 @@ class WCAL_Templates_Table extends WP_List_Table {
 		global $status, $page;
 		// Set parent defaults
 		parent::__construct( array(
-		        'singular' => __( 'template_id', 'woocommerce-ac' ), //singular name of the listed records
-		        'plural'   => __( 'template_ids', 'woocommerce-ac' ), //plural name of the listed records
+		        'singular' => __( 'template_id', 'woocommerce-abandoned-cart' ), //singular name of the listed records
+		        'plural'   => __( 'template_ids', 'woocommerce-abandoned-cart' ), //plural name of the listed records
 				'ajax'     => false             			// Does this table support ajax?
 		) );
 		$this->process_bulk_action();
@@ -69,10 +69,10 @@ class WCAL_Templates_Table extends WP_List_Table {
 	public function get_columns() {	    
 	    $columns = array(
  		        'cb'            => '<input type="checkbox" />',
-                'sr'            => __( 'Sr', 'woocommerce-ac' ),
-		        'template_name' => __( 'Name Of Template', 'woocommerce-ac' ),
-				'sent_time'     => __( 'Sent After Set Time', 'woocommerce-ac' ),
-				'activate'  	=> __( 'Active ?', 'woocommerce-ac' )			
+                'sr'            => __( 'Sr', 'woocommerce-abandoned-cart' ),
+		        'template_name' => __( 'Name Of Template', 'woocommerce-abandoned-cart' ),
+				'sent_time'     => __( 'Sent After Set Time', 'woocommerce-abandoned-cart' ),
+				'activate'  	=> __( 'Active ?', 'woocommerce-abandoned-cart' )			
 		);		
 	   return apply_filters( 'wcal_templates_columns', $columns );
 	}	
@@ -116,8 +116,8 @@ class WCAL_Templates_Table extends WP_List_Table {
 	    if( isset( $template_row_info->template_name ) ) {	    
     	    $template_id = $template_row_info->id ; 
     	    
-    	    $row_actions['edit']   = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'emailtemplates', 'mode'=>'edittemplate', 'id' => $template_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'Edit', 'woocommerce-ac' ) . '</a>';
-    	    $row_actions['delete'] = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'wcal_delete_template', 'template_id' => $template_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'Delete', 'woocommerce-ac' ) . '</a>';
+    	    $row_actions['edit']   = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'emailtemplates', 'mode'=>'edittemplate', 'id' => $template_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'Edit', 'woocommerce-abandoned-cart' ) . '</a>';
+    	    $row_actions['delete'] = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'wcal_delete_template', 'template_id' => $template_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'Delete', 'woocommerce-abandoned-cart' ) . '</a>';
     	    
     	    $email = $template_row_info->template_name;
             $value = $email . $this->row_actions( $row_actions );	    
@@ -152,7 +152,7 @@ class WCAL_Templates_Table extends WP_List_Table {
 		    $return_templates_data[ $i ]->sr            = $i+1;
 		    $return_templates_data[ $i ]->id            = $id;
 		    $return_templates_data[ $i ]->template_name = $value->template_name;
-		    $return_templates_data[ $i ]->sent_time     = __( $frequency . " " . $day_or_hour . " After Abandonment", 'woocommerce-ac' );
+		    $return_templates_data[ $i ]->sent_time     = __( $frequency . " " . $day_or_hour . "After Abandonment", 'woocommerce-abandoned-cart' );
 		    $return_templates_data[ $i ]->activate      = $active;
 		    $return_templates_data[ $i ]->is_active     = $is_active;
 		    $i++;  		        		    
@@ -239,7 +239,7 @@ class WCAL_Templates_Table extends WP_List_Table {
 			       } else {
 			           $active = "off";
 			       }
-			       $active_text   = __( $active, 'woocommerce-ac' ); 
+			       $active_text   = __( $active, 'woocommerce-abandoned-cart' ); 
 			       //$value   = '<a href="#" onclick="wcal_activate_email_template('. $id.', '.$is_active.' )"> '.$active_text.'</a>'; 				
 			       $value =  '<button type="button" class="wcal-switch wcal-toggle-template-status" '
 					. 'wcal-template-id="'. $id .'" '
@@ -256,7 +256,7 @@ class WCAL_Templates_Table extends WP_List_Table {
 	
 	public function get_bulk_actions() {
 	    return array(
-	        'wcal_delete_template' => __( 'Delete', 'woocommerce-ac' )
+	        'wcal_delete_template' => __( 'Delete', 'woocommerce-abandoned-cart' )
 	    );
 	}
 }

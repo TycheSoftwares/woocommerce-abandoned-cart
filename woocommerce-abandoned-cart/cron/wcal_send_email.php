@@ -64,7 +64,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 }
                 $template_id         = $value->id;
                 $is_wc_template      = $value->is_wc_template;
-                $wc_template_header_text = $value->wc_email_header != '' ? $value->wc_email_header : __( 'Abandoned cart reminder', 'woocommerce-ac');
+                $wc_template_header_text = $value->wc_email_header != '' ? $value->wc_email_header : __( 'Abandoned cart reminder', 'woocommerce-abandoned-cart');
                 $wc_template_header  = stripslashes( $wc_template_header_text );
                 if ( '' != $email_body_template ) { 
                     foreach ( $carts as $key => $value ) {
@@ -245,23 +245,23 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                             if( preg_match( "{{products.cart}}", $email_body, $matched ) ) {
                                                 if ( class_exists( 'WP_Better_Emails' ) ) {
                                                     $var = '<table width = 100%>
-                                                            <tr> <td colspan="5"> <h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3> </td></tr>
+                                                            <tr> <td colspan="5"> <h3>'.__( "Your Shopping Cart", "woocommerce-abandoned-cart" ).'</h3> </td></tr>
                                                             <tr>
-                                                            <th>'.__( "Item", "woocommerce-ac" ).'</th>
-                                                            <th>'.__( "Name", "woocommerce-ac" ).'</th>
-                                                            <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
-                                                            <th>'.__( "Price", "woocommerce-ac" ).'</th>
-                                                            <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
+                                                            <th>'.__( "Item", "woocommerce-abandoned-cart" ).'</th>
+                                                            <th>'.__( "Name", "woocommerce-abandoned-cart" ).'</th>
+                                                            <th>'.__( "Quantity", "woocommerce-abandoned-cart" ).'</th>
+                                                            <th>'.__( "Price", "woocommerce-abandoned-cart" ).'</th>
+                                                            <th>'.__( "Line Subtotal", "woocommerce-abandoned-cart" ).'</th>
                                                             </tr>';
                                                 } else {
-                                                    $var = '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
+                                                    $var = '<h3>'.__( "Your Shopping Cart", "woocommerce-abandoned-cart" ).'</h3>
                                                         <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
                                                             <tr>
-                                                            <th>'.__( "Item", "woocommerce-ac" ).'</th>
-                                                            <th>'.__( "Name", "woocommerce-ac" ).'</th>
-                                                            <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
-                                                            <th>'.__( "Price", "woocommerce-ac" ).'</th>
-                                                            <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
+                                                            <th>'.__( "Item", 'woocommerce-abandoned-cart' ).'</th>
+                                                            <th>'.__( "Name", 'woocommerce-abandoned-cart' ).'</th>
+                                                            <th>'.__( "Quantity", 'woocommerce-abandoned-cart' ).'</th>
+                                                            <th>'.__( "Price", 'woocommerce-abandoned-cart' ).'</th>
+                                                            <th>'.__( "Line Subtotal", 'woocommerce-abandoned-cart' ).'</th>
                                                             </tr>';
                                                 }                   
                                                 $cart_details = $cart_info_db_field->cart;
@@ -324,7 +324,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                         }
                                                         $var .='<tr align="center">
                                                                 <td> <a href="'.$cart_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
-                                                                <td> <a href="'.$cart_link_track.'">'.__( $product_name, "woocommerce-ac" ).'</a></td>
+                                                                <td> <a href="'.$cart_link_track.'">'.__( $product_name, 'woocommerce-abandoned-cart' ).'</a></td>
                                                                 <td> '.$quantity_total.'</td>
                                                                 <td> '.$item_subtotal.'</td>
                                                                 <td> '.$item_total_display.'</td>
@@ -337,13 +337,13 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                             <td> </td>
                                                             <td> </td>
                                                             <td> </td>
-                                                            <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
+                                                            <td>'.__( "Cart Total:", 'woocommerce-abandoned-cart' ).'</td>
                                                             <td> '.$cart_total.'</td>
                                                         </tr>';
                                                     $var .= '</table>
                                                                             ';
                                                     $email_body    = str_replace( "{{products.cart}}", $var, $email_body );
-                                                    $email_subject = str_replace( "{{product.name}}", __( $sub_line_prod_name, "woocommerce-ac" ), $email_subject );
+                                                    $email_subject = str_replace( "{{product.name}}", __( $sub_line_prod_name, 'woocommerce-abandoned-cart' ), $email_subject );
                                                 }
                                             
                                                 $user_email       = $value->user_email;
@@ -365,7 +365,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                     wc_mail( $user_email, $email_subject, $final_email_body, $headers );
                                             
                                                 } else {
-                                                    wp_mail( $user_email, $email_subject, __( $email_body_final, 'woocommerce-ac' ), $headers );
+                                                    wp_mail( $user_email, $email_subject, __( $email_body_final, 'woocommerce-abandoned-cart' ), $headers );
                                                 }
                                             }
                                         }                                       
@@ -479,7 +479,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                             $query_order = "UPDATE `" . $wpdb->prefix."ac_abandoned_cart_history_lite` SET recovered_cart= '" . $order_id . "', cart_ignored = '1' WHERE id = '".$cart_id."' ";
                             $wpdb->query( $query_order );
 
-                            $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-ac' ) );
+                            $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
 
                             delete_post_meta( $order_id,  'wcal_recover_order_placed',         $cart_id );
                             delete_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $wcal_check_email_sent_to_cart );
@@ -536,7 +536,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                             $query_order = "UPDATE `" . $wpdb->prefix."ac_abandoned_cart_history_lite` SET recovered_cart= '" . $order_id . "', cart_ignored = '1' WHERE id = '".$cart_id."' ";
                             $wpdb->query( $query_order );
 
-                            $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-ac' ) );
+                            $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
 
                             delete_post_meta( $order_id,  'wcap_recover_order_placed',         $cart_id );
                             delete_post_meta( $order_id , 'wcap_recover_order_placed_sent_id', $wcal_check_email_sent_to_cart );

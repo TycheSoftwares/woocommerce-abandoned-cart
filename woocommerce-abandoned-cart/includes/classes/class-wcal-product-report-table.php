@@ -79,8 +79,8 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		global $status, $page;
 		// Set parent defaults
 		parent::__construct( array(
-		        'singular' => __( 'product_id', 'woocommerce-ac' ), //singular name of the listed records
-		        'plural'   => __( 'product_ids', 'woocommerce-ac' ), //plural name of the listed records
+		        'singular' => __( 'product_id', 'woocommerce-abandoned-cart' ), //singular name of the listed records
+		        'plural'   => __( 'product_ids', 'woocommerce-abandoned-cart' ), //plural name of the listed records
 				'ajax'      => false             			// Does this table support ajax?
 		) );		
 		$this->base_url = admin_url( 'admin.php?page=woocommerce_ac_page&action=stats' );
@@ -103,9 +103,9 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 	
 	public function get_columns() {	    
 	    $columns = array( 		        
-	            'product_name'     => __( 'Product Name', 'woocommerce-ac' ),
-                'abandoned_number' => __( 'Number of Times Abandoned', 'woocommerce-ac' ),
-		        'recover_number'   => __( 'Number of Times Recovered', 'woocommerce-ac' )				
+	            'product_name'     => __( 'Product Name', 'woocommerce-abandoned-cart' ),
+                'abandoned_number' => __( 'Number of Times Abandoned', 'woocommerce-abandoned-cart' ),
+		        'recover_number'   => __( 'Number of Times Recovered', 'woocommerce-abandoned-cart' )				
 	    );		
 	   return apply_filters( 'wcal_product_report_columns', $columns );
 	}

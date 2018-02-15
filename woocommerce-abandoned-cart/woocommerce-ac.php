@@ -6,7 +6,7 @@
 * Version: 4.6
 * Author: Tyche Softwares
 * Author URI: http://www.tychesoftwares.com/
-* Text Domain: woocommerce-ac
+* Text Domain: woocommerce-abandoned-cart
 * Domain Path: /i18n/languages/
 * Requires PHP: 5.6
 * WC requires at least: 3.0.0
@@ -54,7 +54,7 @@ if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
 function wcal_add_tracking_cron_schedule( $schedules ) {
     $schedules[ 'daily_once' ] = array(
         'interval' => 604800,  // one week in seconds
-        'display'  => __( 'Once in a Week', 'woocommerce-ac' )
+        'display'  => __( 'Once in a Week', 'woocommerce-abandoned-cart' )
     );
     return $schedules;
 }
@@ -310,7 +310,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         public static function wcal_wc_disabled_notice() {
                 
             $class = 'notice notice-error is-dismissible';
-            $message = __( 'Abandoned Cart Lite for WooCommerce requires WooCommerce installed and activate.', 'woocommerce-ac' );
+            $message = __( 'Abandoned Cart Lite for WooCommerce requires WooCommerce installed and activate.', 'woocommerce-abandoned-cart' );
                 
             printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
         }
@@ -541,7 +541,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $query_order = "UPDATE $wcal_ac_table_name SET recovered_cart = '" . $order_id . "', cart_ignored = '1' WHERE id = '".$get_abandoned_id_of_order."' ";
                     $wpdb->query( $query_order );
         
-                    $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-ac' ) );
+                    $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
 
                     delete_post_meta( $order_id,  'wcal_recover_order_placed',         $get_abandoned_id_of_order );
                     delete_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $get_sent_email_id_of_order );
@@ -581,7 +581,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         public function wcal_preview_emails() {
             global $woocommerce;
             if( isset( $_GET['wcal_preview_woocommerce_mail'] ) ) {
-                if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-ac' ) ) {
+                if( !wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-abandoned-cart' ) ) {
                     die( 'Security check' );
                 }
                 $message = '';
@@ -593,13 +593,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     include( 'views/wcal-wc-email-template-preview.php' );
                     $mailer        = WC()->mailer();
                     $message       = ob_get_clean();
-                    $email_heading = __( 'HTML Email Template', 'woocommerce-ac' );
+                    $email_heading = __( 'HTML Email Template', 'woocommerce-abandoned-cart' );
                     $message       =  $mailer->wrap_message( $email_heading, $message );
                 } else {
                     // load the mailer class
                     $mailer        = WC()->mailer(); 
                     // get the preview email subject
-                    $email_heading = __( 'Abandoned cart Email Template', 'woocommerce-ac' );       
+                    $email_heading = __( 'Abandoned cart Email Template', 'woocommerce-abandoned-cart' );       
                     // get the preview email content
                     ob_start();
                     include( 'views/wcal-wc-email-template-preview.php' );
@@ -614,7 +614,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
         
             if ( isset( $_GET['wcal_preview_mail'] ) ) {
-                if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-ac' ) ) {
+                if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-abandoned-cart' ) ) {
                     die( 'Security check' );
                 }
                 // get the preview email content
@@ -629,7 +629,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
         // Language Translation
         function  wcal_update_po_file() {
-            $domain = 'woocommerce-ac';
+            /*
+            * Due to the introduction of language packs through translate.wordpress.org, loading our textdomain is complex.
+            *
+            * In v4.8, our textdomain changed from "woocommerce-ac" to "woocommerce-abandoned-cart".
+            */
+            $domain = 'woocommerce-abandoned-cart';
             $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
             if ( $loaded = load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . $domain . '-' . $locale . '.mo' ) ) {
                 return $loaded;
@@ -780,36 +785,36 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             // First, we register a section. This is necessary since all future options must belong to a
             add_settings_section(
                 'ac_lite_general_settings_section',         // ID used to identify this section and with which to register options
-                __( 'Settings', 'woocommerce-ac' ),                  // Title to be displayed on the administration page
+                __( 'Settings', 'woocommerce-abandoned-cart' ),                  // Title to be displayed on the administration page
                 array($this, 'ac_lite_general_options_callback' ), // Callback used to render the description of the section
                 'woocommerce_ac_page'     // Page on which to add this section of options
             );
         
             add_settings_field(
                 'ac_lite_cart_abandoned_time',
-                __( 'Cart abandoned cut-off time', 'woocommerce-ac' ),
+                __( 'Cart abandoned cut-off time', 'woocommerce-abandoned-cart' ),
                 array( $this, 'ac_lite_cart_abandoned_time_callback' ),
                 'woocommerce_ac_page',
                 'ac_lite_general_settings_section',
-                array( __( 'Consider cart abandoned after X minutes of item being added to cart & order not placed.', 'woocommerce-ac' ) )
+                array( __( 'Consider cart abandoned after X minutes of item being added to cart & order not placed.', 'woocommerce-abandoned-cart' ) )
             );
             
             add_settings_field(
                 'ac_lite_email_admin_on_recovery',
-                __( 'Email admin On Order Recovery', 'woocommerce-ac' ),
+                __( 'Email admin On Order Recovery', 'woocommerce-abandoned-cart' ),
                 array( $this, 'ac_lite_email_admin_on_recovery' ),
                 'woocommerce_ac_page',
                 'ac_lite_general_settings_section',
-                array( __( 'Sends email to Admin if an Abandoned Cart Order is recovered.', 'woocommerce-ac' ) )
+                array( __( 'Sends email to Admin if an Abandoned Cart Order is recovered.', 'woocommerce-abandoned-cart' ) )
             );
             
             add_settings_field(
             'ac_lite_track_guest_cart_from_cart_page',
-            __( 'Start tracking from Cart Page', 'woocommerce-ac' ),
+            __( 'Start tracking from Cart Page', 'woocommerce-abandoned-cart' ),
             array( $this, 'wcal_track_guest_cart_from_cart_page_callback' ),
             'woocommerce_ac_page',
             'ac_lite_general_settings_section',
-            array( __( 'Enable tracking of abandoned products & carts even if customer does not visit the checkout page or does not enter any details on the checkout page like Name or Email. Tracking will begin as soon as a visitor adds a product to their cart and visits the cart page.', 'woocommerce-ac' ) )
+            array( __( 'Enable tracking of abandoned products & carts even if customer does not visit the checkout page or does not enter any details on the checkout page like Name or Email. Tracking will begin as soon as a visitor adds a product to their cart and visits the cart page.', 'woocommerce-abandoned-cart' ) )
             );
             /*
              * New section for the Adding the abandoned cart setting.
@@ -818,36 +823,36 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             
             add_settings_section(
             'ac_email_settings_section',           // ID used to identify this section and with which to register options
-            __( 'Settings for abandoned cart recovery emails', 'woocommerce-ac' ),      // Title to be displayed on the administration page
+            __( 'Settings for abandoned cart recovery emails', 'woocommerce-abandoned-cart' ),      // Title to be displayed on the administration page
             array($this, 'wcal_email_callback' ),// Callback used to render the description of the section
             'woocommerce_ac_email_page'     // Page on which to add this section of options
             );
             
             add_settings_field(
             'wcal_from_name',
-            __( '"From" Name', 'woocommerce-ac'  ),
+            __( '"From" Name', 'woocommerce-abandoned-cart'  ),
             array( $this, 'wcal_from_name_callback' ),
             'woocommerce_ac_email_page',
             'ac_email_settings_section',
-            array( 'Enter the name that should appear in the email sent.', 'woocommerce-ac' )
+            array( 'Enter the name that should appear in the email sent.', 'woocommerce-abandoned-cart' )
             );
             
             add_settings_field(
             'wcal_from_email',
-            __( '"From" Address', 'woocommerce-ac'  ),
+            __( '"From" Address', 'woocommerce-abandoned-cart'  ),
             array( $this, 'wcal_from_email_callback' ),
             'woocommerce_ac_email_page',
             'ac_email_settings_section',
-            array( 'Email address from which the reminder emails should be sent.', 'woocommerce-ac' )
+            array( 'Email address from which the reminder emails should be sent.', 'woocommerce-abandoned-cart' )
             );
             
             add_settings_field(
             'wcal_reply_email',
-            __( 'Send Reply Emails to', 'woocommerce-ac'  ),
+            __( 'Send Reply Emails to', 'woocommerce-abandoned-cart'  ),
             array( $this, 'wcal_reply_email_callback' ),
             'woocommerce_ac_email_page',
             'ac_email_settings_section',
-            array( 'When a contact receives your email and clicks reply, which email address should that reply be sent to?', 'woocommerce-ac' )
+            array( 'When a contact receives your email and clicks reply, which email address should that reply be sent to?', 'woocommerce-abandoned-cart' )
             );
             
             // Finally, we register the fields with WordPress
@@ -913,7 +918,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             if ( $input != '' && ( is_numeric( $input) && $input > 0  ) ) {
                 $output = stripslashes( $input) ;
             } else {
-                add_settings_error( 'ac_lite_cart_abandoned_time', 'error found', __( 'Abandoned cart cut off time should be numeric and has to be greater than 0.', 'woocommerce-ac' ) );
+                add_settings_error( 'ac_lite_cart_abandoned_time', 'error found', __( 'Abandoned cart cut off time should be numeric and has to be greater than 0.', 'woocommerce-abandoned-cart' ) );
             }
             return $output;
         }
@@ -1177,9 +1182,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     
                     if ( 'checkout' == $created_via && 'yes' != $recovered_email_sent && true === $wcal_check_order_is_recovered ) { // indicates cart is abandoned
                         $order          = new WC_Order( $order_id );
-                        $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce-ac' );
+                        $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce-abandoned-cart' );
                         $blogname       = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-                        $email_subject  = "New Customer Order - Recovered";
+                        $email_subject  = __( 'New Customer Order - Recovered', 'woocommerce-abandoned-cart' );
                         $user_email     = get_option( 'admin_email' );
                         $headers[]      = "From: Admin <".$user_email.">";
                         $headers[]      = "Content-Type: text/html";
@@ -1224,9 +1229,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $created_via                   = get_post_meta( $order_id, '_created_via', true ); 
                 $wcal_check_order_is_recovered = woocommerce_abandon_cart_lite::wcal_check_order_is_recovered( $order_id );              
                 if ( 'checkout' == $created_via && 'yes' != $recovered_email_sent && true === $wcal_check_order_is_recovered ) { // indicates cart is abandoned                           
-                    $email_heading = __( 'New Customer Order - Recovered', 'woocommerce-ac' );          
+                    $email_heading = __( 'New Customer Order - Recovered', 'woocommerce-abandoned-cart' );          
                     $blogname      = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-                    $email_subject = "New Customer Order - Recovered";
+                    $email_subject = __( 'New Customer Order - Recovered', 'woocommerce-abandoned-cart' ); 
                     $user_email    = get_option( 'admin_email' );
                     $headers[]     = "From: Admin <".$user_email.">";
                     $headers[]     = "Content-Type: text/html";
@@ -1263,7 +1268,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                  
         // Add a submenu page.
         function wcal_admin_menu() {
-            $page = add_submenu_page ( 'woocommerce', __( 'Abandoned Carts', 'woocommerce-ac' ), __( 'Abandoned Carts', 'woocommerce-ac' ), 'manage_woocommerce', 'woocommerce_ac_page', array( &$this, 'wcal_menu_page' ) );
+            $page = add_submenu_page ( 'woocommerce', __( 'Abandoned Carts', 'woocommerce-abandoned-cart' ), __( 'Abandoned Carts', 'woocommerce-abandoned-cart' ), 'manage_woocommerce', 'woocommerce_ac_page', array( &$this, 'wcal_menu_page' ) );
         }
             
         // Capture the cart and insert the information of the cart into DataBase
@@ -1758,7 +1763,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                     WHERE id = '".$get_abandoned_id_of_order."' ";
                 $wpdb->query( $query_order );
             
-                $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-ac' ) );
+                $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
                  
                 delete_post_meta( $order_id, 'wcal_recover_order_placed', $get_abandoned_id_of_order );
                 delete_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $get_sent_email_id_of_order );
@@ -1915,11 +1920,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             <div style="background-image: url('<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/assets/images/ac_tab_icon.png') !important;" class="icon32"><br>
             </div>                      
             <h2 class="nav-tab-wrapper woo-nav-tab-wrapper">
-                <a href="admin.php?page=woocommerce_ac_page&action=listcart" class="nav-tab <?php if (isset($active_listcart)) echo $active_listcart; ?>"> <?php _e( 'Abandoned Orders', 'woocommerce-ac' );?> </a>
-                <a href="admin.php?page=woocommerce_ac_page&action=emailtemplates" class="nav-tab <?php if (isset($active_emailtemplates)) echo $active_emailtemplates; ?>"> <?php _e( 'Email Templates', 'woocommerce-ac' );?> </a>
-                <a href="admin.php?page=woocommerce_ac_page&action=emailsettings" class="nav-tab <?php if (isset($active_settings)) echo $active_settings; ?>"> <?php _e( 'Settings', 'woocommerce-ac' );?> </a>
-                <a href="admin.php?page=woocommerce_ac_page&action=stats" class="nav-tab <?php if (isset($active_stats)) echo $active_stats; ?>"> <?php _e( 'Recovered Orders', 'woocommerce-ac' );?> </a>
-                <a href="admin.php?page=woocommerce_ac_page&action=report" class="nav-tab <?php if( isset( $active_report ) ) echo $active_report; ?>"> <?php _e( 'Product Report', 'woocommerce-ac' );?> </a>
+                <a href="admin.php?page=woocommerce_ac_page&action=listcart" class="nav-tab <?php if (isset($active_listcart)) echo $active_listcart; ?>"> <?php _e( 'Abandoned Orders', 'woocommerce-abandoned-cart' );?> </a>
+                <a href="admin.php?page=woocommerce_ac_page&action=emailtemplates" class="nav-tab <?php if (isset($active_emailtemplates)) echo $active_emailtemplates; ?>"> <?php _e( 'Email Templates', 'woocommerce-abandoned-cart' );?> </a>
+                <a href="admin.php?page=woocommerce_ac_page&action=emailsettings" class="nav-tab <?php if (isset($active_settings)) echo $active_settings; ?>"> <?php _e( 'Settings', 'woocommerce-abandoned-cart' );?> </a>
+                <a href="admin.php?page=woocommerce_ac_page&action=stats" class="nav-tab <?php if (isset($active_stats)) echo $active_stats; ?>"> <?php _e( 'Recovered Orders', 'woocommerce-abandoned-cart' );?> </a>
+                <a href="admin.php?page=woocommerce_ac_page&action=report" class="nav-tab <?php if( isset( $active_report ) ) echo $active_report; ?>"> <?php _e( 'Product Report', 'woocommerce-abandoned-cart' );?> </a>
             </h2>
             <?php
         }
@@ -2014,11 +2019,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 global $wpdb;                   
                 // Check the user capabilities
                 if ( !current_user_can( 'manage_woocommerce' ) ) {    
-                    wp_die( __( 'You do not have sufficient permissions to access this page.', 'woocommerce-ac' ) );
+                    wp_die( __( 'You do not have sufficient permissions to access this page.', 'woocommerce-abandoned-cart' ) );
                 }           
                 ?>
                 <div class="wrap">    
-                    <h2><?php _e( 'WooCommerce - Abandon Cart Lite', 'woocommerce-ac' ); ?></h2>
+                    <h2><?php _e( 'WooCommerce - Abandon Cart Lite', 'woocommerce-abandoned-cart' ); ?></h2>
                 <?php 
                 
                  if ( isset( $_GET['action'] ) ) {
@@ -2066,18 +2071,18 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
              
                 if ( isset( $_GET['wcal_deleted'] ) && 'YES' == $_GET['wcal_deleted'] ) { ?>
                      <div id="message" class="updated fade">
-                       <p><strong><?php _e( 'The Abandoned cart has been successfully deleted.', 'woocommerce-ac' ); ?></strong></p>
+                       <p><strong><?php _e( 'The Abandoned cart has been successfully deleted.', 'woocommerce-abandoned-cart' ); ?></strong></p>
                      </div>
           <?php }    
                  if ( isset( $_GET ['wcal_template_deleted'] ) && 'YES' == $_GET['wcal_template_deleted'] ) { ?>
                     <div id="message" class="updated fade">
-                        <p><strong><?php _e( 'The Template has been successfully deleted.', 'woocommerce-ac' ); ?></strong></p>
+                        <p><strong><?php _e( 'The Template has been successfully deleted.', 'woocommerce-abandoned-cart' ); ?></strong></p>
                     </div>
            <?php }            
                  if ( $action == 'emailsettings' ) {
                  // Save the field values
                     ?>
-                    <p><?php _e( 'Change settings for sending email notifications to Customers, to Admin etc.', 'woocommerce-ac' ); ?></p>
+                    <p><?php _e( 'Change settings for sending email notifications to Customers, to Admin etc.', 'woocommerce-abandoned-cart' ); ?></p>
                     <div id="content">
                     <?php 
                         $wcal_general_settings_class = $wcal_email_setting = "";
@@ -2096,10 +2101,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         ?>
                         <ul class="subsubsub" id="wcal_general_settings_list">
                             <li>
-                                <a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_general_settings" class="<?php echo $wcal_general_settings_class; ?>"><?php _e( 'General Settings', 'woocommerce-ac' );?> </a> |
+                                <a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_general_settings" class="<?php echo $wcal_general_settings_class; ?>"><?php _e( 'General Settings', 'woocommerce-abandoned-cart' );?> </a> |
                             </li>
                                <li>
-                                <a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_email_settings" class="<?php echo $wcal_email_setting; ?>"><?php _e( 'Email Sending Settings', 'woocommerce-ac' );?> </a> 
+                                <a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_email_settings" class="<?php echo $wcal_email_setting; ?>"><?php _e( 'Email Sending Settings', 'woocommerce-abandoned-cart' );?> </a> 
                             </li>
                             
                         </ul>
@@ -2129,7 +2134,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                   <?php 
                   } elseif ( $action == 'listcart' || '' == $action || '-1' == $action || '-1' == $action_two ) {
                   ?>    
-                        <p> <?php _e( 'The list below shows all Abandoned Carts which have remained in cart for a time higher than the "Cart abandoned cut-off time" setting.', 'woocommerce-ac' );?> </p>
+                        <p> <?php _e( 'The list below shows all Abandoned Carts which have remained in cart for a time higher than the "Cart abandoned cut-off time" setting.', 'woocommerce-abandoned-cart' );?> </p>
                         <?php
                         $get_all_abandoned_count      = wcal_common::wcal_get_abandoned_order_count( 'wcal_all_abandoned' );
                         $get_registered_user_ac_count = wcal_common::wcal_get_abandoned_order_count( 'wcal_all_registered' );
@@ -2171,24 +2176,24 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         ?>
                         <ul class="subsubsub" id="wcal_recovered_orders_list">
                             <li>
-                                <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_abandoned" class="<?php echo $wcal_all_abandoned_carts; ?>"><?php _e( "All ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_all_abandoned_count )" ?> </span></a> 
+                                <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_abandoned" class="<?php echo $wcal_all_abandoned_carts; ?>"><?php _e( "All ", 'woocommerce-abandoned-cart' ) ;?> <span class = "count" > <?php echo "( $get_all_abandoned_count )" ?> </span></a> 
                             </li>
     
                             <?php if ($get_registered_user_ac_count > 0 ) { ?>
                             <li>
-                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_registered" class="<?php echo $wcal_all_registered; ?>"><?php _e( " Registered $wcal_user_reg_text ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_registered_user_ac_count )" ?> </span></a> 
+                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_registered" class="<?php echo $wcal_all_registered; ?>"><?php printf( __( 'Registered %s', 'woocommerce-abandoned-cart' ), $wcal_user_reg_text ); ?> <span class = "count" > <?php echo "( $get_registered_user_ac_count )" ?> </span></a> 
                             </li>
                             <?php } ?>
     
                             <?php if ($get_guest_user_ac_count > 0 ) { ?>
                             <li>
-                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_guest" class="<?php echo $wcal_all_guest; ?>"><?php _e( " Guest $wcal_user_gus_text ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_guest_user_ac_count )" ?> </span></a> 
+                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_guest" class="<?php echo $wcal_all_guest; ?>"><?php printf( __( 'Guest %s', 'woocommerce-abandoned-cart' ), $wcal_user_gus_text ); ?> <span class = "count" > <?php echo "( $get_guest_user_ac_count )" ?> </span></a> 
                             </li>
                             <?php } ?>
     
                             <?php if ($get_visitor_user_ac_count > 0 ) { ?>
                             <li>
-                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_visitor" class="<?php echo $wcal_all_visitor; ?>"><?php _e( " Carts without Customer Details ", 'woocommerce-ac' ) ;?> <span class = "count" > <?php echo "( $get_visitor_user_ac_count )" ?> </span></a> 
+                                | <a href="admin.php?page=woocommerce_ac_page&action=listcart&wcal_section=wcal_all_visitor" class="<?php echo $wcal_all_visitor; ?>"><?php _e( "Carts without Customer Details", 'woocommerce-abandoned-cart' ); ?> <span class = "count" > <?php echo "( $get_visitor_user_ac_count )" ?> </span></a> 
                             </li>
                             <?php } ?>
                         </ul>
@@ -2209,7 +2214,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         <?php 
                   } elseif ( $action == 'emailtemplates' && ( $mode != 'edittemplate' && $mode != 'addnewtemplate' ) ) {
                         ?>                                                  
-                        <p> <?php _e( 'Add email templates at different intervals to maximize the possibility of recovering your abandoned carts.', 'woocommerce-ac' );?> </p>
+                        <p> <?php _e( 'Add email templates at different intervals to maximize the possibility of recovering your abandoned carts.', 'woocommerce-abandoned-cart' );?> </p>
                         <?php                       
                         // Save the field values
                         $insert_template_successfuly = $update_template_successfuly = ''; 
@@ -2327,7 +2332,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             <div id="message" class="updated fade">
                                 <p>
                                     <strong>
-                                        <?php _e( 'The Email Template has been successfully added.', 'woocommerce-ac' ); ?>
+                                        <?php _e( 'The Email Template has been successfully added.', 'woocommerce-abandoned-cart' ); ?>
                                     </strong>
                                 </p>
                             </div>
@@ -2336,7 +2341,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                 <div id="message" class="error fade">
                                     <p>
                                         <strong>
-                                            <?php _e( ' There was a problem adding the email template. Please contact the plugin author via <a href= "https://wordpress.org/support/plugin/woocommerce-abandoned-cart">support forum</a>.', 'woocommerce-ac' ); ?>
+                                            <?php _e( 'There was a problem adding the email template. Please contact the plugin author via <a href= "https://wordpress.org/support/plugin/woocommerce-abandoned-cart">support forum</a>.', 'woocommerce-abandoned-cart' ); ?>
                                         </strong>
                                     </p>
                                 </div>
@@ -2347,7 +2352,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                 <div id="message" class="updated fade">
                                     <p>
                                         <strong>
-                                            <?php _e( 'The Email Template has been successfully updated.', 'woocommerce-ac' ); ?>
+                                            <?php _e( 'The Email Template has been successfully updated.', 'woocommerce-abandoned-cart' ); ?>
                                         </strong>
                                     </p>
                                 </div>
@@ -2356,7 +2361,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                     <div id="message" class="error fade">
                                         <p>
                                             <strong>
-                                                <?php _e( ' There was a problem updating the email template. Please contact the plugin author via <a href= "https://wordpress.org/support/plugin/woocommerce-abandoned-cart">support forum</a>.', 'woocommerce-ac' ); ?>
+                                                <?php _e( 'There was a problem updating the email template. Please contact the plugin author via <a href= "https://wordpress.org/support/plugin/woocommerce-abandoned-cart">support forum</a>.', 'woocommerce-abandoned-cart' ); ?>
                                             </strong>
                                         </p>
                                     </div>
@@ -2365,7 +2370,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         ?>
                         <div class="tablenav">
                             <p style="float:left;">
-                               <a cursor: pointer; href="<?php echo "admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=addnewtemplate"; ?>" class="button-secondary"><?php _e( 'Add New Template', 'woocommerce-ac' ); ?>
+                               <a cursor: pointer; href="<?php echo "admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=addnewtemplate"; ?>" class="button-secondary"><?php _e( 'Add New Template', 'woocommerce-abandoned-cart' ); ?>
                                </a>                           
                             </p>
                     
@@ -2442,7 +2447,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         }
                         if ($duration_range == "") $duration_range = "last_seven";
                         
-                            _e( 'The Report below shows how many Abandoned Carts we were able to recover for you by sending automatic emails to     encourage shoppers.', 'woocommerce-ac');
+                            _e( 'The Report below shows how many Abandoned Carts we were able to recover for you by sending automatic emails to encourage shoppers.', 'woocommerce-abandoned-cart');
                         ?>
                         <div id="recovered_stats" class="postbox" style="display:block">
                             <div class="inside">
@@ -2491,35 +2496,35 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         $end_date_range = $date_sett['end_date'];
                                     }
                                     ?>                       
-                                    <label class="start_label" for="start_day"> <?php _e( 'Start Date:', 'woocommerce-ac' ); ?> </label>
+                                    <label class="start_label" for="start_day"> <?php _e( 'Start Date:', 'woocommerce-abandoned-cart' ); ?> </label>
                                     <input type="text" id="start_date" name="start_date" readonly="readonly" value="<?php echo $start_date_range; ?>"/>     
-                                    <label class="end_label" for="end_day"> <?php _e( 'End Date:', 'woocommerce-ac' ); ?> </label>
+                                    <label class="end_label" for="end_day"> <?php _e( 'End Date:', 'woocommerce-abandoned-cart' ); ?> </label>
                                     <input type="text" id="end_date" name="end_date" readonly="readonly" value="<?php echo $end_date_range; ?>"/>  
-                                    <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Go', 'woocommerce-ac' ); ?>"  />
+                                    <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Go', 'woocommerce-abandoned-cart' ); ?>"  />
                                 </form>
                             </div>
                         </div>
                         <div id="recovered_stats" class="postbox" style="display:block">
                             <div class="inside" >
-                                <p style="font-size: 15px"><?php  _e( 'During the selected range ', 'woocommerce-ac' ); ?>
+                                <p style="font-size: 15px"><?php _e( 'During the selected range ', 'woocommerce-abandoned-cart' ); ?>
                                     <strong>
                                         <?php $count = $wcal_recover_orders_list->total_abandoned_cart_count; 
                                               echo $count; ?> 
                                     </strong>
-                                    <?php _e( 'carts totaling', 'woocommerce-ac' ); ?> 
+                                    <?php _e( 'carts totaling', 'woocommerce-abandoned-cart' ); ?> 
                                     <strong> 
                                         <?php $total_of_all_order = $wcal_recover_orders_list->total_order_amount; 
                                                
                                         echo $total_of_all_order; ?>
                                      </strong>
-                                     <?php _e( ' were abandoned. We were able to recover', 'woocommerce-ac' ); ?> 
+                                     <?php _e( ' were abandoned. We were able to recover', 'woocommerce-abandoned-cart' ); ?> 
                                      <strong>
                                         <?php 
                                         $recovered_item = $wcal_recover_orders_list->recovered_item;
                                         
                                         echo $recovered_item; ?>
                                      </strong>
-                                     <?php _e( ' of them, which led to an extra', 'woocommerce-ac' ); ?> 
+                                     <?php _e( ' of them, which led to an extra', 'woocommerce-abandoned-cart' ); ?> 
                                      <strong>
                                         <?php 
                                             $recovered_total = $wcal_recover_orders_list->total_recover_amount;
@@ -2542,15 +2547,15 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         ?>
                         <p> </p>
                         <div id="ac_order_details" class="postbox" style="display:block">
-                            <h3> <p> <?php _e( "Abandoned Order #$ac_order_id Details", "woocommerce-ac" ); ?> </p> </h3>
+                            <h3> <p> <?php printf( __( 'Abandoned Order #%s Details', 'woocommerce-abandoned-cart' ), $ac_order_id); ?> </p> </h3>
                             <div class="inside">
                                 <table cellpadding="0" cellspacing="0" class="wp-list-table widefat fixed posts">
                                     <tr>
-                                        <th> <?php _e( 'Item', 'woocommerce-ac' ); ?> </th>
-                                        <th> <?php _e( 'Name', 'woocommerce-ac' ); ?> </th>
-                                        <th> <?php _e( 'Quantity', 'woocommerce-ac' ); ?> </th>
-                                        <th> <?php _e( 'Line Subtotal', 'woocommerce-ac' ); ?> </th>
-                                        <th> <?php _e( 'Line Total', 'woocommerce-ac' ); ?> </th>
+                                        <th> <?php _e( 'Item', 'woocommerce-abandoned-cart' ); ?> </th>
+                                        <th> <?php _e( 'Name', 'woocommerce-abandoned-cart' ); ?> </th>
+                                        <th> <?php _e( 'Quantity', 'woocommerce-abandoned-cart' ); ?> </th>
+                                        <th> <?php _e( 'Line Subtotal', 'woocommerce-abandoned-cart' ); ?> </th>
+                                        <th> <?php _e( 'Line Total', 'woocommerce-abandoned-cart' ); ?> </th>
                                     </tr>                                           
                                     <?php 
                                     $query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE id = %d ";
@@ -2791,15 +2796,15 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             </div>  
                         </div>
                         <div id="ac_order_customer_details" class="postbox" style="display:block">
-                            <h3> <p> <?php _e( 'Customer Details' , 'woocommerce-ac' ); ?> </p> </h3>
+                            <h3> <p> <?php _e( 'Customer Details' , 'woocommerce-abandoned-cart' ); ?> </p> </h3>
                             <div class="inside" style="height: 300px;" >                                       
                                 <div id="order_data" class="panel">
                                     <div style="width:50%;float:left">
-                                        <h3> <p> <?php _e( 'Billing Details' , 'woocommerce-ac' ); ?> </p> </h3>
-                                        <p> <strong> <?php _e( 'Name:' , 'woocommerce-ac' ); ?> </strong>
+                                        <h3> <p> <?php _e( 'Billing Details' , 'woocommerce-abandoned-cart' ); ?> </p> </h3>
+                                        <p> <strong> <?php _e( 'Name:' , 'woocommerce-abandoned-cart' ); ?> </strong>
                                             <?php echo $user_first_name." ".$user_last_name;?>
                                         </p>                                    
-                                        <p> <strong> <?php _e( 'Address:' , 'woocommerce-ac' ); ?> </strong>
+                                        <p> <strong> <?php _e( 'Address:' , 'woocommerce-abandoned-cart' ); ?> </strong>
                                             <?php echo $user_billing_company."</br>".
                                                        $user_billing_address_1."</br>".
                                                        $user_billing_address_2."</br>".
@@ -2809,17 +2814,17 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                        $user_billing_country."</br>";
                                                        ?> 
                                         </p>                                        
-                                        <p> <strong> <?php _e( 'Email:', 'woocommerce-ac' ); ?> </strong>
+                                        <p> <strong> <?php _e( 'Email:', 'woocommerce-abandoned-cart' ); ?> </strong>
                                             <?php $user_mail_to =  "mailto:".$user_email; ?>
                                             <a href=<?php echo $user_mail_to;?>><?php echo $user_email;?> </a>
                                         </p>                                            
-                                        <p> <strong> <?php _e( 'Phone:', 'woocommerce-ac' ); ?> </strong>
+                                        <p> <strong> <?php _e( 'Phone:', 'woocommerce-abandoned-cart' ); ?> </strong>
                                             <?php echo $user_billing_phone;?>
                                         </p>
                                     </div>                                                                                   
                                     <div style="width:50%;float:right">
-                                        <h3> <p> <?php _e( 'Shipping Details', 'woocommerce-ac' ); ?> </p> </h3>                                       
-                                        <p> <strong> <?php _e( 'Address:', 'woocommerce-ac' ); ?> </strong>
+                                        <h3> <p> <?php _e( 'Shipping Details', 'woocommerce-abandoned-cart' ); ?> </p> </h3>                                       
+                                        <p> <strong> <?php _e( 'Address:', 'woocommerce-abandoned-cart' ); ?> </strong>
                                             <?php 
                                             if ( $user_shipping_company     == '' &&
                                                  $user_shipping_address_1   == '' &&
@@ -2901,12 +2906,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         print'<input type="hidden" name="ac_settings_frm" value="'.$button_mode.'">';?>
                         <div id="poststuff">
                             <div> <!-- <div class="postbox" > -->
-                                <h3 class="hndle"><?php _e( $display_message, 'woocommerce-ac' ); ?></h3>
+                                <h3 class="hndle"><?php _e( $display_message, 'woocommerce-abandoned-cart' ); ?></h3>
                                 <div>
                                   <table class="form-table" id="addedit_template">
                                     <tr>
                                         <th>
-                                            <label for="woocommerce_ac_template_name"><b><?php _e( 'Template Name:', 'woocommerce-ac');?></b></label>
+                                            <label for="woocommerce_ac_template_name"><b><?php _e( 'Template Name:', 'woocommerce-abandoned-cart');?></b></label>
                                         </th>
                                         <td>
                                             <?php
@@ -2915,13 +2920,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                 $template_name = $results[0]->template_name;
                                             }                                           
                                             print'<input type="text" name="woocommerce_ac_template_name" id="woocommerce_ac_template_name" class="regular-text" value="'.$template_name.'">';?>
-                                            <img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter a template name for reference', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
+                                            <img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter a template name for reference', 'woocommerce-abandoned-cart') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
                                         </td>
                                     </tr>
                                     
                                     <tr>
                                        <th>
-                                            <label for="woocommerce_ac_email_subject"><b><?php _e( 'Subject:', 'woocommerce-ac' ); ?></b></label>
+                                            <label for="woocommerce_ac_email_subject"><b><?php _e( 'Subject:', 'woocommerce-abandoned-cart' ); ?></b></label>
                                         </th>
                                         <td>
                                             <?php
@@ -2930,13 +2935,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                 $subject_edit= stripslashes ( $results[0]->subject );
                                             }                                           
                                             print'<input type="text" name="woocommerce_ac_email_subject" id="woocommerce_ac_email_subject" class="regular-text" value="'.$subject_edit.'">';?>
-                                            <img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the subject that should appear in the email sent', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
+                                            <img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the subject that should appear in the email sent', 'woocommerce-abandoned-cart') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <th>
-                                            <label for="woocommerce_ac_email_body"><b><?php _e( 'Email Body:', 'woocommerce-ac' ); ?></b></label>
+                                            <label for="woocommerce_ac_email_body"><b><?php _e( 'Email Body:', 'woocommerce-abandoned-cart' ); ?></b></label>
                                         </th>
                                         <td>            
                                             <?php
@@ -2962,14 +2967,14 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             ?>
                                             <?php echo stripslashes( get_option( 'woocommerce_ac_email_body' ) ); ?>
                                             <span class="description"><?php
-                                                echo __( 'Message to be sent in the reminder email.', 'woocommerce-ac' );
+                                                 _e( 'Message to be sent in the reminder email.', 'woocommerce-abandoned-cart' );
                                             ?></span>
                                         </td>
                                     </tr>
                                     
                                      <tr>
                                         <th>
-                                            <label for="is_wc_template"><b><?php _e( 'Use WooCommerce Template Style:', 'woocommerce-ac' ); ?></b></label>
+                                            <label for="is_wc_template"><b><?php _e( 'Use WooCommerce Template Style:', 'woocommerce-abandoned-cart' ); ?></b></label>
                                         </th>
                                         <td>
                                             <?php
@@ -2984,14 +2989,14 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                 }
                                             }
                                             print'<input type="checkbox" name="is_wc_template" id="is_wc_template" ' . $is_wc_template . '>  </input>'; ?>
-                                            <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Use WooCommerce default style template for abandoned cart reminder emails.', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /> <a target = '_blank' href= <?php  echo wp_nonce_url( admin_url( '?wcal_preview_woocommerce_mail=true' ), 'woocommerce-ac' ) ; ?> > 
-                                            Click here to preview </a>how the email template will look with WooCommerce Template Style enabled. Alternatively, if this is unchecked, the template will appear as <a target = '_blank' href=<?php  echo wp_nonce_url( admin_url( '?wcal_preview_mail=true' ), 'woocommerce-ac' ) ; ?>>shown here</a>. <br> <strong>Note: </strong>When this setting is enabled, then "Send From This Name:" & "Send From This Email Address:" will be overwritten with WooCommerce -> Settings -> Email -> Email Sender Options.   
+                                            <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Use WooCommerce default style template for abandoned cart reminder emails.', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /> <a target = '_blank' href= <?php  echo wp_nonce_url( admin_url( '?wcal_preview_woocommerce_mail=true' ), 'woocommerce-abandoned-cart' ) ; ?> > 
+                                            Click here to preview </a>how the email template will look with WooCommerce Template Style enabled. Alternatively, if this is unchecked, the template will appear as <a target = '_blank' href=<?php  echo wp_nonce_url( admin_url( '?wcal_preview_mail=true' ), 'woocommerce-abandoned-cart' ) ; ?>>shown here</a>. <br> <strong>Note: </strong>When this setting is enabled, then "Send From This Name:" & "Send From This Email Address:" will be overwritten with WooCommerce -> Settings -> Email -> Email Sender Options.   
                                         </td>
                                      </tr>
                                      
                                      <tr>
                                         <th>
-                                            <label for="wcal_wc_email_header"><b><?php _e( 'Email Template Header Text: ', 'woocommerce-ac' ); ?></b></label>
+                                            <label for="wcal_wc_email_header"><b><?php _e( 'Email Template Header Text: ', 'woocommerce-abandoned-cart' ); ?></b></label>
                                         </th>
                                         <td>
 
@@ -3005,13 +3010,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             $wcal_wc_email_header = "Abandoned cart reminder";
                                         }
                                         print'<input type="text" name="wcal_wc_email_header" id="wcal_wc_email_header" class="regular-text" value="' . $wcal_wc_email_header . '">'; ?>
-                                        <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Enter the header which will appear in the abandoned WooCommerce email sent. This is only applicable when only used when "Use WooCommerce Template Style:" is checked.', 'woocommerce-ac' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
+                                        <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Enter the header which will appear in the abandoned WooCommerce email sent. This is only applicable when only used when "Use WooCommerce Template Style:" is checked.', 'woocommerce-abandoned-cart' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
                                         </td>
                                     </tr> 
                                      
                                     <tr>
                                         <th>
-                                            <label for="woocommerce_ac_email_frequency"><b><?php _e( 'Send this email:', 'woocommerce-ac' ); ?></b></label>
+                                            <label for="woocommerce_ac_email_frequency"><b><?php _e( 'Send this email:', 'woocommerce-abandoned-cart' ); ?></b></label>
                                         </th>
                                         <td>
                                             <select name="email_frequency" id="email_frequency">
@@ -3052,19 +3057,19 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                 ?>
                                             </select>           
                                             <span class="description">
-                                              <?php echo __( 'after cart is abandoned.', 'woocommerce-ac' ); ?>
+                                              <?php _e( 'after cart is abandoned.', 'woocommerce-abandoned-cart' ); ?>
                                             </span>
                                         </td>
                                     </tr>
                                     
                                     <tr>
                                         <th>
-                                            <label for="woocommerce_ac_email_preview"><b><?php _e( 'Send a test email to:', 'woocommerce-ac' ); ?></b></label>
+                                            <label for="woocommerce_ac_email_preview"><b><?php _e( 'Send a test email to:', 'woocommerce-abandoned-cart' ); ?></b></label>
                                         </th>
                                         <td> 
                                             <input type="text" id="send_test_email" name="send_test_email" class="regular-text" >
                                             <input type="button" value="Send a test email" id="preview_email" onclick="javascript:void(0);">
-                                            <img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the email id to which the test email needs to be sent.', 'woocommerce-ac') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
+                                            <img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the email id to which the test email needs to be sent.', 'woocommerce-abandoned-cart') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
                                             <div id="preview_email_sent_msg" style="display:none;"></div>
                                         </td>
                                     </tr>                                               
@@ -3079,7 +3084,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             {
                                 $button_value = "Update Changes";
                             }?>
-                        <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( $button_value, 'woocommerce-ac' ); ?>"  />
+                        <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( $button_value, 'woocommerce-abandoned-cart' ); ?>"  />
                       </p>
                     </form>
               </div>
@@ -3091,7 +3096,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             if ( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] === 'woocommerce_ac_page' ) {
                 $footer_text = sprintf( __( 'If you love <strong>Abandoned Cart Lite for WooCommerce</strong>, then please leave us a <a href="https://wordpress.org/support/plugin/woocommerce-abandoned-cart/reviews/?rate=5#new-post" target="_blank" class="ac-rating-link" data-rated="Thanks :)">★★★★★</a>
-                            rating. Thank you in advance. :)', 'woocommerce-ac' ) );
+                            rating. Thank you in advance. :)', 'woocommerce-abandoned-cart' ) );
                 wc_enqueue_js( "
                         jQuery( 'a.ac-rating-link' ).click( function() {
                             jQuery( this ).parent().text( jQuery( this ).data( 'rated' ) );
@@ -3230,24 +3235,24 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $headers          .= "Content-Type: text/plain" . "\r\n";
                     $headers          .= "Reply-To:  " . $reply_name_preview . " " . "\r\n";
                     $var               =  '<table width = 100%>
-                                            <tr> <td colspan="5"> <h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3> </td></tr>
+                                            <tr> <td colspan="5"> <h3>'.__( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ).'</h3> </td></tr>
                                             <tr align="center">
-                                               <th>'.__( "Item", "woocommerce-ac" ).'</th>
-                                               <th>'.__( "Name", "woocommerce-ac" ).'</th>
-                                               <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
-                                               <th>'.__( "Price", "woocommerce-ac" ).'</th>
-                                               <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
+                                               <th>'.__( 'Item', 'woocommerce-abandoned-cart' ).'</th>
+                                               <th>'.__( 'Name', 'woocommerce-abandoned-cart' ).'</th>
+                                               <th>'.__( 'Quantity', 'woocommerce-abandoned-cart' ).'</th>
+                                               <th>'.__( 'Price', 'woocommerce-abandoned-cart' ).'</th>
+                                               <th>'.__( 'Line Subtotal', 'woocommerce-abandoned-cart' ).'</th>
                                             </tr>
                                             <tr align="center">
                                                <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/shoes.jpg"/></td>
-                                               <td>'.__( "Men\'\s Formal Shoes", "woocommerce-ac" ).'</td>
+                                               <td>'.__( "Men\'\s Formal Shoes", 'woocommerce-abandoned-cart' ).'</td>
                                                <td>1</td>
                                                <td>' . $wcal_price . '</td>
                                                <td>' . $wcal_price . '</td>
                                             </tr>
                                             <tr align="center">
                                                <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/handbag.jpg"/></td>
-                                               <td>'.__( "Woman\'\s Hand Bags", "woocommerce-ac" ).'</td>
+                                               <td>'.__( "Woman\'\s Hand Bags", 'woocommerce-abandoned-cart' ).'</td>
                                                <td>1</td>
                                                <td>' . $wcal_price . '</td>
                                                <td>' . $wcal_price . '</td>
@@ -3256,7 +3261,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                <td></td>
                                                <td></td>
                                                <td></td>
-                                               <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
+                                               <td>'.__( "Cart Total:", 'woocommerce-abandoned-cart' ).'</td>
                                                <td>' . $wcal_total_price . '</td>
                                             </tr>
                                         </table>';
@@ -3264,25 +3269,25 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $headers           = "From: " . $from_email_name . " <" . $from_email_preview . ">" . "\r\n";
                     $headers          .= "Content-Type: text/html" . "\r\n";
                     $headers          .= "Reply-To:  " . $reply_name_preview . " " . "\r\n";
-                    $var               = '<h3>'.__( "Your Shopping Cart", "woocommerce-ac" ).'</h3>
+                    $var               = '<h3>'.__( "Your Shopping Cart", 'woocommerce-abandoned-cart' ).'</h3>
                                         <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
                                             <tr align="center">
-                                               <th>'.__( "Item", "woocommerce-ac" ).'</th>
-                                               <th>'.__( "Name", "woocommerce-ac" ).'</th>
-                                               <th>'.__( "Quantity", "woocommerce-ac" ).'</th>
-                                               <th>'.__( "Price", "woocommerce-ac" ).'</th>
-                                               <th>'.__( "Line Subtotal", "woocommerce-ac" ).'</th>
+                                               <th>'.__( "Item", 'woocommerce-abandoned-cart' ).'</th>
+                                               <th>'.__( "Name", 'woocommerce-abandoned-cart' ).'</th>
+                                               <th>'.__( "Quantity", 'woocommerce-abandoned-cart' ).'</th>
+                                               <th>'.__( "Price", 'woocommerce-abandoned-cart' ).'</th>
+                                               <th>'.__( "Line Subtotal", 'woocommerce-abandoned-cart' ).'</th>
                                             </tr>
                                             <tr align="center">
                                                <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/shoes.jpg"/></td>
-                                               <td>'.__( "Men\'\s Formal Shoes", "woocommerce-ac" ).'</td>
+                                               <td>'.__( "Men\'\s Formal Shoes", 'woocommerce-abandoned-cart' ).'</td>
                                                <td>1</td>
                                                <td>' . $wcal_price . '</td>
                                                <td>' . $wcal_price . '</td>
                                             </tr>
                                             <tr align="center">
                                                <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/handbag.jpg"/></td>
-                                               <td>'.__( "Woman\'\s Hand Bags", "woocommerce-ac" ).'</td>
+                                               <td>'.__( "Woman\'\s Hand Bags", 'woocommerce-abandoned-cart' ).'</td>
                                                <td>1</td>
                                                <td>' . $wcal_price . '</td>
                                                <td>' . $wcal_price . '</td>
@@ -3291,7 +3296,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                <td></td>
                                                <td></td>
                                                <td></td>
-                                               <td>'.__( "Cart Total:", "woocommerce-ac" ).'</td>
+                                               <td>'.__( "Cart Total:", 'woocommerce-abandoned-cart' ).'</td>
                                                <td>' . $wcal_total_price . '</td>
                                             </tr>
                                          </table>';
