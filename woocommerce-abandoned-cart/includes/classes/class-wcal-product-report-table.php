@@ -141,7 +141,7 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		    if( isset( $recovered_cart_info->cart ) ){
 		        $cart_details = $recovered_cart_info->cart;
 		    }
-		    if ( count( $cart_details ) > 0) {    		        
+		    if ( count( get_object_vars( $cart_details ) ) > 0) {    		        
 		        foreach ( $cart_details as $k => $v ) {    		
 		            $quantity_total = $quantity_total + $v->quantity;
 		        }
