@@ -294,7 +294,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		    }
 		    $line_total = 0;
 		   
-		    if( count( $cart_details ) > 0 ) {    		
+		    if( count( get_object_vars( $cart_details ) ) > 0 ) {    		
 		        foreach( $cart_details as $k => $v ) {    		     
 		            if( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
 		                $line_total = $line_total + $v->line_total + $v->line_subtotal_tax;
@@ -307,7 +307,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		    $line_total     = wc_price( $line_total );
 		    $quantity_total = 0;
 		
-		    if ( count( $cart_details ) > 0) {    		         
+		    if( count( get_object_vars( $cart_details ) ) > 0 ) {    		         
 		        foreach( $cart_details as $k => $v ) {
 		            $quantity_total = $quantity_total + $v->quantity;
 		        }
