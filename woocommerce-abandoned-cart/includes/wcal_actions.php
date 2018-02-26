@@ -3,17 +3,23 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-
 /**
- * Trigger a abandoned cart Deletion
+ * Abandoned Cart Lite for WooCommerce
  *
+ * It will handle the common action for the plugin.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/admin-action
  * @since 2.5.2
- * @param $abandoned_cart_id Arguments passed
- * @return void
  */
 
 class wcal_delete_bulk_action_handler {
-
+    /**
+     * Trigger when we delete the abandoned cart.
+     * @param int | string  $abandoned_cart_id Abandoned cart id
+     * @globals mixed $wpdb
+     * @since 2.5.2
+     */
     function wcal_delete_bulk_action_handler_function( $abandoned_cart_id ) {
         global $wpdb;
         $get_user_id         = "SELECT user_id FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` 
@@ -33,6 +39,13 @@ class wcal_delete_bulk_action_handler {
         }
         wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&wcal_deleted=YES' ) );  
     }
+
+    /**
+     * Trigger when we delete the template.
+     * @param int | string  $template_id Template id
+     * @globals mixed $wpdb
+     * @since 2.5.2
+     */
     function wcal_delete_template_bulk_action_handler_function( $template_id ) {
         global $wpdb;
         $id_remove    = $template_id;

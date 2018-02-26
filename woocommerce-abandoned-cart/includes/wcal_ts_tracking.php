@@ -1,6 +1,24 @@
 <?php
+/**
+ * Abandoned Cart Lite for WooCommerce
+ *
+ * It will manage the tracking of the plugin data.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/tracking-data
+ */
+ 
 include_once( 'classes/class-wcal-ts-tracker.php' );
+
+/**
+ * It will have all the data for tracking the data.
+ * @since 3.9
+ */
 class Wcal_TS_Tracking {
+	/**
+	 * It will add all the necessary action for tracking the data.
+	 * @since 3.9
+	 */
 	public function __construct() {
 		//Tracking Data
 		add_action( 'admin_notices',               array( &$this, 'wcal_track_usage_data' ), 10 );
@@ -8,12 +26,18 @@ class Wcal_TS_Tracking {
 		add_action( 'wp_ajax_wcal_admin_notices',  array( &$this, 'wcal_admin_notices' ) );
 	}
 
+	/**
+	 * It will add the js for dismissible notice.
+	 * @since 3.9
+	 */
 	public static function wcal_admin_notices_scripts() {
-		
-
-        wp_enqueue_script( 'wcal_admin_dismissal_notice', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_ts_dismiss_notice.js' );
+		wp_enqueue_script( 'wcal_admin_dismissal_notice', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_ts_dismiss_notice.js' );
     }
 
+    /**
+     * It will the admin notice.
+     * @since 3.9
+     */
     public static function wcal_admin_notices() {
     	Class_Wcal_Ts_Tracker::wcal_ts_send_tracking_data( false );
         update_option( 'wcal_allow_tracking', 'dismissed' );
@@ -21,7 +45,8 @@ class Wcal_TS_Tracking {
     }
 
 	/**
-	 * Actions on the final step.
+	 * It will check the selected admin action it will be either allow or not allow.
+	 * @since 3.9
 	 */
 	private function wcal_ts_tracking_actions() {
 
@@ -37,8 +62,9 @@ class Wcal_TS_Tracking {
 	}
 
 	/**
-	* Data Usage tracking notice
-	*/
+	 * It will add the notice on the admin side.
+	 * @since 3.9
+	 */
 	function wcal_track_usage_data() {
 		$wcal_admin_url = get_admin_url();
 		echo '<input type="hidden" id="admin_url" value="' . $wcal_admin_url . '"/>';

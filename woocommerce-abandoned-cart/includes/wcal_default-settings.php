@@ -1,8 +1,21 @@
 <?php
+
+/**
+ * Abandoned Cart Lite for WooCommerce
+ *
+ * It will add the default template for the plugin.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/default-template
+ * @since 2.5
+ */
+
 class wcal_default_template_settings {
-   /* This function will load default template while activating the plugin.
-    * 
-    * @since: AFter 2.5 version
+   
+   /** 
+    * This function will load default template while activating the plugin.
+    * @globals mixed $wpdb 
+    * @since 2.5
     */
    function wcal_create_default_templates() {
        global $wpdb;

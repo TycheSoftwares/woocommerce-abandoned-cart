@@ -1,18 +1,24 @@
 <?php
 /**
- * Abandoned cart data tracker
+ * Abandoned Cart Lite for WooCommerce
  *
- * The Abandoned Cart lite tracker class adds functionality to track Abandoned Cart lite Date usage based on if the customer opted in.
- * No personal information is tracked, only general Abandoned Cart lite settings, abandoned orders and recovered orders, abandoned orders amount, recovred orders amount, total templates, total email sent, logged-in users abandoned & recovered amount, guest users abandoned and admin email for discount code.
+ * The Abandoned Cart lite tracker class adds functionality to track Abandoned Cart lite Data usage based on if the customer opted in.
+ * No personal information is tracked, only general Abandoned Cart lite settings, abandoned orders and 
+ * recovered orders, abandoned orders amount, recovered orders amount, total templates, total email sent, logged-in users abandoned 
+ * & recovered amount, guest users abandoned and admin email for discount code.
  *
- * @class 		Class_Wcal_Ts_Tracker
- * @version		6.8
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/tracking-data
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * It will get all the data for the tracking.
+ * @since 3.9
+ */
 class Class_Wcal_Ts_Tracker {
 
 	/**
@@ -22,7 +28,8 @@ class Class_Wcal_Ts_Tracker {
 	private static $wcal_api_url = 'http://tracking.tychesoftwares.com/v1/';
 
 	/**
-	 * Hook into cron event.
+	 * It will add all the action needed for tracking the data from customers site.
+	 * @since 3.9
 	 */
 	public static function init() {
 		add_action( 'wcal_ts_tracker_send_event', array( __CLASS__, 'wcal_ts_send_tracking_data' ) );
@@ -32,8 +39,9 @@ class Class_Wcal_Ts_Tracker {
 
 	/**
 	 * Decide whether to send tracking data or not.
-	 *
+	 * @hook wcal_ts_tracker_send_event
 	 * @param boolean $override
+	 * @since 3.9
 	 */
 	public static function wcal_ts_send_tracking_data( $override = false ) {
 		
@@ -87,6 +95,7 @@ class Class_Wcal_Ts_Tracker {
 	/**
 	 * Get the last time tracking data was sent.
 	 * @return int|bool
+	 * @since 3.9
 	 */
 	private static function wcal_ts_get_last_send_time() {
 		return apply_filters( 'wcal_ts_tracker_last_send_time', get_option( 'wcal_ts_tracker_last_send', false ) );
@@ -95,6 +104,7 @@ class Class_Wcal_Ts_Tracker {
 	/**
 	 * Get all the tracking data.
 	 * @return array
+	 * @since 3.9
 	 */
 	private static function wcal_ts_get_tracking_data() {
 		$data                        = array();
@@ -122,8 +132,11 @@ class Class_Wcal_Ts_Tracker {
 	}
 
 	/**
-	 * Get plugin related data.
-	 * @return array
+	 * If admin allow to track the data the it will gather all information and return back.
+	 * @hook ts_tracker_data
+	 * @param array $data
+	 * @return array $data
+	 * @since 3.9
 	 */
 	public static function wcal_ts_add_plugin_tracking_data ( $data ){
 
@@ -181,8 +194,10 @@ class Class_Wcal_Ts_Tracker {
 	 }
 
 	/**
-	 * Get data when user dont want to share information.
-	 * @return array
+	 * Get data when Admin dont want to share information.
+	 * @param array $params
+	 * @return array $params
+	 * @since 3.9
 	 */
 	public static function  wcal_get_data_for_opt_out( $params ){
 
@@ -200,7 +215,8 @@ class Class_Wcal_Ts_Tracker {
 
 	/**
 	 * Get WordPress related data.
-	 * @return array
+	 * @return array $wp_data
+	 * @since 3.9
 	 */
 	private static function wcal_ts_get_wordpress_info() {
 		$wp_data = array();
@@ -222,8 +238,9 @@ class Class_Wcal_Ts_Tracker {
 	}
 
 	/**
-	 * Get the current theme info, theme name and version.
+	 * Get the current theme information, theme name and version.
 	 * @return array
+	 * @since 3.9
 	 */
 	public static function wcal_ts_get_theme_info() {
 		$theme_data        = wp_get_theme();
@@ -235,8 +252,10 @@ class Class_Wcal_Ts_Tracker {
 	}
 
 	/**
-	 * Get server related info.
-	 * @return array
+	 * Get server related information.
+	 * @return array $server_data
+	 * @globals mixed $wpdb 
+	 * @since 3.9
 	 */
 	private static function wcal_ts_get_server_info() {
 		$server_data = array();
@@ -269,8 +288,10 @@ class Class_Wcal_Ts_Tracker {
 	}
 
 	/**
-	 * Get all plugins grouped into activated or not.
-	 * @return array
+	 * Get all plugins grouped into activated or deactivated.
+	 * @return array $active_plugins
+	 * @return array $plugins
+	 * @since 3.9
 	 */
 	private static function wcal_ts_get_all_plugins() {
 		// Ensure get_plugins function is loaded
@@ -312,7 +333,9 @@ class Class_Wcal_Ts_Tracker {
 
 	/**
 	 * Get abandoned orders counts.
-	 * @return string
+	 * @globals mixed $wpdb
+	 * @return string | int $wcal_order_count
+	 * @since 3.9
 	 */
 	private static function wcal_ts_get_abandoned_order_counts() {
 		global $wpdb;
@@ -336,7 +359,9 @@ class Class_Wcal_Ts_Tracker {
 	
 	/**
 	 * Get recovered orders counts.
-	 * @return string
+	 * @globals mixed $wpdb
+	 * @return string | int $wcal_recovered_order_count
+	 * @since 3.9
 	 */
 	private static function wcal_ts_get_recovered_order_counts(){
 
@@ -355,10 +380,12 @@ class Class_Wcal_Ts_Tracker {
 		return $wcal_recovered_order_count;
 	}
 
-	/*
-	* Get Total abandoned orders amount
-	*   
-	*/
+	/**
+	 * Get Total abandoned orders amount.
+	 * @globals mixed $wpdb
+	 * @return string | int $wcal_abandoned_orders_amount
+	 * @since 3.9  
+	 */
 	private static function wcal_ts_get_abandoned_order_total_amount(){
 		global $wpdb;
 		$wcal_abandoned_orders_amount = 0;
@@ -380,6 +407,13 @@ class Class_Wcal_Ts_Tracker {
 		return $wcal_abandoned_orders_amount;
 	}
 
+	/**
+	 * Get Total abandoned orders amount.
+	 * @globals mixed $wpdb
+	 * @param array | object $wcal_abandoned_query_result 
+	 * @return string | int $wcal_abandoned_orders_amount
+	 * @since 3.9  
+	 */
 	private static function wcal_get_abandoned_amount( $wcal_abandoned_query_result ){
 
 		$wcal_abandoned_orders_amount = 0;
@@ -405,10 +439,13 @@ class Class_Wcal_Ts_Tracker {
 		return $wcal_abandoned_orders_amount;
 	}
 
-	/*
-	*  Get recovered orders total amount
-	*/
-	private static function	wcal_ts_get_recovered_order_total_amount(){
+	/**
+	 * Get recovered orders total amount.
+	 * @globals mixed $wpdb
+	 * @return string | int $wcal_recovered_orders_amount
+	 * @since 3.9 
+	 */
+	private static function	wcal_ts_get_recovered_order_total_amount() {
 
 		global $wpdb;
 		$wcal_recovered_orders_amount = 0;
@@ -427,6 +464,14 @@ class Class_Wcal_Ts_Tracker {
 		return $wcal_recovered_orders_amount;
 	}
 
+	/**
+	 * Get recovered orders total amount.
+	 * @globals mixed $wpdb
+	 * @param array | object $wcal_data
+	 * @return string | int $wcal_recovered_orders_amount
+	 * @since 3.9 
+	 */
+
 	private static function wcal_get_recovered_amount ( $wcal_data ){
 
 		$wcal_recovered_orders_amount = 0;
@@ -439,9 +484,12 @@ class Class_Wcal_Ts_Tracker {
 		return $wcal_recovered_orders_amount;
 	}
 
-	/*
-	*  Get sent email total count
-	*/
+	/**
+	 * Get sent email total count.
+	 * @globals mixed $wpdb
+	 * @return string | int $wcal_sent_emails_count
+	 * @since 3.9 
+	 */
 	private static function wcal_ts_get_sent_emails_total_count(){
 
 		global $wpdb;
@@ -451,9 +499,12 @@ class Class_Wcal_Ts_Tracker {
 		return $wcal_sent_emails_count;
 	}
 
-	/*
-	*  Get email templates total count
-	*/
+	/**
+	 * Get email templates total count.
+	 * @globals mixed $wpdb
+	 * @return array $wcal_templates_data
+	 * @since 3.9
+	 */
 	private static function wcal_ts_get_email_templates_data(){
 
 		global $wpdb;
@@ -482,9 +533,12 @@ class Class_Wcal_Ts_Tracker {
 		return $wcal_templates_data;
 	}
 
-	/*
-	*  Get logged-in users total abandoned count
-	*/
+	/**
+	 * Get logged-in users total abandoned count.
+     * @globals mixed $wpdb
+	 * @return string | int $wcal_logged_in_user_query_count
+	 * @since 3.9
+	 */
 	private static function wcal_ts_get_logged_in_users_abandoned_cart_total_count (){
 
 		global $wpdb;
@@ -505,9 +559,12 @@ class Class_Wcal_Ts_Tracker {
 		return $wcal_logged_in_user_query_count;
 	}
 
-	/*
-	*  Get logged-in users total abandoned count
-	*/
+	/**
+	 * Get Guest users total abandoned count.
+	 * @globals mixed $wpdb
+	 * @return string | int $wcal_guest_user_query_count
+	 * @since 3.9
+	 */
 	private static function wcal_ts_get_guest_users_abandoned_cart_total_count(){
 		global $wpdb;
 		$wcal_guest_user_query_count = 0;
@@ -527,6 +584,12 @@ class Class_Wcal_Ts_Tracker {
 		return $wcal_guest_user_query_count;
 	}
 
+	/**
+	 * Get logged-in users total abandoned amount.
+     * @globals mixed $wpdb
+	 * @return string | int $wcal_abandoned_orders_amount
+	 * @since 3.9
+	 */
 	private static function wcal_ts_get_logged_in_users_abandoned_cart_total_amount (){
 
 		global $wpdb;
@@ -549,6 +612,12 @@ class Class_Wcal_Ts_Tracker {
 		return $wcal_abandoned_orders_amount;
 	}
 
+	/**
+	 * Get Guest users total abandoned amount.
+     * @globals mixed $wpdb
+	 * @return string | int $wcal_abandoned_orders_amount
+	 * @since 3.9
+	 */
 	private static function wcal_ts_get_guest_users_abandoned_cart_total_amount (){
 
 		global $wpdb;
@@ -571,6 +640,12 @@ class Class_Wcal_Ts_Tracker {
 		return $wcal_abandoned_orders_amount;
 	}
 
+	/**
+	 * Get logged-in users total recovered amount.
+     * @globals mixed $wpdb
+	 * @return string | int $wcal_recovered_orders_amount
+	 * @since 3.9
+	 */
 	private static function wcal_ts_get_logged_in_users_recovered_cart_total_amount(){
 
 		global $wpdb;
@@ -592,6 +667,12 @@ class Class_Wcal_Ts_Tracker {
 	 }
 
 
+	 /**
+	 * Get Guest users total recovered amount.
+     * @globals mixed $wpdb
+	 * @return string | int $wcal_recovered_orders_amount
+	 * @since 3.9
+	 */
 	private static function wcal_ts_get_guest_users_recovered_cart_total_amount (){
 
 		global $wpdb;
@@ -612,8 +693,9 @@ class Class_Wcal_Ts_Tracker {
 
 	}
 	/**
-	 * Get all options starting with woocommerce_ prefix.
+	 * Get all options of the plugin.
 	 * @return array
+	 * @since 3.9
 	 */
 	private static function wcal_ts_get_all_plugin_options_values() {
 		
@@ -624,26 +706,40 @@ class Class_Wcal_Ts_Tracker {
 		 ); 
 	}
 
+	/**
+	 * Get WooCommerce version.
+	 * @return string | int
+	 * @since 3.9
+	 */
 	private static function wcal_ts_get_wc_plugin_version() {
 		return WC()->version;
 	}
 
+	/**
+	 * Get License Key for the plugin.
+	 * @return string
+	 * @since 3.9
+	 */
 	private static function wcal_ts_get_plugin_license_key() {
 		return 'Abandoned Cart Lite';
 	}
 
+	/**
+	 * Get the plugin version.
+	 * @return string | int $wcal_plugin_version
+	 * @since 3.9
+	 */
 	private static function wcal_ts_get_plugin_version() {
 		$wcal_plugin_version = self::wcal_plugin_get_version();
 		return $wcal_plugin_version;
 	}
 
 	/**
-	 * @return string Plugin version
+	 * Get the plugin version.
+	 * @return string | int $plugin_version
+	 * @since 3.9
 	 */
-
 	public static function wcal_plugin_get_version() {
-
-		
 		$plugin_path    				 =  dirname ( dirname ( dirname ( __FILE__ ) ) )  ;
 		$plugin_path_with_base_file_name =  $plugin_path . "/woocommerce-ac.php";
     	$plugin_data    = get_plugin_data( $plugin_path_with_base_file_name );

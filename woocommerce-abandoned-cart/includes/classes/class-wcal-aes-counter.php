@@ -5,7 +5,19 @@
 /*    Right of free use is granted for all commercial or non-commercial use under CC-BY licence.  */
 /*    No warranty of any form is offered.                                                         */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+/**
+ * Abandoned Cart Lite for WooCommerce
+ *
+ * It will handle the common action for the plugin.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/encrypt-decrypt-data
+ */
 
+/**
+ * This class will encrypt and decrypt the data.
+ * @since 2.8
+ */
 Class Wcal_Aes_Ctr extends Wcal_Aes
 {
 
@@ -19,6 +31,7 @@ Class Wcal_Aes_Ctr extends Wcal_Aes
      * @param password  the password to use to generate a key
      * @param nBits     number of bits to be used in the key (128, 192, or 256)
      * @return          encrypted text
+     * @since 2.8
      */
     public static function encrypt($plaintext, $password, $nBits)
     {
@@ -90,6 +103,7 @@ Class Wcal_Aes_Ctr extends Wcal_Aes
      * @param password   the password to use to generate a key
      * @param nBits      number of bits to be used in the key (128, 192, or 256)
      * @return           decrypted text
+     * @since 2.8
      */
     public static function decrypt($ciphertext, $password, $nBits)
     {
@@ -145,12 +159,13 @@ Class Wcal_Aes_Ctr extends Wcal_Aes
     }
 
 
-    /*
+    /**
      * Unsigned right shift function, since PHP has neither >>> operator nor unsigned ints
      *
      * @param a  number to be shifted (32-bit integer)
      * @param b  number of bits to shift a to the right (0..31)
      * @return   a right-shifted and zero-filled by b bits
+     * @since 2.8
      */
     private static function urs($a, $b)
     {

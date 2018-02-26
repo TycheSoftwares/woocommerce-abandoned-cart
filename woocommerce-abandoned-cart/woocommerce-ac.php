@@ -2,7 +2,9 @@
 /*
 * Plugin Name: Abandoned Cart Lite for WooCommerce
 * Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
-* Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
+* Description: This plugin captures abandoned carts by logged-in users & emails them about it. 
+* <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the 
+* PRO Version.</a></strong>
 * Version: 4.7
 * Author: Tyche Softwares
 * Author URI: http://www.tychesoftwares.com/
@@ -11,6 +13,8 @@
 * Requires PHP: 5.6
 * WC requires at least: 3.0.0
 * WC tested up to: 3.2.0
+*
+* @package Abandoned-Cart-Lite-for-WooCommerce
 */
 
 // Deletion Settings
@@ -36,6 +40,15 @@ if ( is_admin() ) {
 // Add a new interval of 15 minutes
 add_filter( 'cron_schedules', 'wcal_add_cron_schedule' );
 
+/**
+ * It will add a cron job for sending the Abandonend cart reminder emails.
+ * By default it will set 15 minutes of interval.
+ * @hook cron_schedules
+ * @param array $schedules
+ * @return array $schedules
+ * @since 1.3
+ * @package Abandoned-Cart-Lite-for-WooCommerce/cron
+ */
 function wcal_add_cron_schedule( $schedules ) { 
     $schedules['15_minutes_lite'] = array(
                 'interval'  => 900, // 15 minutes in seconds
@@ -43,13 +56,24 @@ function wcal_add_cron_schedule( $schedules ) {
     );
     return $schedules;
 }
-// Schedule an action if it's not already scheduled
+
+/**
+ * Schedule an action if it's not already scheduled.
+ * @since 1.3
+ * @package Abandoned-Cart-Lite-for-WooCommerce/cron
+ */ 
 if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
     wp_schedule_event( time(), '15_minutes_lite', 'woocommerce_ac_send_email_action' );
 }
 
 /**
- * Run a cron once in week to delete old records for lockout
+ * It will add a cron job for sending the tarcking data.
+ * By default it will set once in a week interval.
+ * @hook cron_schedules
+ * @param array $schedules
+ * @return array $schedules
+ * @since 3.9
+ * @package Abandoned-Cart-Lite-for-WooCommerce/tracking-data
  */
 function wcal_add_tracking_cron_schedule( $schedules ) {
     $schedules[ 'daily_once' ] = array(
@@ -59,20 +83,40 @@ function wcal_add_tracking_cron_schedule( $schedules ) {
     return $schedules;
 }
 
-/* To capture the data from the client site */
+/**
+ * To capture the data from the client site.
+ * @since 3.9
+ * @package Abandoned-Cart-Lite-for-WooCommerce/tracking-data
+ */  
 if ( ! wp_next_scheduled( 'wcal_ts_tracker_send_event' ) ) {
     wp_schedule_event( time(), 'daily_once', 'wcal_ts_tracker_send_event' );
 }
 
-// Hook into that action that'll fire every 15 minutes
+/**
+ * Hook into that action that'll fire every 15 minutes 
+ */
+ 
 add_action( 'woocommerce_ac_send_email_action', 'wcal_send_email_cron' );
 
+/**
+ * It will add the wcal_send_email.php file which is responsible for sending the abandoned cart reminde emails.
+ * @hook woocommerce_ac_send_email_action
+ * @since 1.3
+ * @package Abandoned-Cart-Lite-for-WooCommerce/cron
+ */
 function wcal_send_email_cron() {
     //require_once( ABSPATH.'wp-content/plugins/woocommerce-abandoned-cart/cron/send_email.php' );
     $plugin_dir_path = plugin_dir_path( __FILE__ );
     require_once( $plugin_dir_path . 'cron/wcal_send_email.php' );
 }
 
+/**
+ * This function will delete plugin tables, options and usermeta when we delete the plugin.
+ * @hook register_uninstall_hook
+ * @globals mixed $wpdb
+ * @since 1.0
+ * @package Abandoned-Cart-Lite-for-WooCommerce/delete-plugin
+ */
 function woocommerce_ac_delete_lite() { 
     global $wpdb;
     if ( ! is_multisite() ) {
@@ -163,6 +207,13 @@ function woocommerce_ac_delete_lite() {
      **/
 if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     
+
+    /**
+     * It will add the hooks, filters, menu and the variables and all the necessary actions for the plguins which will be used 
+     * all over the plugin.
+     * @since 1.0
+     * @package Abandoned-Cart-Lite-for-WooCommerce/core
+     */
     class woocommerce_abandon_cart_lite {       
         var $one_hour;
         var $three_hours;
@@ -172,7 +223,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         var $one_week;          
         var $duration_range_select = array();
         var $start_end_dates       = array();
-        
+        /**
+         * The constructor will add the hooks, filters and the variable which will be used all over the plugin.
+         * @since 1.0
+         * 
+         */
         public function __construct() {         
             $this->one_hour     = 60 * 60;
             $this->three_hours  = 3 * $this->one_hour;
@@ -270,8 +325,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         }
 
         /**
+         * Check if WooCommerce is active or not.
          * @since: 4.2
-         * Check if WC is active or not.
          */
         public static function wcal_wc_check_ac_installed() {
         
@@ -283,8 +338,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         }
             
         /**
+         * Ensures that the Abandoned cart lite get deactivated when WooCommerce is deactivated.
          * @since: 4.2
-         * Ensure that the Abandoned cart lite get deactivated when WC is deactivated.
          */
         public static function wcal_wc_check_compatibility() {
                 
@@ -297,15 +352,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     if ( isset( $_GET['activate'] ) ) {
                         unset( $_GET['activate'] );
                     }
-                        
                 }
-                    
             }
         }
         /**
+         * Display a notice in the admin Plugins page if the Abandoned cart lite is activated while WooCommerce is deactivated.
          * @since: 4.2
-         * Display a notice in the admin Plugins page if the Abandoned cart lite is
-         * activated while WC is deactivated.
          */
         public static function wcal_wc_disabled_notice() {
                 
@@ -314,7 +366,17 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 
             printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
         }
-            
+        
+        /**
+         * When customer clicks on the "Place Order" button on the checkout page, it will identify if we need to keep that cart or 
+         * delete it.
+         * @hook woocommerce_checkout_order_processed
+         * @param int | string $order_id Order id
+         * @globals mixed $wpdb
+         * @globals mixed $woocommerce
+         * 
+         * @since 3.4
+         */    
         public static function wcal_order_placed( $order_id ) {
             if( session_id() === '' ) {
                 //session has not started
@@ -396,9 +458,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
                         $wcal_user_id_of_guest      = $_SESSION['user_id'];
                     }
-
-
-                    /* delete the guest record. As it become the logged in user */
+                    /* Delete the guest record. As it become the logged in user */
                     $get_ac_id_guest_results = array();
                     if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) {
                         $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
@@ -409,7 +469,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_order_id_of_guest ) );
                     }
 
-                    /* it is the new registered users cart id */
+                    /* It is the new registered users cart id */
                     if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) {
                         $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
                     }
@@ -477,22 +537,24 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         /* cart is declared as adandoned */
                         add_post_meta( $order_id , 'wcal_recover_order_placed', $wcal_abandoned_cart_id );
                     }else {
-                        /* cart order is placed within the cutoff time.
-                        we will delete that abandoned cart */
+                        /**
+                         * Cart order is placed within the cutoff time.
+                         *  We will delete that abandoned cart.
+                         */ 
                   
-                        /* if user becomes the registred user */
+                        /* If user becomes the registred user */
 
                         if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
 
                             $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
                             $wcal_user_id_of_guest      = $_SESSION['user_id'];
 
-                            /* delete the guest record. As it become the logged in user */
+                            /* Delete the guest record. As it become the logged in user */
 
                             $wpdb->delete( $wcal_history_table_name , array( 'user_id' => $wcal_user_id_of_guest ) );
                             $wpdb->delete( $wcal_guest_table_name ,   array( 'id' => $wcal_user_id_of_guest ) );
 
-                            /* it is the new registered users cart id */
+                            /* It is the new registered users cart id */
                             $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
                         }else {
 
@@ -502,7 +564,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                              */
                             $wpdb->delete( $wcal_history_table_name , array( 'id' => $wcap_abandoned_cart_id ) );
 
-                            /* this user id is set for the guest uesrs. */
+                            /* This user id is set for the guest uesrs. */
                             if ( isset( $_SESSION['user_id'] ) && $_SESSION['user_id'] != '' ) {
 
                                 $wcal_user_id_of_guest = $_SESSION['user_id'];
@@ -514,6 +576,18 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
         }
         
+        /**
+         * It will check the WooCommerce order status. If the order status is pending or failed the we will keep that cart record 
+         * as an abandoned cart.
+         * It will be executed after order placed.
+         * @hook woocommerce_payment_complete_order_status
+         * @param string $order_status Order Status
+         * @param int | string $order_id Order Id
+         * @return string $order_status
+         * @globals mixed $wpdb
+         * @globals mixed $woocommerce
+         * @since 3.4
+         */
         public function wcal_order_complete_action( $order_status, $order_id ) {                    
             
             /**
@@ -568,15 +642,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 }
             }
             return $order_status;
-        }          
-            
-        /*-----------------------------------------------------------------------------------*/
-        /* Class Functions */
-        /*-----------------------------------------------------------------------------------*/
+        }
+
         /**
-         * Preview email template
-         *
-         * @return string
+         * It will ganerate the preview email template.
+         * @hook admin_init
+         * @globals mixed $woocommerce
+         * @since 2.5
          */
         public function wcal_preview_emails() {
             global $woocommerce;
@@ -627,7 +699,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
         }
 
-        // Language Translation
+        /**
+         * In this version we have allowed customer to transalte the plugin string using .po and .pot file.
+         * @hook init
+         * @return $loaded
+         * @since 1.6
+         */
         function  wcal_update_po_file() {
             /*
             * Due to the introduction of language packs through translate.wordpress.org, loading our textdomain is complex.
@@ -643,9 +720,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
         }
     
-        /*-----------------------------------------------------------------------------------*/
-        /* Class Functions */
-        /*-----------------------------------------------------------------------------------*/                             
+        /**
+         * It will create the plugin tables & the options reqired for plugin.
+         * @hook register_activation_hook
+         * @globals mixed $wpdb
+         * @since 1.0
+         */                             
         function wcal_activate() {
             global $wpdb; 
             $wcap_collate = '';
@@ -777,9 +857,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
        }     
     
-        /***************************************************************
-         * WP Settings API
-         **************************************************************/
+        /**
+         * It will add the section, field, & registres the plugin fields using Settings API.
+         * @hook admin_init
+         * @since 2.5
+         */
         function wcal_initialize_plugin_options() {
 
             // First, we register a section. This is necessary since all future options must belong to a
@@ -816,9 +898,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             'ac_lite_general_settings_section',
             array( __( 'Enable tracking of abandoned products & carts even if customer does not visit the checkout page or does not enter any details on the checkout page like Name or Email. Tracking will begin as soon as a visitor adds a product to their cart and visits the cart page.', 'woocommerce-abandoned-cart' ) )
             );
-            /*
+            /**
              * New section for the Adding the abandoned cart setting.
-             * Since @: 4.7
+             * @since  4.7
              */
             
             add_settings_section(
@@ -886,16 +968,19 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             );
         }
     
-        /***************************************************************
-         * WP Settings API callback for section
-         **************************************************************/
+        /**
+         * Settings API callback for section "ac_lite_general_settings_section".
+         * @since 2.5
+         */
         function ac_lite_general_options_callback() {
         
         }
     
-        /***************************************************************
-         * WP Settings API callback for cart time field
-         **************************************************************/
+        /**
+         * Settings API callback for cart time field.
+         * @param array $args Arguments
+         * @since 2.5
+         */
         function ac_lite_cart_abandoned_time_callback( $args ) {
             // First, we read the option
             $cart_abandoned_time = get_option( 'ac_lite_cart_abandoned_time' );
@@ -910,9 +995,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             echo $html;
         }
     
-        /***************************************************************
-         * WP Settings API cart time field validation
-         **************************************************************/
+        /**
+         * Settings API cart time field validation.
+         * @param int | string $input
+         * @return int | string $output
+         * @since 2.5
+         */
         function ac_lite_cart_time_validation( $input ) {
             $output = '';
             if ( $input != '' && ( is_numeric( $input) && $input > 0  ) ) {
@@ -923,9 +1011,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             return $output;
         }
         
-        /***************************************************************
-         * WP Settings API callback for email admin on cart recovery field
-         **************************************************************/
+        /**
+         * Settings API callback for email admin on cart recovery field.
+         * @param array $args Arguments
+         * @since 2.5
+         */
         function ac_lite_email_admin_on_recovery( $args ) {     
             // First, we read the option
             $email_admin_on_recovery = get_option( 'ac_lite_email_admin_on_recovery' );
@@ -946,10 +1036,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             $html .= '<label for="ac_lite_email_admin_on_recovery"> ' . $args[0] . '</label>';
             echo $html;
         }
-        /***************************************************************
-         * @since : 2.7
-         * WP Settings API callback for capturing guest cart which do not reach the checkout page.
-         **************************************************************/
+        /**
+         * Settings API callback for capturing guest cart which do not reach the checkout page.
+         * @param array $args Arguments
+         * @since 2.7
+         */
         function wcal_track_guest_cart_from_cart_page_callback( $args ) {
             // First, we read the option
             $disable_guest_cart_from_cart_page = get_option( 'ac_lite_track_guest_cart_from_cart_page' );
@@ -970,13 +1061,19 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             echo $html;
         }
         
-        /***************************************************************
-         * WP Settings API callback for Abandoned cart email settings of the plugin
-         **************************************************************/
+        /**
+         * Settings API callback for Abandoned cart email settings of the plugin.
+         * @since 3.5
+         */
         function wcal_email_callback () {
         
         }
         
+        /**
+         * Settings API callback for from name used in Abandoned cart email.
+         * @param array $args Arguments
+         * @since 3.5
+         */
         public static function wcal_from_name_callback( $args ) {
             // First, we read the option
             $wcal_from_name = get_option( 'wcal_from_name' );
@@ -991,6 +1088,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 echo $html;
         }
         
+        /**
+         * Settings API callback for from email used in Abandoned cart email.
+         * @param array $args Arguments
+         * @since 3.5
+         */
         public static function wcal_from_email_callback( $args ) {
             // First, we read the option
             $wcal_from_email = get_option( 'wcal_from_email' );
@@ -1005,6 +1107,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 echo $html;
         }
         
+        /**
+         * Settings API callback for reply email used in Abandoned cart email.
+         * @param array $args Arguments
+         * @since 3.5
+         */
         public static function wcal_reply_email_callback( $args ) {
             // First, we read the option
             $wcal_reply_email = get_option( 'wcal_reply_email' );
@@ -1018,9 +1125,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $html = '<label for="wcal_reply_email_label"> '  . $args[0] . '</label>';
                 echo $html;
         }
-        /**************************************************
-         * This function is run when the plugin is upgraded
-         *************************************************/
+
+        /**
+         * It will be executed when the plugin is upgraded.
+         * @hook admin_init
+         * @globals mixed $wpdb
+         * @since 1.0
+         */
         function wcal_update_db_check() {
             global $wpdb;
             
@@ -1067,9 +1178,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     }
                 }           
                 /**
-                 *  
-                 * This is used to prevent guest users wrong Id. If guest users id is less then 63000000 then this code will ensure that we 
-                 * will change the id of guest tables so it wont affect on the next guest users.
+                 * This is used to prevent guest users wrong Id. If guest users id is less then 63000000 then this code will
+                 * ensure that we will change the id of guest tables so it wont affect on the next guest users.
                  */         
                 if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_guest_abandoned_cart_history_lite';" )  && 'yes' != get_option( 'wcal_guest_user_id_altered' ) ) {
                     $last_id = $wpdb->get_var( "SELECT max(id) FROM `{$wpdb->prefix}ac_guest_abandoned_cart_history_lite`;" );
@@ -1161,7 +1271,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     
         /**
          * Send email to admin when cart is recovered only via PayPal.
-         * @since 2.9 version
+         * @hook woocommerce_order_status_changed
+         * @param int | string $order_id Order id
+         * @param string $old Old status
+         * @param string $new_status New status
+         * @globals mixed $wpdb
+         * @globals mixed $woocommerce
+         * @since 2.9
          */
         public static function wcal_email_admin_recovery_for_paypal( $order_id, $old, $new_status ) {           
             if ( 'pending' == $old && 'processing' == $new_status ) {
@@ -1210,7 +1326,15 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
     
         /**
          * Send email to admin when cart is recovered via any other payment gateway other than PayPal.
-         * @since 2.3 version
+         * @hook woocommerce_order_status_pending_to_processing_notification
+         * @hook woocommerce_order_status_pending_to_completed_notification
+         * @hook woocommerce_order_status_pending_to_on-hold_notification
+         * @hook woocommerce_order_status_failed_to_processing_notification
+         * @hook woocommerce_order_status_failed_to_completed_notification
+         * @param int | string $order_id Order id
+         * @globals mixed $wpdb
+         * @globals mixed $woocommerce
+         * @since 2.3
          */
         function wcal_email_admin_recovery ( $order_id ) { 
             global $wpdb, $woocommerce;
@@ -1255,7 +1379,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
         }
 
-        // For sending Recovery Email to Admin, we will check that order is recovered or not.
+        /**
+         * For sending Recovery Email to Admin, we will check that order is recovered or not.
+         * @param int | string $wcal_order_id Order id
+         * @return boolean true | false
+         * @globals mixed $wpdb
+         * @since 2.3
+         */
         function wcal_check_order_is_recovered( $wcal_order_id ) {
             global $wpdb;
             $wcal_recover_order_query        = "SELECT `recovered_cart` FROM `wp_ac_abandoned_cart_history_lite` WHERE `recovered_cart` = %d";
@@ -1266,12 +1396,22 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             return false;
         }
                  
-        // Add a submenu page.
+        /**
+         * Add a submenu page under the WooCommerce.
+         * @hook admin_menu
+         * @since 1.0
+         */ 
         function wcal_admin_menu() {
             $page = add_submenu_page ( 'woocommerce', __( 'Abandoned Carts', 'woocommerce-abandoned-cart' ), __( 'Abandoned Carts', 'woocommerce-abandoned-cart' ), 'manage_woocommerce', 'woocommerce_ac_page', array( &$this, 'wcal_menu_page' ) );
         }
             
-        // Capture the cart and insert the information of the cart into DataBase
+        /**
+         * Capture the cart and insert the information of the cart into DataBase.
+         * @hook woocommerce_cart_updated
+         * @globals mixed $wpdb
+         * @globals mixed $woocommerce
+         * @since 1.0
+         */ 
         function wcal_store_cart_timestamp() {  
             
             if( session_id() === '' ){
@@ -1407,8 +1547,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 } else {                   
                     /**
                      * Here we capture the guest cart from the cart page.
-                     * @since: 3.5
-                     * 
+                     * @since 3.5
                      */                  
                     if ( $track_guest_user_cart_from_cart == "on" &&  $get_cookie[0] != '' ) {                    
                         $query   = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE session_id LIKE %s AND cart_ignored = '0' AND recovered_cart = '0' ";
@@ -1448,6 +1587,14 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
         }
        
+        /**
+         * It will unsubscribe the abandoned cart, so user will not recieve further abandoned cart emails.
+         * @hook template_include
+         * @param string $args Arguments
+         * @return string $args
+         * @globals mixed $wpdb
+         * @since 2.9
+         */
         function wcal_email_unsubscribe( $args ) {
             global $wpdb;
             
@@ -1499,7 +1646,15 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
         }
     
-        // It will track the URL of cart link from email  
+        /**
+         * It will track the URL of cart link from email, and it will populate the logged-in and guest users cart.
+         * @hook template_include
+         * @param string $template 
+         * @return string $template
+         * @globals mixed $wpdb
+         * @globals mixed $woocommerce
+         * @since 1.0
+         */ 
         function wcal_email_track_links( $template ) {              
             global $woocommerce;
             $track_link = '';
@@ -1578,7 +1733,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 return $template;
         }
     
-        // load the information of the guest user
+        /**
+         * When customer clicks on the abandoned cart link and that cart is for the the guest users the it will load the guest 
+         * user's cart detail.
+         * @globals mixed $woocommerce
+         * @since 1.0
+         */   
         function wcal_load_guest_persistent_cart() {                
             if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
                 global $woocommerce;
@@ -1638,6 +1798,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
         }
         
+        /**
+         * It will compare only guest users cart while capturing the cart.
+         * @param json_encode $new_cart New abandoned cart details
+         * @param json_encode $last_abandoned_cart Old abandoned cart details
+         * @return boolean true | false
+         * @since 1.0
+         */
         function wcal_compare_only_guest_carts( $new_cart, $last_abandoned_cart ) {
             $current_woo_cart   = array();
             $current_woo_cart   = json_decode( stripslashes( $new_cart ), true );   
@@ -1686,7 +1853,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             return true;
         }
 
-        // Compare the existing cart with new cart
+        /**
+         * It will compare only loggedin users cart while capturing the cart.
+         * @param int | string $user_id User id
+         * @param json_encode $last_abandoned_cart Old abandoned cart details
+         * @return boolean true | false
+         * @since 1.0
+         */
         function wcal_compare_carts( $user_id, $last_abandoned_cart ) { 
             global $woocommerce;
             $current_woo_cart   = array();
@@ -1739,7 +1912,15 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             return true;
         }
     
-        // function is call when order is recovered
+        /**
+         * When user places the order and reach the order recieved page, then it will check if it is abandoned cart and subsequently 
+         * recovered or not.
+         * @hook woocommerce_order_details_after_order_table
+         * @param array | object $order Order details
+         * @globals mixed $wpdb
+         * @globals mixed $woocommerce
+         * @since 1.0
+         */
         function wcal_action_after_delivery_session( $order ) {
             
             if( session_id() === '' ){
@@ -1853,7 +2034,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 }
             }
         }
-    
+        
+        /**
+         * It will add the wp editor for email body on the email edit page.
+         * @hook admin_init
+         * @since 2.6
+         */
         function wcal_action_admin_init() {
 
             // only hook up these filters if we're in the admin panel and the current user has permission
@@ -1878,18 +2064,36 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
         }
         
+        /**
+         * It will create a button on the WordPress editor.
+         * @hook mce_buttons
+         * @param array $buttons 
+         * @return array $buttons
+         * @since 2.6
+         */
         function wcal_filter_mce_button( $buttons ) {
             // add a separation before our button, here our button's id is &quot;mygallery_button&quot;
             array_push( $buttons, 'abandoncart', '|' );
             return $buttons;
         }
         
+        /**
+         * It will add the list for the added extra button.
+         * @hook mce_external_plugins
+         * @param array $plugins 
+         * @return array $plugins
+         * @since 2.6
+         */
         function wcal_filter_mce_plugin( $plugins ) {
             // this plugin file will work the magic of our button
             $plugins['abandoncart'] = plugin_dir_url( __FILE__ ) . 'assets/js/abandoncart_plugin_button.js';
             return $plugins;
         }
         
+        /**
+         * It will add the tabs on the Abandoned cart page.
+         * @since 1.0
+         */
         function wcal_display_tabs() {
         
             if ( isset( $_GET['action'] ) ) {
@@ -1929,6 +2133,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             <?php
         }
         
+        /**
+         * It will add the scripts needed for the plugin.
+         * @hook admin_enqueue_scripts
+         * @param string $hook Name of hook
+         * @since 1.0
+         */
         function wcal_enqueue_scripts_js( $hook ) {
             
             if ( $hook != 'woocommerce_page_woocommerce_ac_page' ) {
@@ -1966,7 +2176,14 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 wp_enqueue_script( 'wcal_activate_template', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_template_activate.js' ); 
             }
         }
-    
+        
+        /**
+         * It will add the parameter to the editor.
+         * @hook tiny_mce_before_init
+         * @param array $in
+         * @return array $in
+         * @since 2.6
+         */
         function wcal_format_tiny_MCE( $in ) {      
             $in['force_root_block']             = false;
             $in['valid_children']               = '+body[style]';
@@ -1992,6 +2209,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             return $in;
         }
         
+        /**
+         * It will add the necesaary css for the plugin.
+         * @hook admin_enqueue_scripts
+         * @param string $hook Name of page
+         * @since 1.0
+         */
         function wcal_enqueue_scripts_css( $hook ) {
             if ( $hook != 'woocommerce_page_woocommerce_ac_page' ) {
                 return;
@@ -2004,14 +2227,24 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             
             }
         }       
-        //bulk action
-        // to over come the wp redirect warning while deleting
+
+        /**
+         * When we have added the wp list table for the listing then while deleting the record with the bulk action it was showing 
+         * the notice. To overcome the wp redirect warning we need to start the ob_start. 
+         * @hook init
+         * @since 2.5.2
+         */
         function wcal_app_output_buffer() {
             ob_start();
         }
             
         /**
-         * Abandon Cart Settings Page
+         * Abandon Cart Settings Page. It will show the tabs, notices for the plugin.
+         * It will also update the template records and display the template fields. 
+         * It will also show the abandoned cart details page.
+         * It will also show the details of all the tabs.
+         * @globals mixed $wpdb
+         * @since 1.0
          */
         function wcal_menu_page() {
             
@@ -2073,12 +2306,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                      <div id="message" class="updated fade">
                        <p><strong><?php _e( 'The Abandoned cart has been successfully deleted.', 'woocommerce-abandoned-cart' ); ?></strong></p>
                      </div>
-          <?php }    
+                <?php }    
                  if ( isset( $_GET ['wcal_template_deleted'] ) && 'YES' == $_GET['wcal_template_deleted'] ) { ?>
                     <div id="message" class="updated fade">
                         <p><strong><?php _e( 'The Template has been successfully deleted.', 'woocommerce-abandoned-cart' ); ?></strong></p>
                     </div>
-           <?php }            
+                <?php }            
                  if ( $action == 'emailsettings' ) {
                  // Save the field values
                     ?>
@@ -3092,6 +3325,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }   
         }
         
+        /**
+         * It will add the footer text for the plugin.
+         * @hook admin_footer_text
+         * @param string $footer_text Text
+         * @return string $footer_text
+         * @since 1.0
+         */
         function wcal_admin_footer_text( $footer_text ) {
 
             if ( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] === 'woocommerce_ac_page' ) {
@@ -3106,6 +3346,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             return $footer_text;
         }
         
+        /**
+         * It will sort the record for the product reports tab.
+         * @param array $unsort_array Unsorted array
+         * @param string $order Order details
+         * @return array $array
+         * @since 2.6
+         */
         function bubble_sort_function( $unsort_array, $order ) {        
             $temp = array();
             foreach ( $unsort_array as $key => $value )
@@ -3120,7 +3367,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             unset( $temp );
             return $array;
         }
-                
+         
+        /**
+         * It will be called when we send the test email from the email edit page.
+         * @hook wp_ajax_wcal_preview_email_sent
+         * @since 1.0
+         */        
         function wcal_action_send_preview() {
             ?>
             <script type="text/javascript" >
@@ -3163,9 +3415,16 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         });
                     });
                 });
-            </script>
+                </script>
                 <?php
         }
+
+        /**
+         * It will update the template satus when we change the template active status from the email template list page.
+         * @hook wp_ajax_wcal_toggle_template_status
+         * @globals mixed $wpdb
+         * @since 4.4
+         */
         public static function wcal_toggle_template_status () {
             global $wpdb;
             $template_id             = $_POST['wcal_template_id'];
@@ -3206,7 +3465,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             wp_die();
 
         }
-        // Send Test Email      
+        /**
+         * It will replace the test email data with the static content.
+         * @return string email sent | not sent
+         * @since 1.0
+         */      
         function wcal_preview_email_sent() {
             if ( '' != $_POST['body_email_preview'] ) {
                 $from_email_name       = get_option ( 'wcal_from_name' );

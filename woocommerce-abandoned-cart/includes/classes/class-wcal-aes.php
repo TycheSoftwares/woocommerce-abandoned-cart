@@ -6,6 +6,19 @@
 /*    No warranty of any form is offered.                                                         */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
+/**
+ * Abandoned Cart Lite for WooCommerce
+ *
+ * It will handle the common action for the plugin.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/encrypt-decrypt-data
+ */
+
+/**
+ * It will genrate the encryption and decryption for data.
+ * @since 2.8
+ */
 Class Wcal_Aes
 {
     /**
@@ -15,6 +28,7 @@ Class Wcal_Aes
      * @param w     key schedule as 2D byte-array (Nr+1 x Nb bytes) -
      *              generated from the cipher key by keyExpansion()
      * @return      ciphertext as byte-array (16 bytes)
+     * @since 2.8
      */
     public static function cipher($input, $w)
     {
@@ -42,6 +56,7 @@ Class Wcal_Aes
     }
     /**
      * Xor Round Key into state S [§5.1.4].
+     * @since 2.8
      */
     private static function addRoundKey( $state, $w, $rnd, $Nb )
     {
@@ -53,6 +68,7 @@ Class Wcal_Aes
 
     /**
      * Apply SBox to state S [§5.1.1].
+     * @since 2.8
      */
     private static function subBytes($s, $Nb)
     {
@@ -64,6 +80,7 @@ Class Wcal_Aes
 
     /**
      * Shift row r of state S left by r bytes [§5.1.2].
+     * @since 2.8
      */
     private static function shiftRows($s, $Nb)
     {
@@ -77,6 +94,7 @@ Class Wcal_Aes
 
     /**
      * Combine bytes of each col of state S [§5.1.3].
+     * @since 2.8
      */
     private static function mixColumns($s, $Nb)
     {
@@ -103,6 +121,7 @@ Class Wcal_Aes
      *
      * @param  key cipher key byte-array (16 bytes).
      * @return key schedule as 2D byte-array (Nr+1 x Nb bytes).
+     * @since 2.8
      */
     public static function keyExpansion($key)
     {
@@ -134,6 +153,7 @@ Class Wcal_Aes
 
     /**
      * Apply SBox to 4-byte word w.
+     * @since 2.8
      */
     private static function subWord($w)
     {
@@ -143,6 +163,7 @@ Class Wcal_Aes
 
     /**
      * Rotate 4-byte word w left by one byte.
+     * @since 2.8
      */
     private static function rotWord($w)
     {

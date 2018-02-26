@@ -1,9 +1,20 @@
 <?php 
-/* 
-* Woocommerce Abandoned Cart Lite Plugin - Saves guest cart information
-*/
+/**
+ * Abandoned Cart Lite for WooCommerce
+ *
+ * It will capture the guest users data.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/capture-guest-cart
+ */
+
 if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 
+    /**
+     * It will add the js, ajax for capturing the guest cart.
+     * It will add an action for populating the guest data when user comes from the abandoned cart reminder emails.
+     * @since 2.2
+     */
 	class woocommerce_guest_ac {		
 		var $a;		
 		public function __construct() {
@@ -12,15 +23,23 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 			add_filter( 'woocommerce_checkout_fields', 'guest_checkout_fields' );
 		}
 	}			
-	/*-----------------------------------------------------------------------------------*/
-	/* Class Functions */
-	/*-----------------------------------------------------------------------------------*/
+	
+    /**
+     * It will add the ajax for capturing the guest record.
+     * @hook init
+     * @since 2.2
+     */
 	function load_ac_ajax() {
         if ( ! is_user_logged_in() ) {
 			add_action( 'wp_ajax_nopriv_save_data', 'save_data' );
 		} 
 	}
 
+    /**
+     * It will add the js for capturing the guest cart.
+     * @hook woocommerce_after_checkout_billing_form
+     * @since 2.2
+     */
 	function user_side_js() {
 		?>
 		<script type="text/javascript">
@@ -57,6 +76,13 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 	<?php
 	}
 	
+    /**
+     * It will add the guest users data in the database.
+     * @hook wp_ajax_nopriv_save_data
+     * @globals mixed $wpdb
+     * @globals mixed $woocommerce
+     * @since 2.2
+     */
 	function save_data() {		
         if ( ! is_user_logged_in() ) {            
             if( session_id() === '' ) {
@@ -236,6 +262,13 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
         }
     }
 	
+    /**
+     * It will populate the data on the chekout field if user comes from the abandoned cart reminder emails.
+     * @hook woocommerce_checkout_fields
+     * @param array $fields All fields of checkout page
+     * @return array $fields
+     * @since 2.2
+     */
     function guest_checkout_fields( $fields ) {
        if ( isset( $_SESSION['guest_first_name'] ) && $_SESSION['guest_first_name'] != "" ) {
             $_POST['billing_first_name'] = $_SESSION['guest_first_name'];
