@@ -1,9 +1,19 @@
+/**
+ * This function will add the new button in the tinymce editor.
+ * It will add all the mergecode of the plugin.
+ * @function wcal_filter_mce_plugin
+ */
 (function() {
 
+  /**
+   * This function will add the new button in the tinymce editor.
+   * It will add all the mergecode of the plugin.
+   * @return array buttons
+   * @since: 2.6 
+   */
 	tinymce.PluginManager.add('abandoncart', function(editor, url) {
 
-	
-    editor.addButton('abandoncart', {
+	editor.addButton('abandoncart', {
         type: 'menubutton',
         text: false,
         icon: "abandoncart_email_variables",

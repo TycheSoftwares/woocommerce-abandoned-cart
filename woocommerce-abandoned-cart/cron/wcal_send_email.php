@@ -1,4 +1,12 @@
 <?php 
+/**
+ * It will send the automatic reminder emails to the customers.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/cron
+ */
+
+
 static $wp_load; // Since this will be called twice, hold onto it.
 if ( ! isset( $wp_load ) ) {
     $wp_load = false;
@@ -13,11 +21,14 @@ $wcal_root = dirname( dirname(__FILE__) ); // go two level up for directory from
 require_once $wp_load;
 require_once $wcal_root.'/includes/classes/class-wcal-aes.php';
 require_once $wcal_root.'/includes/classes/class-wcal-aes-counter.php';
-/**
- * woocommerce_abandon_cart_cron class
-**/
+
+
 if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 
+    /**
+     * It will send the automatic reminder emails to the customers
+     * @since 1.3
+     */
     class woocommerce_abandon_cart_cron {   
         var $cart_settings_cron;
         var $cart_abandon_cut_off_time_cron;        
@@ -26,7 +37,12 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
             $this->cart_abandon_cut_off_time_cron = ( $this->cart_settings_cron ) * 60;             
         }
         /**
-         * Function to send emails
+         * It will send the reminder emails to the cutomers.
+         * It will also replace the merge code to its original data.
+         * it will also check if guest id is valid, and check if the order is placed before sending the reminder email.
+         * @globals mixed $wpdb
+         * @globals mixed $woocommerce
+         * @since 1.3
          */
         function wcal_send_email_notification() {   
             global $wpdb, $woocommerce;         
@@ -381,6 +397,10 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
         /**
          * This function will check if the user type is Guest and the id is greater than 63000000
          * Then conider that as a correct guest user, if is not then do not send the emails
+         * @param strinng | int $wcal_user_id User id
+         * @param strinng $wcal_user_type User Type
+         * @return boolean true | false
+         * @since 4.4
          */
         public static function wcal_get_is_guest_valid ( $wcal_user_id, $wcal_user_type ) {
 
@@ -397,6 +417,13 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
              */
             return false;
         }
+
+        /**
+         * It will check the cart total.
+         * @param array | object $cart Cart details
+         * @return boolean true | false
+         * @since 4.3
+         */
         function wcal_check_cart_total ( $cart ){
             foreach( $cart as $k => $v ) {
                 if( $v->line_total != 0 && $v->line_total > 0 ) {
@@ -406,7 +433,12 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
             return false;
         }       
         /**
-         * get all carts which have the creation time earlier than the one that is passed
+         * Get all carts which have the creation time earlier than the one that is passed.
+         * @param string | timestamp $template_to_send_after_time Template time
+         * @param string | timestamp $cart_abandon_cut_off_time Cutoff time
+         * @globals mixed $wpdb
+         * @return array | object $results
+         * @since 1.3
          */
         function wcal_get_carts( $template_to_send_after_time, $cart_abandon_cut_off_time ) {   
             global $wpdb;       
@@ -423,6 +455,18 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
             exit;
         }
         
+        /**
+         * It will update the abandoned cart staus if the order has been placed before sending the reminder emails.
+         * @param string | timestamp $time_to_send_template_after Template time
+         * @param string | timestamp $wcal_cart_time Abandoned time
+         * @param string | int $wcal_user_id User id
+         * @param string  $wcal_user_type User type
+         * @param string | int $wcal_cart_id Abandoned cart id
+         * @param string  $wcal_user_email User Email
+         * @globals mixed $wpdb
+         * @return boolean true | false
+         * @since 4.3 
+         */
         public static function wcal_update_abandoned_cart_status_for_placed_orders( $time_to_send_template_after, $wcal_cart_time, $wcal_user_id, $wcal_user_type, $wcal_cart_id, $wcal_user_email ){
             global $wpdb;
 
@@ -440,6 +484,16 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
             return false;
         }
         
+        /**
+         * It will update the Guest users abandoned cart staus if the order has been placed before sending the reminder emails.
+         * @param string | int $cart_id Abandoned cart id
+         * @param string | timestamp $time_to_send_template_after Template time
+         * @param string | timestamp $abandoned_cart_time Abandoned time
+         * @param string  $wcal_user_email_address User Email
+         * @globals mixed $wpdb
+         * @return int 0 | 1
+         * @since 4.3 
+         */
         public static function wcal_update_status_of_guest ( $cart_id, $abandoned_cart_time , $time_to_send_template_after, $wcal_user_email_address ) {
             global $wpdb;
 
@@ -460,7 +514,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 if ( $order_date == $todays_date ) {
 
                     /**
-                     * in some case the cart is recovered but it is not marked as the recovred. So here we check if any 
+                     * in some case the cart is recovered but it is not marked as the recovered. So here we check if any 
                      * record is found for that cart id if yes then update the record respectively.
                      */
                     $wcal_check_email_sent_to_cart = woocommerce_abandon_cart_cron::wcal_get_cart_sent_data ( $cart_id );
@@ -505,6 +559,16 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
             return 0;
         }
         
+        /**
+         * It will update the Loggedin users abandoned cart staus if the order has been placed before sending the reminder emails.
+         * @param string | int $cart_id Abandoned cart id
+         * @param string | timestamp $time_to_send_template_after Template time
+         * @param string | timestamp $abandoned_cart_time Abandoned time
+         * @param string  $user_billing_email User Email
+         * @globals mixed $wpdb
+         * @return int 0 | 1
+         * @since 4.3 
+         */
         public static function wcal_update_status_of_loggedin( $cart_id, $abandoned_cart_time , $time_to_send_template_after, $user_billing_email ) {
             global $wpdb;
 
@@ -558,6 +622,13 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
             return 0; // it means there are no record found to be update it.
         }
 
+        /**
+         * It will check that for abandoned cart remider email has been sent.
+         * @param string | int $wcal_cart_id Abandoned cart id
+         * @return int  $wcal_sent_id | 0 Email sent id
+         * @globals mixed $wpdb
+         * @since 4.3
+         */
         public static function wcal_get_cart_sent_data ( $wcal_cart_id ) {
             global $wpdb;
 
@@ -571,6 +642,16 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
             return 0;
         }
 
+        /**
+         * If none of the email has been sent for some time then from the time where it send the first email template it will consider
+         * the time and further email will sent from first email sent time. So all template will not sent at the same time.
+         * @param string | int $wcal_cart_id Abandoned cart id
+         * @param string | timestamp $time_to_send_template_after Template time
+         * @param string | int $template_id Template id 
+         * @return boolean true | false
+         * @globals mixed $wpdb
+         * @since 3.1
+         */
         public static function wcal_remove_cart_for_mutiple_templates( $wcal_cart_id, $time_to_send_template_after, $template_id ) {
             global $wpdb;
             
@@ -588,15 +669,28 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
             
             return false;
         }
-        /******
-        *  This function is used to encode the validate string.
-        ******/
+        /**
+         * This function is used to encode the validate string.
+         * @param string $validate 
+         * @return encoded data $validate_encoded
+         * @since 1.3
+         */
         function wcal_encrypt_validate( $validate ) {            
             $cryptKey         = get_option( 'wcal_security_key' );        
             $validate_encoded = Wcal_Aes_Ctr::encrypt( $validate, $cryptKey, 256 );
             return( $validate_encoded );
         }
         
+        /**
+         * It will check if the reminder email has been sent to the abandoned cart.
+         * @param string | int $user_id User id
+         * @param string | timestamp $cart_update_time Abandoned cart time
+         * @param string | int $template_id Template id
+         * @param string | int $id Abandoned cart id
+         * @globals mixed $wpdb 
+         * @return boolean true | false
+         * @since 1.3 
+         */
         function wcal_check_sent_history( $user_id, $cart_update_time, $template_id, $id ) {            
             global $wpdb;           
             $query = "SELECT wpcs . * , wpac . abandoned_cart_time , wpac . user_id FROM `".$wpdb->prefix."ac_sent_history_lite` AS wpcs

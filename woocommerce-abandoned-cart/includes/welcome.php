@@ -1,23 +1,19 @@
 <?php 
 
-/**
- * Abandoned Cart Lite Welcome Page Class
- *
- * Displays on plugin activation
- */
-
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Wcal_Welcome Class
+ * Abandoned Cart Lite for WooCommerce
  *
- * A general class for About page.
+ * Displays on plugin activation.
  *
- * @since 4.5
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/welcome-page
  */
+
 class Wcal_Welcome {
 
 	/**
@@ -26,8 +22,7 @@ class Wcal_Welcome {
 	public $minimum_capability = 'manage_options';
 
 	/**
-	 * Get things started
-	 *
+	 * It will add all the action for welcome page.
 	 * @since 4.5
 	 */
 	public function __construct() {
@@ -44,15 +39,12 @@ class Wcal_Welcome {
 	/**
 	 * Register the Dashboard Page which is later hidden but this pages
 	 * is used to render the Welcome page.
-	 *
-	 * @access public
 	 * @since  4.5
-	 * @return void
 	 */
 	public function admin_menus() {
 		$display_version = WCAL_VERSION;
 
-		// About Page
+		// Welcome Page
 		add_dashboard_page(
 			sprintf( esc_html__( 'Welcome to Abandoned Cart Lite %s', 'woocommerce-abandoned-cart' ), $display_version ),
 			esc_html__( 'Welcome to Abandoned Cart Lite', 'woocommerce-abandoned-cart' ),
@@ -64,22 +56,16 @@ class Wcal_Welcome {
 	}
 
 	/**
-	 * Hide Individual Dashboard Pages
-	 *
-	 * @access public
+	 * Hide Individual Dashboard Pages.
 	 * @since  4.5
-	 * @return void
 	 */
 	public function admin_head() {
 		remove_submenu_page( 'index.php', 'wcal-about' );
 	}
 
 	/**
-	 * Render About Screen
-	 *
-	 * @access public
+	 * Render Welcome Screen.
 	 * @since  4.5
-	 * @return void
 	 */
 	public function about_screen() {
 		$display_version = WCAL_VERSION;
@@ -267,9 +253,10 @@ class Wcal_Welcome {
 
 
 	/**
-	 * Social Media Like Buttons
+	 * Social Media Like Buttons.
 	 *
-	 * Various social media elements to Tyche Softwares
+	 * Various social media elements to Tyche Softwares.
+	 * @since 4.5
 	 */
 	public function social_media_elements() { ?>
 
@@ -306,11 +293,7 @@ class Wcal_Welcome {
 	/**
 	 * Sends user to the Welcome page on first activation of Abandoned Cart Lite as well as each
 	 * time Abandoned Cart Lite is upgraded to a new version
-	 *
-	 * @access public
 	 * @since  4.5
-	 *
-	 * @return void
 	 */
 	public function welcome() {
 

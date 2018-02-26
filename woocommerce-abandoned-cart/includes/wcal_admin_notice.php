@@ -4,8 +4,19 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/**
+ * It will display the admin notices for the pro version.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/admin-notice
+ */
+
 class Wcal_Admin_Notice {
 
+    /**
+     * It will display the four notices for the pro version of the plugin.
+     * @since 4.3
+     */
     public static function wcal_pro_notice () {
         
         $wcal_activate_time = get_option ( 'wcal_activate_time' );
@@ -129,7 +140,8 @@ class Wcal_Admin_Notice {
     }
 
     /**
-     * Ignore pro notice
+     * When admin ignores the notice it will handle the functionality
+     * @since 4.3
      */
     public static function wcal_pro_notice_ignore() {
 

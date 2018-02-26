@@ -1,5 +1,7 @@
- /* To display the toggle button on the template page*/
-
+ /**
+  * To display the toggle button on the template page.
+  * @since 4.4
+  */    
   .wcal-switch {
     cursor: pointer;
     text-indent: -999em;

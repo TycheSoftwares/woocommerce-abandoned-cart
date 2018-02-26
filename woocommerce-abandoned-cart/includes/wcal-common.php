@@ -1,6 +1,26 @@
 <?php
+/**
+ * Abandoned Cart Lite for WooCommerce
+ *
+ * 
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/common-functions
+ */
 
-class wcal_common {    
+/**
+ * It will have all the common funtions for the plugin.
+ * @since 2.5.2
+ */
+class wcal_common {
+
+    /**
+     * It will fetch the total count for the abandoned cart section.
+     * @param string $get_section_result Name of the section for which we need result
+     * @return string | int $return_abandoned_count
+     * @globals mixed $wpdb
+     * @since 2.5.2
+     */    
     public static function wcal_get_abandoned_order_count( $get_section_result ){
         global $wpdb;
         $return_abandoned_count = 0;    
@@ -43,6 +63,8 @@ class wcal_common {
 
     /**
      * This function returns the Abandoned Cart Lite plugin version number.
+     * @return string $plugin_version
+     * @since 2.5.2
      */
     public static function wcal_get_version() {
         $plugin_version = '';
@@ -57,7 +79,9 @@ class wcal_common {
     }
 
     /**
-     * This function returns the plugin url 
+     * This function returns the plugin url.
+     * @return string plugin url
+     * @since 2.5.2 
      */
     public static function wcal_get_plugin_url() {
         return plugins_url() . '/woocommerce-abandoned-cart/';
