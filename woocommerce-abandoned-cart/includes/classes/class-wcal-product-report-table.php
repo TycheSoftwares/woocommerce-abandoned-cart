@@ -9,6 +9,16 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
+/**
+ * Abandoned Cart Lite for WooCommerce
+ *
+ * It will handle the common action for the plugin.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/list-class
+ * @since 2.5.3
+ */
+
 class WCAL_Product_Report_Table extends WP_List_Table {
 
 	/**
@@ -28,52 +38,18 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 	public $base_url;
 
 	/**
-	 * Total number of recovred orders
+	 * Total number of products 
 	 *
 	 * @var int
 	 * @since 2.5.3
 	 */
 	public $total_count;
 	
-	
 	/**
-	 * Total number of recovred orders
-	 *
-	 * @var int
-	 * @since 2.5.3
-	 */
-	public $open_emails;
-	
-	/**
-	 * Total amount of abandoned orders
-	 *
-	 * @var int
-	 * @since 2.5.3
-	 */
-	public $link_click_count;
-	
-	/**
-	 * Total number recovred orders
-	 *
-	 * @var int
-	 * @since 2.5.3
-	 */
-	public $start_date_db;
-	
-	/**
-	 * Total number recovred orders total
-	 *
-	 * @var int
-	 * @since 2.5.3
-	 */
-	public $end_date_db;
-	
-	public $duration;
-	
-    /**
-	 * Get things started
+	 *  It will add the variable needed for the class.
 	 *
 	 * @see WP_List_Table::__construct()
+	 * @since 2.5.3
 	 */
 	public function __construct() {
 		global $status, $page;
@@ -86,6 +62,10 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		$this->base_url = admin_url( 'admin.php?page=woocommerce_ac_page&action=stats' );
 	}
 	
+	/**
+	 * It will prepare the list of the Product reports, like columns, pagination, sortable column, all data
+	 * @since 2.5.3
+	 */
 	public function wcal_product_report_prepare_items() {
 		$columns               = $this->get_columns();
 		$hidden                = array(); // No hidden columns		
@@ -101,6 +81,11 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		);		
 	}
 	
+	/**
+	 * It will add the columns product report list.
+	 * @return array $columns All columns name.
+	 * @since 2.5.3
+	 */
 	public function get_columns() {	    
 	    $columns = array( 		        
 	            'product_name'     => __( 'Product Name', 'woocommerce-abandoned-cart' ),
@@ -111,15 +96,11 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 	}
 	
     /**
-	 * Render the user name Column
-	 *
-	 * @access public
-	 * @since 2.5.3
-	 * @param array $abandoned_row_info Contains all the data of the template row 
-	 * @return string Data shown in the Email column
-	 * 
-	 * This function used for individual delete of row, It is for hover effect delete.
-	 */
+     * It will generate the product list data.
+     * @globals mixed $wpdb
+     * @return array $return_product_report_display Key and value of all the columns
+     * @since 2.5.3
+     */
 	public function wcal_product_report_data () { 
 		global $wpdb;    		
 		$wcal_class            = new woocommerce_abandon_cart_lite ();
@@ -221,6 +202,13 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 	return apply_filters( 'wcal_product_report_table_data', $return_product_report_display );
 	}
 	
+	/**
+	 * It will display the data for product column
+	 * @param array | object $wcal_sent_emails All data of the list
+	 * @param stirng $column_name Name of the column
+	 * @return string $value Data of the column
+	 * @since 2.5.3
+	 */
 	public function column_default( $wcal_sent_emails, $column_name ) {
 	    $value = '';
 	    switch ( $column_name ) {

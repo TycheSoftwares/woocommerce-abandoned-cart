@@ -1,3 +1,8 @@
+/**
+ * This function will toggle the status of the email template.
+ * 
+ * @function toggle_template_status
+ */
 jQuery(function( $ ) {
 
 	$('.wcal-switch.wcal-toggle-template-status').click(function(){
