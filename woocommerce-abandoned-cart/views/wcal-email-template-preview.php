@@ -1,7 +1,7 @@
 <?php
 /**
  * Admin View: Abandoned Cart reminder Email Template Preview
-*/
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @author  Tyche Softwares
  * @package Abandoned-Cart-Lite-for-WooCommerce/template-view
- * @since 2.5.2
+ * 
  */
 
 $current_time_stamp = current_time( 'timestamp' );
