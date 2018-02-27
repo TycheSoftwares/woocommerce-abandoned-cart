@@ -4,6 +4,15 @@
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
+/**
+ * Abandoned Cart Lite for WooCommerce
+ *
+ * It will handle the common action for the plugin.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/list-class
+ * @since 2.5.2
+ */
 
 class wcal_Recover_Orders_Table extends WP_List_Table {
 
@@ -65,9 +74,10 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	public $total_recover_amount;		
 
     /**
-	 * Get things started
+	 * It will add the variable needed for the class.
 	 *
 	 * @see WP_List_Table::__construct()
+	 * @since 2.5.2
 	 */
 	public function __construct() {
 		global $status, $page;
@@ -80,6 +90,10 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
         $this->base_url = admin_url( 'admin.php?page=woocommerce_ac_page&action=stats' );
 	}
 	
+	/**
+	 * It will prepare the list of the recovered carts, like columns, pagination, sortable column, all data.
+	 * @since 2.5.2
+	 */
     public function wcal_recovered_orders_prepare_items() {
 		$columns                    = $this->get_columns();
 		$hidden                     = array(); // No hidden columns
@@ -100,6 +114,11 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		);
 	}
 	
+	/**
+	 * It will add the columns recovered orders list.
+	 * @return array $columns All columns name.
+	 * @since 2.5.2
+	 */
 	public function get_columns() {	    
 	    $columns = array( 		        
                 'user_name'       => __( 'Customer Name', 'woocommerce-abandoned-cart' ),
@@ -111,6 +130,11 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	   return apply_filters( 'wcal_recovered_orders_columns', $columns );
 	}
 	
+	/**
+	 * We can mention on which column we need the sorting. Here, Abandoned cart date and recovered date.
+	 * @return array $columns Name of the column
+	 * @since 2.5.2
+	 */
 	public function recovered_orders_get_sortable_columns() {
 		$columns = array(
 				'created_on'      => array( 'created_on', false ),
@@ -120,14 +144,12 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	}
 	
 	/**
-	 * Render the user name Column
-	 *
-	 * @access public
+	 * Render the user name Column. 
+	 * We will add the view detials hover link.
 	 * @since 2.5.2
-	 * @param array $abandoned_row_info Contains all the data of the template row 
-	 * @return string Data shown in the Email column
+	 * @param array $recovered_orders_row_info Contains all the data of the recovered order row 
+	 * @return string $value shown in the User name
 	 * 
-	 * This function used for individual delete of row, It is for hover effect delete.
 	 */
 	public function column_user_name( $recovered_orders_row_info ) {	
 	    $row_actions  = array();
@@ -142,7 +164,14 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	    }	
 	    return apply_filters( 'wcal_recovered_orders_single_column', $value, $recovered_id, 'email' );
 	}
-    	
+    
+    /**
+     * It will generate the recovered cart list data.
+     * @globals mixed $wpdb
+     * @globals mixed $woocommerce
+     * @return array $return_recovered_orders_display Key and value of all the columns
+     * @since 2.5.2
+     */
 	public function wcal_recovered_orders_data() { 
 		global $wpdb, $woocommerce;    		
 		$wcal_class      = new woocommerce_abandon_cart_lite ();
@@ -337,14 +366,36 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	return apply_filters( 'wcal_recovered_orders_table_data', $return_recovered_orders_display );
 	}
 	
+	/**
+	 * It will sort the ascending data based on the abandoned cart date.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @return timestamp  
+	 * @since 2.5.2
+	 */
 	function wcal_class_recovered_created_on_asc( $value1,$value2 ) {
 	    return $value1->abandoned_date - $value2->abandoned_date;
 	}
 	
+	/**
+	 * It will sort the descending data based on the abandoned cart date.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @return timestamp  
+	 * @since 2.5.2
+	 */
 	function wcal_class_recovered_created_on_dsc( $value1,$value2 ) {
 	    return $value2->abandoned_date - $value1->abandoned_date;
 	}
-	
+
+	/**
+	 * It will sort the ascending data based on the recovered cart date.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @globals mixed $woocommerce
+	 * @return timestamp  
+	 * @since 2.5.2
+	 */	
 	function wcal_class_recovered_date_asc( $value1,$value2 ) {
 
 		global $woocommerce;
@@ -357,6 +408,15 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		}
 	    return $value1->recover_order_date - $value2->recover_order_date;
 	}
+
+	/**
+	 * It will sort the descending data based on the recovered cart date.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @globals mixed $woocommerce
+	 * @return timestamp  
+	 * @since 2.5.2
+	 */
 	
 	function wcal_class_recovered_date_dsc( $value1,$value2 ) {
 		global $woocommerce;
@@ -370,6 +430,13 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	    return $value2->recover_order_date - $value1->recover_order_date;
 	}
 	
+	/**
+	 * It will display the data for the recovered column.
+	 * @param array | object $wcal_abandoned_orders All data of the list
+	 * @param stirng $column_name Name of the column
+	 * @return string $value Data of the column
+	 * @since 2.5.2
+	 */
 	public function column_default( $wcal_abandoned_orders, $column_name ) {
 	    $value = '';
 	    switch ( $column_name ) {      

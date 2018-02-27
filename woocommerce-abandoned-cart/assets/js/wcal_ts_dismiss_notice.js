@@ -1,4 +1,7 @@
-// Make notices dismissible
+/**	
+ * It will add the button of the dimiss on the pro version notice.
+ * @function dismiss_notice
+ */
 jQuery(document).ready( function() {
 	jQuery( '.notice.is-dismissible' ).each( function() {
 		

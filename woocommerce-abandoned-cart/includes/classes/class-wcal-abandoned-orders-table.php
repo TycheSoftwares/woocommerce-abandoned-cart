@@ -4,6 +4,16 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
+/**
+ * Abandoned Cart Lite for WooCommerce
+ *
+ * It will handle the common action for the plugin.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/list-class
+ * @since 2.5.2
+ */
+
 class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 
 	/**
@@ -31,8 +41,8 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	public $total_count;
 
     /**
-	 * Get things started
-	 *
+	 * It will add the bulk action function and other variable needed for the class.
+	 * @since 2.5.2
 	 * @see WP_List_Table::__construct()
 	 */
 	public function __construct() {
@@ -46,6 +56,11 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		$this->process_bulk_action();
         $this->base_url = admin_url( 'admin.php?page=woocommerce_ac_page' );
 	}
+
+	/**
+	 * It will prepare the list of the abandoned carts, like columns, pagination, sortable column, all data.
+	 * @since 2.5.2
+	 */
 	
 	public function wcal_abandoned_order_prepare_items() {
 		$columns               = $this->get_columns();
@@ -69,6 +84,11 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		);
 	}
 	
+	/**
+	 * It will add the columns for abanodned orders list.
+	 * @return array $columns All columns name.
+	 * @since 2.5.2
+	 */
 	public function get_columns() {	  
 	    $columns = array();
 		$columns = array(
@@ -83,8 +103,11 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		return apply_filters( 'wcal_abandoned_orders_columns', $columns );
 	}
 	
-	/*** 
-	 * It is used to add the check box for the items
+	/** 
+	 * It is used to add the check box for the items.
+	 * @param $string $item 
+	 * @return string 
+	 * @since 2.5.2
 	 */
 	function column_cb( $item ){	   
 	    $abandoned_order_id = '';
@@ -98,6 +121,11 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    );
 	}
 	
+	/**
+	 * We can mention on which column we need the sorting. Here, abandoned cart date, abandoned cart status
+	 * @return array $columns Name of the column
+	 * @since 2.5.2
+	 */
 	public function get_sortable_columns() {
 		$columns = array(
 				'date' 			=> array( 'date', false ),
@@ -107,14 +135,11 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	}
 	
 	/**
-	 * Render the Email Column
-	 *
-	 * @access public
-	 * @since 2.4.8
-	 * @param array $abandoned_row_info Contains all the data of the abandoned order tabs row 
-	 * @return string Data shown in the Email column
-	 * 
+	 * Render the Email Column. So we will add the action on the hover affect.
 	 * This function used for individual delete of row, It is for hover effect delete.
+	 * @param array $abandoned_row_info Contains all the data of the abandoned order tabs row .
+	 * @return string $value shown in the Email column.
+	 * @since 2.5.2
 	 */
 	public function column_email( $abandoned_row_info ) {	
 	    $row_actions 			= array();
@@ -130,6 +155,12 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    return apply_filters( 'wcal_abandoned_orders_single_column', $value, $abandoned_order_id, 'email' );
 	}
     
+    /**
+     * It will generate the abandoned cart list data.
+     * @globals mixed $wpdb
+     * @return array $return_abandoned_orders_display Key and value of all the columns
+     * @since 2.5.2
+     */
 	public function wcal_abandoned_cart_data() { 
 		global $wpdb;    	
 		$return_abandoned_orders = array();
@@ -384,6 +415,13 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	return apply_filters( 'wcal_abandoned_orders_table_data', $return_abandoned_orders_display );
 	}
 	
+	/**
+	 * It will sort the ascending data based on the abandoned cart date.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @return timestamp  
+	 * @since 2.5.2
+	 */
 	function wcal_class_order_date_asc( $value1,$value2 ) {	    
 	    $date_two           = $date_one = '';
 	    $value_one          = $value1->date;
@@ -400,6 +438,13 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    return strtotime( $date_one ) - strtotime( $date_two );
 	}
 	
+	/**
+	 * It will sort the descending data based on the abandoned cart date.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @return timestamp  
+	 * @since 2.5.2
+	 */
 	function wcal_class_order_date_dsc( $value1,$value2 ) {	   
 	    $date_two           = $date_one = '';
 	    $value_one          = $value1->date;
@@ -416,14 +461,35 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    return strtotime($date_two) - strtotime($date_one);
 	}
 	
+	/**
+	 * It will sort the alphabetally ascending on the abandoned cart staus.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @return sorted array  
+	 * @since 2.5.2
+	 */
 	function wcal_class_status_asc( $value1,$value2 ) {
 	    return strcasecmp( $value1->status,$value2->status );
 	}
 	
+	/**
+	 * It will sort the alphabetally descending on the abandoned cart staus.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @return sorted array  
+	 * @since 2.5.2
+	 */
 	function wcal_class_status_dsc( $value1,$value2 ) {
 	    return strcasecmp( $value2->status,$value1->status );
 	}
 	
+	/**
+	 * It will display the data for the abanodned column
+	 * @param array | object $wcal_abandoned_orders All data of the list
+	 * @param stirng $column_name Name of the column
+	 * @return string $value Data of the column
+	 * @since 2.5.2
+	 */
 	public function column_default( $wcal_abandoned_orders, $column_name ) {
 	    $value = '';
 	    switch( $column_name ) {
@@ -459,12 +525,22 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		return apply_filters( 'wcal_abandoned_orders_column_default', $value, $wcal_abandoned_orders, $column_name );
 	}
 	
+	/**
+	 * It will add the bulk action, here Delete
+	 * @return array
+	 * @since 2.5.2
+	 */
 	public function get_bulk_actions() {
 	    return array(
 	        'wcal_delete' => __( 'Delete', 'woocommerce-abandoned-cart' )
 	    );
 	}
 	
+	/**
+	 * It will give the section name.
+	 * @return string $section Name of the current section
+	 * @since 2.5.2
+	 */
 	public function wcal_get_current_section () {
 	    $section = 'wcal_all_abandoned';
 	    if ( isset( $_GET[ 'wcal_section' ] ) ) {

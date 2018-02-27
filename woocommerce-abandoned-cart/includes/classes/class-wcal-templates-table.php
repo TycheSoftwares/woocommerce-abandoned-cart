@@ -4,6 +4,15 @@
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
+/**
+ * Abandoned Cart Lite for WooCommerce
+ *
+ * It will handle the common action for the plugin.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/list-class
+ * @since 2.5.2
+ */
 
 class WCAL_Templates_Table extends WP_List_Table {
 
@@ -32,9 +41,10 @@ class WCAL_Templates_Table extends WP_List_Table {
 	public $total_count;
 	
     /**
-	 * Get things started
+	 * It will add the bulk action function and other variable needed for the class.
 	 *
 	 * @see WP_List_Table::__construct()
+	 * @since 2.5.2
 	 */
 	public function __construct() {
 		global $status, $page;
@@ -48,6 +58,10 @@ class WCAL_Templates_Table extends WP_List_Table {
         $this->base_url = admin_url( 'admin.php?page=woocommerce_ac_page&action=emailtemplates' );
 	}
 	
+	/**
+	 * It will prepare the list of the templates, like columns, pagination, sortable column, all data.
+	 * @since 2.5.2
+	 */
 	public function wcal_templates_prepare_items() {
 		$columns  = $this->get_columns();
 		$hidden   = array(); // No hidden columns
@@ -66,6 +80,11 @@ class WCAL_Templates_Table extends WP_List_Table {
 		);
 	}
 	
+	/**
+	 * It will add the columns templates list.
+	 * @return array $columns All columns name.
+	 * @since 2.5.2
+	 */
 	public function get_columns() {	    
 	    $columns = array(
  		        'cb'            => '<input type="checkbox" />',
@@ -76,8 +95,11 @@ class WCAL_Templates_Table extends WP_List_Table {
 		);		
 	   return apply_filters( 'wcal_templates_columns', $columns );
 	}	
-	/*** 
-	 * It is used to add the check box for the items
+	/**
+	 * It is used to add the check box for the items.
+	 * @param string $item  
+	 * @return string 
+	 * @since 2.5.2
 	 */
 	function column_cb( $item ) {	    
 	    $template_id = '';
@@ -91,6 +113,11 @@ class WCAL_Templates_Table extends WP_List_Table {
 	    );
 	}
 	
+	/**
+	 * We can mention on which column we need the sorting. Here we have template name, email sent time
+	 * @return array $columns Name of the column
+	 * @since 2.5.2
+	 */
 	public function templates_get_sortable_columns() {
 		$columns = array(
 				'template_name' => array( 'template_name', false ),
@@ -100,14 +127,12 @@ class WCAL_Templates_Table extends WP_List_Table {
 	}
 	
 	/**
-	 * Render the Email Column
-	 *
-	 * @access public
+	 * It will add the hover link on the template name. 
+	 * This function used for individual delete, edit of row.
 	 * @since 2.5.2
-	 * @param array $abandoned_row_info Contains all the data of the template row 
-	 * @return string Data shown in the Email column
+	 * @param array $template_row_info Contains all the data of the template row 
+	 * @return string $value All hover links, here we have edit and delete
 	 * 
-	 * This function used for individual delete of row, It is for hover effect delete.
 	 */
 	public function column_template_name( $template_row_info ) {	
 	    $row_actions = array();
@@ -125,6 +150,12 @@ class WCAL_Templates_Table extends WP_List_Table {
 	return apply_filters( 'wcal_template_single_column', $value, $template_id, 'email' );
 	}
     
+    /**
+     * It will generate the templates list data.
+     * @globals mixed $wpdb
+     * @return array $return_templates_data_display Key and value of all the columns
+     * @since 2.5.2
+     */
 	public function wcal_templates_data() { 
 		global $wpdb;    		
 		$return_templates_data = array();
@@ -194,22 +225,57 @@ class WCAL_Templates_Table extends WP_List_Table {
 	return apply_filters( 'wcal_templates_table_data', $return_templates_data_display );
 	}
 	
+	/**
+	 * It will sort the data alphabetally ascending on the template name.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @return sorted array  
+	 * @since 2.5.2
+	 */
 	function wcal_class_template_name_asc( $value1,$value2 ) {
 	    return strcasecmp( $value1->template_name,$value2->template_name );
 	}
 	
+	/**
+	 * It will sort the data alphabetally descending on the template name.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @return sorted array  
+	 * @since 2.5.2
+	 */
 	function wcal_class_template_name_dsc( $value1,$value2 ) {
 	    return strcasecmp( $value2->template_name,$value1->template_name );
 	}
 	
+	/**
+	 * It will sort the data alphanumeric ascending on the template time.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @return sorted array  
+	 * @since 2.5.2
+	 */
 	function wcal_class_sent_time_asc( $value1,$value2 ) {
 	    return strnatcasecmp( $value1->sent_time,$value2->sent_time );
 	}
 	
+	/**
+	 * It will sort the data alphanumeric descending on the template time.
+	 * @param array | object $value1 All data of the list
+	 * @param array | object $value2 All data of the list
+	 * @return sorted array  
+	 * @since 2.5.2
+	 */
 	function wcal_class_sent_time_dsc( $value1,$value2 ) {
 	    return strnatcasecmp( $value2->sent_time,$value1->sent_time );
 	}
-		
+	
+	/**
+	 * It will display the data for the templates list
+	 * @param array | object $wcal_abandoned_orders All data of the list
+	 * @param stirng $column_name Name of the column
+	 * @return string $value Data of the column
+	 * @since 2.5.2
+	 */
 	public function column_default( $wcal_abandoned_orders, $column_name ) {
 	    $value = '';
 	    switch ( $column_name ) {	       
@@ -254,6 +320,11 @@ class WCAL_Templates_Table extends WP_List_Table {
 	return apply_filters( 'wcal_template_column_default', $value, $wcal_abandoned_orders, $column_name );
 	}
 	
+	/**
+	 * It will add the bulk action, here Delete
+	 * @return array
+	 * @since 2.5.2
+	 */
 	public function get_bulk_actions() {
 	    return array(
 	        'wcal_delete_template' => __( 'Delete', 'woocommerce-abandoned-cart' )

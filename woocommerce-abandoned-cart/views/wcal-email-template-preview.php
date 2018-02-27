@@ -5,6 +5,17 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+
+/**
+ * Abandoned Cart Lite for WooCommerce
+ *
+ * It will handle the common action for the plugin.
+ *
+ * @author  Tyche Softwares
+ * @package Abandoned-Cart-Lite-for-WooCommerce/template-view
+ * @since 2.5.2
+ */
+
 $current_time_stamp = current_time( 'timestamp' );
 $date_format        = date_i18n( get_option( 'date_format' ), $current_time_stamp );
 $time_format        = date_i18n( get_option( 'time_format' ), $current_time_stamp );
