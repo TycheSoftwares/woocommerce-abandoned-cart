@@ -11,7 +11,7 @@
  * It will handle the common action for the plugin.
  *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/encrypt-decrypt-data
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Encrypt-Decrypt-Data
  */
 
 /**

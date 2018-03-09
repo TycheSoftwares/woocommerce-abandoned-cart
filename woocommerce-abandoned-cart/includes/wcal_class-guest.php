@@ -5,7 +5,7 @@
  * It will capture the guest users data.
  *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/capture-guest-cart
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Frontend/Capture-Guest-Cart
  */
 
 if ( ! class_exists( 'woocommerce_guest_ac' ) ) {

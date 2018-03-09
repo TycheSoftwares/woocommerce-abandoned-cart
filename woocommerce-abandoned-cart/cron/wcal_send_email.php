@@ -3,7 +3,7 @@
  * It will send the automatic reminder emails to the customers.
  *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/cron
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
  */
 
 
@@ -12,9 +12,9 @@ if ( ! isset( $wp_load ) ) {
     $wp_load = false;
     $dir     = __FILE__;
     while( '/' != ( $dir = dirname( $dir ) ) ) {
-        if( file_exists( $wp_load = "{$dir}/wp-load.php" ) ) {
-            break;
-        }
+        // if( file_exists( $wp_load = "{$dir}/wp-load.php" ) ) {
+        //     break;
+        // }
     }
 }
 $wcal_root = dirname( dirname(__FILE__) ); // go two level up for directory from this file.

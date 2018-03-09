@@ -1,7 +1,7 @@
 <?php
 /**
  * Admin View: Abandoned Cart reminder Email Template Preview
- */
+*/
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * It will handle the common action for the plugin.
  *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/template-view
- * 
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Template-view
+ * @since 2.5.2
  */
 
 $current_time_stamp = current_time( 'timestamp' );

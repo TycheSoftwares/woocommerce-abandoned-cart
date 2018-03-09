@@ -47,7 +47,7 @@ add_filter( 'cron_schedules', 'wcal_add_cron_schedule' );
  * @param array $schedules
  * @return array $schedules
  * @since 1.3
- * @package Abandoned-Cart-Lite-for-WooCommerce/cron
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
  */
 function wcal_add_cron_schedule( $schedules ) { 
     $schedules['15_minutes_lite'] = array(
@@ -60,7 +60,7 @@ function wcal_add_cron_schedule( $schedules ) {
 /**
  * Schedule an action if it's not already scheduled.
  * @since 1.3
- * @package Abandoned-Cart-Lite-for-WooCommerce/cron
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
  */ 
 if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
     wp_schedule_event( time(), '15_minutes_lite', 'woocommerce_ac_send_email_action' );
@@ -73,7 +73,7 @@ if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
  * @param array $schedules
  * @return array $schedules
  * @since 3.9
- * @package Abandoned-Cart-Lite-for-WooCommerce/tracking-data
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Tracking-Data
  */
 function wcal_add_tracking_cron_schedule( $schedules ) {
     $schedules[ 'daily_once' ] = array(
@@ -86,7 +86,7 @@ function wcal_add_tracking_cron_schedule( $schedules ) {
 /**
  * To capture the data from the client site.
  * @since 3.9
- * @package Abandoned-Cart-Lite-for-WooCommerce/tracking-data
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Tracking-Data
  */  
 if ( ! wp_next_scheduled( 'wcal_ts_tracker_send_event' ) ) {
     wp_schedule_event( time(), 'daily_once', 'wcal_ts_tracker_send_event' );
@@ -102,7 +102,7 @@ add_action( 'woocommerce_ac_send_email_action', 'wcal_send_email_cron' );
  * It will add the wcal_send_email.php file which is responsible for sending the abandoned cart reminde emails.
  * @hook woocommerce_ac_send_email_action
  * @since 1.3
- * @package Abandoned-Cart-Lite-for-WooCommerce/cron
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
  */
 function wcal_send_email_cron() {
     //require_once( ABSPATH.'wp-content/plugins/woocommerce-abandoned-cart/cron/send_email.php' );
@@ -115,7 +115,7 @@ function wcal_send_email_cron() {
  * @hook register_uninstall_hook
  * @globals mixed $wpdb
  * @since 1.0
- * @package Abandoned-Cart-Lite-for-WooCommerce/delete-plugin
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Uninstaller
  */
 function woocommerce_ac_delete_lite() { 
     global $wpdb;
@@ -212,7 +212,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
      * It will add the hooks, filters, menu and the variables and all the necessary actions for the plguins which will be used 
      * all over the plugin.
      * @since 1.0
-     * @package Abandoned-Cart-Lite-for-WooCommerce/core
+     * @package Abandoned-Cart-Lite-for-WooCommerce/Core
      */
     class woocommerce_abandon_cart_lite {       
         var $one_hour;

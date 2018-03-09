@@ -6,7 +6,7 @@
  * It will add the default template for the plugin.
  *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/default-template
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Default-Template
  * @since 2.5
  */
 

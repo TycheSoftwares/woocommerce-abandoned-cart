@@ -8,7 +8,7 @@
  * & recovered amount, guest users abandoned and admin email for discount code.
  *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/tracking-data
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Tracking-Data
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
