@@ -5,7 +5,7 @@
  * It will manage the tracking of the plugin data.
  *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/tracking-data
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Tracking-Data
  */
  
 include_once( 'classes/class-wcal-ts-tracker.php' );

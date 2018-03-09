@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * It will display the admin notices for the pro version.
  *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/admin-notice
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Admin-Notice
  */
 
 class Wcal_Admin_Notice {

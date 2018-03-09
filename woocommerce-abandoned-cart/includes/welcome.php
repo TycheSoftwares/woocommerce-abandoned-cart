@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Displays on plugin activation.
  *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/welcome-page
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Welcome-Page
  */
 
 class Wcal_Welcome {

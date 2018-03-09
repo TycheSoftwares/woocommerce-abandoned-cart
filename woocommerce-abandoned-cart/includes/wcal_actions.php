@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * It will handle the common action for the plugin.
  *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/admin-action
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Admin-Action
  * @since 2.5.2
  */
 

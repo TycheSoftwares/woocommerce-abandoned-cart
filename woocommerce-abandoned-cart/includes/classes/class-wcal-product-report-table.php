@@ -15,7 +15,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * It will handle the common action for the plugin.
  *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/list-class
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/List-Class
  * @since 2.5.3
  */
 

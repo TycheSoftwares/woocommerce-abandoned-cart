@@ -2,10 +2,8 @@
 /**
  * Abandoned Cart Lite for WooCommerce
  *
- * 
- *
  * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/common-functions
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Common-Functions
  */
 
 /**
