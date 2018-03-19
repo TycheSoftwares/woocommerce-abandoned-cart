@@ -239,7 +239,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		foreach ( $ac_carts_results as $key => $value ) {    		  
 	        $count_carts += 1;
 	        $cart_detail = json_decode( $value->abandoned_cart_info );
-	        $product_details = array();
+	        $product_details = new stdClass();
 	        if( isset( $cart_detail->cart ) ) {
 	            $product_details = $cart_detail->cart;
 	        }
