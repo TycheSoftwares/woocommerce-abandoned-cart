@@ -214,7 +214,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
      * @since 1.0
      * @package Abandoned-Cart-Lite-for-WooCommerce/Core
      */
-    class woocommerce_abandon_cart_lite {       
+    class woocommerce_abandon_cart_lite {
         var $one_hour;
         var $three_hours;
         var $six_hours;
@@ -316,6 +316,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             add_action( 'admin_notices',                                               array( 'Wcal_Admin_Notice',   'wcal_pro_notice' ) );
             add_action( 'admin_init',                                                  array( 'Wcal_Admin_Notice',   'wcal_pro_notice_ignore' ) );
+            add_action( 'admin_notices',                                               array( 'Wcal_Admin_Notice',   'wcal_show_db_update_notice' ) ); 
 
             /** 
              *  @since: 4.2 
@@ -735,12 +736,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             $table_name = $wpdb->prefix . "ac_email_templates_lite";            
             $sql = "CREATE TABLE IF NOT EXISTS $table_name (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
-                    `subject` text COLLATE utf8_unicode_ci NOT NULL,
-                    `body` mediumtext COLLATE utf8_unicode_ci NOT NULL,
-                    `is_active` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
+                    `subject` text COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `body` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `is_active` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL,
                     `frequency` int(11) NOT NULL,
-                    `day_or_hour` enum('Days','Hours') COLLATE utf8_unicode_ci NOT NULL,
-                    `template_name` text COLLATE utf8_unicode_ci NOT NULL,
+                    `day_or_hour` enum('Days','Hours') COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `template_name` text COLLATE utf8mb4_unicode_ci NOT NULL,
                     PRIMARY KEY (`id`)
                     ) $wcap_collate AUTO_INCREMENT=1 ";
         
@@ -753,7 +754,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
              
             if ( count( $results ) == 0 ) {
                 $alter_template_table_query = "ALTER TABLE $table_name
-                ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `template_name`,
+                ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL AFTER `template_name`,
                 ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";
                 
                 $wpdb->get_results( $alter_template_table_query );
@@ -2258,6 +2259,16 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 <div class="wrap">    
                     <h2><?php _e( 'WooCommerce - Abandon Cart Lite', 'woocommerce-abandoned-cart' ); ?></h2>
                 <?php 
+
+                if ( isset( $_GET['ac_update'] ) && $_GET['ac_update'] === 'email_templates' ) {
+                    $status = wcal_common::update_templates_table();
+
+                    if ( $status ) {
+                        wcal_common::show_update_success();
+                    }else {
+                        wcal_common::show_update_failure();
+                    }
+                }
                 
                  if ( isset( $_GET['action'] ) ) {
                      $action = $_GET['action'];
@@ -2581,7 +2592,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                              <?php   
                         }
 
-                        if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'update'  && isset($update_template_successfuly) && $update_template_successfuly >= 0 ) { ?>
+                        if ( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'update'  && isset($update_template_successfuly) && $update_template_successfuly !== false ) { ?>
                                 <div id="message" class="updated fade">
                                     <p>
                                         <strong>
@@ -3596,7 +3607,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 echo "not sent";
                 die();
             }
-        }                   
+        }
     }   
 }       
 $woocommerce_abandon_cart = new woocommerce_abandon_cart_lite();

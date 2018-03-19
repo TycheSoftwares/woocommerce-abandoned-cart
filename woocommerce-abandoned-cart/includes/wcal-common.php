@@ -84,5 +84,50 @@ class wcal_common {
     public static function wcal_get_plugin_url() {
         return plugins_url() . '/woocommerce-abandoned-cart/';
     }
+
+    /**
+     * This function will alter Email Templates Table to include emojis
+     * 
+     * @return bool true if success else false
+     * 
+     * @since 4.8
+     */
+    public static function update_templates_table(){
+
+        global $wpdb;
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+        return maybe_convert_table_to_utf8mb4( $wpdb->prefix . "ac_email_templates_lite" );
+    }
+
+    /**
+     * This function will show a dismissible success message after DB update is completed
+     * 
+     * @since 4.8
+     */
+    public static function show_update_success() {
+        ?>
+
+        <div class="notice notice-success is-dismissible"> 
+            <p><strong><?php _e( 'Database Updated Successfully', 'woocommerce-abandoned-cart');?></strong></p>
+        </div>
+
+        <?php
+    }
+
+    /**
+     * This function will show a dismissible success message after DB update is completed
+     * 
+     * @since 4.8
+     */
+    public static function show_update_failure() {
+        ?>
+
+        <div class="notice notice-error is-dismissible"> 
+            <p><strong><?php _e( 'Database Update Failed. Please try again after sometime', 'woocommerce-abandoned-cart');?></strong></p>
+        </div>
+
+        <?php
+    }
 }
 ?>

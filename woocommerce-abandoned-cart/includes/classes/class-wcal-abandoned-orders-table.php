@@ -319,7 +319,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		    $cut_off_time   = intval( $ac_cutoff_time ) * 60;
 		    $current_time   = current_time( 'timestamp' );
 		    $compare_time   = $current_time - $cart_update_time;
-		    $cart_details   = array();
+		    $cart_details   = new stdClass();
 		    if( isset( $cart_info->cart ) ){
 		        $cart_details = $cart_info->cart;
 		    }

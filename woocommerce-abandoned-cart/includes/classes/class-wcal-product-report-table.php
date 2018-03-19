@@ -118,7 +118,7 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		    $recovered_cart_dat  = json_decode( $recovered_cart_value->recovered_cart);		    
 		    $cart_update_time    = $recovered_cart_value->abandoned_cart_time;
 		    $quantity_total      = 0;
-		    $cart_details        = array();
+		    $cart_details        = new stdClass();
 		    if( isset( $recovered_cart_info->cart ) ){
 		        $cart_details = $recovered_cart_info->cart;
 		    }

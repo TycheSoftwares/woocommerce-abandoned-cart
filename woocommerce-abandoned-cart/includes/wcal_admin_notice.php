@@ -171,4 +171,28 @@ class Wcal_Admin_Notice {
             wp_safe_redirect( remove_query_arg( 'wcal_pro_fourth_notice_ignore' ) );
         }
     }
+
+    /**
+     * Show a DB Update Notice when upgrading from 4.7 to latest version
+     * 
+     * @since 4.8
+     * 
+     * @hook admin_notices
+     */
+    public static function wcal_show_db_update_notice(){
+
+        if( isset( $_GET['ac_update'] ) && $_GET['ac_update'] == 'email_templates' ){
+            return;
+        }
+
+        global $wpdb;
+
+        $query_status = "SHOW TABLE STATUS LIKE '" . $wpdb->prefix . "ac_email_templates_lite" . "'" ;
+
+        $results = $wpdb->get_results( $query_status );
+
+        if ( $results[0]->Collation !== 'utf8mb4_unicode_ci' ) {
+            printf( __( '<div id="wcal_update" class="updated woocommerce-message" style="padding:15px;"><span>We need to update your email template database for some improvements. Please take a backup of your databases for your peice of mind</span><span class="submit"><a href="%s" class="button-primary" style="float:right;">Update</a></span></div>', 'woocommerce-abandoned-cart' ), 'admin.php?page=woocommerce_ac_page&action=listcart&ac_update=email_templates' );
+        }
+    }
 }

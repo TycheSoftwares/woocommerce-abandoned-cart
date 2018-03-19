@@ -113,11 +113,11 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                             if( isset( $value->abandoned_cart_info ) ) {
                                $cart_info_db_field = json_decode( $value->abandoned_cart_info );
                             }
-                            $cart = array();
+                            $cart = new stdClass();
                             if( !empty( $cart_info_db_field->cart ) ) {
                                 $cart           = $cart_info_db_field->cart;
                             }
-                            if( count( $cart ) > 0 && isset( $value->user_id ) && '0' != $value->user_id && isset( $value->id ) ) {
+                            if( count( get_object_vars( $cart ) ) > 0 && isset( $value->user_id ) && '0' != $value->user_id && isset( $value->id ) ) {
                                 $cart_update_time = $value->abandoned_cart_time;
                                 $new_user         = $this->wcal_check_sent_history( $value->user_id, $cart_update_time, $template_id, $value->id );                         
                                 if ( $new_user == true ) {
