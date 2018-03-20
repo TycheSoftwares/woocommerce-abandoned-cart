@@ -188,6 +188,20 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 4.8 (20.03-2018) =
+* This is a minor update to the plugin which contains some bug fixes and requires Database update to include emojis in the email templates. We recommend that you take a backup of the database of your store for your piece of mind.
+
+* Bug Fixed - Fixed compatibility issues related to PHP 7.2 where error notices were being displayed on Abandoned Order List page
+
+* Bug Fixed - Fixed issue related to saving email template where changes were not getting saved despite a success message.
+
+* Additonal Changes - PHP Doc blocks added for generating documentation and readability
+
+= 4.7 (16.02-2018) =
+* This version has 2 bug fixes.
+
+* Bug Fixed - Due to the introduction of language packs through translate.wordpress.org, our plugin was not prepared for localization. So, we changed textdomain from "woocommerce-ac" to "woocommerce-abandoned-cart".
+
 = 4.6 (31.01-2018) =
 
 * This version has 7 bugs fixes.
