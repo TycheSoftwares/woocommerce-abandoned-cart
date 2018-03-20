@@ -218,13 +218,13 @@ class Wcal_Welcome {
                 </div>
 
 
-                <div class="content feature-section-item">
+                <!-- <div class="content feature-section-item">
 
                     <h3><?php esc_html_e( 'Current Offers', 'woocommerce-abandoned-cart' ); ?></h3>
 
                     <p>Buy all our <a href="https://tychesoftwares.com/premium-plugins/?utm_source=wpaboutpage&utm_medium=link&utm_campaign=AbandonedCartLitePlugin" target="_blank">premium plugins</a> at 30% off till 31st December 2017</p>
 
-                </div>
+                </div> -->
 
             </div>            
             <!-- /.feature-section -->
