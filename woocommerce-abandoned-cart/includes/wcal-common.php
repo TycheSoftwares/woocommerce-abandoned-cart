@@ -97,7 +97,9 @@ class wcal_common {
         global $wpdb;
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-        return maybe_convert_table_to_utf8mb4( $wpdb->prefix . "ac_email_templates_lite" );
+        $query = "ALTER TABLE " . $wpdb->prefix . "ac_email_templates_lite" . " CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+
+        return $wpdb->query( $query );
     }
 
     /**
