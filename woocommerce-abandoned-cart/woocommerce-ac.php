@@ -5,7 +5,7 @@
 * Description: This plugin captures abandoned carts by logged-in users & emails them about it. 
 * <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the 
 * PRO Version.</a></strong>
-* Version: 4.7
+* Version: 4.8
 * Author: Tyche Softwares
 * Author URI: http://www.tychesoftwares.com/
 * Text Domain: woocommerce-abandoned-cart
