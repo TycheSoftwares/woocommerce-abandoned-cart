@@ -2263,7 +2263,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 if ( isset( $_GET['ac_update'] ) && $_GET['ac_update'] === 'email_templates' ) {
                     $status = wcal_common::update_templates_table();
 
-                    if ( $status ) {
+                    if ( $status !== false ) {
                         wcal_common::show_update_success();
                     }else {
                         wcal_common::show_update_failure();
