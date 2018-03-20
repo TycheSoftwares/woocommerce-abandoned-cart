@@ -1163,7 +1163,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 
                 if ( count(  $results_email ) == 0 ) {
                     $alter_email_template_table_query = "ALTER TABLE $table_name
-                    ADD COLUMN `wc_email_header` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `default_template`";
+                    ADD COLUMN `wc_email_header` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL AFTER `default_template`";
                     $wpdb->get_results( $alter_email_template_table_query );
                 }
 
