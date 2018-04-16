@@ -239,9 +239,21 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
                     $abandoned_cart_id                  = $wpdb->insert_id;
                     $_SESSION['abandoned_cart_id_lite'] = $abandoned_cart_id;
                     
-                    $insert_persistent_cart = "INSERT INTO `".$wpdb->prefix."usermeta`( user_id, meta_key, meta_value )
-                                               VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
-                    $wpdb->query( $insert_persistent_cart );
+                    // $insert_persistent_cart = "INSERT INTO `".$wpdb->prefix."usermeta`( user_id, meta_key, meta_value )
+                    //                            VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
+                    // $wpdb->query( $insert_persistent_cart );
+                    if( is_multisite() ) {
+                         // get main site's table prefix
+                         $main_prefix = $wpdb->get_blog_prefix(1);
+                         $insert_persistent_cart = "INSERT INTO `" . $wpdb->main_prefix . "usermeta`( user_id, meta_key, meta_value )
+                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
+                          $wpdb->query( $insert_persistent_cart );
+
+                    } else { 
+                          $insert_persistent_cart = "INSERT INTO `" . $wpdb->prefix . "usermeta`( user_id, meta_key, meta_value )
+                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
+                           $wpdb->query( $insert_persistent_cart );
+                    }
                 } else {
                     $query_update        = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET user_id = '" . $user_id . "', abandoned_cart_info = '" . $cart_info . "', abandoned_cart_time  = '" . $current_time . "' WHERE session_id ='" . $get_cookie[0] . "' AND cart_ignored='0' ";
                     $wpdb->query( $query_update );
@@ -256,7 +268,19 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
                     
                     $insert_persistent_cart = "INSERT INTO `".$wpdb->prefix."usermeta`( user_id, meta_key, meta_value )
                                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
-                    $wpdb->query( $insert_persistent_cart );                    
+                    $wpdb->query( $insert_persistent_cart );   
+                    if( is_multisite() ) {
+                     // get main site's table prefix
+                     $main_prefix = $wpdb->get_blog_prefix(1);
+                     $insert_persistent_cart = "INSERT INTO `".$wpdb->main_prefix. " usermeta`( user_id, meta_key, meta_value )
+                        VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
+                      $wpdb->query( $insert_persistent_cart );
+
+                    } else { 
+                      $insert_persistent_cart = "INSERT INTO `" . $wpdb->prefix." usermeta`( user_id, meta_key, meta_value )
+                        VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
+                       $wpdb->query( $insert_persistent_cart );
+                }                 
                 }                    
             }
         }
