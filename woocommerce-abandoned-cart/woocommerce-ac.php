@@ -742,23 +742,26 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     `frequency` int(11) NOT NULL,
                     `day_or_hour` enum('Days','Hours') COLLATE utf8mb4_unicode_ci NOT NULL,
                     `template_name` text COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
+                    `default_template` int(11) COLLATE utf8_unicode_ci NOT NULL,
+                    `wc_email_header` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
                     PRIMARY KEY (`id`)
                     ) $wcap_collate AUTO_INCREMENT=1 ";
         
             require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
             
-            $table_name = $wpdb->prefix . "ac_email_templates_lite";
-            $check_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'is_wc_template' ";
-            $results = $wpdb->get_results( $check_template_table_query );
+            // $table_name = $wpdb->prefix . "ac_email_templates_lite";
+            // $check_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'is_wc_template' ";
+            // $results = $wpdb->get_results( $check_template_table_query );
              
-            if ( count( $results ) == 0 ) {
-                $alter_template_table_query = "ALTER TABLE $table_name
-                ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL AFTER `template_name`,
-                ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";
+            // if ( count( $results ) == 0 ) {
+            //     $alter_template_table_query = "ALTER TABLE $table_name
+            //     ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL AFTER `template_name`,
+            //     ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";
                 
-                $wpdb->get_results( $alter_template_table_query );
-            }
+            //     $wpdb->get_results( $alter_template_table_query );
+            // }
             
             $sent_table_name = $wpdb->prefix . "ac_sent_history_lite";
         
@@ -1169,7 +1172,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
                 if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_abandoned_cart_history_lite';" ) ) {
                     if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_abandoned_cart_history_lite` LIKE 'unsubscribe_link';" ) ) {
-                        $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_abandoned_cart_history_lite ADD `unsubscribe_link` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER  `user_type`;" );
+                        $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_abandoned_cart_history_lite ADD `unsubscribe_link` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `user_type`;" );
                     }
                 }
             
