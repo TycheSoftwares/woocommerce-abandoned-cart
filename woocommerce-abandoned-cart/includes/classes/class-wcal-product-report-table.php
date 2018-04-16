@@ -110,7 +110,7 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		$blank_cart_info       = '{"cart":[]}';
 		$blank_cart_info_guest = '[]';
 		$blank_cart            = '""';
-		$query                 = "SELECT abandoned_cart_time, abandoned_cart_info, recovered_cart FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '%$blank_cart%' ORDER BY recovered_cart DESC";
+		$query                 = "SELECT abandoned_cart_time, abandoned_cart_info, recovered_cart FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '$blank_cart' ORDER BY recovered_cart DESC";
 		$recover_query         = $wpdb->get_results( $query );
 		$rec_carts_array       = array ( );
 		$recover_product_array = array( );
