@@ -563,7 +563,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                              * It will delete the order from history table if the order is placed before any email sent to
                              * the user.
                              */
-                            $wpdb->delete( $wcal_history_table_name , array( 'id' => $wcap_abandoned_cart_id ) );
+                            $wpdb->delete( $wcal_history_table_name , array( 'id' => $wcal_abandoned_cart_id ) );
 
                             /* This user id is set for the guest uesrs. */
                             if ( isset( $_SESSION['user_id'] ) && $_SESSION['user_id'] != '' ) {
