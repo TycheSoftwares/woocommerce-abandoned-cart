@@ -34,11 +34,11 @@ Here Index start from 1. Do not change it. We need to display 10 Questions and a
 
 4. You need to create 3 do_action in your respective plugin. And it should follow below standard.
 
-1. {{plugin-prefix}}_add_tabs
+1. {{plugin-prefix}}_add_settings_tab
 2. {{plugin-prefix}}_add_tab_content
 3. {{plugin-prefix}}_add_submenu
 
-5. {{plugin-prefix}}_add_tabs : This do_action will be placed after your plguins tab. It will allow to add new tab.
+5. {{plugin-prefix}}_add_settings_tab : This do_action will be placed after your plguins tab. It will allow to add new tab.
 
 6. {{plugin-prefix}}_add_tab_content : This do_action will be placed where you display the content of the tab.
 

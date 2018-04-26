@@ -2099,7 +2099,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 <a href="admin.php?page=woocommerce_ac_page&action=stats" class="nav-tab <?php if (isset($active_stats)) echo $active_stats; ?>"> <?php _e( 'Recovered Orders', 'woocommerce-abandoned-cart' );?> </a>
                 <a href="admin.php?page=woocommerce_ac_page&action=report" class="nav-tab <?php if( isset( $active_report ) ) echo $active_report; ?>"> <?php _e( 'Product Report', 'woocommerce-abandoned-cart' );?> </a>
 
-                <?php do_action ( 'wcal_add_tabs' ); ?>
+                <?php do_action ( 'wcal_add_settings_tab' ); ?>
             </h2>
             <?php
         }

@@ -72,7 +72,7 @@ class TS_Faq_Support {
 		add_action( self::$plugin_prefix . '_add_submenu', array( &$this, 'ts_add_submenu' ) );
 
 		//Add a tab for FAQ & Support along with other plugin settings tab.
-		add_action( self::$plugin_prefix . '_add_tabs', array( &$this, 'ts_add_new_settings_tab' ) );
+		add_action( self::$plugin_prefix . '_add_settings_tab', array( &$this, 'ts_add_new_settings_tab' ) );
 		add_action( self::$plugin_prefix . '_add_tab_content', array( &$this, 'ts_add_tab_content' ) );
 
 		self::$plugin_folder  = $ts_plugin_folder_name; 		
