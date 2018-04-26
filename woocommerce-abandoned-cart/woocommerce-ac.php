@@ -26,15 +26,13 @@ require_once( "includes/wcal_actions.php" );
 require_once( "includes/classes/class-wcal-aes.php" );
 require_once( "includes/classes/class-wcal-aes-counter.php" );
 require_once( "includes/wcal-common.php" );
-require_once( "includes/wcal_ts_tracking.php");
+
 require_once( "includes/wcal_admin_notice.php");
 
+
 if ( is_admin() ) {
-    require_once( 'includes/welcome.php' );
-
-    define( 'WCAL_VERSION', wcal_common::wcal_get_version() );
-
-    define( 'WCAL_PLUGIN_URL', wcal_common::wcal_get_plugin_url() );
+    require_once( 'includes/wcal_all_component.php' );
+    
 }
 
 // Add a new interval of 15 minutes
@@ -67,35 +65,8 @@ if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
 }
 
 /**
- * It will add a cron job for sending the tarcking data.
- * By default it will set once in a week interval.
- * @hook cron_schedules
- * @param array $schedules
- * @return array $schedules
- * @since 3.9
- * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Tracking-Data
- */
-function wcal_add_tracking_cron_schedule( $schedules ) {
-    $schedules[ 'daily_once' ] = array(
-        'interval' => 604800,  // one week in seconds
-        'display'  => __( 'Once in a Week', 'woocommerce-abandoned-cart' )
-    );
-    return $schedules;
-}
-
-/**
- * To capture the data from the client site.
- * @since 3.9
- * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Tracking-Data
- */  
-if ( ! wp_next_scheduled( 'wcal_ts_tracker_send_event' ) ) {
-    wp_schedule_event( time(), 'daily_once', 'wcal_ts_tracker_send_event' );
-}
-
-/**
  * Hook into that action that'll fire every 15 minutes 
  */
- 
 add_action( 'woocommerce_ac_send_email_action', 'wcal_send_email_cron' );
 
 /**
@@ -297,6 +268,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 add_action ( 'admin_head',                              array( &$this, 'wcal_action_send_preview' ) );
                 add_action ( 'wp_ajax_wcal_preview_email_sent',         array( &$this, 'wcal_preview_email_sent' ) );
                 add_action ( 'wp_ajax_wcal_toggle_template_status',     array( &$this, 'wcal_toggle_template_status' ) );   
+
+                add_filter( 'ts_tracker_data',                          array( 'wcal_common', 'ts_add_plugin_tracking_data' ), 10, 1 );
+                add_filter( 'ts_tracker_opt_out_data',                  array( 'wcal_common', 'ts_get_data_for_opt_out' ), 10, 1 );
+                add_filter( 'ts_deativate_plugin_questions',            array( &$this,  'wcal_deactivate_add_questions' ), 10, 1 );
             }
                 
             // Send Email on order recovery
@@ -314,58 +289,45 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             add_filter( 'woocommerce_payment_complete_order_status',                   array( &$this,  'wcal_order_complete_action' ), 10 , 2 );        
             add_filter( 'admin_footer_text',                                           array( $this,   'wcal_admin_footer_text' ), 1 );
 
-            add_action( 'admin_notices',                                               array( 'Wcal_Admin_Notice',   'wcal_pro_notice' ) );
-            add_action( 'admin_init',                                                  array( 'Wcal_Admin_Notice',   'wcal_pro_notice_ignore' ) );
             add_action( 'admin_notices',                                               array( 'Wcal_Admin_Notice',   'wcal_show_db_update_notice' ) ); 
-
-            /** 
-             *  @since: 4.2 
-             *  Check if WC is enabled or not. 
-             */
-            add_action( 'admin_init',                                                  array( &$this,  'wcal_wc_check_compatibility' ) ); 
         }
 
         /**
-         * Check if WooCommerce is active or not.
-         * @since: 4.2
+         * It will add the Questions while admin deactivate the plugin.
+         * @hook ts_deativate_plugin_questions
+         * @param array $wcal_add_questions Blank array
+         * @return array $wcal_add_questions List of all questions.
          */
-        public static function wcal_wc_check_ac_installed() {
-        
-            if ( is_plugin_active( 'woocommerce/woocommerce.php' ) && class_exists( 'WooCommerce' ) ) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-            
-        /**
-         * Ensures that the Abandoned cart lite get deactivated when WooCommerce is deactivated.
-         * @since: 4.2
-         */
-        public static function wcal_wc_check_compatibility() {
-                
-            if ( ! self::wcal_wc_check_ac_installed() ) {
-                    
-                if ( is_plugin_active( plugin_basename( __FILE__ ) ) ) {
-                    deactivate_plugins( plugin_basename( __FILE__ ) );
-                        
-                    add_action( 'admin_notices', array( 'woocommerce_abandon_cart_lite', 'wcal_wc_disabled_notice' ) );
-                    if ( isset( $_GET['activate'] ) ) {
-                        unset( $_GET['activate'] );
-                    }
-                }
-            }
-        }
-        /**
-         * Display a notice in the admin Plugins page if the Abandoned cart lite is activated while WooCommerce is deactivated.
-         * @since: 4.2
-         */
-        public static function wcal_wc_disabled_notice() {
-                
-            $class = 'notice notice-error is-dismissible';
-            $message = __( 'Abandoned Cart Lite for WooCommerce requires WooCommerce installed and activate.', 'woocommerce-abandoned-cart' );
-                
-            printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
+        public static function wcal_deactivate_add_questions ( $wcal_add_questions ) {
+
+            $wcal_add_questions = array(
+                0 => array(
+                    'id'                => 4,
+                    'text'              => __( "Emails are not being sent to customers.", "woocommerce-abandoned-cart" ),
+                    'input_type'        => '',
+                    'input_placeholder' => ''
+                    ), 
+                1 =>  array(
+                    'id'                => 5,
+                    'text'              => __( "Capturing of cart and other information was not satisfactory.", "woocommerce-abandoned-cart" ),
+                    'input_type'        => '',
+                    'input_placeholder' => ''
+                ),
+                2 => array(
+                    'id'                => 6,
+                    'text'              => __( "I cannot see abandoned cart reminder emails records.", "woocommerce-abandoned-cart" ),
+                    'input_type'        => '',
+                    'input_placeholder' => ''
+                ),
+                3 => array(
+                    'id'                => 7,
+                    'text'              => __( "I want to upgrade the plugin to the PRO version.", "woocommerce-abandoned-cart" ),
+                    'input_type'        => '',
+                    'input_placeholder' => ''
+                )
+
+            );
+            return $wcal_add_questions;
         }
         
         /**
@@ -856,10 +818,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 add_option( 'wcal_reply_email', $wcal_get_admin_email );
             }
 
-            if( !get_option( 'wcal_activate_time' ) ) {
-                add_option( 'wcal_activate_time', current_time( 'timestamp' ) );
-            }
-       }     
+            do_action( 'wcal_activate' );
+        }     
     
         /**
          * It will add the section, field, & registres the plugin fields using Settings API.
@@ -1139,6 +1099,11 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         function wcal_update_db_check() {
             global $wpdb;
             
+            $wcal_previous_version = get_option( 'wcal_previous_version' );
+
+            if ( $wcal_previous_version != wcal_common::wcal_get_version() ) {
+                update_option( 'wcal_previous_version', '4.8' );
+            }
             if( get_option( 'ac_lite_alter_table_queries' ) != 'yes' ) {
                 $ac_history_table_name = $wpdb->prefix."ac_abandoned_cart_history_lite";
                 $check_table_query     = "SHOW COLUMNS FROM $ac_history_table_name LIKE 'user_type'";
@@ -2133,6 +2098,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 <a href="admin.php?page=woocommerce_ac_page&action=emailsettings" class="nav-tab <?php if (isset($active_settings)) echo $active_settings; ?>"> <?php _e( 'Settings', 'woocommerce-abandoned-cart' );?> </a>
                 <a href="admin.php?page=woocommerce_ac_page&action=stats" class="nav-tab <?php if (isset($active_stats)) echo $active_stats; ?>"> <?php _e( 'Recovered Orders', 'woocommerce-abandoned-cart' );?> </a>
                 <a href="admin.php?page=woocommerce_ac_page&action=report" class="nav-tab <?php if( isset( $active_report ) ) echo $active_report; ?>"> <?php _e( 'Product Report', 'woocommerce-abandoned-cart' );?> </a>
+
+                <?php do_action ( 'wcal_add_settings_tab' ); ?>
             </h2>
             <?php
         }
@@ -2284,6 +2251,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                      $mode = "";
                  }                                          
                  $this->wcal_display_tabs();
+                 
+                 do_action ( 'wcal_add_tab_content' );
                  
                  /**
                   * When we delete the item from the below drop down it is registred in action 2
