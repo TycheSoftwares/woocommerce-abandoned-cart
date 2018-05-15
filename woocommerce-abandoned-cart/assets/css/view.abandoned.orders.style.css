@@ -58,3 +58,11 @@ table.wp-list-table td img {
     max-width: 100%;
     height: auto;
 }
+
+/**
+ * Add left/right margin to h3 titles.
+ */
+h3.details-title {
+    margin-left: 12px;
+    margin-right: 12px;
+}
