@@ -50,9 +50,14 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
                 $wcal_plugin_slug          = 'woocommerce_ac_page';
                 $wcal_pro_file_name        = 'woocommerce-abandon-cart-pro/woocommerce-ac.php';
 
+                $wcal_settings_page        = 'admin.php?page=woocommerce_ac_page&action=emailsettings';
+                $wcal_setting_add_on       = 'woocommerce_ac_page';
+                $wcal_setting_section      = 'ac_lite_general_settings_section';
+                $wcal_register_setting     = 'woocommerce_ac_settings';
+
                 new TS_Woo_Active ( $wcal_plugin_name, $wcal_file_name, $wcal_locale );
 
-                new TS_tracking ( $wcal_plugin_prefix, $wcal_plugin_name, $wcal_blog_post_link, $wcal_locale, $wcal_plugin_url );
+                new TS_tracking ( $wcal_plugin_prefix, $wcal_plugin_name, $wcal_blog_post_link, $wcal_locale, $wcal_plugin_url, $wcal_settings_page, $wcal_setting_add_on, $wcal_setting_section, $wcal_register_setting );
 
                 new TS_Tracker ( $wcal_plugin_prefix, $wcal_plugin_name );
 

@@ -930,6 +930,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 'woocommerce_ac_email_settings',
                 'wcal_reply_email'
             );
+
+            do_action ( "wcal_add_new_settings" );
         }
     
         /**

@@ -133,7 +133,7 @@ class TS_Tracker {
 		//WooCommerce version 
 		$data[ 'wc_plugin_version' ] = self::ts_get_wc_plugin_version();
 
-		
+
 				
 		return apply_filters( 'ts_tracker_data', $data );
 	}
@@ -177,8 +177,9 @@ class TS_Tracker {
 		$wp_data[ 'multisite' ]    = is_multisite() ? 'Yes' : 'No';
 		$wp_data[ 'blogdescription' ] = get_option ( 'blogdescription' );
 		$wp_data[ 'blogname' ] = get_option ( 'blogname' );
-		$wp_data[ 'wc_city' ] 	         = self::ts_get_wc_city();
-		$wp_data[ 'wc_country' ] 		 = self::ts_get_wc_country();
+		$wp_data[ 'wc_city' ] 	 = self::ts_get_wc_city();
+		$wp_data[ 'wc_country' ] = self::ts_get_wc_country();
+
 		return $wp_data;
 	}
 
