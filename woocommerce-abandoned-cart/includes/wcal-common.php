@@ -442,7 +442,7 @@ class wcal_common {
 			// Get all plugin options info
 			$plugin_data[ 'settings' ]          				= self::wcal_ts_get_all_plugin_options_values();
 			$plugin_data[ 'plugin_version' ]    				= self::wcal_get_version();
-			$plugin_data[ 'wcal_allow_tracking' ]      			= get_option ('wcal_allow_tracking');
+			$plugin_data[ 'tracking_usage' ]      			    = get_option ('wcal_allow_tracking');
 			
 			$data [ 'plugin_data' ] = $plugin_data;
 		}
@@ -459,9 +459,6 @@ class wcal_common {
 
 		$plugin_data[ 'ts_meta_data_table_name']   = 'ts_wcal_tracking_meta_data';
 		$plugin_data[ 'ts_plugin_name' ]		   = 'Abandoned Cart Lite for WooCommerce';
-		$plugin_data[ 'abandoned_orders_amount' ]  = self::wcal_ts_get_abandoned_order_total_amount();
-		// Store recovered count info
-		$plugin_data[ 'recovered_orders_amount' ]  = self::wcal_ts_get_recovered_order_total_amount();
 		
 		$params[ 'plugin_data' ]  				   = $plugin_data;
 
