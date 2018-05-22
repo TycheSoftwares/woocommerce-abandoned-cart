@@ -2765,7 +2765,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         ?>
                         <p> </p>
                         <div id="ac_order_details" class="postbox" style="display:block">
-                            <h3> <p> <?php printf( __( 'Abandoned Order #%s Details', 'woocommerce-abandoned-cart' ), $ac_order_id); ?> </p> </h3>
+                            <h3 class="details-title"> <p> <?php printf( __( 'Abandoned Order #%s Details', 'woocommerce-abandoned-cart' ), $ac_order_id); ?> </p> </h3>
                             <div class="inside">
                                 <table cellpadding="0" cellspacing="0" class="wp-list-table widefat fixed posts">
                                     <tr>
@@ -3014,8 +3014,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             </div>  
                         </div>
                         <div id="ac_order_customer_details" class="postbox" style="display:block">
-                            <h3> <p> <?php _e( 'Customer Details' , 'woocommerce-abandoned-cart' ); ?> </p> </h3>
-                            <div class="inside" style="height: 300px;" >                                       
+                            <h3 class="details-title"> <p> <?php _e( 'Customer Details' , 'woocommerce-abandoned-cart' ); ?> </p> </h3>
+                            <div class="inside" style="height: 300px;" >
                                 <div id="order_data" class="panel">
                                     <div style="width:50%;float:left">
                                         <h3> <p> <?php _e( 'Billing Details' , 'woocommerce-abandoned-cart' ); ?> </p> </h3>
