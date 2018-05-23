@@ -485,7 +485,7 @@ class wcal_common {
     
         switch ( $get_section_result ) {
             case 'wcal_all_abandoned':    
-                $query_ac        = "SELECT COUNT(`id`) as cnt FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE ( user_type = 'REGISTERED' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '%$blank_cart%' AND abandoned_cart_time <= '$compare_time' AND recovered_cart = 0 ) OR ( user_type = 'GUEST' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart' AND abandoned_cart_time <= '$compare_time' AND recovered_cart = 0 ) ORDER BY recovered_cart desc ";
+                $query_ac        = "SELECT COUNT(`id`) as cnt FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE ( user_type = 'REGISTERED' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart' AND abandoned_cart_time <= '$compare_time' AND recovered_cart = 0 ) OR ( user_type = 'GUEST' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart' AND abandoned_cart_time <= '$compare_time' AND recovered_cart = 0 ) ORDER BY recovered_cart desc ";
                 $return_abandoned_count  = $wpdb->get_var( $query_ac );
                 break;
     
@@ -584,5 +584,158 @@ class wcal_common {
 
         <?php
     }
+    /**
+     * Returns an array of customer billing information.
+     * Should be called only for registered users.
+     *
+     * @param integer $user_id - User ID
+     * @return array $billing_details - Contains Billing Address Details
+     * @global $woocommerce
+     * @since  4.9
+     */
+    public static function wcal_get_billing_details( $user_id ) {
+    	global $woocommerce;
+    
+        $billing_details = array();
+    
+        $user_billing_company_temp = get_user_meta( $user_id, 'billing_company' );
+        $user_billing_company = "";
+        if ( isset( $user_billing_company_temp[0] ) ){
+            $user_billing_company = $user_billing_company_temp[0];
+        }
+        $billing_details[ 'billing_company' ] = $user_billing_company;
+    
+        $user_billing_address_1_temp = get_user_meta( $user_id, 'billing_address_1' );
+        $user_billing_address_1      = "";
+        if ( isset( $user_billing_address_1_temp[0] ) ) {
+            $user_billing_address_1 = $user_billing_address_1_temp[0];
+        }
+        $billing_details[ 'billing_address_1' ] = $user_billing_address_1;
+    
+        $user_billing_address_2_temp = get_user_meta( $user_id, 'billing_address_2' );
+        $user_billing_address_2 = "";
+        if ( isset( $user_billing_address_2_temp[0] ) ) {
+            $user_billing_address_2 = $user_billing_address_2_temp[0];
+        }
+        $billing_details[ 'billing_address_2' ] = $user_billing_address_2;
+    
+        $user_billing_city_temp = get_user_meta( $user_id, 'billing_city' );
+        $user_billing_city = "";
+        if ( isset( $user_billing_city_temp[0] ) ) {
+            $user_billing_city = $user_billing_city_temp[0];
+        }
+        $billing_details[ 'billing_city' ] = $user_billing_city;
+    
+        $user_billing_postcode_temp = get_user_meta( $user_id, 'billing_postcode' );
+        $user_billing_postcode = "";
+        if ( isset( $user_billing_postcode_temp[0] ) ) {
+            $user_billing_postcode = $user_billing_postcode_temp[0];
+        }
+        $billing_details[ 'billing_postcode' ] = $user_billing_postcode;
+    
+        $user_billing_country_temp = get_user_meta( $user_id, 'billing_country' );
+        $user_billing_country = "";
+        if ( isset( $user_billing_country_temp[0] ) && '' != $user_billing_country_temp[0] ) {
+            $user_billing_country = $user_billing_country_temp[0];
+            if ( isset( $woocommerce->countries->countries[ $user_billing_country ] ) || '' != ( $woocommerce->countries->countries[ $user_billing_country ] ) ) {
+                $user_billing_country = WC()->countries->countries[ $user_billing_country ];
+            }else {
+                $user_billing_country = "";
+            }
+        }
+        $billing_details[ 'billing_country' ] = $user_billing_country;
+    
+        $user_billing_state_temp = get_user_meta( $user_id, 'billing_state' );
+        $user_billing_state = "";
+        if ( isset( $user_billing_state_temp[0] ) ) {
+            $user_billing_state = $user_billing_state_temp[0];
+            if ( isset( $woocommerce->countries->states[ $user_billing_country_temp[0] ][ $user_billing_state ] ) ) {
+                $user_billing_state = WC()->countries->states[ $user_billing_country_temp[0] ][ $user_billing_state ];
+            }else {
+                $user_billing_state = "";
+            }
+        }
+        $billing_details[ 'billing_state' ] = $user_billing_state;
+    
+        return $billing_details;
+    }
+
+
+    /**
+     * Returns the Item Name, Qty and Total for any given product
+     * in the WC Cart
+     *
+     * @param stdClass $v - Cart Information from WC()->cart;
+     * @return array $item_details - Item Data
+     * @global $woocommerce
+     * @since  4.9
+     */
+    public static function wcal_get_cart_details( $v ) {
+    	global $woocommerce;
+
+    	$cart_total        = $item_subtotal = $item_total = $line_subtotal_tax_display =  $after_item_subtotal = $after_item_subtotal_display = 0;
+
+        $line_subtotal_tax = '';
+        $quantity_total =  0;
+
+        $item_details = array();
+    
+        $quantity_total = $v->quantity;
+        $product_id     = $v->product_id;
+        $prod_name      = get_post( $product_id );
+        $product_name   = $prod_name->post_title;  
+
+        if ( isset( $v->variation_id ) && '' != $v->variation_id ){
+            $variation_id               = $v->variation_id;
+            $variation                  = wc_get_product( $variation_id );
+            $name                       = $variation->get_formatted_name() ;
+            $explode_all                = explode ( "&ndash;", $name );
+            if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
+                $wcap_sku = '';
+                if ( $variation->get_sku() ) {
+                    $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
+                }
+                $wcap_get_formatted_variation  =  wc_get_formatted_variation( $variation, true );
+
+                $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
+                        
+                $pro_name_variation = (array) $add_product_name;
+            }else{
+                $pro_name_variation = array_slice( $explode_all, 1, -1 );
+            }
+            $product_name_with_variable = '';
+            $explode_many_varaition     = array();
+            foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
+                $explode_many_varaition = explode ( ",", $pro_name_variation_value );
+                if( !empty( $explode_many_varaition ) ) {
+                    foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
+                        $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
+                    }
+                } else {
+                    $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
+                }
+            }
+            $product_name = $product_name_with_variable;
+        }
+        $item_subtotal = 0;
+        // Item subtotal is calculated as product total including taxes
+        if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
+            $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
+        } else {
+            $item_subtotal = $item_subtotal + $v->line_total;
+        }            
+        //  Line total
+        $item_total    = $item_subtotal;
+        $item_subtotal = $item_subtotal / $quantity_total;
+        $item_total    = wc_price( $item_total );
+        $item_subtotal = wc_price( $item_subtotal );
+
+        $item_details[ 'product_name' ] = $product_name;
+        $item_details[ 'item_total_formatted' ] = $item_subtotal;
+        $item_details[ 'item_total' ] = $item_total;
+        $item_details[ 'qty' ] = $quantity_total;
+    
+        return $item_details;
+    }        	
 }
 ?>
