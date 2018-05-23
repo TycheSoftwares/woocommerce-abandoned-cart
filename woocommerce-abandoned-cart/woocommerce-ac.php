@@ -2996,7 +2996,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             $item_total    = wc_price( $item_total );
                                             $item_subtotal = wc_price( $item_subtotal );                               
                                             $product       = wc_get_product( $product_id );
-                                            $prod_image    = $product->get_image();
+                                            $prod_image    = $product->get_image( array( 200, 200 ) );
                                         ?>                   
                                         <tr>
                                             <td> <?php echo $prod_image; ?></td>
