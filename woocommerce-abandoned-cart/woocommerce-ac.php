@@ -28,7 +28,9 @@ require_once( "includes/classes/class-wcal-aes-counter.php" );
 require_once( "includes/wcal-common.php" );
 
 require_once( "includes/wcal_admin_notice.php");
-
+require_once( 'includes/wcal_data_tracking_message.php' );
+require_once( 'includes/admin/wcal_privacy_erase.php' );
+require_once( 'includes/admin/wcal_privacy_export.php' );
 
 if ( is_admin() ) {
     require_once( 'includes/wcal_all_component.php' );
@@ -172,6 +174,9 @@ function woocommerce_ac_delete_lite() {
 
     delete_option( 'wcal_welcome_page_shown_time' );
     delete_option( 'wcal_welcome_page_shown' );
+
+    delete_option( 'wcal_guest_cart_capture_msg' );
+    delete_option( 'wcal_logged_cart_capture_msg' );
 }
     /**
      * woocommerce_abandon_cart_lite class
@@ -862,6 +867,25 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             'ac_lite_general_settings_section',
             array( __( 'Enable tracking of abandoned products & carts even if customer does not visit the checkout page or does not enter any details on the checkout page like Name or Email. Tracking will begin as soon as a visitor adds a product to their cart and visits the cart page.', 'woocommerce-abandoned-cart' ) )
             );
+
+            add_settings_field(
+                'wcal_guest_cart_capture_msg',
+                __( 'Message to be displayed for Guest users when tracking their carts', 'woocommerce-abandoned-cart' ),
+                array( $this, 'wcal_guest_cart_capture_msg_callback' ),
+                'woocommerce_ac_page',
+                'ac_lite_general_settings_section',
+                array( __( '<br>In compliance with GDPR, add a message on the Checkout page and Email Address Capture pop-up to inform Guest users of how their data is being used.<br><i>For example: Your email address will help us support your shopping experience throughout the site. Please check our Privacy Policy to see how we use your personal data.</i>', 'woocommerce-abandoned-cart' ) )
+            );
+            
+            add_settings_field(
+                'wcal_logged_cart_capture_msg',
+                __( 'Message to be displayed for registered users when tracking their carts.', 'woocommerce-abandoned-cart' ),
+                array( $this, 'wcal_logged_cart_capture_msg_callback' ),
+                'woocommerce_ac_page',
+                'ac_lite_general_settings_section',
+                array( __( '<br>In compliance with GDPR, add a message on the Shop & Product pages to inform Registered users of how their data is being used.<br><i>For example: Please check our Privacy Policy to see how we use your personal data.</i>', 'woocommerce-abandoned-cart' ) )
+            );
+            
             /**
              * New section for the Adding the abandoned cart setting.
              * @since  4.7
@@ -916,6 +940,16 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             register_setting(
                 'woocommerce_ac_settings',
                 'ac_lite_track_guest_cart_from_cart_page'
+            );
+
+            register_setting(
+                'woocommerce_ac_settings',
+                'wcal_guest_cart_capture_msg'
+            );
+            
+            register_setting(
+                'woocommerce_ac_settings',
+                'wcal_logged_cart_capture_msg'
             );
             
             register_setting(
@@ -1028,6 +1062,36 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         }
         
         /**
+         * Call back function for guest user cart capture message
+         * @param array $args Argument for adding field details
+         * @since 7.8
+         */
+        public static function wcal_guest_cart_capture_msg_callback( $args ) {
+        
+            $guest_msg = get_option( 'wcal_guest_cart_capture_msg' );
+        
+            $html = "<textarea rows='4' cols='80' id='wcal_guest_cart_capture_msg' name='wcal_guest_cart_capture_msg'>$guest_msg</textarea>";
+        
+            $html .= '<label for="wcal_guest_cart_capture_msg"> ' . $args[0] . '</label>';
+            echo $html;
+        }
+        
+        /**
+         * Call back function for registered user cart capture message
+         * @param array $args Argument for adding field details
+         * @since 7.8
+         */
+        public static function wcal_logged_cart_capture_msg_callback( $args) {
+        
+            $logged_msg = get_option( 'wcal_logged_cart_capture_msg' );
+        
+            $html = "<input type='text' class='regular-text' id='wcal_logged_cart_capture_msg' name='wcal_logged_cart_capture_msg' value='$logged_msg' />";
+        
+            $html .= '<label for="wcal_logged_cart_capture_msg"> ' . $args[0] . '</label>';
+            echo $html;
+        }
+
+        /**
          * Settings API callback for Abandoned cart email settings of the plugin.
          * @since 3.5
          */
@@ -1106,6 +1170,18 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             if ( $wcal_previous_version != wcal_common::wcal_get_version() ) {
                 update_option( 'wcal_previous_version', '4.8' );
             }
+
+            /**
+             * This is used to prevent guest users wrong Id. If guest users id is less then 63000000 then this code will
+             * ensure that we will change the id of guest tables so it wont affect on the next guest users.
+             */         
+             if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_guest_abandoned_cart_history_lite';" )  && 'yes' != get_option( 'wcal_guest_user_id_altered' ) ) {
+                $last_id = $wpdb->get_var( "SELECT max(id) FROM `{$wpdb->prefix}ac_guest_abandoned_cart_history_lite`;" );
+                if ( NULL != $last_id && $last_id <= 63000000 ) {
+                    $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_guest_abandoned_cart_history_lite AUTO_INCREMENT = 63000000;" );
+                    update_option ( 'wcal_guest_user_id_altered', 'yes' );
+                }
+            }
             if( get_option( 'ac_lite_alter_table_queries' ) != 'yes' ) {
                 $ac_history_table_name = $wpdb->prefix."ac_abandoned_cart_history_lite";
                 $check_table_query     = "SHOW COLUMNS FROM $ac_history_table_name LIKE 'user_type'";
@@ -1148,17 +1224,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_abandoned_cart_history_lite ADD `session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `unsubscribe_link`;" );
                     }
                 }           
-                /**
-                 * This is used to prevent guest users wrong Id. If guest users id is less then 63000000 then this code will
-                 * ensure that we will change the id of guest tables so it wont affect on the next guest users.
-                 */         
-                if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_guest_abandoned_cart_history_lite';" )  && 'yes' != get_option( 'wcal_guest_user_id_altered' ) ) {
-                    $last_id = $wpdb->get_var( "SELECT max(id) FROM `{$wpdb->prefix}ac_guest_abandoned_cart_history_lite`;" );
-                    if ( NULL != $last_id && $last_id <= 63000000 ) {
-                        $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_guest_abandoned_cart_history_lite AUTO_INCREMENT = 63000000;" );
-                        update_option ( 'wcal_guest_user_id_altered', 'yes' );
-                    }
-                }
                 
                 /**
                  * We have moved email templates fields in the setings section. SO to remove that fields column fro the db we need it.
@@ -2847,49 +2912,18 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             $user_last_name     = $user_last_name_temp;
                                         }                                        
                                         $user_billing_first_name = get_user_meta( $results[0]->user_id, 'billing_first_name' );
-                                        $user_billing_last_name  = get_user_meta( $results[0]->user_id, 'billing_last_name' );                                        
-                                        $user_billing_company_temp = get_user_meta( $results[0]->user_id, 'billing_company' );
-                                        if ( isset( $user_billing_company_temp[0] ) ) {
-                                            $user_billing_company = $user_billing_company_temp[0];
-                                        } else {
-                                            $user_billing_company = "";
-                                        }                                  
-                                        $user_billing_address_1_temp = get_user_meta( $results[0]->user_id, 'billing_address_1' );
-                                        if ( isset( $user_billing_address_1_temp[0] ) ) {
-                                            $user_billing_address_1  = $user_billing_address_1_temp[0];
-                                        } else {
-                                            $user_billing_address_1  = "";
-                                        }                                        
-                                        $user_billing_address_2_temp = get_user_meta( $results[0]->user_id, 'billing_address_2' );
-                                        if ( isset( $user_billing_address_2_temp[0] ) ) {
-                                            $user_billing_address_2 = $user_billing_address_2_temp[0];
-                                        } else {
-                                            $user_billing_address_2 = "";
-                                        }                                        
-                                        $user_billing_city_temp = get_user_meta( $results[0]->user_id, 'billing_city' );
-                                        if ( isset( $user_billing_city_temp[0] ) ) {
-                                            $user_billing_city = $user_billing_city_temp[0];
-                                        } else {
-                                            $user_billing_city = "";
-                                        }                                        
-                                        $user_billing_postcode_temp = get_user_meta( $results[0]->user_id, 'billing_postcode' );
-                                        if ( isset( $user_billing_postcode_temp[0] ) ) {
-                                            $user_billing_postcode = $user_billing_postcode_temp[0];
-                                        } else {
-                                            $user_billing_postcode = "";
-                                        }                                        
-                                        $user_billing_state_temp = get_user_meta( $results[0]->user_id, 'billing_state' );
-                                        if ( isset( $user_billing_state_temp[0] ) ) {
-                                            $user_billing_state = $user_billing_state_temp[0];
-                                        } else {
-                                            $user_billing_state = "";
-                                        }                                        
-                                        $user_billing_country_temp = get_user_meta( $results[0]->user_id, 'billing_country' );
-                                        if ( isset( $user_billing_country_temp[0] ) ) {
-                                            $user_billing_country = $user_billing_country_temp[0];
-                                        } else {
-                                            $user_billing_country = "";
-                                        }                                        
+                                        $user_billing_last_name  = get_user_meta( $results[0]->user_id, 'billing_last_name' ); 
+
+                                        $user_billing_details = wcal_common::wcal_get_billing_details( $results[0]->user_id );
+                    
+                                        $user_billing_company = $user_billing_details[ 'billing_company' ];
+                                        $user_billing_address_1 = $user_billing_details[ 'billing_address_1' ];
+                                        $user_billing_address_2 = $user_billing_details[ 'billing_address_2' ];
+                                        $user_billing_city = $user_billing_details[ 'billing_city' ];
+                                        $user_billing_postcode = $user_billing_details[ 'billing_postcode' ] ;
+                                        $user_billing_country = $user_billing_details[ 'billing_country' ];
+                                        $user_billing_state = $user_billing_details[ 'billing_state' ];
+
                                         $user_billing_phone_temp = get_user_meta( $results[0]->user_id, 'billing_phone' );
                                         if ( isset( $user_billing_phone_temp[0] ) ) {
                                             $user_billing_phone = $user_billing_phone_temp[0];
@@ -2928,19 +2962,27 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                         } else {
                                             $user_shipping_postcode = "";
                                         }                                        
-                                        $user_shipping_state_temp = get_user_meta( $results[0]->user_id, 'shipping_state' );
-                                        if ( isset( $user_shipping_state_temp[0] ) ) {
-                                            $user_shipping_state = $user_shipping_state_temp[0];
-                                        } else {
-                                            $user_shipping_state = "";
-                                        }                                        
                                         $user_shipping_country_temp = get_user_meta( $results[0]->user_id, 'shipping_country' );
+                                        $user_shipping_country = "";
                                         if ( isset( $user_shipping_country_temp[0] ) ) {
                                             $user_shipping_country = $user_shipping_country_temp[0];
-                                        } else {
-                                            $user_shipping_country = "";
+                                            if ( isset( $woocommerce->countries->countries[ $user_shipping_country ] ) ) {
+                                        $user_shipping_country = $woocommerce->countries->countries[ $user_shipping_country ];    
+                                            }else {
+                                                $user_shipping_country = "";
+                                            }                            
                                         }
+                                        $user_shipping_state_temp = get_user_meta( $results[0]->user_id, 'shipping_state' );
+                                        $user_shipping_state = "";
+                                        if ( isset( $user_shipping_state_temp[0] ) ) {
+                                            $user_shipping_state = $user_shipping_state_temp[0];
+                                            if ( isset( $woocommerce->countries->states[ $user_shipping_country_temp[0] ][ $user_shipping_state ] ) ) {
+                                # code...
+                                                $user_shipping_state = $woocommerce->countries->states[ $user_shipping_country_temp[0] ][ $user_shipping_state ];
+                                            }    
+                                        }                  
                                     } 
+                                    
                                     $cart_details   = array();
                                     $cart_info      = json_decode( $results[0]->abandoned_cart_info );
                                     $cart_details   = (array) $cart_info->cart;
@@ -2948,56 +2990,23 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                     
                                     if ( is_array ( $cart_details ) && count( $cart_details ) > 0 ) {                                                                              
                                         foreach ( $cart_details as $k => $v ) {
-                                            $quantity_total = $v->quantity;
-                                            $product_id     = $v->product_id;
-                                            $prod_name      = get_post($product_id);
-                                            $product_name   = $prod_name->post_title;                                            
-                                            if ( isset( $v->variation_id ) && '' != $v->variation_id ){
-                                                $variation_id               = $v->variation_id;
-                                                $variation                  = wc_get_product( $variation_id );
-                                                $name                       = $variation->get_formatted_name() ;
-                                                $explode_all                = explode ( "&ndash;", $name );
-                                                if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
-                                                    $wcap_sku = '';
-                                                    if ( $variation->get_sku() ) {
-                                                        $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
-                                                    }
-                                                    $wcap_get_formatted_variation  =  wc_get_formatted_variation( $variation, true );
 
-                                                    $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
-                                                            
-                                                    $pro_name_variation = (array) $add_product_name;
-                                                }else{
-                                                    $pro_name_variation = array_slice( $explode_all, 1, -1 );
-                                                }
-                                                $product_name_with_variable = '';
-                                                $explode_many_varaition     = array();
-                                                foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
-                                                    $explode_many_varaition = explode ( ",", $pro_name_variation_value );
-                                                    if( !empty( $explode_many_varaition ) ) {
-                                                        foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
-                                                            $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
-                                                        }
-                                                    } else {
-                                                        $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
-                                                    }
-                                                }
-                                                $product_name = $product_name_with_variable;
-                                            }
-                                            // Item subtotal is calculated as product total including taxes
-                                            if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
-                                                $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
-                                            } else {
-                                                $item_subtotal = $item_subtotal + $v->line_total;
-                                            }            
-                                            //  Line total
-                                            $item_total    = $item_subtotal;
-                                            $item_subtotal = $item_subtotal / $quantity_total;
-                                            $item_total    = wc_price( $item_total );
-                                            $item_subtotal = wc_price( $item_subtotal );                               
+                                            $item_details = wcal_common::wcal_get_cart_details( $v );
+
+                                            $product_id     = $v->product_id;
                                             $product       = wc_get_product( $product_id );
-                                            $prod_image    = $product->get_image( array( 200, 200 ) );
-                                        ?>                   
+                                            $prod_image    = $product->get_image(array(200, 200));
+
+                                            $product_name = $item_details[ 'product_name' ];
+                                            $item_subtotal = $item_details[ 'item_total_formatted' ];
+                                            $item_total =  $item_details[ 'item_total' ];
+                                            $quantity_total = $item_details[ 'qty' ];
+                                            
+                                            $qty_item_text = 'item';
+                                            if ( $quantity_total > 1 ) {
+                                                $qty_item_text = 'items';
+                                            }
+                                                                ?>                   
                                         <tr>
                                             <td> <?php echo $prod_image; ?></td>
                                             <td> <?php echo $product_name; ?></td>
