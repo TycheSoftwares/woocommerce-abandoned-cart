@@ -279,27 +279,32 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		            $user_last_name = "";
 		        }    		        
 		    } else {    		        
-		        $user_email_billing = get_user_meta( $value->user_id, 'billing_email', true );
-		        if( $user_email_billing != '' ) {
-		            $user_email = $user_email_billing;
-		        } else {
-		            $user_data = get_userdata( $value->user_id );
-		            $user_email = $user_data->user_email;
-		        }        		   
-		        $user_first_name = "";
+		        $user_email_biiling = get_user_meta( $user_id, 'billing_email', true );
+		        $user_email = __( "User Deleted" , "woocommerce-abandoned-cart" );
+		        if( isset( $user_email_biiling ) && "" == $user_email_biiling ) {
+		            $user_data  = get_userdata( $user_id );
+		            if( isset( $user_data->user_email ) && "" != $user_data->user_email ) {
+		            	$user_email = $user_data->user_email;
+		        	} 
+		        } else if ( '' != $user_email_biiling ) {
+		            $user_email = $user_email_biiling;
+		        } 
 		        $user_first_name_temp = get_user_meta( $user_id, 'billing_first_name', true );
 		        if( isset( $user_first_name_temp ) && "" == $user_first_name_temp ) {
 		            $user_data  = get_userdata( $user_id );
-		            $user_first_name = $user_data->first_name;
+		            if( isset( $user_data->first_name ) && "" != $user_data->first_name ) {
+		            	$user_first_name = $user_data->first_name;
+		            }
 		        } else {
 		            $user_first_name = $user_first_name_temp;
 		        }
-		        
-		        $user_last_name = "";
+
 		        $user_last_name_temp = get_user_meta( $user_id, 'billing_last_name', true );
 		        if( isset( $user_last_name_temp ) && "" == $user_last_name_temp ) {
 		            $user_data  = get_userdata( $user_id );
-		            $user_last_name = $user_data->last_name;
+		            if( isset( $user_data->last_name ) && "" != $user_data->last_name ) {
+		            	$user_last_name = $user_data->last_name;
+		            }
 		        } else {
 		            $user_last_name = $user_last_name_temp;
 		        }
