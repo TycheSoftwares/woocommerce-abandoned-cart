@@ -272,12 +272,12 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
                     if( is_multisite() ) {
                      // get main site's table prefix
                      $main_prefix = $wpdb->get_blog_prefix(1);
-                     $insert_persistent_cart = "INSERT INTO `".$wpdb->main_prefix. " usermeta`( user_id, meta_key, meta_value )
+                     $insert_persistent_cart = "INSERT INTO `" . $wpdb->main_prefix . "usermeta`( user_id, meta_key, meta_value )
                         VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
                       $wpdb->query( $insert_persistent_cart );
 
                     } else { 
-                      $insert_persistent_cart = "INSERT INTO `" . $wpdb->prefix." usermeta`( user_id, meta_key, meta_value )
+                      $insert_persistent_cart = "INSERT INTO `" . $wpdb->prefix . "usermeta`( user_id, meta_key, meta_value )
                         VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
                        $wpdb->query( $insert_persistent_cart );
                 }                 

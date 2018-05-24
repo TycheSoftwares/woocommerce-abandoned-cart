@@ -874,7 +874,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 array( $this, 'wcal_guest_cart_capture_msg_callback' ),
                 'woocommerce_ac_page',
                 'ac_lite_general_settings_section',
-                array( __( '<br>In compliance with GDPR, add a message on the Checkout page and Email Address Capture pop-up to inform Guest users of how their data is being used.<br><i>For example: Your email address will help us support your shopping experience throughout the site. Please check our Privacy Policy to see how we use your personal data.</i>', 'woocommerce-abandoned-cart' ) )
+                array( __( '<br>In compliance with GDPR, add a message on the Checkout page to inform Guest users of how their data is being used.<br><i>For example: Your email address will help us support your shopping experience throughout the site. Please check our Privacy Policy to see how we use your personal data.</i>', 'woocommerce-abandoned-cart' ) )
             );
             
             add_settings_field(
