@@ -1422,7 +1422,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          * @globals mixed $wpdb
          * @since 2.3
          */
-        function wcal_check_order_is_recovered( $wcal_order_id ) {
+        public static function wcal_check_order_is_recovered( $wcal_order_id ) {
             global $wpdb;
             $wcal_recover_order_query        = "SELECT `recovered_cart` FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE `recovered_cart` = %d";
             $wcal_recover_order_query_result = $wpdb->get_results( $wpdb->prepare( $wcal_recover_order_query, $wcal_order_id ) );
