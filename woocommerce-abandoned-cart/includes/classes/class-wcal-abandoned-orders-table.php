@@ -294,6 +294,8 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		            $user_data  = get_userdata( $user_id );
 		            if( isset( $user_data->first_name ) && "" != $user_data->first_name ) {
 		            	$user_first_name = $user_data->first_name;
+		            }else{
+		            	$user_first_name = '';
 		            }
 		        } else {
 		            $user_first_name = $user_first_name_temp;
@@ -304,6 +306,8 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		            $user_data  = get_userdata( $user_id );
 		            if( isset( $user_data->last_name ) && "" != $user_data->last_name ) {
 		            	$user_last_name = $user_data->last_name;
+		            }else{
+		            	$user_last_name = '';
 		            }
 		        } else {
 		            $user_last_name = $user_last_name_temp;
