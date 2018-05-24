@@ -183,18 +183,18 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
            }         
             $user_id = $cart_details->user_id;
             $user_type = $cart_details->user_type;
+
+            $cart_data = json_decode( stripslashes( $cart_details->abandoned_cart_info ) );
+            $cart_info = $cart_data->cart;
+            
+            if( count( $cart_info ) > 0 ) {
+                $cart_details_formatted = self::wcal_get_cart_details_export( $cart_info );
+            }
             
             if( $user_type == 'GUEST' ) {
                 $guest_details = self::wcal_get_guest_personal_info( $user_id );
             }
             foreach( $cart_details_to_export as $prop => $name ) {
-
-                $cart_data = json_decode( stripslashes( $cart_details->abandoned_cart_info ) );
-                $cart_info = $cart_data->cart;
-                
-                if( count( $cart_info ) > 0 ) {
-                    $cart_details_formatted = wcal_common::wcal_get_cart_details( $cart_info );
-                }
                 
                 switch( $prop ) {
                     case 'cart_id':
@@ -316,6 +316,60 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
             }
             
             return $guest_details;
+        }
+        
+        /**
+         * Returns the Cart Details such as quantity, product name
+         * etc.
+         * 
+         * @param object $cart_info - Abandoned Cart Information
+         * @return array $cart_details - Array containing product, qty & total for each item
+         * @since 4.9
+         */
+        static function wcal_get_cart_details_export( $cart_info ) {
+            
+            $cart_details = array();
+             
+            if( count( $cart_info ) > 0 ) {
+                    
+                $cart_total = 0;
+                foreach( $cart_info as $k => $item_detail ) {
+                        
+                    // Qty
+                    $qty = $item_detail->quantity;
+                     
+                    //Product Name
+                    $product_id     = $item_detail->product_id;
+                    $prod_obj       = wc_get_product( $product_id );
+                    $product_name   = $prod_obj->get_name();
+                     
+                    // Variation Name
+                    if( isset( $item_detail->variation_id ) && $item_detail->variation_id > 0 ) {
+                        $variation_id = $item_detail->variation_id;
+                        $variation = wc_get_product( $variation_id );
+                        $variation_name = $variation->get_name();
+                         
+                        $product_name = $variation_name;
+                    }
+                    
+                    // Total
+                    $item_total = $item_detail->line_total;
+                    if ( $item_detail->line_subtotal_tax > 0 ) {
+                        $item_total += $item_detail->line_subtotal_tax;
+                    } 
+                     
+                    // Populate the array
+                    $cart_details[ $k ][ 'qty' ] = $qty;
+                    $cart_details[ $k ][ 'product_name' ] = $product_name;
+                    $cart_details[ $k ][ 'item_total' ] = $item_total;
+                     
+                    $cart_total += $item_total;
+                }
+                    
+                $cart_details[ 'total' ] = $cart_total;
+            }
+            
+            return $cart_details;
         }
     } // end of class
     $Wcal_Personal_Data_Export = new Wcal_Personal_Data_Export();
