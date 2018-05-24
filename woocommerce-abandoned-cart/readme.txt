@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares
 Tags: abandon cart, cart recovery, increase woocommerce conversion rate , recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 4.9.2
+Tested up to: 4.9.5
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -110,6 +110,11 @@ Abandoned Cart Plugin relies on a function called WP-Cron, and this function onl
 
 4. **[WooCommerce Print Invoice & Delivery Note](https://wordpress.org/plugins/woocommerce-delivery-notes/ "WooCommerce Print Invoice & Delivery Note")**
 
+**[Documentation](https://www.tychesoftwares.com/docs/docs/abandoned-cart-for-woocommerce-lite/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite "Documentation")**
+
+**[Developer Documentation](https://www.tychesoftwares.com/docs/acl-apidocs/index.html "Developer Documentation")**
+
+**[Github Repository](https://github.com/TycheSoftwares/Woocommerce-abandon-cart-lite "Github Repository")**
 
 == Installation ==
 
@@ -143,7 +148,7 @@ Method 3:
 
 = How is the email address of the customers captured? =
 
-Our plugin captures visitor emails in real-time as they’re typing it in to the email address field on the checkout page, so you don’t need to worry about them changing their mind at the last second.
+Our plugin captures visitor emails in real-time as they're typing it in to the email address field on the checkout page, so you don't need to worry about them changing their mind at the last second.
 
 When logged-in user add the product to the cart we capture the email address from the user's profile.
 
@@ -188,14 +193,23 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 4.9 (24.05-2018) =
+* The plugin is now GDPR compliant.
+
+* New feature - Added two settings to show the message on the checkout page for guest users and the message to be displayed at the start of the shop page for Registered users.
+
+* New feature - Abandoned Cart details will now be exported to the User's Personal Data from the Tools -> Export Personal Data menu and it can be erased from Tools -> Erase Personal Data.
+
+*  Bug Fixed - Some notices are fixed of the debug.log file.
+
 = 4.8 (20.03-2018) =
 * This is a minor update to the plugin which contains some bug fixes and requires Database update to include emojis in the email templates. We recommend that you take a backup of the database of your store for your piece of mind.
 
-* Bug Fixed - Fixed compatibility issues related to PHP 7.2 where error notices were being displayed on Abandoned Order List page
+* Bug Fixed - Fixed compatibility issues related to PHP 7.2 where error notices were being displayed on Abandoned Order List page.
 
 * Bug Fixed - Fixed issue related to saving email template where changes were not getting saved despite a success message.
 
-* Additonal Changes - PHP Doc blocks added for generating documentation and readability
+* Additonal Changes - PHP Doc blocks added for generating documentation and readability.
 
 = 4.7 (16.02-2018) =
 * This version has 2 bug fixes.
