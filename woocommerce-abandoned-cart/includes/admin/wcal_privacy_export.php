@@ -114,7 +114,7 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                     foreach ( $cart_export as $abandoned_ids ) {
                     
                         $cart_id = $abandoned_ids->id;
-                        if( count( $abandoned_ids->cart_info ) > 0 ) {
+                        if( count( $abandoned_ids->id ) > 0 ) {
                             $data_to_export[] = array(
                                 'group_id'    => 'wcal_carts',
                                 'group_label' => __( 'Abandoned Carts', 'woocommerce-abandoned-cart' ),
@@ -155,6 +155,8 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                             WHERE id = %d";
             $cart_details = $wpdb->get_results( $wpdb->prepare( $cart_query, $abandoned_id ) );
             $cart_details = $cart_details[0];
+            $user_id = $cart_details->user_id;
+            $user_type = $cart_details->user_type;
 
            if( $user_type == 'GUEST' ) {
 
@@ -181,9 +183,7 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
             ), $abandoned_id );
             
            }         
-            $user_id = $cart_details->user_id;
-            $user_type = $cart_details->user_type;
-
+            
             $cart_data = json_decode( stripslashes( $cart_details->abandoned_cart_info ) );
             $cart_info = $cart_data->cart;
             
