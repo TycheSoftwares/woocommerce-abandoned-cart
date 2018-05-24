@@ -23,7 +23,7 @@ if ( !class_exists('Wcal_Tracking_msg' ) ) {
             add_action( 'woocommerce_after_add_to_cart_button', array( &$this, 'wcal_add_logged_msg' ), 10 );
             // Shop Page notice
             add_action( 'woocommerce_before_shop_loop', array( &$this, 'wcal_add_logged_msg' ), 10 );
-            add_action( 'woocommerce_after_shop_loop_item', array( &$this, 'wcal_add_logged_msg' ), 10 );
+            //add_action( 'woocommerce_after_shop_loop_item', array( &$this, 'wcal_add_logged_msg' ), 10 );
         }
         
         /**
