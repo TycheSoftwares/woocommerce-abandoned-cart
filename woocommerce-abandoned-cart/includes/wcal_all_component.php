@@ -55,22 +55,22 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
                 $wcal_setting_section      = 'ac_lite_general_settings_section';
                 $wcal_register_setting     = 'woocommerce_ac_settings';
 
-                new TS_Woo_Active ( $wcal_plugin_name, $wcal_file_name, $wcal_locale );
+                new Wcal_TS_Woo_Active ( $wcal_plugin_name, $wcal_file_name, $wcal_locale );
 
-                new TS_tracking ( $wcal_plugin_prefix, $wcal_plugin_name, $wcal_blog_post_link, $wcal_locale, $wcal_plugin_url, $wcal_settings_page, $wcal_setting_add_on, $wcal_setting_section, $wcal_register_setting );
+                new Wcal_TS_tracking ( $wcal_plugin_prefix, $wcal_plugin_name, $wcal_blog_post_link, $wcal_locale, $wcal_plugin_url, $wcal_settings_page, $wcal_setting_add_on, $wcal_setting_section, $wcal_register_setting );
 
-                new TS_Tracker ( $wcal_plugin_prefix, $wcal_plugin_name );
+                new Wcal_TS_Tracker ( $wcal_plugin_prefix, $wcal_plugin_name );
 
-                $wcal_deativate = new TS_deactivate;
+                $wcal_deativate = new Wcal_TS_deactivate;
                 $wcal_deativate->init ( $wcal_file_name, $wcal_plugin_name );
 
-                new TS_Welcome ( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_dir_name, $wcal_get_previous_version );
+                new Wcal_TS_Welcome ( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_dir_name, $wcal_get_previous_version );
                 
                 $ts_pro_faq = self::wcal_get_faq ();
-                new TS_Faq_Support( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_plugins_page, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_slug, $ts_pro_faq );
+                new Wcal_TS_Faq_Support( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_plugins_page, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_slug, $ts_pro_faq );
                 
                 $ts_pro_notices = self::wcal_get_notice_text ();
-				new ts_pro_notices( $wcal_plugin_name, $wcal_lite_plugin_prefix, $wcal_plugin_prefix, $ts_pro_notices, $wcal_file_name, $wcal_pro_file_name );
+				new Wcal_ts_pro_notices( $wcal_plugin_name, $wcal_lite_plugin_prefix, $wcal_plugin_prefix, $ts_pro_notices, $wcal_file_name, $wcal_pro_file_name );
 
             }
         }

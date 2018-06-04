@@ -4,12 +4,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * TS_Woo_Active Class
+ * Wcap_TS_Woo_Active Class
  *
- * @class TS_Woo_Active
+ * @class Wcap_TS_Woo_Active
  */
 
-class TS_Woo_Active {
+class Wcal_TS_Woo_Active {
 
 	/**
 	 * @var string The name of the plugin
