@@ -4,9 +4,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Wcap_TS_Woo_Active Class
+ * Wcal_TS_Woo_Active Class
  *
- * @class Wcap_TS_Woo_Active
+ * @class Wcal_TS_Woo_Active
  */
 
 class Wcal_TS_Woo_Active {
