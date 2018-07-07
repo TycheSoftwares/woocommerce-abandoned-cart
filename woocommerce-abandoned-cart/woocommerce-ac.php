@@ -3578,6 +3578,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $email_body_template_footer = ob_get_clean();   
                                             
                     $final_email_body =  $email_body_template_header . $body_email_final_preview . $email_body_template_footer;
+
+                    $site_title = get_bloginfo( 'name' ); 
+                    $email_body_template_footer     = str_replace( '{site_title}', $site_title, $email_body_template_footer ); 
                     
                     wc_mail( $to_email_preview, $subject_email_preview, $final_email_body , $headers );    
                 }

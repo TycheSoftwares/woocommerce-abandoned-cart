@@ -88,7 +88,10 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                 $guest_user_ids = $wpdb->get_results( $wpdb->prepare( $guest_query, $email_address ) );
                 
                 if( count( $guest_user_ids ) == 0 ) 
-                    return;
+                    return array(
+                       'data' => array(),
+                       'done' => true,
+                    );
                 
                 $cart_ids = array();
                 

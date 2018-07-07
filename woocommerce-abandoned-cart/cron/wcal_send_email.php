@@ -378,6 +378,9 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                             
                                                     wc_get_template( 'emails/email-footer.php' );  
                                                     $email_body_template_footer = ob_get_clean();
+
+                                                    $site_title = get_bloginfo( 'name' ); 
+                                                    $email_body_template_footer     = str_replace( '{site_title}', $site_title, $email_body_template_footer );
                                             
                                                     $final_email_body =  $email_body_template_header . $email_body_final . $email_body_template_footer;
                                             
