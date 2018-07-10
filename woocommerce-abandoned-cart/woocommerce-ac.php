@@ -2415,8 +2415,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         ?>
                     </div>
                   <?php 
-                  } elseif ( $action == 'listcart' || '' == $action || '-1' == $action || '-1' == $action_two ) {
-                  ?>    
+                  } elseif ( $action == 'listcart' && ( $action == 'listcart' || '' == $action || '-1' == $action || '-1' == $action_two ) ) {
+                        ?>    
                         <p> <?php _e( 'The list below shows all Abandoned Carts which have remained in cart for a time higher than the "Cart abandoned cut-off time" setting.', 'woocommerce-abandoned-cart' );?> </p>
                         <?php
                         $get_all_abandoned_count      = wcal_common::wcal_get_abandoned_order_count( 'wcal_all_abandoned' );
@@ -2495,7 +2495,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             </form>
                         </div>                        
                         <?php 
-                  } elseif ( $action == 'emailtemplates' && ( $mode != 'edittemplate' && $mode != 'addnewtemplate' ) ) {
+                  } elseif ( ( $action == 'emailtemplates' && ( $mode != 'edittemplate' && $mode != 'addnewtemplate' ) ) || ( $action == 'emailtemplates' || '' == $action || '-1' == $action || '-1' == $action_two ) ) {
                         ?>                                                  
                         <p> <?php _e( 'Add email templates at different intervals to maximize the possibility of recovering your abandoned carts.', 'woocommerce-abandoned-cart' );?> </p>
                         <?php                       
