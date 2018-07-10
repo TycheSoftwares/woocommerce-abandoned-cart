@@ -3193,11 +3193,32 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             
                                             ?>
                                             <?php echo stripslashes( get_option( 'woocommerce_ac_email_body' ) ); ?>
-                                            <span class="description"><?php
+                                            <span class="description">
+                                                <?php
                                                  _e( 'Message to be sent in the reminder email.', 'woocommerce-abandoned-cart' );
-                                            ?></span>
+                                                ?>
+                                                <img width="16" height="16" src="<?php echo plugins_url(); ?>/woocommerce-abandon-cart-pro/assets/images/information.png" onClick="wcal_show_help_tips()"/>
+                                            </span>
+                                            <span id="help_message" style="display:none">
+                                                1. You can add customer & cart information in the template using this icon <img width="20" height="20" src="<?php echo plugins_url(); ?>/woocommerce-abandon-cart-pro/assets/images/ac_editor_icon.png" /> in top left of the editor.<br>
+                                                2. The product information/cart contents table will be added in emails using the {{products.cart}} merge field.<br>
+                                                3. Insert/Remove any of the new shortcodes that have been included for the default template.<br>
+                                                4. Change the look and feel of the table by modifying the table style properties using CSS in "Text" mode. <br>
+                                                5. Change the text color of the table rows by using the Toolbar of the editor. <br>
+
+                                            </span>
                                         </td>
                                     </tr>
+                                    <script type="text/javascript">
+                                        function wcal_show_help_tips() {
+                                            if( jQuery( '#help_message' ) . css( 'display' ) == 'none') {
+                                                document.getElementById( "help_message" ).style.display = "block";
+                                            }
+                                            else {
+                                                document.getElementById( "help_message" ) . style.display = "none";
+                                            }
+                                        }
+                                    </script>
                                     
                                      <tr>
                                         <th>
