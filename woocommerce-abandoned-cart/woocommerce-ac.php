@@ -2495,7 +2495,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             </form>
                         </div>                        
                         <?php 
-                  } elseif ( ( $action == 'emailtemplates' && ( $mode != 'edittemplate' && $mode != 'addnewtemplate' ) ) || ( $action == 'emailtemplates' || '' == $action || '-1' == $action || '-1' == $action_two ) ) {
+                  } elseif ( ( $action == 'emailtemplates' && ( $mode != 'edittemplate' && $mode != 'addnewtemplate' ) || '' == $action || '-1' == $action || '-1' == $action_two ) ) {
                         ?>                                                  
                         <p> <?php _e( 'Add email templates at different intervals to maximize the possibility of recovering your abandoned carts.', 'woocommerce-abandoned-cart' );?> </p>
                         <?php                       

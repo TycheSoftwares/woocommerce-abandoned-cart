@@ -165,19 +165,14 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
                 foreach ( $results_guest as $key => $value ) {
                     $query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
                               WHERE  user_id = %d AND recovered_cart = '0'" ;
-                    $result = $wpdb->get_results( $wpdb->prepare( $query, $value->id ) );  
+                    $result = $wpdb->get_results( $wpdb->prepare( $query, $value->id ) ); 
+                    // update existing record and create new record if guest cart history table will have the same email id. 
                     
                     if ( count( $result ) ) {
-                        $delete_sent_email = "DELETE FROM `".$wpdb->prefix."ac_sent_history_lite` 
-                                              WHERE abandoned_order_id = '".$result[0]->id."'";
-                        $wpdb->query( $delete_sent_email );						
-                        $delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
-                                         WHERE user_id = '".$value->id."'";
-                        $wpdb->query( $delete_query );
+                         $update_mobile_info = "UPDATE `" .$wpdb->prefix."ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE user_id = '".$value->id."'";
+                        $wpdb->query( $update_mobile_info );
+                        
                     }
-                    $guest_delete = "DELETE FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` 
-                                    WHERE id = '".$value->id."'";
-                    $wpdb->query( $guest_delete );
                 }
             }
             // Insert record in guest table
