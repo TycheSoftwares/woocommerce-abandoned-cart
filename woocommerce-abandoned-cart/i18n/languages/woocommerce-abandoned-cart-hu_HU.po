@@ -1,0 +1,503 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Abandoned Cart Lite for WooCommerce\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-05-10 16:04+0000\n"
+"PO-Revision-Date: 2018-07-11 07:10+0000\n"
+"Last-Translator: admin <chetna@tychesoftwares.com>\n"
+"Language-Team: Magyar\n"
+"Language: hu-HU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Loco https://localise.biz/"
+
+#: woocommerce-ac.php:298 woocommerce-ac.php:1317
+msgid "This order was abandoned & subsequently recovered."
+msgstr ""
+
+#: woocommerce-ac.php:323
+msgid ""
+"The Lite & Pro version of Abandoned Cart plugin for WooCommerce (from Tyche "
+"Softwares) are active on your website. <br> In this case, the abandoned "
+"carts will be captured in both plugins & email reminders will also be sent "
+"from both plugins. <br> It is recommended that you deactivate the Lite "
+"version & keep the Pro version active."
+msgstr ""
+
+#: woocommerce-ac.php:497
+msgid "Cart abandoned cut-off time"
+msgstr ""
+
+#: woocommerce-ac.php:501
+msgid ""
+"Consider cart abandoned after X minutes of item being added to cart & order "
+"not placed."
+msgstr ""
+
+#: woocommerce-ac.php:506
+msgid "Email admin On Order Recovery"
+msgstr ""
+
+#: woocommerce-ac.php:558
+msgid ""
+"Abandoned cart cut off time should be numeric and has to be greater than 0."
+msgstr ""
+
+#: woocommerce-ac.php:1660
+msgid ""
+"Change settings for sending email notifications to Customers after X minute."
+msgstr ""
+
+#: woocommerce-ac.php:1673
+msgid ""
+"The list below shows all Abandoned Carts which have remained in cart for a "
+"time higher than the \"Cart abandoned cut-off time\" setting."
+msgstr ""
+
+#: woocommerce-ac.php:1694
+msgid ""
+"Add email templates at different intervals to maximize the possibility of "
+"recovering your abandoned carts."
+msgstr ""
+
+#: woocommerce-ac.php:2120
+msgid ""
+"The Report below shows how many Abandoned Carts we were able to recover for "
+"you by sending automatic emails to encourage shoppers."
+msgstr ""
+
+#: woocommerce-ac.php:2200
+msgid " of them, which led to an extra"
+msgstr ""
+
+#: woocommerce-ac.php:2742
+msgid ""
+"Enter the header which will appear in the abandoned WooCommerce email sent. "
+"This is only applicable when only used when \"Use WooCommerce Template Style:"
+"\" is checked."
+msgstr ""
+
+#: woocommerce-ac.php:2773
+msgid ""
+"The email template will be sent to customers only if the \"Active\" checkbox "
+"is enabled. Leave this unchecked if you want to add the email template but "
+"not send it to customers."
+msgstr ""
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:254
+msgid "cart created after this"
+msgstr ""
+
+#: includes/classes/class-wcal-templates-table.php:156
+msgid " "
+msgstr ""
+
+#: woocommerce-ac.php:28
+msgid "Once Every Fifteen Minutes"
+msgstr "Tizetnöt percenként egyszer"
+
+#: woocommerce-ac.php:350
+msgid "HTML Email Template"
+msgstr ""
+"HTML Email sablon\n"
+
+#: woocommerce-ac.php:356
+msgid "Abandoned cart Email Template"
+msgstr "Abadon cart Email sablon"
+
+#: woocommerce-ac.php:490 woocommerce-ac.php:1471
+msgid "Settings"
+msgstr "Beállítások"
+
+#: woocommerce-ac.php:510
+msgid "Sends email to Admin if an Abandoned Cart Order is recovered."
+msgstr ""
+"Küldjön email üzenetet az Adminisztrátornak, ha egy befejezetlen vásárlást "
+"befejeztek."
+
+#: woocommerce-ac.php:769 woocommerce-ac.php:816
+msgid "New Customer Order - Recovered"
+msgstr "Új vásárlói rendelés - Helyreállított"
+
+#: woocommerce-ac.php:843
+msgid "Abandoned Carts"
+msgstr "Befejezetlen kosarak"
+
+#: woocommerce-ac.php:1469
+msgid "Abandoned Orders"
+msgstr "Befejezetlen rendelések"
+
+#: woocommerce-ac.php:1470
+msgid "Email Templates"
+msgstr "Email sablonok"
+
+#: woocommerce-ac.php:1472
+msgid "Recovered Orders"
+msgstr "Helyreállított rendeléseka"
+
+#: woocommerce-ac.php:1473
+msgid "Product Report"
+msgstr "Termék riport"
+
+#: woocommerce-ac.php:1570
+msgid "You do not have sufficient permissions to access this page."
+msgstr "Nincs megfelelő jogosultsága az oldal használatához"
+
+#: woocommerce-ac.php:1574
+msgid "WooCommerce - Abandon Cart Lite"
+msgstr "WooCommerce - Abandon Cart Lite verzió"
+
+#: woocommerce-ac.php:1640
+msgid "The Abandoned cart has been successfully deleted."
+msgstr "A befejezetlen vásárlás sikeresen törölve."
+
+#: woocommerce-ac.php:1646
+msgid "The Template has been successfully deleted."
+msgstr "A sablon sikeresen törölve."
+
+#: woocommerce-ac.php:2011
+msgid "The Email Template has been successfully added."
+msgstr "Az email sablon sikeresen hozzáadva."
+
+#: woocommerce-ac.php:2014
+msgid ""
+" There was a problem adding the email template. Please contact the plugin "
+"author via <a href= \"https://wordpress.org/support/plugin/woocommerce-"
+"abandoned-cart\">support forum</a>."
+msgstr ""
+"Hiba történt az email sablon hozzáadása közben. Kérjük vegye fel a "
+"kapcsolatot a support fórumán."
+
+#: woocommerce-ac.php:2019
+msgid "The Email Template has been successfully updated."
+msgstr "Az email sablon sikeresen frissítve."
+
+#: woocommerce-ac.php:2022
+msgid ""
+" There was a problem updating the email template. Please contact the plugin "
+"author via <a href= \"https://wordpress.org/support/plugin/woocommerce-"
+"abandoned-cart\">support forum</a>."
+msgstr ""
+"Probléma adódott az email sablon frissítése közben. Vegye fel a kapcsolatot "
+"a supporttal. <a href= \"https://wordpress.org/support/plugin/woocommerce-"
+"abandoned-cart\">support forum</a>."
+
+#: woocommerce-ac.php:2028
+msgid "Add New Template"
+msgstr "Új sablon hozzáadása"
+
+#: woocommerce-ac.php:2172
+msgid "Start Date:"
+msgstr "Kezdő dátuma:"
+
+#: woocommerce-ac.php:2174
+msgid "End Date:"
+msgstr "Befejezés dátuma:"
+
+#: woocommerce-ac.php:2176
+msgid "Go"
+msgstr "Menj"
+
+#: woocommerce-ac.php:2182
+msgid "During the selected range "
+msgstr "A kiválasztott időintervallumon belül."
+
+#: woocommerce-ac.php:2187
+msgid "carts totaling"
+msgstr "kosarak összesen"
+
+#: woocommerce-ac.php:2193
+msgid " were abandoned. We were able to recover"
+msgstr "befejezetlenek. Mi képesek vagyunk helyreállítani."
+
+#: woocommerce-ac.php:2226 woocommerce-ac.php:2964 cron/wcal_send_email.php:310
+msgid "Item"
+msgstr "Termék"
+
+#: woocommerce-ac.php:2227 woocommerce-ac.php:2965 cron/wcal_send_email.php:311
+msgid "Name"
+msgstr "Név"
+
+#: woocommerce-ac.php:2228 woocommerce-ac.php:2966 cron/wcal_send_email.php:312
+msgid "Quantity"
+msgstr "Menyiség"
+
+#: woocommerce-ac.php:2229 woocommerce-ac.php:2968 cron/wcal_send_email.php:314
+msgid "Line Subtotal"
+msgstr "Részösszeg:"
+
+#: woocommerce-ac.php:2230
+msgid "Line Total"
+msgstr "Sor összesen"
+
+#: woocommerce-ac.php:2474
+msgid "Customer Details"
+msgstr "Vásárló részletei"
+
+#: woocommerce-ac.php:2478
+msgid "Billing Details"
+msgstr "Számlázás részletei:"
+
+#: woocommerce-ac.php:2479
+msgid "Name:"
+msgstr "Név:"
+
+#: woocommerce-ac.php:2482 woocommerce-ac.php:2502
+msgid "Address:"
+msgstr "Cím:"
+
+#: woocommerce-ac.php:2492
+msgid "Email:"
+msgstr "Email cím:"
+
+#: woocommerce-ac.php:2496
+msgid "Phone:"
+msgstr "Telefonszám:"
+
+#: woocommerce-ac.php:2501
+msgid "Shipping Details"
+msgstr "Szállítás részletei:"
+
+#: woocommerce-ac.php:2586
+msgid "Template Name:"
+msgstr "Sablon neve:"
+
+#: woocommerce-ac.php:2597
+msgid "Enter a template name for reference"
+msgstr "Adja meg a sablon nevét a hivatkozáshoz"
+
+#: woocommerce-ac.php:2603
+msgid "Send From This Name:"
+msgstr "Küld az alábbi névvel:"
+
+#: woocommerce-ac.php:2614
+msgid "Enter the name that should appear in the email sent"
+msgstr "Írja be a nevet, mely megjelenik email küldőként."
+
+#: woocommerce-ac.php:2620
+msgid "Send From This Email Address:"
+msgstr "Küld az alábbi email címről:"
+
+#: woocommerce-ac.php:2630
+msgid ""
+"Which email address should be shown in the \"From    Email\" field for this "
+"email?"
+msgstr "Milyen email cím jelenjen meg feladóként ?"
+
+#: woocommerce-ac.php:2636
+msgid "Send Reply Emails to:"
+msgstr "Küldj válasz emailt:"
+
+#: woocommerce-ac.php:2647
+msgid ""
+"When a contact receives your email and clicks reply, which email address "
+"should that reply be sent to?"
+msgstr ""
+"Ha egy kapcsolattartó megkapja az e-mailjét, és a válaszra kattint, akkor "
+"melyik e-mail címre kell elküldeni a válasz üzenetet?"
+
+#: woocommerce-ac.php:2653
+msgid "Subject:"
+msgstr "Tárgy:"
+
+#: woocommerce-ac.php:2664
+msgid "Enter the subject that should appear in the email sent"
+msgstr "Adja meg a küldendő e-mailben megjelenő témát"
+
+#: woocommerce-ac.php:2670
+msgid "Email Body:"
+msgstr "Email törzs:"
+
+#: woocommerce-ac.php:2698
+msgid "Message to be sent in the reminder email."
+msgstr "Elküldött emlékeztető üzenet."
+
+#: woocommerce-ac.php:2705
+msgid "Use WooCommerce Template Style:"
+msgstr "Használja a WooCommerce téma sablont:"
+
+#: woocommerce-ac.php:2720
+msgid ""
+"Use WooCommerce default style template for abandoned cart reminder emails."
+msgstr ""
+"Használja a WooCommerce téma sablont a befejezettlen vásárlások emailjeihez."
+
+#: woocommerce-ac.php:2727
+msgid "Email Template Header Text: "
+msgstr "Email sablon fejléc szövege:"
+
+#: woocommerce-ac.php:2748
+msgid "Active:"
+msgstr "Aktív:"
+
+#: woocommerce-ac.php:2779
+msgid "Send this email:"
+msgstr "Küld el ezt az emailt:"
+
+#: woocommerce-ac.php:2825
+msgid "after cart is abandoned."
+msgstr "Miótán befejezetlen a vásárlás"
+
+#: woocommerce-ac.php:2832
+msgid "Send a test email to:"
+msgstr "Küld el a teszt emailt."
+
+#: woocommerce-ac.php:2837
+msgid "Enter the email id to which the test email needs to be sent."
+msgstr "Adja meg az email címet, ahova a teszt üzenetet küldeni szeretné."
+
+#: woocommerce-ac.php:2961 cron/wcal_send_email.php:307
+msgid "Your Shopping Cart"
+msgstr "A kosár tartalma:"
+
+#: woocommerce-ac.php:2967 cron/wcal_send_email.php:313
+msgid "Price"
+msgstr "Ár"
+
+#: woocommerce-ac.php:2972
+msgid "Men\\'\\s Formal Shoes"
+msgstr "Férfi Cipő"
+
+#: woocommerce-ac.php:2979
+msgid "Woman\\'\\s Hand Bags"
+msgstr "Női kézi táska"
+
+#: woocommerce-ac.php:2988 cron/wcal_send_email.php:381
+msgid "Cart Total:"
+msgstr "Kosár teljes összege:"
+
+#: cron/wcal_send_email.php:191
+msgid "Abandoned cart reminder"
+msgstr "Befejezetlen vásárlás emlékeztető"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:42
+msgid "abandoned_order_id"
+msgstr "befejezettlen_vásárlás_azonosító"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:43
+msgid "abandoned_order_ids"
+msgstr "befejezettlen_vásárlás_azonosítói"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:76
+msgid "Id"
+msgstr "Azonosító"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:77 
+#: includes/classes/class-wcal-recover-orders-table.php:106
+msgid "Email Address"
+msgstr "Email cím"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:78
+msgid "Customer"
+msgstr "Vásárló"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:79 
+#: includes/classes/class-wcal-recover-orders-table.php:109
+msgid "Order Total"
+msgstr "Rendelés összesen"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:80
+msgid "Abandoned Date"
+msgstr "Félbemaradt vásárlás dátuma"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:81
+msgid "Status of Cart"
+msgstr "Kosár státusza"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:127
+msgid "View order"
+msgstr "Rendelés nézet"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:128 
+#: includes/classes/class-wcal-abandoned-orders-table.php:394 
+#: includes/classes/class-wcal-templates-table.php:120 
+#: includes/classes/class-wcal-templates-table.php:256
+msgid "Delete"
+msgstr "Törlés"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:246
+msgid "item"
+msgstr "termék"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:248
+msgid "items"
+msgstr "termékek"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:252
+msgid "Abandoned"
+msgstr "Befejezettlen"
+
+#: includes/classes/class-wcal-abandoned-orders-table.php:254
+msgid "Abandoned but new"
+msgstr "Befejezettlen de új"
+
+#: includes/classes/class-wcal-product-report-table.php:82
+msgid "product_id"
+msgstr "termék_azonosító"
+
+#: includes/classes/class-wcal-product-report-table.php:83
+msgid "product_ids"
+msgstr ""
+"termék_azonosítók\n"
+
+#: includes/classes/class-wcal-product-report-table.php:106
+msgid "Product Name"
+msgstr "Termék név"
+
+#: includes/classes/class-wcal-product-report-table.php:107
+msgid "Number of Times Abandoned"
+msgstr "Befejezetlen vásárlások száma"
+
+#: includes/classes/class-wcal-product-report-table.php:108
+msgid "Number of Times Recovered"
+msgstr "Vásárlások helyreállításának száma"
+
+#: includes/classes/class-wcal-recover-orders-table.php:76
+msgid "rec_abandoned_id"
+msgstr "helyreállított_kosár_azonosítója"
+
+#: includes/classes/class-wcal-recover-orders-table.php:77
+msgid "rec_abandoned_ids"
+msgstr "helyreállított_kosarak_azonosítói"
+
+#: includes/classes/class-wcal-recover-orders-table.php:105
+msgid "Customer Name"
+msgstr "Vásárló neve"
+
+#: includes/classes/class-wcal-recover-orders-table.php:107
+msgid "Cart Abandoned Date"
+msgstr "Kosár elhagyásának dátuma"
+
+#: includes/classes/class-wcal-recover-orders-table.php:108
+msgid "Cart Recovered Date"
+msgstr "Kosár helyreállításának Dátuma"
+
+#: includes/classes/class-wcal-recover-orders-table.php:139
+msgid "View Details"
+msgstr "Mutasd a részleteket"
+
+#: includes/classes/class-wcal-templates-table.php:43
+msgid "template_id"
+msgstr "sablon azonosító"
+
+#: includes/classes/class-wcal-templates-table.php:44
+msgid "template_ids"
+msgstr "sablon_azonosítók"
+
+#: includes/classes/class-wcal-templates-table.php:72
+msgid "Sr"
+msgstr "Sr"
+
+#: includes/classes/class-wcal-templates-table.php:73
+msgid "Name Of Template"
+msgstr "Sablon neve"
+
+#: includes/classes/class-wcal-templates-table.php:74
+msgid "Sent After Set Time"
+msgstr "Elküldve a beállított időben"
+
+#: includes/classes/class-wcal-templates-table.php:75
+msgid "Active ?"
+msgstr ""
