@@ -267,6 +267,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             
             add_action ( 'admin_enqueue_scripts',                       array( &$this, 'wcal_enqueue_scripts_js' ) );
             add_action ( 'admin_enqueue_scripts',                       array( &$this, 'wcal_enqueue_scripts_css' ) );
+			//delete abandoned order after X number of days
+            if ( class_exists( 'wcal_delete_bulk_action_handler' ) ) {
+                add_action( 'admin_init',                              array( 'wcal_delete_bulk_action_handler', 'wcal_delete_abandoned_carts_after_x_days' ) );
+            }
             
             if ( is_admin() ) {
                 // Load "admin-only" scripts here               
@@ -849,6 +853,16 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 'ac_lite_general_settings_section',
                 array( __( 'Consider cart abandoned after X minutes of item being added to cart & order not placed.', 'woocommerce-abandoned-cart' ) )
             );
+
+            add_settings_field(
+                'ac_lite_delete_abandoned_order_days',
+                __( 'Automatically Delete Abandoned Orders after X days', 'woocommerce-abandoned-cart' ),
+                array( $this, 'wcal_delete_abandoned_orders_days_callback' ),
+                'woocommerce_ac_page',
+                'ac_lite_general_settings_section',
+                array( __( 'Automatically delete abandoned cart orders after X days.', 'woocommerce-abandoned-cart' ) )
+            );
+
             
             add_settings_field(
                 'ac_lite_email_admin_on_recovery',
@@ -858,6 +872,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 'ac_lite_general_settings_section',
                 array( __( 'Sends email to Admin if an Abandoned Cart Order is recovered.', 'woocommerce-abandoned-cart' ) )
             );
+
             
             add_settings_field(
             'ac_lite_track_guest_cart_from_cart_page',
@@ -930,6 +945,12 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 'woocommerce_ac_settings',
                 'ac_lite_cart_abandoned_time',
                 array ( $this, 'ac_lite_cart_time_validation' )
+            );
+
+            register_setting(
+                'woocommerce_ac_settings',
+                'ac_lite_delete_abandoned_order_days',
+                array ( $this, 'wcal_delete_days_validation' )
             );
             
             register_setting(
@@ -1009,6 +1030,41 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 add_settings_error( 'ac_lite_cart_abandoned_time', 'error found', __( 'Abandoned cart cut off time should be numeric and has to be greater than 0.', 'woocommerce-abandoned-cart' ) );
             }
             return $output;
+        }
+
+        /**
+         * Validation for automatically delete abandoned carts after X days.
+         * @param int | string $input input of the field Abandoned cart cut off time
+         * @return int | string $output Error message or the input value
+         * @since  5.0
+         */
+        public static function wcal_delete_days_validation( $input ) {
+            $output = '';
+            if ( $input == '' || ( is_numeric( $input ) && $input > 0 ) ) {
+                $output = stripslashes( $input );
+            } else {
+                add_settings_error( 'ac_lite_delete_abandoned_order_days', 'error found', __( 'Automatically Delete Abandoned Orders after X days has to be greater than 0.', 'woocommerce-abandoned-cart' ) );
+            }
+            return $output;
+        }
+
+        /**
+         * Callback for deleting abandoned order after X days field.
+         * @param array $args Argument given while adding the field
+         * @since 5.0
+         */
+        public static function wcal_delete_abandoned_orders_days_callback( $args ) {
+            // First, we read the option
+            $delete_abandoned_order_days = get_option( 'ac_lite_delete_abandoned_order_days' );
+            // Next, we update the name attribute to access this element's ID in the context of the display options array
+            // We also access the show_header element of the options collection in the call to the checked() helper function
+            printf(
+                '<input type="text" id="ac_lite_delete_abandoned_order_days" name="ac_lite_delete_abandoned_order_days" value="%s" />',
+                isset( $delete_abandoned_order_days ) ? esc_attr( $delete_abandoned_order_days ) : ''
+            );
+            // Here, we'll take the first argument of the array and add it to a label next to the checkbox
+            $html = '<label for="ac_lite_delete_abandoned_order_days"> ' . $args[0] . '</label>';
+            echo $html;
         }
         
         /**
@@ -1282,11 +1338,18 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             $ac_settings = get_option( 'ac_lite_settings_status' );     
             if ( $ac_settings != 'INDIVIDUAL' ) {
                 //fetch the existing settings and save them as inidividual to be used for the settings API
-                $woocommerce_ac_settings = json_decode( get_option( 'woocommerce_ac_settings' ) );              
+                $woocommerce_ac_settings = json_decode( get_option( 'woocommerce_ac_settings' ) ); 
+
                 if( isset( $woocommerce_ac_settings[0]->cart_time ) ) {
                     add_option( 'ac_lite_cart_abandoned_time', $woocommerce_ac_settings[0]->cart_time );
                 } else {
                     add_option( 'ac_lite_cart_abandoned_time', '10' );
+                }
+
+                if( isset( $woocommerce_ac_settings[0]->delete_order_days ) ) {
+                    add_option( 'ac_lite_delete_abandoned_order_days', $woocommerce_ac_settings[0]->delete_order_days );
+                } else {
+                    add_option( 'ac_lite_delete_abandoned_order_days', "" );
                 }
             
                 if( isset( $woocommerce_ac_settings[0]->email_admin ) ) {
