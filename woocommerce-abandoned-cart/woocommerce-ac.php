@@ -757,9 +757,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                              `abandoned_cart_time` int(11) NOT NULL,
                              `cart_ignored` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
                              `recovered_cart` int(11) NOT NULL,
-                             `user_type` text,
-                             `unsubscribe_link` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
-                             `session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
                              PRIMARY KEY (`id`)
                              ) $wcap_collate";
                      
