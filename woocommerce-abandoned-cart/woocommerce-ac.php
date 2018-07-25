@@ -3321,7 +3321,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             $wcal_wc_email_header = $results[0]->wc_email_header;
                                         }                                           
                                         if ( $wcal_wc_email_header == "" ) {
-                                            $wcal_wc_email_header = "You Left Something in Your Cart!";
+                                            $wcal_wc_email_header = "Abandoned cart reminder";
                                         }
                                         print'<input type="text" name="wcal_wc_email_header" id="wcal_wc_email_header" class="regular-text" value="' . $wcal_wc_email_header . '">'; ?>
                                         <img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Enter the header which will appear in the abandoned WooCommerce email sent. This is only applicable when only used when "Use WooCommerce Template Style:" is checked.', 'woocommerce-abandoned-cart' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
@@ -3471,7 +3471,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         var body_email_preview    = email_body;
                         var send_email_id         = $( '#send_test_email' ).val();  
                         var is_wc_template        = document.getElementById( "is_wc_template" ).checked;    
-                        var wc_template_header    = $( '#wcal_wc_email_header' ).val() != '' ? $( '#wcal_wc_email_header' ).val() : 'You Left Something in Your Cart!';                                                              
+                        var wc_template_header    = $( '#wcal_wc_email_header' ).val() != '' ? $( '#wcal_wc_email_header' ).val() : 'Abandoned cart reminder';                                                              
                         var data                  = {                                                       
                                                         subject_email_preview: subject_email_preview,
                                                         body_email_preview   : body_email_preview,
