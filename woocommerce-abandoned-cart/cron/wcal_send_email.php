@@ -83,7 +83,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 }
                 $template_id         = $value->id;
                 $is_wc_template      = $value->is_wc_template;
-                $wc_template_header_text = $value->wc_email_header != '' ? $value->wc_email_header : __( 'You Left Something in Your Cart!', 'woocommerce-abandoned-cart');
+                $wc_template_header_text = $value->wc_email_header != '' ? $value->wc_email_header : __( 'Abandoned cart reminder', 'woocommerce-abandoned-cart');
                 $wc_template_header  = stripslashes( $wc_template_header_text );
                 if ( '' != $email_body_template ) { 
                     foreach ( $carts as $key => $value ) {
