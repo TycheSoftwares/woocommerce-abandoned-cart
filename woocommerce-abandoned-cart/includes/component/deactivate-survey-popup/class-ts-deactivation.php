@@ -16,7 +16,7 @@ class Wcal_TS_deactivate {
 	 * @var string
 	 */
 
-	private static $api_url = 'http://trackingdev.tychesoftwares.com/v1/';
+	private static $api_url = 'http://tracking.tychesoftwares.com/v1/';
 
 	/**
 	* @var string Plugin name
