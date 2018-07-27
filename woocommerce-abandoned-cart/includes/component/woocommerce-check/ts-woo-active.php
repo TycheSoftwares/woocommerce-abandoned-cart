@@ -5,7 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Wcal_TS_Woo_Active Class
- *
  * @class Wcal_TS_Woo_Active
  */
 
