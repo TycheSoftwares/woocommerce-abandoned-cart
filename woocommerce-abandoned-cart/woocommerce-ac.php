@@ -177,6 +177,8 @@ function woocommerce_ac_delete_lite() {
 
     delete_option( 'wcal_guest_cart_capture_msg' );
     delete_option( 'wcal_logged_cart_capture_msg' );
+
+    delete_option( 'ac_lite_delete_abandoned_order_days' );
 }
     /**
      * woocommerce_abandon_cart_lite class
