@@ -82,34 +82,34 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
         public static function wcal_get_notice_text () {
             $ts_pro_notices = array();
 
-            $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/checkout?edd_action=add_to_cart&download_id=20&utm_source=wpnotice&utm_medium=first&utm_campaign=AbandonedCartLitePlugin';
+            $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wpnotice&utm_medium=first&utm_campaign=AbandonedCartLitePlugin';
             $message_first = wp_kses_post ( __( 'Thank you for using Abandoned Cart Lite for WooCommerce! You can use the Pro version for recovering more sales with some additional features. <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'">Get it now!</a></strong>', 'woocommerce-abandoned-cart' ) );  
 
-            $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/checkout?edd_action=add_to_cart&download_id=20&utm_source=wpnotice&utm_medium=second&utm_campaign=AbandonedCartLitePlugin';
+            $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wpnotice&utm_medium=second&utm_campaign=AbandonedCartLitePlugin';
             $message_two = wp_kses_post ( __( 'Get an extra benefit of analysis of your Abandoned Cart data with some statistical view present on Dashboard. <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'">Grab it now!</a></strong>', 'woocommerce-abandoned-cart' ) );
 
-            $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/checkout?edd_action=add_to_cart&download_id=20&utm_source=wpnotice&utm_medium=third&utm_campaign=AbandonedCartLitePlugin';
+            $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wpnotice&utm_medium=third&utm_campaign=AbandonedCartLitePlugin';
             $message_three = wp_kses_post ( __( 'Abandoned Cart Pro plugin allows you to recover more revenue by offering discount coupons in the abandoned cart email notifications. <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'">Grab it now!</a></strong>.', 'woocommerce-abandoned-cart' ) );
 
-            $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/checkout?edd_action=add_to_cart&download_id=20&utm_source=wpnotice&utm_medium=fourth&utm_campaign=AbandonedCartLitePlugin';
+            $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wpnotice&utm_medium=fourth&utm_campaign=AbandonedCartLitePlugin';
             $message_four = wp_kses_post ( __( 'Capture guest customer emails while adding a product to cart with our Add to cart modal pop-up feature present in Abandoned Cart Pro for WooCommerce. <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'">Purchase now</a></strong>.', 'woocommerce-abandoned-cart' ) );
 
-            $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/checkout?edd_action=add_to_cart&download_id=20&utm_source=wpnotice&utm_medium=fifth&utm_campaign=AbandonedCartLitePlugin';
+            $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wpnotice&utm_medium=fifth&utm_campaign=AbandonedCartLitePlugin';
             $wcal_pro_diff = 'https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/';
             $message_five = wp_kses_post ( __( 'Using Abandoned Cart Pro plugin, you can add more merge tags, one-click Cart & Checkout page button, send customised abandoned cart reminder email to specific customers & <strong><a target="_blank" href= "'.$wcal_pro_diff.'">much more</a></strong>. <br>Grab 20% discount on the purchase using ACPRO20 discount code and save $24. Coupon is limited to first 20 customers only. <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'">Purchase now</a></strong>.', 'woocommerce-abandoned-cart' ) );
 
-            $_link = 'https://www.tychesoftwares.com/store/premium-plugins/order-delivery-date-for-woocommerce-pro-21/checkout?edd_action=add_to_cart&download_id=16&utm_source=wpnotice&utm_medium=sixth&utm_campaign=AbandonedCartLitePlugin';
+            $_link = 'https://www.tychesoftwares.com/store/premium-plugins/order-delivery-date-for-woocommerce-pro-21/?utm_source=wpnotice&utm_medium=sixth&utm_campaign=AbandonedCartLitePlugin';
             $message_six = wp_kses_post ( __( 'Reduce cart abandonment rate by 57% with our Order Delivery Date Pro WooCommerce plugin. You can Create Delivery Settings by Shipping Zones & Shipping Classes. <br>Use discount code "ORDPRO20" and grab 20% discount on the purchase of the plugin. The discount code is valid only for the first 20 customers. <strong><a target="_blank" href= "'.$_link.'">Purchase now</a></strong>', 'woocommerce-abandoned-cart' ) );
 
-            $_link = 'https://www.tychesoftwares.com/store/premium-plugins/order-delivery-date-for-woocommerce-pro-21/checkout?edd_action=add_to_cart&download_id=16&utm_source=wpnotice&utm_medium=seventh&utm_campaign=AbandonedCartLitePlugin';
+            $_link = 'https://www.tychesoftwares.com/store/premium-plugins/product-delivery-date-pro-for-woocommerce/?utm_source=wpnotice&utm_medium=seventh&utm_campaign=AbandonedCartLitePlugin';
             $message_seven = wp_kses_post ( __( 'Allow your customers to select the Delivery Date on Single Product Page using our Product Delivery Date pro for WooCommerce Plugin. <br> 
             <strong><a target="_blank" href= "'.$_link.'">Shop now</a></strong> & be one of the 20 customers to get 20% discount on the plugin price. Use the code "PRDPRO20". Hurry!!', 'woocommerce-abandoned-cart' ) );
             
-            $_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-booking-plugin/checkout?edd_action=add_to_cart&download_id=22&utm_source=wpnotice&utm_medium=eight&utm_campaign=AbandonedCartLitePlugin';
+            $_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-booking-plugin/?utm_source=wpnotice&utm_medium=eight&utm_campaign=AbandonedCartLitePlugin';
             $message_eight = wp_kses_post ( __( ' Allow your customers to book an appointment or rent an apartment with our Booking and Appointment for WooCommerce plugin. You can also sell your product as a resource or integrate with a few Vendor plugins. <br>Shop now & Save 20% on the plugin with the code "BKAP20". Only for first 20 customers. <strong><a target="_blank" href= "'.$_link.'">Have it now!</a></strong>', 'woocommerce-abandoned-cart' ) );
             
-            $_link = 'https://www.tychesoftwares.com/store/premium-plugins/deposits-for-woocommerce/checkout?edd_action=add_to_cart&download_id=286371&utm_source=wpnotice&utm_medium=eight&utm_campaign=AbandonedCartLitePlugin';
-            $message_nine = wp_kses_post ( __( ' Allow your customers to pay deposits on products using our Deposits for WooCommerce plguin. <br>
+            $_link = 'https://www.tychesoftwares.com/store/premium-plugins/deposits-for-woocommerce/?utm_source=wpnotice&utm_medium=eight&utm_campaign=AbandonedCartLitePlugin';
+            $message_nine = wp_kses_post ( __( ' Allow your customers to pay deposits on products using our Deposits for WooCommerce plugin. <br>
             <strong><a target="_blank" href= "'.$_link.'">Purchase now</a></strong> & Grab 20% discount with the code "DFWP20". The discount code is valid only for the first 20 customers.', 'woocommerce-abandoned-cart' ) );
 			
             $ts_pro_notices = array (
