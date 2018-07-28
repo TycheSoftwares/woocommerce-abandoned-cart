@@ -2483,7 +2483,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         ?>
                     </div>
                   <?php 
-                  } elseif ( $action == 'listcart' && ( $action == 'listcart' || '' == $action || '-1' == $action || '-1' == $action_two ) ) {
+                  } elseif ( $action == 'listcart' || '' == $action || '-1' == $action || '-1' == $action_two ) {
                         ?>    
                         <p> <?php _e( 'The list below shows all Abandoned Carts which have remained in cart for a time higher than the "Cart abandoned cut-off time" setting.', 'woocommerce-abandoned-cart' );?> </p>
                         <?php
