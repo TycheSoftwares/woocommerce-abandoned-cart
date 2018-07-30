@@ -4,9 +4,9 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares
 Tags: abandon cart, cart recovery, increase woocommerce conversion rate , recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 4.9.5
+Tested up to: 4.9.7
 Stable tag: trunk
-License: GPLv2 or later
+License: GPLv2 or late
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.me/TycheSoftwares
 
@@ -193,7 +193,40 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 5.0 (30.07-2018) =
+
+* This version has 1 new feature and 9 bugs fixes along with 4 Tweaks.
+
+* New feature - From this version, we have added "Automatically Delete Abandoned Orders after X days" setting. The same setting will delete all the Abandoned carts automatically after number of days which will set in the setting.
+
+*  Bug Fixed - . When WordPress exports data for an email address and if there are no abandoned cart records for the said address, the export was failing. Fixed the same.
+
+*  Bug Fixed - In WooCommerce > Settings > Email menu, if the footer will have "{site_title}" merge tag then our plugin will show the title of website at the end of test email and abandoned cart reminder email.
+
+*  Bug Fixed - For Multisite, we were getting error message in the debug log file once we abandoned a cart. This issue has been fixed now.
+
+*  Bug Fixed - Under the Recovered Orders tab, duplicate records were showing for the recovered orders. This issue is fixed.
+
+*  Bug Fixed - When abandoned cart will have a variable product which has 3 attributes or more then the slug name of selected variations were showing in the abandoned cart reminder emails and on the abandoned cart details page. This has been fixed.
+
+*  Bug Fixed - With the Fresh Install of the plugin, some columns of abandoned cart history table were not created. This issue is fixed.
+
+*  Bug Fixed - With version 5.0 onwards, if the guest will use the same email address which was already used for abandoning the cart then the existing record will be updated and new record will added in the Abandoned Orders tab. This was not the case with older versions.
+
+*  Bug Fixed - The pagination on the Email Templates tab was not working. It has been fixed.
+
+*  Bug Fixed - Some error notices of debug log file are fixed.
+
+* Tweak - We have updated .pot and .po & .mo files in our plugin. So all the strings from Abandoned Cart Pro for WooCommerce plugin can be translated to any language you want to.
+
+* Tweak - We have added .po and .mo files of Hungarian language in plugin's folder. So, if the Site language will be Hungarian language then translated strings of our plugin will be displayed into Hungarian language.
+
+* Tweak -  Added Help tip below of Email Body section while editing or creating an email template.
+
+* Tweak - "Unsubscribed" status added to Abandoned Orders page and will be displayed for Unsubscribed carts.
+
 = 4.9 (24.05-2018) =
+
 * The plugin is now GDPR compliant.
 
 * New feature - Added two settings to show the message on the checkout page for guest users and the message to be displayed at the start of the shop page for Registered users.
