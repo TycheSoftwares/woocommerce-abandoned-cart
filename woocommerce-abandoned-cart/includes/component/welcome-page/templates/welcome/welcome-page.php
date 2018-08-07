@@ -76,7 +76,7 @@
                 <h3><?php esc_html_e( 'Set different cut-off times for visitors & logged-in users', 'woocommerce-abandoned-cart' ); ?></h3>
 
                     <p><?php esc_html_e( 'The provision for setting two separate cut-off times for different roles is mainly because sometimes if the store admin wants the visitor carts to be captured earlier than the registered user carts, then these different settings can play an important role.', 'woocommerce-abandoned-cart' ); ?></p>
-                    <a href="https://www.tychesoftwares.com/capturing-abandoned-carts-woocommerce-abandoned-cart-pro-plugin/?utm_source=wpaboutpage&utm_medium=link&utm_campaign=AbandonedCartLitePlugin" target="_blank" class="button-secondary">
+                    <a href="https://www.tychesoftwares.com/docs/docs/abandoned-cart-pro-for-woocommerce/capturing-abandoned-carts/?utm_source=wpaboutpage&utm_medium=link&utm_campaign=AbandonedCartLitePlugin" target="_blank" class="button-secondary">
                         <?php esc_html_e( 'Learn More', 'woocommerce-abandoned-cart' ); ?>
                         <span class="dashicons dashicons-external"></span>
                     </a>
@@ -97,7 +97,7 @@
                 <h3><?php esc_html_e( 'Send abandoned cart recovery email in minutes of cart being abandoned', 'woocommerce-abandoned-cart' ); ?></h3>
 
                 <p><?php esc_html_e( 'The ability to send the abandoned cart recovery email within first few minutes of cart being abandoned is a big advantage. In the Lite plugin, the earliest an email can be sent is after 1 hour. Whereas in the Pro version, the first recovery email gets sent 15 minutes after the cart is abandoned. This increases the recovery chances manifold.', 'woocommerce-abandoned-cart' ); ?></p>
-                <a href="https://www.tychesoftwares.com/understanding-the-default-email-templates-of-abandoned-cart-pro-for-woocommerce-plugin/?utm_source=wpaboutpage&utm_medium=link&utm_campaign=AbandonedCartLitePlugin" target="_blank" class="button-secondary">
+                <a href="https://www.tychesoftwares.com/docs/docs/abandoned-cart-pro-for-woocommerce/default-email-templates/?utm_source=wpaboutpage&utm_medium=link&utm_campaign=AbandonedCartLitePlugin" target="_blank" class="button-secondary">
                     <?php esc_html_e( 'Learn More', 'woocommerce-abandoned-cart' ); ?>
                     <span class="dashicons dashicons-external"></span>
                 </a>
