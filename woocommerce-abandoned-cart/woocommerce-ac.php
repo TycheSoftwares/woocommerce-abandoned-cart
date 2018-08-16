@@ -32,11 +32,6 @@ require_once( 'includes/wcal_data_tracking_message.php' );
 require_once( 'includes/admin/wcal_privacy_erase.php' );
 require_once( 'includes/admin/wcal_privacy_export.php' );
 
-if ( is_admin() ) {
-    require_once( 'includes/wcal_all_component.php' );
-    
-}
-
 // Add a new interval of 15 minutes
 add_filter( 'cron_schedules', 'wcal_add_cron_schedule' );
 
@@ -260,6 +255,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             
             // Language Translation
             add_action ( 'init',                                        array( &$this, 'wcal_update_po_file' ) );
+
+            add_action ( 'init',                                        array ( &$this, 'wcal_add_component_file')  );
             
             // track links
             add_filter( 'template_include',                             array( &$this, 'wcal_email_track_links' ), 99, 1 );
@@ -302,7 +299,19 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             add_action( 'admin_notices',                                               array( 'Wcal_Admin_Notice',   'wcal_show_db_update_notice' ) ); 
         }
+	
+	/**
+         * It will load the boilerplate components file. In this file we have included all boilerplate files.
+         * We need to inlcude this file after the init hook.
+         * @hook init
+         */
 
+        public static function wcal_add_component_file () {
+            if ( is_admin() ) {
+                require_once( 'includes/wcal_all_component.php' );
+                
+            }
+        }
         /**
          * It will add the Questions while admin deactivate the plugin.
          * @hook ts_deativate_plugin_questions
