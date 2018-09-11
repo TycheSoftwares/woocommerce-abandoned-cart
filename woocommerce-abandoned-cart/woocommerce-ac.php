@@ -2579,10 +2579,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         // Save the field values
                         $insert_template_successfuly = $update_template_successfuly = ''; 
                         if( isset( $_POST['ac_settings_frm'] ) && $_POST['ac_settings_frm'] == 'save' ) {                                                                  
-                            $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
+                            $woocommerce_ac_email_subject = trim( htmlspecialchars( $_POST['woocommerce_ac_email_subject'] ), ENT_QUOTES );
                             $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
                             $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-                            $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
+                            $woocommerce_ac_email_header  = stripslashes( trim( htmlspecialchars( $_POST['wcal_wc_email_header'] ), ENT_QUOTES ) );
                            
                             $email_frequency              = trim( $_POST['email_frequency'] );
                             $day_or_hour                  = trim( $_POST['day_or_hour'] );
@@ -2613,10 +2613,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             $day_or_hour                  = trim( $_POST['day_or_hour'] );
                             $is_wc_template               = ( empty( $_POST['is_wc_template'] ) ) ? '0' : '1';
                             
-                            $woocommerce_ac_email_subject = trim( $_POST['woocommerce_ac_email_subject'] );
+                            $woocommerce_ac_email_subject = trim( htmlspecialchars( $_POST['woocommerce_ac_email_subject'] ), ENT_QUOTES );
                             $woocommerce_ac_email_body    = trim( $_POST['woocommerce_ac_email_body'] );
                             $woocommerce_ac_template_name = trim( $_POST['woocommerce_ac_template_name'] );
-                            $woocommerce_ac_email_header  = trim( $_POST['wcal_wc_email_header'] );
+                            $woocommerce_ac_email_header  = stripslashes( trim( htmlspecialchars( $_POST['wcal_wc_email_header'] ), ENT_QUOTES ) );
                             $id                           = trim( $_POST['id'] );
                             
                             $check_query = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite`
