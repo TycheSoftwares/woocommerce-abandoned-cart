@@ -19,6 +19,12 @@ if ( ! isset( $wp_load ) ) {
             break;
         }
     }
+    /*
+     * In case wp-content folder is seperated from WP core folders (like Bedrock setup from Roots.io) the above while loop will not find wp-load correctly, so we must use ABSPATH
+     */
+    if ( ! file_exists( $wp_load ) ) {
+        $wp_load = trailingslashit( ABSPATH ) . 'wp-load.php';
+    }
 }
 $wcal_root = dirname( dirname(__FILE__) ); // go two level up for directory from this file.
 require_once $wp_load;
