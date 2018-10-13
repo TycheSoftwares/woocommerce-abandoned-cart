@@ -64,16 +64,13 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
                 $wcal_deativate = new Wcal_TS_deactivate;
                 $wcal_deativate->init ( $wcal_file_name, $wcal_plugin_name );
 
-                $user = wp_get_current_user();
+                /*new Wcal_TS_Welcome ( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_dir_name, $wcal_get_previous_version );*/
                 
-                if ( in_array( 'administrator', (array) $user->roles ) ) {
-                    new Wcal_TS_Welcome ( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_dir_name, $wcal_get_previous_version );
-                }
                 $ts_pro_faq = self::wcal_get_faq ();
                 new Wcal_TS_Faq_Support( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_plugins_page, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_slug, $ts_pro_faq );
                 
-                $ts_pro_notices = self::wcal_get_notice_text ();
-				new Wcal_ts_pro_notices( $wcal_plugin_name, $wcal_lite_plugin_prefix, $wcal_plugin_prefix, $ts_pro_notices, $wcal_file_name, $wcal_pro_file_name );
+                /*$ts_pro_notices = self::wcal_get_notice_text ();
+				new Wcal_ts_pro_notices( $wcal_plugin_name, $wcal_lite_plugin_prefix, $wcal_plugin_prefix, $ts_pro_notices, $wcal_file_name, $wcal_pro_file_name );*/
 
             }
         }

@@ -193,6 +193,14 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 5.0.2 (13.10.2018) =
+
+* Removed the Welcome page of the plugin and also removed the promotional notices which were being displayed on admin end of the WordPress website.
+
+= 5.0.1 (30.07-2018) =
+
+Bug Fix - The website was crashing as the folder name for the plugin was not changed. This is fixed now.
+
 = 5.0 (30.07-2018) =
 
 * This version has 1 new feature and 9 bugs fixes along with 4 Tweaks.
@@ -233,7 +241,7 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 * New feature - Abandoned Cart details will now be exported to the User's Personal Data from the Tools -> Export Personal Data menu and it can be erased from Tools -> Erase Personal Data.
 
-*  Bug Fixed - Some notices are fixed of the debug.log file.
+*  Bug Fixed - Some notices are fixedÂ of the debug.log file.
 
 = 4.8 (20.03-2018) =
 * This is a minor update to the plugin which contains some bug fixes and requires Database update to include emojis in the email templates. We recommend that you take a backup of the database of your store for your piece of mind.
