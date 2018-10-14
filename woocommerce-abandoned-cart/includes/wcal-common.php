@@ -100,16 +100,16 @@ class wcal_common {
 		$wcal_abandoned_orders_amount = 0;
 		foreach ( $wcal_abandoned_query_result as $wcal_abandoned_query_key => $wcal_abandoned_query_value ) {
 			# code...
-			$cart_info        = json_decode( $wcal_abandoned_query_value->abandoned_cart_info );
+			$cart_info = json_decode( $wcal_abandoned_query_value->abandoned_cart_info );
 
-			$cart_details   = array();
-			if( isset( $cart_info->cart ) ){
+			$cart_details = array();
+			if ( isset( $cart_info->cart ) ){
 		        $cart_details = $cart_info->cart;
 		    }
 
-		    if( count( $cart_details ) > 0 ) {    		
+		    if ( count( $cart_details ) > 0 ) {    		
 		        foreach( $cart_details as $k => $v ) {    		     
-		            if( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
+		            if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
 		                $wcal_abandoned_orders_amount = $wcal_abandoned_orders_amount + $v->line_total + $v->line_subtotal_tax;
 		            } else {
 		                $wcal_abandoned_orders_amount = $wcal_abandoned_orders_amount + $v->line_total;
@@ -140,7 +140,7 @@ class wcal_common {
 
 		$wcal_recovered_order_amount_result = $wpdb->get_results( $wcal_recovery_query_amount );
 
-		$wcal_recovered_orders_amount = self::wcal_get_recovered_amount ($wcal_recovered_order_amount_result );
+		$wcal_recovered_orders_amount = self::wcal_get_recovered_amount ( $wcal_recovered_order_amount_result );
 
 		return $wcal_recovered_orders_amount;
 	}
@@ -153,13 +153,13 @@ class wcal_common {
 	 * @since 3.9 
 	 */
 
-	private static function wcal_get_recovered_amount ( $wcal_data ){
+	private static function wcal_get_recovered_amount ( $wcal_data ) {
 
 		$wcal_recovered_orders_amount = 0;
 
-		foreach ($wcal_data as $wcal_data_key => $wcal_data_value) {
+		foreach ( $wcal_data as $wcal_data_key => $wcal_data_value ) {
 
-			$wcal_order_total 			 = get_post_meta( $wcal_data_value->recovered_cart , '_order_total', true);
+			$wcal_order_total 			  = get_post_meta( $wcal_data_value->recovered_cart , '_order_total', true);
 			$wcal_recovered_orders_amount = $wcal_recovered_orders_amount + $wcal_order_total;
 		}
 		return $wcal_recovered_orders_amount;
@@ -195,14 +195,14 @@ class wcal_common {
 
 		$wcal_email_templates_count   = count( $wcal_email_templates_results );
 
-		$wcal_templates_data = array();
+		$wcal_templates_data                     = array();
 		$wcal_templates_data ['total_templates'] = $wcal_email_templates_count;
 
-		foreach ($wcal_email_templates_results as $wcal_email_templates_results_key => $wcal_email_templates_results_value ) {
+		foreach ( $wcal_email_templates_results as $wcal_email_templates_results_key => $wcal_email_templates_results_value ) {
 
-			$wcal_template_time = $wcal_email_templates_results_value->frequency . ' ' .$wcal_email_templates_results_value->day_or_hour ;
+			$wcal_template_time = $wcal_email_templates_results_value->frequency . ' ' . $wcal_email_templates_results_value->day_or_hour ;
 
-			$wcal_get_total_email_sent_for_template = "SELECT COUNT(id) FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE template_id = ". $wcal_email_templates_results_value->id;
+			$wcal_get_total_email_sent_for_template       = "SELECT COUNT(id) FROM `" . $wpdb->prefix . "ac_sent_history_lite` WHERE template_id = ". $wcal_email_templates_results_value->id;
 			$wcal_get_total_email_sent_for_template_count = $wpdb->get_var( $wcal_get_total_email_sent_for_template );
 
 			$wcal_templates_data [ "template_id_" . $wcal_email_templates_results_value->id ] ['is_activate']      =  ( $wcal_email_templates_results_value->is_active == 1 ) ? 'Active' : 'Deactive';
@@ -341,7 +341,7 @@ class wcal_common {
 
 		$wcal_recovered_order_amount_result = $wpdb->get_results( $wcal_recovery_query_amount );
 
-		$wcal_recovered_orders_amount = self::wcal_get_recovered_amount ($wcal_recovered_order_amount_result );
+		$wcal_recovered_orders_amount = self::wcal_get_recovered_amount ( $wcal_recovered_order_amount_result );
 
 		return $wcal_recovered_orders_amount;
 
@@ -368,7 +368,7 @@ class wcal_common {
 
 		$wcal_recovered_order_amount_result = $wpdb->get_results( $wcal_recovery_query_amount );
 
-		$wcal_recovered_orders_amount = self::wcal_get_recovered_amount ($wcal_recovered_order_amount_result );
+		$wcal_recovered_orders_amount = self::wcal_get_recovered_amount ( $wcal_recovered_order_amount_result );
 
 		return $wcal_recovered_orders_amount;
 
@@ -548,7 +548,7 @@ class wcal_common {
     public static function update_templates_table(){
 
         global $wpdb;
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
         $query = "ALTER TABLE " . $wpdb->prefix . "ac_email_templates_lite" . " CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 
@@ -639,7 +639,7 @@ class wcal_common {
             $user_billing_country = $user_billing_country_temp[0];
             if ( isset( $woocommerce->countries->countries[ $user_billing_country ] ) || '' != ( $woocommerce->countries->countries[ $user_billing_country ] ) ) {
                 $user_billing_country = WC()->countries->countries[ $user_billing_country ];
-            }else {
+            } else {
                 $user_billing_country = "";
             }
         }
@@ -651,7 +651,7 @@ class wcal_common {
             $user_billing_state = $user_billing_state_temp[0];
             if ( isset( $woocommerce->countries->states[ $user_billing_country_temp[0] ][ $user_billing_state ] ) ) {
                 $user_billing_state = WC()->countries->states[ $user_billing_country_temp[0] ][ $user_billing_state ];
-            }else {
+            } else {
                 $user_billing_state = "";
             }
         }
@@ -676,7 +676,7 @@ class wcal_common {
     	$cart_total        = $item_subtotal = $item_total = $line_subtotal_tax_display =  $after_item_subtotal = $after_item_subtotal_display = 0;
 
         $line_subtotal_tax = '';
-        $quantity_total =  0;
+        $quantity_total    =  0;
 
         $item_details = array();
     
@@ -685,12 +685,12 @@ class wcal_common {
         $prod_name      = get_post( $product_id );
         $product_name   = $prod_name->post_title;  
 
-        if ( isset( $v->variation_id ) && '' != $v->variation_id ){
+        if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
             $variation_id               = $v->variation_id;
             $variation                  = wc_get_product( $variation_id );
             $name                       = $variation->get_formatted_name() ;
             $explode_all                = explode ( "&ndash;", $name );
-            if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
+            if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
                 $wcap_sku = '';
                 if ( $variation->get_sku() ) {
                     $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
@@ -700,14 +700,14 @@ class wcal_common {
                 $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
                         
                 $pro_name_variation = (array) $add_product_name;
-            }else{
+            } else {
                 $pro_name_variation = array_slice( $explode_all, 1, -1 );
             }
             $product_name_with_variable = '';
             $explode_many_varaition     = array();
             foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
                 $explode_many_varaition = explode ( ",", $pro_name_variation_value );
-                if( !empty( $explode_many_varaition ) ) {
+                if ( ! empty( $explode_many_varaition ) ) {
                     foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
                         $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
                     }

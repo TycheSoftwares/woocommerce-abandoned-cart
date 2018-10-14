@@ -85,75 +85,75 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
      */
 	function save_data() {		
         if ( ! is_user_logged_in() ) {            
-            if( session_id() === '' ) {
+            if( '' === session_id() ) {
                 //session has not started
                 session_start();
             }            
             global $wpdb, $woocommerce;    
-            if ( isset($_POST['billing_first_name']) && $_POST['billing_first_name'] != '' ){
+            if ( isset( $_POST['billing_first_name'] ) && '' != $_POST['billing_first_name'] ) {
                 $_SESSION['billing_first_name'] = $_POST['billing_first_name'];
             }            
-            if ( isset($_POST['billing_last_name']) && $_POST['billing_last_name'] != '' ) {
+            if ( isset( $_POST['billing_last_name'] ) && '' != $_POST['billing_last_name'] ) {
                 $_SESSION['billing_last_name'] = $_POST['billing_last_name'];
             }            
-            if ( isset($_POST['billing_company']) && $_POST['billing_company'] != '' ) {
+            if ( isset( $_POST['billing_company'] ) && '' != $_POST['billing_company'] ) {
                 $_SESSION['billing_company'] = $_POST['billing_company'];
             }            
-            if ( isset($_POST['billing_address_1']) && $_POST['billing_address_1'] != '' ) {
+            if ( isset( $_POST['billing_address_1'] ) && '' != $_POST['billing_address_1'] ) {
                 $_SESSION['billing_address_1'] = $_POST['billing_address_1'];
             }    
-            if ( isset($_POST['billing_address_2']) && $_POST['billing_address_2'] != '' ) {
+            if ( isset( $_POST['billing_address_2'] ) && '' != $_POST['billing_address_2'] ) {
                 $_SESSION['billing_address_2'] = $_POST['billing_address_2'];
             }            
-            if ( isset($_POST['billing_city']) && $_POST['billing_city'] != '' ) {
+            if ( isset( $_POST['billing_city'] ) && '' != $_POST['billing_city'] ) {
                 $_SESSION['billing_city'] = $_POST['billing_city'];
             }            
-            if ( isset($_POST['billing_state']) && $_POST['billing_state'] != '' ) {
+            if ( isset( $_POST['billing_state'] ) && '' != $_POST['billing_state'] ) {
                 $_SESSION['billing_state'] = $_POST['billing_state'];
             }            
-            if ( isset($_POST['billing_postcode']) && $_POST['billing_postcode'] != '' ) {
+            if ( isset( $_POST['billing_postcode'] ) && '' != $_POST['billing_postcode'] ) {
                 $_SESSION['billing_postcode'] = $_POST['billing_postcode'];
             }            
-            if ( isset($_POST['billing_country']) && $_POST['billing_country'] != '' ) {
+            if ( isset( $_POST['billing_country'] ) && '' != $_POST['billing_country'] ) {
                 $_SESSION['billing_country'] = $_POST['billing_country'];
             }            
-            if ( isset($_POST['billing_email']) && $_POST['billing_email'] != '' ) {
+            if ( isset( $_POST['billing_email'] ) && '' != $_POST['billing_email'] ) {
                 $_SESSION['billing_email'] = $_POST['billing_email'];
             }            
-            if ( isset($_POST['billing_phone']) && $_POST['billing_phone'] != '' ) {
+            if ( isset( $_POST['billing_phone'] ) && '' != $_POST['billing_phone'] ) {
                 $_SESSION['billing_phone'] = $_POST['billing_phone'];
             }            
-            if ( isset($_POST['order_notes']) && $_POST['order_notes'] != '' ) {
+            if ( isset( $_POST['order_notes'] ) && '' != $_POST['order_notes'] ) {
                 $_SESSION['order_notes'] = $_POST['order_notes'];
             }           
-            if( isset( $_POST['ship_to_billing'] ) && $_POST['ship_to_billing'] != '' ) {
+            if( isset( $_POST['ship_to_billing'] ) && '' != $_POST['ship_to_billing'] ) {
                 $_SESSION['ship_to_billing'] = $_POST['ship_to_billing'];
             }            
-            if ( isset($_POST['shipping_first_name']) && $_POST['shipping_first_name'] != '' ) {
+            if ( isset( $_POST['shipping_first_name'] ) && '' != $_POST['shipping_first_name'] ) {
                 $_SESSION['shipping_first_name'] = $_POST['shipping_first_name'];
             }            
-            if ( isset($_POST['shipping_last_name']) && $_POST['shipping_last_name'] != '' ) {
+            if ( isset( $_POST['shipping_last_name'] ) && '' != $_POST['shipping_last_name'] ) {
             $_SESSION['shipping_last_name'] = $_POST['shipping_last_name'];
             }            
-            if ( isset($_POST['shipping_company']) && $_POST['shipping_company'] != '' ) {
+            if ( isset( $_POST['shipping_company'] ) && '' != $_POST['shipping_company'] ) {
                 $_SESSION['shipping_company'] = $_POST['shipping_company'];
             }            
-            if ( isset($_POST['shipping_address_1']) && $_POST['shipping_address_1'] != '' ) {
+            if ( isset( $_POST['shipping_address_1'] ) && '' != $_POST['shipping_address_1'] ) {
             $_SESSION['shipping_address_1'] = $_POST['shipping_address_1'];
             }            
-            if ( isset($_POST['shipping_address_2']) && $_POST['shipping_address_2'] != '' ) {
+            if ( isset( $_POST['shipping_address_2'] ) && '' != $_POST['shipping_address_2'] ) {
                 $_SESSION['shipping_address_2'] = $_POST['shipping_address_2'];
             }            
-            if ( isset($_POST['shipping_city']) && $_POST['shipping_city'] != '' ) {
+            if ( isset( $_POST['shipping_city'] ) && '' != $_POST['shipping_city'] ) {
                 $_SESSION['shipping_city'] = $_POST['shipping_city'];
             }            
-            if ( isset($_POST['shipping_state']) && $_POST['shipping_state'] != '' ) {
+            if ( isset( $_POST['shipping_state'] ) && '' != $_POST['shipping_state'] ) {
                 $_SESSION['shipping_state'] = $_POST['shipping_state'];
             }            
-            if ( isset($_POST['shipping_postcode']) && $_POST['shipping_postcode'] != '' ) {
+            if ( isset( $_POST['shipping_postcode'] ) && '' != $_POST['shipping_postcode'] ) {
                 $_SESSION['shipping_postcode'] = $_POST['shipping_postcode'];
             }            
-            if ( isset($_POST['shipping_country']) && $_POST['shipping_country'] != '' ) {
+            if ( isset( $_POST['shipping_country'] ) && '' != $_POST['shipping_country'] ) {
                 $_SESSION['shipping_country'] = $_POST['shipping_country'];
             }
             // If a record is present in the guest cart history table for the same email id, then delete the previous records
@@ -188,9 +188,9 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
             }
             $shipping_zipcode = $billing_zipcode = '';
     
-            if ( isset( $_SESSION['shipping_postcode'] ) && $_SESSION['shipping_postcode'] != "" ) {
+            if ( isset( $_SESSION['shipping_postcode'] ) && '' != $_SESSION['shipping_postcode'] ) {
                 $shipping_zipcode = $_SESSION['shipping_postcode'];
-            } elseif( isset( $_SESSION['billing_postcode'] ) && $_SESSION['billing_postcode'] != "" ) {
+            } elseif( isset( $_SESSION['billing_postcode'] ) && '' != $_SESSION['billing_postcode'] ) {
                 $shipping_zipcode = $billing_zipcode = $_SESSION['billing_postcode'];
             }			
             $shipping_charges = $woocommerce->cart->shipping_total;			
@@ -206,27 +206,27 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
             $cart_cut_off_time   = $cut_off_time * 60;
             $compare_time        = $current_time - $cart_cut_off_time;
     
-            $query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
-                     WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0' AND user_type = 'GUEST'";			
+            $query   = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
+                        WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0' AND user_type = 'GUEST'";			
             $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id ) );
     
             $cart = array();
     
-            if ( function_exists('WC') ) {
+            if ( function_exists( 'WC' ) ) {
                 $cart['cart'] = WC()->session->cart;
             } else {
                 $cart['cart'] = $woocommerce->session->cart;
             }
     
-        if ( count( $results ) == 0 ) {
-                $get_cookie   = WC()->session->get_session_cookie();
-                $cart_info    = addslashes( json_encode( $cart ) );
+        if ( 0 == count( $results ) ) {
+                $get_cookie = WC()->session->get_session_cookie();
+                $cart_info  = addslashes( json_encode( $cart ) );
                 
-                $query     = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
-                                    WHERE session_id LIKE %s AND cart_ignored = '0' AND recovered_cart = '0' ";
-                $results   = $wpdb->get_results( $wpdb->prepare( $query, $get_cookie[0] ) );
+                $query      = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
+                               WHERE session_id LIKE %s AND cart_ignored = '0' AND recovered_cart = '0' ";
+                $results    = $wpdb->get_results( $wpdb->prepare( $query, $get_cookie[0] ) );
                 
-                if ( count( $results ) == 0 ) {
+                if ( 0 == count( $results ) ) {
                     $insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type, session_id )
                                      VALUES ( '".$user_id."', '".$cart_info."', '".$current_time."', '0', '0', 'GUEST', '".$get_cookie[0] ."' )";
                     $wpdb->query( $insert_query );
@@ -237,23 +237,23 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
                     // $insert_persistent_cart = "INSERT INTO `".$wpdb->prefix."usermeta`( user_id, meta_key, meta_value )
                     //                            VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
                     // $wpdb->query( $insert_persistent_cart );
-                    if( is_multisite() ) {
-                         // get main site's table prefix
-                         $main_prefix = $wpdb->get_blog_prefix(1);
-                         $insert_persistent_cart = "INSERT INTO `" . $main_prefix . "usermeta`( user_id, meta_key, meta_value )
-                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
-                          $wpdb->query( $insert_persistent_cart );
+                    if ( is_multisite() ) {
+                        // get main site's table prefix
+                        $main_prefix            = $wpdb->get_blog_prefix(1);
+                        $insert_persistent_cart = "INSERT INTO `" . $main_prefix . "usermeta`( user_id, meta_key, meta_value )
+                                                   VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
+                        $wpdb->query( $insert_persistent_cart );
 
-                    } else { 
-                          $insert_persistent_cart = "INSERT INTO `" . $wpdb->prefix . "usermeta`( user_id, meta_key, meta_value )
-                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
-                           $wpdb->query( $insert_persistent_cart );
+                    } else {
+                        $insert_persistent_cart = "INSERT INTO `" . $wpdb->prefix . "usermeta`( user_id, meta_key, meta_value )
+                                                   VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
+                        $wpdb->query( $insert_persistent_cart );
                     }
                 } else {
-                    $query_update        = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET user_id = '" . $user_id . "', abandoned_cart_info = '" . $cart_info . "', abandoned_cart_time  = '" . $current_time . "' WHERE session_id ='" . $get_cookie[0] . "' AND cart_ignored='0' ";
+                    $query_update         = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET user_id = '" . $user_id . "', abandoned_cart_info = '" . $cart_info . "', abandoned_cart_time  = '" . $current_time . "' WHERE session_id ='" . $get_cookie[0] . "' AND cart_ignored='0' ";
                     $wpdb->query( $query_update );
-                    $query_update_get    = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
-                                                WHERE user_id ='" . $user_id . "' AND cart_ignored='0' AND session_id ='" . $get_cookie[0] . "' ";
+                    $query_update_get     = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
+                                             WHERE user_id ='" . $user_id . "' AND cart_ignored='0' AND session_id ='" . $get_cookie[0] . "' ";
                     $get_abandoned_record = $wpdb->get_results( $query_update_get );
                     
                     if ( count( $get_abandoned_record ) > 0 ) {
@@ -264,23 +264,23 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
                     $insert_persistent_cart = "INSERT INTO `".$wpdb->prefix."usermeta`( user_id, meta_key, meta_value )
                                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
                     $wpdb->query( $insert_persistent_cart );   
-                    if( is_multisite() ) {
+                    if ( is_multisite() ) {
                      // get main site's table prefix
-                     $main_prefix = $wpdb->get_blog_prefix(1);
+                     $main_prefix            = $wpdb->get_blog_prefix(1);
                      $insert_persistent_cart = "INSERT INTO `" . $main_prefix . "usermeta`( user_id, meta_key, meta_value )
-                        VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
+                                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
                       $wpdb->query( $insert_persistent_cart );
 
                     } else { 
                       $insert_persistent_cart = "INSERT INTO `" . $wpdb->prefix . "usermeta`( user_id, meta_key, meta_value )
                         VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
                        $wpdb->query( $insert_persistent_cart );
+                    }                 
                 }                 
-                }                    
             }
         }
     }
-	
+
     /**
      * It will populate the data on the chekout field if user comes from the abandoned cart reminder emails.
      * @hook woocommerce_checkout_fields
@@ -289,16 +289,16 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
      * @since 2.2
      */
     function guest_checkout_fields( $fields ) {
-       if ( isset( $_SESSION['guest_first_name'] ) && $_SESSION['guest_first_name'] != "" ) {
+       if ( isset( $_SESSION['guest_first_name'] ) && '' != $_SESSION['guest_first_name'] ) {
             $_POST['billing_first_name'] = $_SESSION['guest_first_name'];
         }
-        if ( isset( $_SESSION['guest_last_name'] ) && $_SESSION['guest_last_name'] != "" ) {
+        if ( isset( $_SESSION['guest_last_name'] ) && '' != $_SESSION['guest_last_name'] ) {
             $_POST['billing_last_name'] = $_SESSION['guest_last_name'];
         }
-        if ( isset( $_SESSION['guest_email']) && $_SESSION['guest_email'] != "" ) {
+        if ( isset( $_SESSION['guest_email'] ) && '' != $_SESSION['guest_email'] ) {
             $_POST['billing_email'] = $_SESSION['guest_email'];
         }        
-        if ( isset( $_SESSION['guest_phone']) && $_SESSION['guest_phone'] != "" ) {
+        if ( isset( $_SESSION['guest_phone'] ) && '' != $_SESSION['guest_phone'] ) {
             $_POST['billing_phone'] = $_SESSION['guest_phone'];
         }
     return $fields;

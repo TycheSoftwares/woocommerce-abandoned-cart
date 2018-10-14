@@ -8,7 +8,7 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
+if ( ! class_exists('Wcal_Personal_Data_Export' ) ) {
 
     /**
      * Export Abandoned Carts data in
@@ -64,21 +64,21 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
             
             global $wpdb;
             
-            $done           = false;
-            $page           = (int) $page;
-            $user           = get_user_by( 'email', $email_address ); // Check if user has an ID in the DB to load stored personal data.
-            $data_to_export = array();
+            $done                   = false;
+            $page                   = (int) $page;
+            $user                   = get_user_by( 'email', $email_address ); // Check if user has an ID in the DB to load stored personal data.
+            $data_to_export         = array();
             $blank_cart_info        = '{"cart":[]}';
             $blank_cart_info_guest  = '[]';
             $blank_cart             = '""';   
             
             $user_id = $user ? (int) $user->ID : 0;
             
-            if( $user_id > 0 ) { // registered user
+            if ( $user_id > 0 ) { // registered user
                 
                 $cart_query = "SELECT id FROM `" . $wpdb->prefix . 'ac_abandoned_cart_history_lite' . "`
-                                WHERE user_id = %d AND
-                                user_type = 'REGISTERED' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart'";
+                               WHERE user_id = %d AND
+                               user_type = 'REGISTERED' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart'";
                 
                 $cart_ids = $wpdb->get_results( $wpdb->prepare( $cart_query, $user_id ) );
             } else { // guest carts
@@ -87,7 +87,7 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                 
                 $guest_user_ids = $wpdb->get_results( $wpdb->prepare( $guest_query, $email_address ) );
                 
-                if( count( $guest_user_ids ) == 0 ) 
+                if ( 0 == count( $guest_user_ids ) ) 
                     return array(
                        'data' => array(),
                        'done' => true,
@@ -95,11 +95,11 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                 
                 $cart_ids = array();
                 
-                foreach( $guest_user_ids as $ids ) {
+                foreach ( $guest_user_ids as $ids ) {
                     // get the cart data
                     $cart_query = "SELECT id, abandoned_cart_info AS cart_info FROM `" . $wpdb->prefix . 'ac_abandoned_cart_history_lite' . "`
-                                    WHERE user_id = %d AND
-                                    user_type = 'GUEST'";
+                                   WHERE user_id = %d AND
+                                   user_type = 'GUEST'";
                     
                     $cart_data = $wpdb->get_results( $wpdb->prepare( $cart_query, $ids->id ) );
                     
@@ -112,12 +112,12 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                 $cart_chunks = array_chunk( $cart_ids, 10, true );
                 
                 $cart_export = isset( $cart_chunks[ $page - 1 ] ) ? $cart_chunks[ $page - 1 ] : array();
-                if( count( $cart_export ) > 0 ) {
+                if ( count( $cart_export ) > 0 ) {
                     
                     foreach ( $cart_export as $abandoned_ids ) {
                     
                         $cart_id = $abandoned_ids->id;
-                        if( count( $abandoned_ids->id ) > 0 ) {
+                        if ( count( $abandoned_ids->id ) > 0 ) {
                             $data_to_export[] = array(
                                 'group_id'    => 'wcal_carts',
                                 'group_label' => __( 'Abandoned Carts', 'woocommerce-abandoned-cart' ),
@@ -150,18 +150,18 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
          * @since  4.9
          */
         static function get_cart_data( $abandoned_id ) {
-            $personal_data   = array();
+            $personal_data = array();
             
             global $wpdb;
             
-            $cart_query = "SELECT * FROM `" . $wpdb->prefix . 'ac_abandoned_cart_history_lite' . "`
-                            WHERE id = %d";
+            $cart_query   = "SELECT * FROM `" . $wpdb->prefix . 'ac_abandoned_cart_history_lite' . "`
+                             WHERE id = %d";
             $cart_details = $wpdb->get_results( $wpdb->prepare( $cart_query, $abandoned_id ) );
             $cart_details = $cart_details[0];
-            $user_id = $cart_details->user_id;
-            $user_type = $cart_details->user_type;
+            $user_id      = $cart_details->user_id;
+            $user_type    = $cart_details->user_type;
 
-           if( $user_type == 'GUEST' ) {
+           if ( $user_type == 'GUEST' ) {
 
             $cart_details_to_export = apply_filters( 'wcal_personal_export_cart_details_prop', array(
                 'cart_id'                    => __( 'Abandoned Cart ID', 'woocommerce-abandoned-cart' ),
@@ -190,16 +190,16 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
             $cart_data = json_decode( stripslashes( $cart_details->abandoned_cart_info ) );
             $cart_info = $cart_data->cart;
             
-            if( count( $cart_info ) > 0 ) {
+            if ( count( $cart_info ) > 0 ) {
                 $cart_details_formatted = self::wcal_get_cart_details_export( $cart_info );
             }
             
-            if( $user_type == 'GUEST' ) {
+            if ( 'GUEST' == $user_type ) {
                 $guest_details = self::wcal_get_guest_personal_info( $user_id );
             }
-            foreach( $cart_details_to_export as $prop => $name ) {
+            foreach ( $cart_details_to_export as $prop => $name ) {
                 
-                switch( $prop ) {
+                switch ( $prop ) {
                     case 'cart_id':
                         $value = $cart_details->id;
                         break;
@@ -225,8 +225,8 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                     case 'total':
                         $total = 0;
                         
-                        if( count( $cart_info ) > 0 ) {
-                            foreach( $cart_info as $k => $v ) {
+                        if ( count( $cart_info ) > 0 ) {
+                            foreach ( $cart_info as $k => $v ) {
                         
                                 $total += $cart_details_formatted[$k][ 'item_total' ];
                             }
@@ -236,8 +236,8 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                     case 'items':
                         $value = '';
                         
-                        if( count( $cart_info ) > 0 ) {
-                            foreach( $cart_info as $k => $v ) {
+                        if ( count( $cart_info ) > 0 ) {
+                            foreach ( $cart_info as $k => $v ) {
                         
                                 $product_name = $cart_details_formatted[$k][ 'product_name' ];
                                 $qty = $cart_details_formatted[$k][ 'qty' ];
@@ -248,21 +248,21 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                         break;
                     case 'formatted_billing_address':
                         
-                        if( $user_type == 'REGISTERED' ) { // registered user
+                        if ( $user_type == 'REGISTERED' ) { // registered user
                             
                             $billing = wcal_common::wcal_get_billing_details( $user_id );
                             $value = get_user_meta( $user_id, 'billing_first_name', true ); // First Name
                             $value .= ' ' . get_user_meta( $user_id, 'billing_last_name', true ); // Last Name 
-                            if( count( $billing ) > 0 ) {
-                                foreach( $billing as $details ) {
-                                    if( $details != '' ) {
+                            if ( count( $billing ) > 0 ) {
+                                foreach ( $billing as $details ) {
+                                    if ( '' != $details ) {
                                         $value .= ",$details ";
                                     } 
                                 }
                                 
                             }
-                        } elseif ( $user_type == 'GUEST' ) {
-                            if( count( $guest_details ) > 0 ) {
+                        } elseif ( 'GUEST' == $user_type ) {
+                            if ( count( $guest_details ) > 0 ) {
                                 $value = $guest_details->billing_first_name; // First Name
                                 $value .= ' ' . $guest_details->billing_last_name; // Last Name
                             }
@@ -270,10 +270,10 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                         break;
                     
                     case 'billing_email':
-                        if( $user_type == 'REGISTERED' ) { // registered user
+                        if ( 'REGISTERED' == $user_type ) { // registered user
                             $value = get_user_meta( $user_id, $prop, true );
-                        } else if( $user_type == 'GUEST' ) {
-                            if( count( $guest_details ) > 0 ) {
+                        } else if ( 'GUEST' == $user_type ) {
+                            if ( count( $guest_details ) > 0 ) {
                                 $value = $guest_details->$prop; 
                             }
                         }
@@ -286,7 +286,7 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                 $value = apply_filters( 'wcal_personal_export_cart_details_prop_value', $value, $prop, $cart_details );
                 
                 $personal_data[] = array( 
-                    'name' => $name,
+                    'name'  => $name,
                     'value' => $value,
                 );
             
@@ -309,12 +309,12 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
             global $wpdb;
             $guest_details = array();
             
-            $guest_query = "SELECT billing_first_name, billing_last_name, email_id AS billing_email, phone AS billing_phone FROM `" . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite' . "`
-                            WHERE id = %d";
+            $guest_query   = "SELECT billing_first_name, billing_last_name, email_id AS billing_email, phone AS billing_phone FROM `" . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite' . "`
+                              WHERE id = %d";
             
             $guest_details = $wpdb->get_results( $wpdb->prepare( $guest_query, $user_id ) );
             
-            if( is_array( $guest_details ) && count( $guest_details ) > 0 ) {
+            if ( is_array( $guest_details ) && count( $guest_details ) > 0 ) {
                 $guest_details = $guest_details[0];
             }
             
@@ -333,10 +333,10 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
             
             $cart_details = array();
              
-            if( count( $cart_info ) > 0 ) {
+            if ( count( $cart_info ) > 0 ) {
                     
                 $cart_total = 0;
-                foreach( $cart_info as $k => $item_detail ) {
+                foreach ( $cart_info as $k => $item_detail ) {
                         
                     // Qty
                     $qty = $item_detail->quantity;
@@ -347,9 +347,9 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                     $product_name   = $prod_obj->get_name();
                      
                     // Variation Name
-                    if( isset( $item_detail->variation_id ) && $item_detail->variation_id > 0 ) {
-                        $variation_id = $item_detail->variation_id;
-                        $variation = wc_get_product( $variation_id );
+                    if ( isset( $item_detail->variation_id ) && $item_detail->variation_id > 0 ) {
+                        $variation_id   = $item_detail->variation_id;
+                        $variation      = wc_get_product( $variation_id );
                         $variation_name = $variation->get_name();
                          
                         $product_name = $variation_name;
@@ -362,9 +362,9 @@ if ( !class_exists('Wcal_Personal_Data_Export' ) ) {
                     } 
                      
                     // Populate the array
-                    $cart_details[ $k ][ 'qty' ] = $qty;
+                    $cart_details[ $k ][ 'qty' ]          = $qty;
                     $cart_details[ $k ][ 'product_name' ] = $product_name;
-                    $cart_details[ $k ][ 'item_total' ] = $item_total;
+                    $cart_details[ $k ][ 'item_total' ]   = $item_total;
                      
                     $cart_total += $item_total;
                 }

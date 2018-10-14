@@ -22,7 +22,7 @@ class Wcal_Admin_Notice {
      */
     public static function wcal_show_db_update_notice(){
 
-        if( isset( $_GET['ac_update'] ) && $_GET['ac_update'] == 'email_templates' ){
+        if( isset( $_GET['ac_update'] ) && 'email_templates' == $_GET['ac_update'] ) {
             return;
         }
 

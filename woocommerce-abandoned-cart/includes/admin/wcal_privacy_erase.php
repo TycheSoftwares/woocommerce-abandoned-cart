@@ -8,7 +8,7 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( !class_exists('Wcal_Personal_Data_Eraser' ) ) {
+if ( ! class_exists('Wcal_Personal_Data_Eraser' ) ) {
 
     /**
      * Export Abandoned Carts data in
@@ -39,7 +39,7 @@ if ( !class_exists('Wcal_Personal_Data_Eraser' ) ) {
             // Add our eraser and it's callback function
             $eraser_list[ 'wcal_carts' ] = array( 
                 'eraser_friendly_name' => __( 'Abandoned & Recovered Carts', 'woocommerce-abandoned-cart' ),
-                'callback'               => array( 'Wcal_Personal_Data_Eraser', 'wcal_data_eraser' )
+                'callback'             => array( 'Wcal_Personal_Data_Eraser', 'wcal_data_eraser' )
             );
              
             $erasers = array_merge( $erasers, $eraser_list );
@@ -86,7 +86,7 @@ if ( !class_exists('Wcal_Personal_Data_Eraser' ) ) {
                 
                 $guest_user_ids = $wpdb->get_results( $wpdb->prepare( $guest_query, $email_address ) );
                 
-                if( count( $guest_user_ids ) == 0 ) {
+                if ( 0 == count( $guest_user_ids ) ) {
                     return array( 'messages' => array( __( 'No personal data found for any abandoned carts.', 'woocommerce-abandoned-cart' ) ),
                             'items_removed' => false,
                             'items_retained' => true,       
@@ -98,8 +98,8 @@ if ( !class_exists('Wcal_Personal_Data_Eraser' ) ) {
                 foreach( $guest_user_ids as $ids ) {
                     // get the cart data
                     $cart_query = "SELECT id FROM `" . $wpdb->prefix . 'ac_abandoned_cart_history_lite' . "`
-                                    WHERE user_id = %d AND
-                                    user_type = 'GUEST'";
+                                   WHERE user_id = %d AND
+                                   user_type = 'GUEST'";
                     
                     $cart_data = $wpdb->get_results( $wpdb->prepare( $cart_query, $ids->id ) );
             
@@ -156,7 +156,7 @@ if ( !class_exists('Wcal_Personal_Data_Eraser' ) ) {
 
             // list the props we'll be anonymizing for cart history table
             $props_to_remove_cart = apply_filters( 'wcal_privacy_remove_cart_personal_data_props', array(
-                'session_id'          => 'numeric_id',
+                'session_id' => 'numeric_id',
                 ), 
                 $abandoned_id 
             );
@@ -172,8 +172,8 @@ if ( !class_exists('Wcal_Personal_Data_Eraser' ) ) {
             if ( ! empty( $props_to_remove_cart ) && is_array( $props_to_remove_cart ) ) {
                 
                 // get the data from cart history 
-                $cart_query = "SELECT session_id, user_type, user_id FROM `" . $wpdb->prefix . 'ac_abandoned_cart_history_lite' . "`
-                                WHERE id = %d";
+                $cart_query   = "SELECT session_id, user_type, user_id FROM `" . $wpdb->prefix . 'ac_abandoned_cart_history_lite' . "`
+                                 WHERE id = %d";
                 $cart_details = $wpdb->get_results( $wpdb->prepare( $cart_query, $abandoned_id ) );
                 
                 if( count( $cart_details ) > 0 ) {
@@ -182,7 +182,7 @@ if ( !class_exists('Wcal_Personal_Data_Eraser' ) ) {
                     return;
                 }
 
-                $user_id = $cart_details->user_id;
+                $user_id   = $cart_details->user_id;
                 $user_type = $cart_details->user_type;
                 
                 foreach ( $props_to_remove_cart as $prop => $data_type ) {
@@ -207,14 +207,14 @@ if ( !class_exists('Wcal_Personal_Data_Eraser' ) ) {
             }
             
             // check whether it's a guest user
-            if( $user_type == 'GUEST' && ! empty( $props_to_remove_guest ) && is_array( $props_to_remove_guest ) ) {
+            if( 'GUEST' == $user_type && ! empty( $props_to_remove_guest ) && is_array( $props_to_remove_guest ) ) {
 
                 // get the data from guest cart history
-                $guest_query = "SELECT billing_first_name, billing_last_name, phone, email_id FROM `" . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite' . "`
-                                WHERE id = %d";
+                $guest_query   = "SELECT billing_first_name, billing_last_name, phone, email_id FROM `" . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite' . "`
+                                  WHERE id = %d";
                 $guest_details = $wpdb->get_results( $wpdb->prepare( $guest_query, $user_id ) );
                 
-                if( count( $guest_details ) > 0 ) {
+                if ( count( $guest_details ) > 0 ) {
                     $guest_details = $guest_details[0];
                 } else {
                     return;
