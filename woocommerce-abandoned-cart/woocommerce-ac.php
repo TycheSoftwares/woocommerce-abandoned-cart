@@ -361,11 +361,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          * @since 3.4
          */    
         public static function wcal_order_placed( $order_id ) {
-            if( session_id() === '' ) {
-                //session has not started
-                session_start();
-            }
-            
+
             /**
              * When user comes from the abandoned cart reminder email this conditon will be executed.
              * It will check the guest uers data in further 3 conditions.
@@ -375,15 +371,15 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
              * 3. When user places the orde as guest user. 
              * It will consider the old cart of the customer as the recovered order and delete the unwanted new records.
              */
-            if ( isset( $_SESSION['email_sent_id'] ) && $_SESSION['email_sent_id'] !='' ) {
+            $email_sent_id = wcal_common::wcal_get_cart_session( 'email_sent_id' );
+
+            if ( $email_sent_id !='' ) {
                 global $woocommerce, $wpdb;
 
                 $wcal_history_table_name    = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
                 $wcal_guest_table_name      = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
                 $wcal_sent_email_table_name = $wpdb->prefix . 'ac_sent_history_lite';
 
-                $email_sent_id      = $_SESSION['email_sent_id'];
-                
                 $get_ac_id_query    = "SELECT abandoned_order_id FROM ". $wcal_sent_email_table_name ." WHERE id = %d";
                 $get_ac_id_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
                 
@@ -397,15 +393,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 /*if user becomes the registered user */
                 if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
 
-                    $abandoned_cart_id_new_user = '';
-                    if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && '' != $_SESSION['abandoned_cart_id_lite'] ) { 
-                        $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
-                    }
+                    $abandoned_cart_id_new_user = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
 
-                    $wcal_user_id_of_guest = '';
-                    if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
-                        $wcal_user_id_of_guest      = $_SESSION['user_id'];
-                    }
+                    $wcal_user_id_of_guest = wcal_common::wcal_get_cart_session( 'user_id' );
 
                     /* delete the guest record. As it become the logged in user */
 
@@ -433,10 +423,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                      $_POST['createaccount'] != ''    && 
                      'no' == $wcal_account_password_check ) {
 
-                    $abandoned_cart_id_new_user = '';
-                    if ( isset ( $_SESSION['abandoned_cart_id_lite'] ) && '' != $_SESSION['abandoned_cart_id_lite'] ) {
-                        $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
-                    }
+                    $abandoned_cart_id_new_user = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
+
                     $wcal_user_id_of_guest = '';
                     if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
                         $wcal_user_id_of_guest      = $_SESSION['user_id'];
@@ -480,7 +468,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     add_post_meta( $order_id , 'wcal_recover_order_placed', $abandoned_order_id );
                 }
 
-            }else if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && $_SESSION['abandoned_cart_id_lite'] != '' ) {
+            }else if ( wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' ) != '' ) {
 
                 /**
                  * In this codition we are cheking that if the order is placed before the cart cut off time then we 
@@ -489,10 +477,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                  * the abandoned cart id. So we will refer this abandoned cart id when order staus is changed
                  * while placing the order.
                  */
-                if( session_id() === '' ){
-                    //session has not started
-                    session_start();
-                }
 
                 global $woocommerce, $wpdb;
 
@@ -502,8 +486,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
                 $current_time   = current_time( 'timestamp' );
                 $wcal_cart_abandoned_time = '';
-                if ( isset( $_SESSION['abandoned_cart_id_lite'] ) && '' != $_SESSION['abandoned_cart_id_lite'] ) {
-                    $wcal_abandoned_cart_id   = $_SESSION['abandoned_cart_id_lite'];
+                $wcal_abandoned_cart_id   = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
+
+                if ( $wcal_abandoned_cart_id != '' ) {
 
                     $get_abandoned_cart_query   = "SELECT abandoned_cart_time FROM `" . $wcal_history_table_name . "` WHERE id = %d ";
                     $get_abandoned_cart_results = $wpdb->get_results( $wpdb->prepare( $get_abandoned_cart_query, $wcal_abandoned_cart_id ) );
@@ -529,8 +514,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
                         if ( isset( $_POST['account_password'] ) && $_POST['account_password'] != '' ) {
 
-                            $abandoned_cart_id_new_user = $_SESSION['abandoned_cart_id_lite'];
-                            $wcal_user_id_of_guest      = $_SESSION['user_id'];
+                            $abandoned_cart_id_new_user = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
+                            $wcal_user_id_of_guest      = wcal_common::wcal_get_cart_session( 'user_id' );
 
                             /* Delete the guest record. As it become the logged in user */
 
@@ -548,9 +533,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             $wpdb->delete( $wcal_history_table_name , array( 'id' => $wcal_abandoned_cart_id ) );
 
                             /* This user id is set for the guest uesrs. */
-                            if ( isset( $_SESSION['user_id'] ) && $_SESSION['user_id'] != '' ) {
+                            if ( wcal_common::wcal_get_cart_session( 'user_id' ) != '' ) {
 
-                                $wcal_user_id_of_guest = $_SESSION['user_id'];
+                                $wcal_user_id_of_guest = wcal_common::wcal_get_cart_session( 'user_id' );
                                 $wpdb->delete( $wcal_guest_table_name,  array( 'id' => $wcal_user_id_of_guest ) );
                             }
                         } 
@@ -1526,11 +1511,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          * @since 1.0
          */ 
         function wcal_store_cart_timestamp() {  
-            
-            if( session_id() === '' ){
-                //session has not started
-                session_start();
-            } 
+
             global $wpdb,$woocommerce;
             $current_time   = current_time( 'timestamp' );
             $cut_off_time   = get_option( 'ac_lite_cart_abandoned_time' );              
@@ -1568,8 +1549,8 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                      VALUES ( %d, %s, %d, %s, %s )";
                     $wpdb->query( $wpdb->prepare( $insert_query, $user_id, $cart_info,$current_time, $cart_ignored, $user_type ) );
                     
-                    $abandoned_cart_id              = $wpdb->insert_id;                 
-                    $_SESSION['abandoned_cart_id_lite'] = $abandoned_cart_id;
+                    $abandoned_cart_id = $wpdb->insert_id;
+                    wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
                 } elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {
                     
                     $wcal_woocommerce_persistent_cart = version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ; 
@@ -1591,7 +1572,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "yes" ) );
                         
                         $abandoned_cart_id                  = $wpdb->insert_id;                     
-                        $_SESSION['abandoned_cart_id_lite'] = $abandoned_cart_id;                       
+                        wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
                     } else {    
                         update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "no" ) );
                     }
@@ -1610,17 +1591,13 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $get_abandoned_record = $wpdb->get_results( $query_update );
                     if ( count( $get_abandoned_record ) > 0 ) {
                         $abandoned_cart_id   = $get_abandoned_record[0]->id;
-                        $_SESSION['abandoned_cart_id_lite'] = $abandoned_cart_id;
+                        wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
                     }
                 }
             } else { 
                 //start here guest user                 
-                if ( isset( $_SESSION['user_id'] ) ) {                  
-                    $user_id = $_SESSION['user_id'];
-                } else {
-                    $user_id = "";
-                }
-                
+                $user_id = wcal_common::wcal_get_cart_session( 'user_id' );
+
                 $query   = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0' AND user_id != '0'";
                 $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id ) );
                 $cart    = array();
@@ -1788,7 +1765,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $link_decode             = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $cryptKey, 256 );                          
                 $sent_email_id_pos       = strpos( $link_decode, '&' );               
                 $email_sent_id           = substr( $link_decode , 0, $sent_email_id_pos );
-                $_SESSION['email_sent_id'] = $email_sent_id;
+
+                wcal_common::wcal_set_cart_session( 'email_sent_id', $email_sent_id );
+                set_transient( 'wcal_email_sent_id', $email_sent_id, 5 );
+
                 $url_pos                 = strpos( $link_decode, '=' );
                 $url_pos                 = $url_pos + 1;
                 $url                     = substr( $link_decode, $url_pos );             
@@ -1814,10 +1794,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $query_cart    = "SELECT recovered_cart FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id = %d";
                     $results       = $wpdb->get_results( $wpdb->prepare( $query_cart, $user_id ) );                 
                     if ( $results_guest  && $results[0]->recovered_cart == '0' ) {
-                        $_SESSION['guest_first_name'] = $results_guest[0]->billing_first_name;
-                        $_SESSION['guest_last_name']  = $results_guest[0]->billing_last_name;
-                        $_SESSION['guest_email']      = $results_guest[0]->email_id;
-                        $_SESSION['user_id']          = $user_id;
+                        wcal_common::wcal_set_cart_session( 'guest_first_name', $results_guest[0]->billing_first_name );
+                        wcal_common::wcal_set_cart_session( 'guest_last_name', $results_guest[0]->billing_last_name );
+                        wcal_common::wcal_set_cart_session( 'guest_email', $results_guest[0]->email_id );
+                        wcal_common::wcal_set_cart_session( 'user_id', $user_id );
                     } else {
                         if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
                             wp_redirect( get_permalink( wc_get_page_id( 'shop' ) ) );
@@ -1853,9 +1833,9 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          * @since 1.0
          */   
         function wcal_load_guest_persistent_cart() {                
-            if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
+            if ( wcal_common::wcal_get_cart_session( 'user_id' ) != '' ) {
                 global $woocommerce;
-                $saved_cart = json_decode( get_user_meta( $_SESSION['user_id'], '_woocommerce_persistent_cart',true ), true );
+                $saved_cart = json_decode( get_user_meta( wcal_common::wcal_get_cart_session( 'user_id' ), '_woocommerce_persistent_cart',true ), true );
                 $c          = array();
                 $cart_contents_total = $cart_contents_weight = $cart_contents_count = $cart_contents_tax = $total = $subtotal = $subtotal_ex_tax = $tax_total = 0;
                 if ( count( $saved_cart ) > 0 ) {
@@ -2063,14 +2043,15 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 delete_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $get_sent_email_id_of_order );
             }
             $user_id    = get_current_user_id();
-            $sent_email = '';
-            if( isset( $_SESSION['email_sent_id'] ) ){
-                $sent_email = $_SESSION['email_sent_id'];
-            }
+            $sent_email = wcal_common::wcal_get_cart_session( 'email_sent_id' );
+
             if( $user_id == "" ) {
-                $user_id = $_SESSION['user_id'];
+                $user_id = wcal_common::wcal_get_cart_session( 'user_id' );
                 //  Set the session variables to blanks
-                $_SESSION['guest_first_name'] = $_SESSION['guest_last_name'] = $_SESSION['guest_email'] = $_SESSION['user_id'] = "";
+                wcal_common::wcal_unset_cart_session( 'guest_first_name' );
+                wcal_common::wcal_unset_cart_session( 'guest_last_name' );
+                wcal_common::wcal_unset_cart_session( 'guest_email' );
+                wcal_common::wcal_unset_cart_session( 'user_id' );
             }               
             delete_user_meta( $user_id, '_woocommerce_ac_persistent_cart_time' );
             delete_user_meta( $user_id, '_woocommerce_ac_persistent_cart_temp_time' );      
@@ -2168,12 +2149,6 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 add_filter( 'tiny_mce_before_init',  array( &$this, 'wcal_format_tiny_MCE' ) );
                 add_filter( 'mce_buttons',          array( &$this, 'wcal_filter_mce_button' ) );
                 add_filter( 'mce_external_plugins', array( &$this, 'wcal_filter_mce_plugin' ) );
-            }
-            if ( isset( $_GET['page'] ) && 'woocommerce_ac_page' == $_GET['page'] ) {
-                if( session_id() === '' ){
-                    //session has not started
-                    session_start();
-                }
             }
         }
         
