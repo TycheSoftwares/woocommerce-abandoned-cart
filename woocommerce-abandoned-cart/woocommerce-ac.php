@@ -2230,20 +2230,21 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          * @since 1.0
          */
         function wcal_enqueue_scripts_js( $hook ) {
+            global $pagenow, $woocommerce;
+             $page = isset( $_GET['page'] ) ? $_GET['page'] : '';
             
-            if ( $hook != 'woocommerce_page_woocommerce_ac_page' ) {
+            if (  $page === '' || $page !== 'woocommerce_ac_page' ) {
                 return;
             } else {                
                 wp_enqueue_script( 'jquery' );
-                wp_enqueue_script( 
-                                   'jquery-ui-min',
-                                   '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js',
-                                   '',
-                                   '',
-                                   false
+                wp_enqueue_script(
+                    'jquery-ui-min',
+                     plugins_url( '/assets/js/jquery-ui.min.js', __FILE__ ),
+                    '',
+                    '',
+                    false
                 );
                 wp_enqueue_script( 'jquery-ui-datepicker' );
-                
                 wp_enqueue_script(
                                    'jquery-tip',
                                    plugins_url( '/assets/js/jquery.tipTip.minified.js', __FILE__ ),
@@ -2251,6 +2252,7 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                    '',
                                    false
                 );
+
                 wp_register_script( 'woocommerce_admin', plugins_url() . '/woocommerce/assets/js/admin/woocommerce_admin.js', array( 'jquery', 'jquery-ui-widget', 'jquery-ui-core' ) );
                 wp_enqueue_script( 'woocommerce_admin' );
                 ?>
@@ -2306,17 +2308,25 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          * @since 1.0
          */
         function wcal_enqueue_scripts_css( $hook ) {
+
+            global $pagenow;
+
+            $page = isset( $_GET['page'] ) ? $_GET['page'] : '';
+
             if ( $hook != 'woocommerce_page_woocommerce_ac_page' ) {
                 return;
-            } else {
-                wp_enqueue_style( 'jquery-ui', "//ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" , '', '', false );                  
+            } elseif ( $page === 'woocommerce_ac_page' ) {
+                
+                wp_enqueue_style( 'jquery-ui',                plugins_url() . '/woocommerce-abandoned-cart/assets/css/jquery-ui.css', '', '', false );               
                 wp_enqueue_style( 'woocommerce_admin_styles', plugins_url() . '/woocommerce/assets/css/admin.css' );
-                wp_enqueue_style( 'jquery-ui-style', '//ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
+                
+                wp_enqueue_style( 'jquery-ui-style',          plugins_url() . '/woocommerce-abandoned-cart/assets/css/jquery-ui-smoothness.css' );
                 wp_enqueue_style( 'abandoned-orders-list', plugins_url() . '/woocommerce-abandoned-cart/assets/css/view.abandoned.orders.style.css' );
                 wp_enqueue_style( 'wcal_email_template', plugins_url() . '/woocommerce-abandoned-cart/assets/css/wcal_template_activate.css' );
             
             }
         }       
+       
 
         /**
          * When we have added the wp list table for the listing then while deleting the record with the bulk action it was showing 
