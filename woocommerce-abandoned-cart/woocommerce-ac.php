@@ -62,23 +62,6 @@ if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
 }
 
 /**
- * Hook into that action that'll fire every 15 minutes 
- */
-add_action( 'woocommerce_ac_send_email_action', 'wcal_send_email_cron' );
-
-/**
- * It will add the wcal_send_email.php file which is responsible for sending the abandoned cart reminde emails.
- * @hook woocommerce_ac_send_email_action
- * @since 1.3
- * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
- */
-function wcal_send_email_cron() {
-    //require_once( ABSPATH.'wp-content/plugins/woocommerce-abandoned-cart/cron/send_email.php' );
-    $plugin_dir_path = plugin_dir_path( __FILE__ );
-    require_once( $plugin_dir_path . 'cron/wcal_send_email.php' );
-}
-
-/**
  * This function will delete plugin tables, options and usermeta when we delete the plugin.
  * @hook register_uninstall_hook
  * @globals mixed $wpdb
@@ -235,6 +218,10 @@ if( !class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             
             // Initialize settings
             register_activation_hook ( __FILE__,                        array( &$this, 'wcal_activate' ) );
+
+            // Background Processing for Cron
+            require_once( 'cron/wcal_send_email.php' );
+            require_once( 'includes/background-processes/wcal_process_base.php' );
             
             // WordPress Administration Menu 
             add_action ( 'admin_menu',                                  array( &$this, 'wcal_admin_menu' ) );

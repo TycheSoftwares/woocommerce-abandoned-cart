@@ -715,6 +715,4 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
     }   
 }   
 $woocommerce_abandon_cart_cron = new woocommerce_abandon_cart_cron();
-$woocommerce_abandon_cart_cron->wcal_send_email_notification();
-
 ?>
