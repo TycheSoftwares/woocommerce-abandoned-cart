@@ -26,15 +26,15 @@ class wcal_delete_bulk_action_handler {
                                 WHERE id = '$abandoned_cart_id' ";
         $results_get_user_id = $wpdb->get_results( $get_user_id );
         $user_id_of_guest    = $results_get_user_id[0]->user_id;
-        
+
         $query_delete        = "DELETE FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` 
                                 WHERE id = '$abandoned_cart_id' ";
         $results_delete      = $wpdb->get_results( $query_delete );
                
         if ( $user_id_of_guest >= '63000000' ) {
-            $guest_query_delete   = "DELETE FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` 
-                                    WHERE id = '" . $user_id_of_guest . "'";
-            $results_guest = $wpdb->get_results( $guest_query_delete );
+            $guest_query_delete = "DELETE FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` 
+                                   WHERE id = '" . $user_id_of_guest . "'";
+            $results_guest      = $wpdb->get_results( $guest_query_delete );
             //guest user
         }
         wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&wcal_deleted=YES' ) );  
@@ -82,23 +82,23 @@ class wcal_delete_bulk_action_handler {
          */
         public static function wcal_delete_ac_carts( $value, $cart_update_time ) {
             global $wpdb;
-            $delete_ac_after_days      = get_option( 'ac_lite_delete_abandoned_order_days' );
-            if ( '' != $delete_ac_after_days ){
+            $delete_ac_after_days = get_option( 'ac_lite_delete_abandoned_order_days' );
+            if ( '' != $delete_ac_after_days ) {
                 $delete_ac_after_days_time = $delete_ac_after_days * 86400;
                 $current_time              = current_time( 'timestamp' );
                 $check_time                = $current_time - $cart_update_time;
 
-                if ( $check_time > $delete_ac_after_days_time && $delete_ac_after_days_time != 0 && $delete_ac_after_days_time != "" ) {
-                    $abandoned_id                = $value->id;
-                    $query_delete_sent_history   = "DELETE FROM `" . $wpdb->prefix . "ac_sent_history_lite" . "` WHERE abandoned_order_id = '$abandoned_id' ";
-                    $delete_sent_history         = $wpdb->get_results( $query_delete_sent_history );
+                if ( $check_time > $delete_ac_after_days_time && 0 != $delete_ac_after_days_time && '' != $delete_ac_after_days_time ) {
+                    $abandoned_id              = $value->id;
+                    $query_delete_sent_history = "DELETE FROM `" . $wpdb->prefix . "ac_sent_history_lite" . "` WHERE abandoned_order_id = '$abandoned_id' ";
+                    $delete_sent_history       = $wpdb->get_results( $query_delete_sent_history );
 
-                    $user_id               = $value->user_id;
-                    $query                 = "DELETE FROM `" .  $wpdb->prefix . "ac_abandoned_cart_history_lite" . "` WHERE user_id = '$user_id' AND abandoned_cart_time = '$cart_update_time'";
-                    $results2              = $wpdb->get_results ( $query );
+                    $user_id                   = $value->user_id;
+                    $query                     = "DELETE FROM `" .  $wpdb->prefix . "ac_abandoned_cart_history_lite" . "` WHERE user_id = '$user_id' AND abandoned_cart_time = '$cart_update_time'";
+                    $results2                  = $wpdb->get_results ( $query );
 
-                    $query_delete_cart     = "DELETE FROM `" . $wpdb->prefix."usermeta` WHERE user_id = '$user_id' AND meta_key = '_woocommerce_persistent_cart' ";
-                    $results_delete        = $wpdb->get_results ( $query_delete_cart );
+                    $query_delete_cart         = "DELETE FROM `" . $wpdb->prefix."usermeta` WHERE user_id = '$user_id' AND meta_key = '_woocommerce_persistent_cart' ";
+                    $results_delete            = $wpdb->get_results ( $query_delete_cart );
                     if ( $user_id >= '63000000' ) {
                         $guest_query   = "DELETE FROM `" . $wpdb->prefix . "ac_guest_abandoned_cart_history_lite" . "` WHERE id = '" . $user_id . "'";
                         $results_guest = $wpdb->get_results ( $guest_query );

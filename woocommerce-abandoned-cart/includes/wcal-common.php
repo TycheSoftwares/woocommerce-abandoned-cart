@@ -548,7 +548,7 @@ class wcal_common {
     public static function update_templates_table(){
 
         global $wpdb;
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
         $query = "ALTER TABLE " . $wpdb->prefix . "ac_email_templates_lite" . " CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 
@@ -639,7 +639,7 @@ class wcal_common {
             $user_billing_country = $user_billing_country_temp[0];
             if ( isset( $woocommerce->countries->countries[ $user_billing_country ] ) || '' != ( $woocommerce->countries->countries[ $user_billing_country ] ) ) {
                 $user_billing_country = WC()->countries->countries[ $user_billing_country ];
-            }else {
+            } else {
                 $user_billing_country = "";
             }
         }
@@ -651,7 +651,7 @@ class wcal_common {
             $user_billing_state = $user_billing_state_temp[0];
             if ( isset( $woocommerce->countries->states[ $user_billing_country_temp[0] ][ $user_billing_state ] ) ) {
                 $user_billing_state = WC()->countries->states[ $user_billing_country_temp[0] ][ $user_billing_state ];
-            }else {
+            } else {
                 $user_billing_state = "";
             }
         }
@@ -676,7 +676,7 @@ class wcal_common {
         $cart_total        = $item_subtotal = $item_total = $line_subtotal_tax_display =  $after_item_subtotal = $after_item_subtotal_display = 0;
 
         $line_subtotal_tax = '';
-        $quantity_total =  0;
+        $quantity_total    =  0;
 
         $item_details = array();
     
@@ -685,12 +685,12 @@ class wcal_common {
         $prod_name      = get_post( $product_id );
         $product_name   = $prod_name->post_title;  
 
-        if ( isset( $v->variation_id ) && '' != $v->variation_id ){
+        if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
             $variation_id               = $v->variation_id;
             $variation                  = wc_get_product( $variation_id );
             $name                       = $variation->get_formatted_name() ;
             $explode_all                = explode ( "&ndash;", $name );
-            if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
+            if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
                 $wcap_sku = '';
                 if ( $variation->get_sku() ) {
                     $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
@@ -700,14 +700,14 @@ class wcal_common {
                 $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
                         
                 $pro_name_variation = (array) $add_product_name;
-            }else{
+            } else {
                 $pro_name_variation = array_slice( $explode_all, 1, -1 );
             }
             $product_name_with_variable = '';
             $explode_many_varaition     = array();
             foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
                 $explode_many_varaition = explode ( ",", $pro_name_variation_value );
-                if( !empty( $explode_many_varaition ) ) {
+                if ( ! empty( $explode_many_varaition ) ) {
                     foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
                         $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
                     }

@@ -177,7 +177,7 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
             $billing_last_name = wcal_common::wcal_get_cart_session( 'billing_last_name' );
 
             $shipping_zipcode = $billing_zipcode = '';
-    
+
             if ( wcal_common::wcal_get_cart_session( 'shipping_postcode' ) != "" ) {
                 $shipping_zipcode = wcal_common::wcal_get_cart_session( 'shipping_postcode' );
             } elseif( wcal_common::wcal_get_cart_session( 'billing_postcode' ) != "" ) {
@@ -196,27 +196,27 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
             $cart_cut_off_time   = $cut_off_time * 60;
             $compare_time        = $current_time - $cart_cut_off_time;
     
-            $query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
-                     WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0' AND user_type = 'GUEST'";			
+            $query   = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
+                        WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0' AND user_type = 'GUEST'";			
             $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id ) );
     
             $cart = array();
     
-            if ( function_exists('WC') ) {
+            if ( function_exists( 'WC' ) ) {
                 $cart['cart'] = WC()->session->cart;
             } else {
                 $cart['cart'] = $woocommerce->session->cart;
             }
     
-        if ( count( $results ) == 0 ) {
-                $get_cookie   = WC()->session->get_session_cookie();
-                $cart_info    = addslashes( json_encode( $cart ) );
+        if ( 0 == count( $results ) ) {
+                $get_cookie = WC()->session->get_session_cookie();
+                $cart_info  = addslashes( json_encode( $cart ) );
                 
-                $query     = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
-                                    WHERE session_id LIKE %s AND cart_ignored = '0' AND recovered_cart = '0' ";
-                $results   = $wpdb->get_results( $wpdb->prepare( $query, $get_cookie[0] ) );
+                $query      = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
+                               WHERE session_id LIKE %s AND cart_ignored = '0' AND recovered_cart = '0' ";
+                $results    = $wpdb->get_results( $wpdb->prepare( $query, $get_cookie[0] ) );
                 
-                if ( count( $results ) == 0 ) {
+                if ( 0 == count( $results ) ) {
                     $insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type, session_id )
                                      VALUES ( '".$user_id."', '".$cart_info."', '".$current_time."', '0', '0', 'GUEST', '".$get_cookie[0] ."' )";
                     $wpdb->query( $insert_query );
@@ -227,23 +227,23 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
                     // $insert_persistent_cart = "INSERT INTO `".$wpdb->prefix."usermeta`( user_id, meta_key, meta_value )
                     //                            VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
                     // $wpdb->query( $insert_persistent_cart );
-                    if( is_multisite() ) {
-                         // get main site's table prefix
-                         $main_prefix = $wpdb->get_blog_prefix(1);
-                         $insert_persistent_cart = "INSERT INTO `" . $main_prefix . "usermeta`( user_id, meta_key, meta_value )
-                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
-                          $wpdb->query( $insert_persistent_cart );
+                    if ( is_multisite() ) {
+                        // get main site's table prefix
+                        $main_prefix            = $wpdb->get_blog_prefix(1);
+                        $insert_persistent_cart = "INSERT INTO `" . $main_prefix . "usermeta`( user_id, meta_key, meta_value )
+                                                   VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
+                        $wpdb->query( $insert_persistent_cart );
 
-                    } else { 
-                          $insert_persistent_cart = "INSERT INTO `" . $wpdb->prefix . "usermeta`( user_id, meta_key, meta_value )
-                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
-                           $wpdb->query( $insert_persistent_cart );
+                    } else {
+                        $insert_persistent_cart = "INSERT INTO `" . $wpdb->prefix . "usermeta`( user_id, meta_key, meta_value )
+                                                   VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
+                        $wpdb->query( $insert_persistent_cart );
                     }
                 } else {
-                    $query_update        = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET user_id = '" . $user_id . "', abandoned_cart_info = '" . $cart_info . "', abandoned_cart_time  = '" . $current_time . "' WHERE session_id ='" . $get_cookie[0] . "' AND cart_ignored='0' ";
+                    $query_update         = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET user_id = '" . $user_id . "', abandoned_cart_info = '" . $cart_info . "', abandoned_cart_time  = '" . $current_time . "' WHERE session_id ='" . $get_cookie[0] . "' AND cart_ignored='0' ";
                     $wpdb->query( $query_update );
-                    $query_update_get    = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
-                                                WHERE user_id ='" . $user_id . "' AND cart_ignored='0' AND session_id ='" . $get_cookie[0] . "' ";
+                    $query_update_get     = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
+                                             WHERE user_id ='" . $user_id . "' AND cart_ignored='0' AND session_id ='" . $get_cookie[0] . "' ";
                     $get_abandoned_record = $wpdb->get_results( $query_update_get );
                     
                     if ( count( $get_abandoned_record ) > 0 ) {
@@ -254,23 +254,23 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
                     $insert_persistent_cart = "INSERT INTO `".$wpdb->prefix."usermeta`( user_id, meta_key, meta_value )
                                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
                     $wpdb->query( $insert_persistent_cart );   
-                    if( is_multisite() ) {
+                    if ( is_multisite() ) {
                      // get main site's table prefix
-                     $main_prefix = $wpdb->get_blog_prefix(1);
+                     $main_prefix            = $wpdb->get_blog_prefix(1);
                      $insert_persistent_cart = "INSERT INTO `" . $main_prefix . "usermeta`( user_id, meta_key, meta_value )
-                        VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
+                                                VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
                       $wpdb->query( $insert_persistent_cart );
 
                     } else { 
                       $insert_persistent_cart = "INSERT INTO `" . $wpdb->prefix . "usermeta`( user_id, meta_key, meta_value )
                         VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
                        $wpdb->query( $insert_persistent_cart );
+                    }                 
                 }                 
-                }                    
             }
         }
     }
-	
+
     /**
      * It will populate the data on the chekout field if user comes from the abandoned cart reminder emails.
      * @hook woocommerce_checkout_fields

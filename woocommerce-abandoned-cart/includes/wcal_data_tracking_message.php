@@ -5,10 +5,10 @@
  * @package  Abandoned-Cart-Lite-for-WooCommerce/Tracking
  * @since    4.9
  */
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
-if ( !class_exists('Wcal_Tracking_msg' ) ) {
+if ( ! class_exists( 'Wcal_Tracking_msg' ) ) {
 
     /**
      * It will add messages as needed informing users of data being tracked.
@@ -38,11 +38,11 @@ if ( !class_exists('Wcal_Tracking_msg' ) ) {
          */
         static function wcal_add_gdpr_msg( $fields ) {
             
-            if( ! is_user_logged_in() ) {
+            if ( ! is_user_logged_in() ) {
                 // check if any message is present in the settings
                 $guest_msg = get_option( 'wcal_guest_cart_capture_msg' );
                 
-                if( isset( $guest_msg ) && '' != $guest_msg ) {
+                if ( isset( $guest_msg ) && '' != $guest_msg ) {
                     $existing_label = $fields[ 'billing' ][ 'billing_email' ][ 'label' ];
                     $fields[ 'billing' ][ 'billing_email' ][ 'label' ] = $existing_label . "<br><small>$guest_msg</small>";
                 }
@@ -59,11 +59,11 @@ if ( !class_exists('Wcal_Tracking_msg' ) ) {
          * @since 4.9      
          */
         static function wcal_add_logged_msg() {
-            if( is_user_logged_in() ) {
+            if ( is_user_logged_in() ) {
                 
                 $registered_msg = get_option( 'wcal_logged_cart_capture_msg' );
                 
-                if( isset( $registered_msg ) && '' != $registered_msg ) {
+                if ( isset( $registered_msg ) && '' != $registered_msg ) {
                     echo "<p><small>" . __( $registered_msg, 'woocommerce-abandoned-cart' ) . "</small></p>";
                 }
             }
