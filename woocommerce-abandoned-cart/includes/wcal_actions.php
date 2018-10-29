@@ -94,20 +94,21 @@ class wcal_delete_bulk_action_handler {
             $abandoned_id                = $value->id;
             $user_id                     = $value->user_id;
             $user_type                   = $value->user_type;
-            
-            // delete the sent history for reminder emails for the cart
-            $query_delete_sent_history   = $wpdb->delete( $wpdb->prefix . "ac_sent_history_lite", array( 'abandoned_order_id' => $abandoned_id ) );
-            
-            // delete the user meta for the user
-            $query_delete_cart     = $wpdb->delete( $wpdb->prefix . "usermeta", array( 'user_id' => $user_id, 'meta_key' => '_woocommerce_persistent_cart' ) );
-            
-            // delete the cart history table record
-            $query                 = $wpdb->delete( $wpdb->prefix . "ac_abandoned_cart_history_lite", array( 'user_id' => $user_id, 'id' => $abandoned_id ) );
-            
-            // delete the guest cart record if applicable
-            if( $user_type == 'GUEST' ) {
-                $guest_query   = $wpdb->delete( $wpdb->prefix . "ac_guest_abandoned_cart_history_lite", array( 'id' => $user_id ) );
+
+            if( $abandoned_id > 0 && '' != $user_type ) {
+                // delete the sent history for reminder emails for the cart
+                $query_delete_sent_history   = $wpdb->delete( $wpdb->prefix . "ac_sent_history_lite", array( 'abandoned_order_id' => $abandoned_id ) );
+                
+                // delete the user meta for the user
+                $query_delete_cart     = $wpdb->delete( $wpdb->prefix . "usermeta", array( 'user_id' => $user_id, 'meta_key' => '_woocommerce_persistent_cart' ) );
+                
+                // delete the cart history table record
+                $query                 = $wpdb->delete( $wpdb->prefix . "ac_abandoned_cart_history_lite", array( 'user_id' => $user_id, 'id' => $abandoned_id ) );
+                
+                // delete the guest cart record if applicable
+                if( 'GUEST' == $user_type && $user_id >= 63000000 ) {
+                    $guest_query   = $wpdb->delete( $wpdb->prefix . "ac_guest_abandoned_cart_history_lite", array( 'id' => $user_id ) );
+                }
             }
-            
        }
 }
