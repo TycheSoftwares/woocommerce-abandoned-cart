@@ -182,6 +182,7 @@ function woocommerce_ac_delete_lite() {
     delete_option( 'wcal_logged_cart_capture_msg' );
 
     delete_option( 'ac_lite_delete_abandoned_order_days' );
+    delete_option( 'wcal_new_default_templates' );
 }
     /**
      * woocommerce_abandon_cart_lite class
@@ -1247,6 +1248,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_guest_abandoned_cart_history_lite AUTO_INCREMENT = 63000000;" );
                     update_option ( 'wcal_guest_user_id_altered', 'yes' );
                 }
+            }
+
+            if( !get_option( 'wcal_new_default_templates' ) ) {          
+                    $default_template = new wcal_default_template_settings;
+                    $default_template->wcal_create_default_templates();
+                    add_option( 'wcal_new_default_templates', "yes" );
+                
             }
             if ( 'yes' != get_option( 'ac_lite_alter_table_queries' ) ) {
                 $ac_history_table_name = $wpdb->prefix."ac_abandoned_cart_history_lite";
@@ -3565,10 +3573,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $reply_name_preview    = get_option ( 'wcal_from_email' );
                 $from_email_preview    = get_option ( 'wcal_reply_email' );
                 $subject_email_preview = stripslashes ( $_POST['subject_email_preview'] );
-                $subject_email_preview = convert_smilies ( $subject_email_preview );                        
+                $subject_email_preview = convert_smilies ( $subject_email_preview ); 
+                $subject_email_preview    = str_replace( '{{customer.firstname}}', 'John', $subject_email_preview );                       
                 $body_email_preview    = convert_smilies ( $_POST['body_email_preview'] );
                 $is_wc_template        = $_POST['is_wc_template'];
-                $wc_template_header    = stripslashes( $_POST['wc_template_header'] );                                                  
+                $wc_template_header    = stripslashes( $_POST['wc_template_header'] );
+
+                $body_email_preview    = str_replace( '{{customer.firstname}}', 'John', $body_email_preview );                                                  
                 $body_email_preview    = str_replace( '{{customer.firstname}}', 'John', $body_email_preview );
                 $body_email_preview    = str_replace( '{{customer.lastname}}', 'Doe', $body_email_preview );
                 $body_email_preview    = str_replace( '{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview );

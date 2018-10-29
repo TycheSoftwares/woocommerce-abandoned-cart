@@ -1,21 +1,4 @@
 <?php
-/**
- * Admin View: Abandoned Cart reminder Email Template Preview
-*/
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
-
-/**
- * Abandoned Cart Lite for WooCommerce
- *
- * It will handle the common action for the plugin.
- *
- * @author  Tyche Softwares
- * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Template-view
- * @since 2.5.2
- */
-
 
 $site_title             = get_bloginfo( 'name' );
 $site_url               = get_option( 'siteurl' );
@@ -26,9 +9,8 @@ $admin_args = array( 'role' => 'administrator',
 $admin_usr  = get_users( $admin_args );
 $uid        = $admin_usr[0]->id;
 $admin_phone = get_user_meta( $uid, 'billing_phone', true );
-$wcal_price         = wc_price( '150' );
-$wcal_total_price   = wc_price( '300' );
 ?>
+
 <p><style type="text/css">
         * {
             -webkit-font-smoothing: antialiased;
@@ -154,35 +136,9 @@ $wcal_total_price   = wc_price( '300' );
 
     </tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="30"> </td></tr><tr><td class="sm-txt1" style="font-size: 50px; line-height: 50px; text-align: center; color: #000000; text-transform: uppercase; font-family: Ubuntu, Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif; padding: 0;" align="center" width="100%">PSST...</td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="20"> </td></tr><tr><td style="font-size: 15px; line-height: 24px; text-align: center; color: #333032; text-transform: uppercase; letter-spacing: 2px; padding: 0;" align="center" width="100%">Looks like you left something fabulous <br />in your shopping bag</td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="25"> </td></tr><tr><td style="font-size: 0pt; line-height: 0pt; padding: 0;" align="center"><img style="display: block; width: 100%; max-width: 301px; margin: 0 auto;" src="http://staging.tychesoftwares.com/templates/default1.jpeg" alt="" /></td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="25"> </td></tr><tr><td style="font-size: 15px; line-height: 24px; text-align: center; color: #333032; text-transform: uppercase; letter-spacing: 2px; padding: 0;" align="center" width="100%">Shop now before time runs out, <br />These must have ITEMs won't be around for long... </td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="20"> </td></tr><tr><td style="text-align: center; padding: 0;" align="center">
 
-        <table border="0" width="100%" cellspacing="0" cellpadding="0"><b>Your Shopping Cart</b>
-            <tbody>
-                <tr>
-                 
+        {{products.cart}}
 
-        <td style="background-color: #666666; color: #ffffff; text-align: center; font-size: 13px; text-transform: uppercase; padding: 5px;" align="center" bgcolor="#666666"></td>
 
-        <td style="background-color: #666666; color: #ffffff; text-align: center; font-size: 13px; text-transform: uppercase; padding: 5px;" align="center" bgcolor="#666666">Product</td>
-
-            <td style="background-color: #666666; color: #ffffff; text-align: center; font-size: 13px; text-transform: uppercase; padding: 5px;" align="center" bgcolor="#666666">Price</td>
-
-            <td style="background-color: #666666; color: #ffffff; text-align: center; font-size: 13px; text-transform: uppercase; padding: 5px;" align="center" bgcolor="#666666">Quantity</td>
-
-              <td style="background-color: #666666; color: #ffffff; text-align: center; font-size: 13px; text-transform: uppercase; padding: 5px;" align="center" bgcolor="#666666">Total</td>
-
-        </tr>
-       <tr style="background-color:#f4f5f4;">
-                    <td><img src = "<?php echo plugins_url();?>/woocommerce-abandoned-cart/assets/images/spectre.jpg" height="40px" width="40px"></td><td>Spectre</td><td> <?php echo "$wcal_price"; ?></td><td>2</td><td><?php echo "$wcal_total_price"; ?> </td>
-                </tr>
-                <tr>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <th>Cart Total:</th>
-                    <td><?php echo "$wcal_total_price"; ?></td>
-                </tr>
-
-            </tbody></table>
-
-        </td></tr><tr><td style="line-height: 1px; font-size: 1px;" bgcolor="#cfcfcf" height="2"> </td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="30"> </td></tr><tr><td style="font-size: 15px; line-height: 20px; text-align: center; color: #333032; font-weight: bold; padding: 0;" align="center" width="100%">For your convenience, we have saved your shopping cart.</td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="30"> </td></tr><tr><td align="center"><table border="0" cellspacing="0" cellpadding="0" align="center"><tbody><tr><td align="center"><table border="0" width="270" cellspacing="0" cellpadding="0" align="center"><tbody><tr><td style="border-collapse: collapse; word-break: break-word; word-wrap: break-word;" align="center"><a style="display: block; font-family: Arial, Helvetica, sans-serif; font-size: 16px; letter-spacing: 1px; color: #ffffff; line-height: 20px; text-decoration: none; text-align: center; background-color: #000; margin: 0 auto; width: 270px; box-sizing: border-box; padding: 8px 8px 8px 8px;" href="{{cart.link}}">CHECKOUT NOW</a></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="30"> </td></tr><tr><td style="font-size: 15px; line-height: 20px; text-align: center; color: #333032; padding: 0;" align="center" width="100%">For your assistance or if you would like to place an order directly with our customer service team, please call us at <?php echo "$admin_phone"; ?> </td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="30"> </td></tr><tr><td style="line-height: 1px; font-size: 1px;" bgcolor="#cfcfcf" height="2"> </td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="30"> </td></tr></tbody></table></td><td class="td_w_sm" style="font-size: 0; line-height: 0;" width="30"> </td></tr></tbody></table></td></tr><tr><td><!-- ======= footer start======= --><table border="0" width="100%" cellspacing="0" cellpadding="0"><tbody><tr><td class="td_w_sm" style="font-size: 0; line-height: 0;" width="30"> </td><td style="padding: 0;"><table border="0" width="100%" cellspacing="0" cellpadding="0"><tbody>
+    </td></tr><tr><td style="line-height: 1px; font-size: 1px;" bgcolor="#cfcfcf" height="2"> </td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="30"> </td></tr><tr><td style="font-size: 15px; line-height: 20px; text-align: center; color: #333032; font-weight: bold; padding: 0;" align="center" width="100%">For your convenience, we have saved your shopping cart.</td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="30"> </td></tr><tr><td align="center"><table border="0" cellspacing="0" cellpadding="0" align="center"><tbody><tr><td align="center"><table border="0" width="270" cellspacing="0" cellpadding="0" align="center"><tbody><tr><td style="border-collapse: collapse; word-break: break-word; word-wrap: break-word;" align="center"><a style="display: block; font-family: Arial, Helvetica, sans-serif; font-size: 16px; letter-spacing: 1px; color: #ffffff; line-height: 20px; text-decoration: none; text-align: center; background-color: #000; margin: 0 auto; width: 270px; box-sizing: border-box; padding: 8px 8px 8px 8px;" href="{{cart.link}}">CHECKOUT NOW</a></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="30"> </td></tr><tr><td style="font-size: 15px; line-height: 20px; text-align: center; color: #333032; padding: 0;" align="center" width="100%">For your assistance or if you would like to place an order directly with our customer service team, please call us at <?php echo "$admin_phone"; ?> </td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="30"> </td></tr><tr><td style="line-height: 1px; font-size: 1px;" bgcolor="#cfcfcf" height="2"> </td></tr><tr><td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="30"> </td></tr></tbody></table></td><td class="td_w_sm" style="font-size: 0; line-height: 0;" width="30"> </td></tr></tbody></table></td></tr><tr><td><!-- ======= footer start======= --><table border="0" width="100%" cellspacing="0" cellpadding="0"><tbody><tr><td class="td_w_sm" style="font-size: 0; line-height: 0;" width="30"> </td><td style="padding: 0;"><table border="0" width="100%" cellspacing="0" cellpadding="0"><tbody>
 
             <td style="font-size: 0pt; line-height: 0pt; text-align: left; padding: 0;" height="10"> </td></tr><tr><td style="font-size: 15px; line-height: 20px; text-align: center; color: #333032; padding: 0;" align="center" width="100%"><a href="{{cart.unsubscribe}}">Unsubscribe</a></td></tr></tbody></table><!-- ======= footer end======= --></td><td class="td_w_sm" style="font-size: 0; line-height: 0;" width="30"> </td></tr></tbody></table></td></tr></tbody></table></div><!-- [if mso | IE]>      </td></tr></table>      <![endif]--></td></tr></tbody></table>

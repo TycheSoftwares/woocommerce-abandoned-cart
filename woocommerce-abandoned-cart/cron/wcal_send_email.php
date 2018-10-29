@@ -70,6 +70,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 } elseif ( $value->day_or_hour == 'Hours' ) {
                     $time_to_send_template_after = $value->frequency * $hour_seconds;
                 }
+                
                 $carts               = $this->wcal_get_carts( $time_to_send_template_after, $cart_abandon_cut_off_time );
                 $email_frequency     = $value->frequency;
                 $email_body_template = $value->body;
@@ -302,8 +303,8 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                         $sub_line_prod_name = $product_name;
                                                     }
                                                     // Item subtotal is calculated as product total including taxes
-                                                    if( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
-                                                        $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
+                                                    if( $v->line_tax != 0 && $v->line_tax > 0 ) {
+                                                        $item_subtotal = $item_subtotal + $v->line_total + $v->line_tax;
                                                     } else {
                                                         $item_subtotal = $item_subtotal + $v->line_total;
                                                     }
