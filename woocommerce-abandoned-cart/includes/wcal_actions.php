@@ -26,15 +26,15 @@ class wcal_delete_bulk_action_handler {
                                 WHERE id = '$abandoned_cart_id' ";
         $results_get_user_id = $wpdb->get_results( $get_user_id );
         $user_id_of_guest    = $results_get_user_id[0]->user_id;
-        
+
         $query_delete        = "DELETE FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` 
                                 WHERE id = '$abandoned_cart_id' ";
         $results_delete      = $wpdb->get_results( $query_delete );
                
         if ( $user_id_of_guest >= '63000000' ) {
-            $guest_query_delete   = "DELETE FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` 
-                                    WHERE id = '" . $user_id_of_guest . "'";
-            $results_guest = $wpdb->get_results( $guest_query_delete );
+            $guest_query_delete = "DELETE FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` 
+                                   WHERE id = '" . $user_id_of_guest . "'";
+            $results_guest      = $wpdb->get_results( $guest_query_delete );
             //guest user
         }
         wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&wcal_deleted=YES' ) );  
