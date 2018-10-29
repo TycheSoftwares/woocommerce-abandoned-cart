@@ -64,46 +64,51 @@ class wcal_delete_bulk_action_handler {
          */
         public static function wcal_delete_abandoned_carts_after_x_days() {
             global $wpdb;
-            $query = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite" . "` WHERE recovered_cart = '0' ";
-            $carts = $wpdb->get_results ( $query );
-            foreach( $carts as $cart_key => $cart_value ) {
-                $cart_update_time = $cart_value->abandoned_cart_time;
-                wcal_delete_bulk_action_handler::wcal_delete_ac_carts( $cart_value, $cart_update_time );
+            
+            $delete_ac_after_days      = get_option( 'ac_lite_delete_abandoned_order_days' );
+            if ( '' != $delete_ac_after_days && $delete_ac_after_days != 0 ){
+            
+                $delete_ac_after_days_time = $delete_ac_after_days * 86400;
+                $current_time              = current_time( 'timestamp' );
+                $check_time                = $current_time - $delete_ac_after_days_time;
+            
+                $query = "SELECT id, user_id, user_type FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite" . "` WHERE recovered_cart = '0' AND abandoned_cart_time < %s";
+                $carts = $wpdb->get_results ( $wpdb->prepare( $query, $check_time ) );
+                foreach( $carts as $cart_key => $cart_value ) {
+                    wcal_delete_bulk_action_handler::wcal_delete_ac_carts( $cart_value );
+                }
             }
+            
         }
     /**
          * It will delete the abandoned cart data from database.
          * It will also delete the email history for that abandoned cart.
          * If the user id guest user then it will delete the record from users table.
          * @param object $value Value of cart.
-         * @param timestamp $cart_update_time Cart abandoned time
          * @globals mixed $wpdb
          * @since 5.0
          */
-        public static function wcal_delete_ac_carts( $value, $cart_update_time ) {
+        public static function wcal_delete_ac_carts( $value ) {
             global $wpdb;
-            $delete_ac_after_days = get_option( 'ac_lite_delete_abandoned_order_days' );
-            if ( '' != $delete_ac_after_days ) {
-                $delete_ac_after_days_time = $delete_ac_after_days * 86400;
-                $current_time              = current_time( 'timestamp' );
-                $check_time                = $current_time - $cart_update_time;
+            
+            $abandoned_id                = $value->id;
+            $user_id                     = $value->user_id;
+            $user_type                   = $value->user_type;
 
-                if ( $check_time > $delete_ac_after_days_time && 0 != $delete_ac_after_days_time && '' != $delete_ac_after_days_time ) {
-                    $abandoned_id              = $value->id;
-                    $query_delete_sent_history = "DELETE FROM `" . $wpdb->prefix . "ac_sent_history_lite" . "` WHERE abandoned_order_id = '$abandoned_id' ";
-                    $delete_sent_history       = $wpdb->get_results( $query_delete_sent_history );
-
-                    $user_id                   = $value->user_id;
-                    $query                     = "DELETE FROM `" .  $wpdb->prefix . "ac_abandoned_cart_history_lite" . "` WHERE user_id = '$user_id' AND abandoned_cart_time = '$cart_update_time'";
-                    $results2                  = $wpdb->get_results ( $query );
-
-                    $query_delete_cart         = "DELETE FROM `" . $wpdb->prefix."usermeta` WHERE user_id = '$user_id' AND meta_key = '_woocommerce_persistent_cart' ";
-                    $results_delete            = $wpdb->get_results ( $query_delete_cart );
-                    if ( $user_id >= '63000000' ) {
-                        $guest_query   = "DELETE FROM `" . $wpdb->prefix . "ac_guest_abandoned_cart_history_lite" . "` WHERE id = '" . $user_id . "'";
-                        $results_guest = $wpdb->get_results ( $guest_query );
-                    }
+            if( $abandoned_id > 0 && '' != $user_type ) {
+                // delete the sent history for reminder emails for the cart
+                $query_delete_sent_history   = $wpdb->delete( $wpdb->prefix . "ac_sent_history_lite", array( 'abandoned_order_id' => $abandoned_id ) );
+                
+                // delete the user meta for the user
+                $query_delete_cart     = $wpdb->delete( $wpdb->prefix . "usermeta", array( 'user_id' => $user_id, 'meta_key' => '_woocommerce_persistent_cart' ) );
+                
+                // delete the cart history table record
+                $query                 = $wpdb->delete( $wpdb->prefix . "ac_abandoned_cart_history_lite", array( 'user_id' => $user_id, 'id' => $abandoned_id ) );
+                
+                // delete the guest cart record if applicable
+                if( 'GUEST' == $user_type && $user_id >= 63000000 ) {
+                    $guest_query   = $wpdb->delete( $wpdb->prefix . "ac_guest_abandoned_cart_history_lite", array( 'id' => $user_id ) );
                 }
             }
-        }
+       }
 }

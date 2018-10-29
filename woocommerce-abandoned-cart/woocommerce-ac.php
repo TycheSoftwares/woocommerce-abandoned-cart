@@ -62,6 +62,31 @@ if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
 }
 
 /**
+ * Schedule an action to delete old carts once a day
+ * @since 5.1
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
+ */
+if( ! wp_next_scheduled( 'wcal_clear_carts' ) ) {
+    wp_schedule_event( time(), 'daily', 'wcal_clear_carts' );
+}
+/**
+ * Hook into that action that'll fire every 15 minutes 
+ */
+add_action( 'woocommerce_ac_send_email_action', 'wcal_send_email_cron' );
+
+/**
+ * It will add the wcal_send_email.php file which is responsible for sending the abandoned cart reminde emails.
+ * @hook woocommerce_ac_send_email_action
+ * @since 1.3
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
+ */
+function wcal_send_email_cron() {
+    //require_once( ABSPATH.'wp-content/plugins/woocommerce-abandoned-cart/cron/send_email.php' );
+    $plugin_dir_path = plugin_dir_path( __FILE__ );
+    require_once( $plugin_dir_path . 'cron/wcal_send_email.php' );
+}
+
+/**
  * This function will delete plugin tables, options and usermeta when we delete the plugin.
  * @hook register_uninstall_hook
  * @globals mixed $wpdb
@@ -255,7 +280,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             add_action ( 'admin_enqueue_scripts',                       array( &$this, 'wcal_enqueue_scripts_css' ) );
 			//delete abandoned order after X number of days
             if ( class_exists( 'wcal_delete_bulk_action_handler' ) ) {
-                add_action( 'admin_init',                              array( 'wcal_delete_bulk_action_handler', 'wcal_delete_abandoned_carts_after_x_days' ) );
+                add_action( 'wcal_clear_carts',                         array( 'wcal_delete_bulk_action_handler', 'wcal_delete_abandoned_carts_after_x_days' ) );
             }
             
             if ( is_admin() ) {

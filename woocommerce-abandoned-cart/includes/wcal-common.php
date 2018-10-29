@@ -688,34 +688,37 @@ class wcal_common {
         if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
             $variation_id               = $v->variation_id;
             $variation                  = wc_get_product( $variation_id );
-            $name                       = $variation->get_formatted_name() ;
-            $explode_all                = explode ( "&ndash;", $name );
-            if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
-                $wcap_sku = '';
-                if ( $variation->get_sku() ) {
-                    $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
+            
+            if( false != $variation ) {
+                $name                       = $variation->get_formatted_name() ;
+                $explode_all                = explode ( "&ndash;", $name );
+                if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
+                    $wcap_sku = '';
+                    if ( $variation->get_sku() ) {
+                        $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
+                    }
+                    $wcap_get_formatted_variation  =  wc_get_formatted_variation( $variation, true );
+    
+                    $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
+                            
+                    $pro_name_variation = (array) $add_product_name;
+                }else{
+                    $pro_name_variation = array_slice( $explode_all, 1, -1 );
                 }
-                $wcap_get_formatted_variation  =  wc_get_formatted_variation( $variation, true );
-
-                $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
-                        
-                $pro_name_variation = (array) $add_product_name;
-            } else {
-                $pro_name_variation = array_slice( $explode_all, 1, -1 );
-            }
-            $product_name_with_variable = '';
-            $explode_many_varaition     = array();
-            foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
-                $explode_many_varaition = explode ( ",", $pro_name_variation_value );
-                if ( ! empty( $explode_many_varaition ) ) {
-                    foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
+                $product_name_with_variable = '';
+                $explode_many_varaition     = array();
+                foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
+                    $explode_many_varaition = explode ( ",", $pro_name_variation_value );
+                    if( !empty( $explode_many_varaition ) ) {
+                        foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
+                            $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
+                        }
+                    } else {
                         $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
                     }
-                } else {
-                    $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
                 }
+                $product_name = $product_name_with_variable;
             }
-            $product_name = $product_name_with_variable;
         }
         $item_subtotal = 0;
         // Item subtotal is calculated as product total including taxes
