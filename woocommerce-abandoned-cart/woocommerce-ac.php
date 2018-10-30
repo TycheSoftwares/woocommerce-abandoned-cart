@@ -3080,6 +3080,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             $product_id     = $v->product_id;
                                             $product        = wc_get_product( $product_id );
                                             $prod_image     = $product->get_image(array(200, 200));
+                                            $product_page_url = get_permalink( $product_id );
                                             $product_name   = $item_details[ 'product_name' ];
                                             $item_subtotal  = $item_details[ 'item_total_formatted' ];
                                             $item_total     = $item_details[ 'item_total' ];
@@ -3092,7 +3093,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             ?>                   
                                         <tr>
                                             <td> <?php echo $prod_image; ?></td>
-                                            <td> <?php echo $product_name; ?></td>
+                                            <td> <?php echo '<a href="' . $product_page_url . '"> ' . $product_name . ' </a>'; ?> </td>
                                             <td> <?php echo $quantity_total; ?></td>
                                             <td> <?php echo $item_subtotal; ?></td>
                                             <td> <?php echo $item_total; ?></td>
