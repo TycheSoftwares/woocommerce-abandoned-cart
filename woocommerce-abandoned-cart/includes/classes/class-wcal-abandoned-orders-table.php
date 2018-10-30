@@ -363,8 +363,6 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
                 $ac_status = __( "Unsubscribed", "woocommerce-abandoned-cart" );
             } elseif( $value->cart_ignored == 0 && $value->recovered_cart == 0 ) {
 		        $ac_status = __( "Abandoned", "woocommerce-abandoned-cart" );
-		    } elseif( $value->cart_ignored == 1 && $value->recovered_cart == 0 ) {
-		        $ac_status = __( "Abandoned but new","woocommerce-abandoned-cart" )."</br>". __( "cart created after this", "woocommerce-abandoned-cart" );
 		    } else {
 		        $ac_status = "";
 		    }
