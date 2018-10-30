@@ -776,11 +776,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             // Default templates:  function call to create default templates.
             $check_table_empty  = $wpdb->get_var( "SELECT COUNT(*) FROM `" . $wpdb->prefix . "ac_email_templates_lite`" );
     
-            if ( ! get_option( 'woocommerce_ac_default_templates_installed' ) ) {         
+            if ( ! get_option( 'wcal_new_default_templates' ) ) {         
                 if ( 0 == $check_table_empty ) {
                     $default_template = new wcal_default_template_settings;
                     $default_template->wcal_create_default_templates();
-                    update_option( 'woocommerce_ac_default_templates_installed', "yes" );
+                    update_option( 'wcal_new_default_templates', "yes" );
                 }
             }
 
