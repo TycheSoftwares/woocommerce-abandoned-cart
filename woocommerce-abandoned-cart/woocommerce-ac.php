@@ -689,15 +689,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             $table_name = $wpdb->prefix . "ac_email_templates_lite";            
             $sql = "CREATE TABLE IF NOT EXISTS $table_name (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
-                    `subject` text COLLATE utf8mb4_unicode_ci NOT NULL,
-                    `body` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
-                    `is_active` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `subject` text NOT NULL,
+                    `body` mediumtext NOT NULL,
+                    `is_active` enum('0','1') NOT NULL,
                     `frequency` int(11) NOT NULL,
-                    `day_or_hour` enum('Days','Hours') COLLATE utf8mb4_unicode_ci NOT NULL,
-                    `template_name` text COLLATE utf8mb4_unicode_ci NOT NULL,
-                    `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
-                    `default_template` int(11) COLLATE utf8_unicode_ci NOT NULL,
-                    `wc_email_header` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+                    `day_or_hour` enum('Days','Hours') NOT NULL,
+                    `template_name` text NOT NULL,
+                    `is_wc_template` enum('0','1') NOT NULL,
+                    `default_template` int(11) NOT NULL,
+                    `wc_email_header` varchar(50) NOT NULL,
                     PRIMARY KEY (`id`)
                     ) $wcap_collate AUTO_INCREMENT=1 ";
         
@@ -1250,7 +1250,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 
                 if ( 0 == count( $results_email ) ) {
                     $alter_email_template_table_query = "ALTER TABLE $table_name
-                    ADD COLUMN `wc_email_header` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL AFTER `default_template`";
+                    ADD COLUMN `wc_email_header` varchar(50) NOT NULL AFTER `default_template`";
                     $wpdb->get_results( $alter_email_template_table_query );
                 }
 
