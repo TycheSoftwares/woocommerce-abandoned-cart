@@ -230,7 +230,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		$ac_results       = $wpdb->get_results( $wpdb->prepare( $query_ac, $start_date, $end_date ) );
 		
 		$query_ac_carts   = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite 
-		                     WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d AND abandoned_cart_time <= '$compare_time' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '$blank_cart' ";
+		                     WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d AND abandoned_cart_time <= '$compare_time' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '$blank_cart' AND (cart_ignored <> '1') OR (cart_ignored = '1' AND recovered_cart > 0)";
 		$ac_carts_results = $wpdb->get_results( $wpdb->prepare( $query_ac_carts, $start_date, $end_date ) );
 		
 		$recovered_item   = $recovered_total = $count_carts = $total_value = $order_total = 0;    		
