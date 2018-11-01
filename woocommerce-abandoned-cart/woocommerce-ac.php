@@ -1573,15 +1573,18 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 if ( 0 == count( $results ) ) {                   
                     $wcal_woocommerce_persistent_cart =version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ;
                                     
-                    $cart_info    = json_encode( get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true ) );                 
-                    $user_type    = "REGISTERED";
-                    $insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-                                     ( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type )
-                                     VALUES ( %d, %s, %d, %s, %s )";
-                    $wpdb->query( $wpdb->prepare( $insert_query, $user_id, $cart_info,$current_time, $cart_ignored, $user_type ) );
-                    
-                    $abandoned_cart_id = $wpdb->insert_id;
-                    wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
+                    $cart_info_meta = get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true );
+                    if( '' !== $cart_info_meta && '{"cart":[]}' != $cart_info_meta ) {
+                        $cart_info    = json_encode( $cart_info_meta );
+                        $user_type    = "REGISTERED";
+                        $insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
+                                         ( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type )
+                                         VALUES ( %d, %s, %d, %s, %s )";
+                        $wpdb->query( $wpdb->prepare( $insert_query, $user_id, $cart_info,$current_time, $cart_ignored, $user_type ) );
+                        
+                        $abandoned_cart_id = $wpdb->insert_id;
+                        wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
+                    }
                 } elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {
                     
                     $wcal_woocommerce_persistent_cart = version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ; 
