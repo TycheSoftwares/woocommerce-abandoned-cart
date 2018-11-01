@@ -1574,7 +1574,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $wcal_woocommerce_persistent_cart =version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ;
                                     
                     $cart_info_meta = get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true );
-                    if( $cart_info_meta !== '' ) {
+                    if( '' !== $cart_info_meta && '{"cart":[]}' != $cart_info_meta ) {
                         $cart_info    = json_encode( $cart_info_meta );
                         $user_type    = "REGISTERED";
                         $insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
