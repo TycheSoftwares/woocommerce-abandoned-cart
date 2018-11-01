@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares
 Tags: abandon cart, cart recovery, increase woocommerce conversion rate , recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 4.9.7
+Tested up to: 4.9.8
 Stable tag: trunk
 License: GPLv2 or late
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -192,6 +192,32 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 6. Product Report Tab.
 
 == Changelog ==
+
+= 5.1.0 (01.11.2018) =
+
+* This version has 5 Enhancements and 5 bugs fixes along with 1 Tweak.
+
+* Enhancement - Removed the reliability on PHP sessions. The plugin no longer uses PHP sessions from this release.
+
+* Enhancement - Modified the plugin to no longer display carts with the status ‘Abandoned but new Cart created’. Since, these carts are not sent any reminder emails, it made most sense to stop displaying them as well.
+
+* Enhancement - Added new default email template that use the responsive email designs added in the plugin version.
+
+* Enhancement - We have removed a few unwanted queries & optimised the code which was executed every 2-3 minutes. This will improve the site performance.
+
+* Enhancement - We have added Product page URL on the Product Name under Abandoned Orders View page.
+
+* Tweak - Changed the subject lines and Header text for the default email templates.
+
+* Bug Fix - When the site language is Hebrew, the site admin is unable to activate email templates. The same has now been fixed.
+
+* Bug Fix - Email Templates were not getting saved as “utf8mb4_unicode_ci” collation was not allowing to create table of the email template in the database due to some site restriction. This issue has been fixed.
+
+* Bug Fix - The plugin now runs the process to send reminder emails in the background. This will help fix the issue where the site performance is affected due to the plugin.
+
+* Bug Fix - In case, if wp-content folder is separated from WP core folders then the plugin could not find “wp-load.php” correctly and abandoned cart reminder emails were not being sent. This issue is fixed now.
+
+* Bug Fix - Some error messages are fixed in this plugin version.
 
 = 5.0.2 (13.10.2018) =
 
