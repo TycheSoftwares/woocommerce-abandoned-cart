@@ -2255,7 +2255,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         function wcal_enqueue_scripts_js( $hook ) {
             global $pagenow, $woocommerce;
              $page = isset( $_GET['page'] ) ? $_GET['page'] : '';
-            
+
             if (  $page === '' || $page !== 'woocommerce_ac_page' ) {
                 return;
             } else {                
@@ -2336,7 +2336,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             $page = isset( $_GET['page'] ) ? $_GET['page'] : '';
 
-            if ( $hook != 'woocommerce_page_woocommerce_ac_page' ) {
+            if ( $page != 'woocommerce_ac_page' ) {
                 return;
             } elseif ( $page === 'woocommerce_ac_page' ) {
                 
