@@ -246,7 +246,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	        }
 	        $line_total = 0;
 	
-	        if ( isset( $product_details ) && count( get_object_vars( $product_details ) ) > 0 && $product_details != false ) {    		
+	        if ( false != $product_details && is_object( $product_details ) && count( get_object_vars( $product_details ) ) > 0 ) {    		
 	            foreach ( $product_details as $k => $v ) {    		
 	                if( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
 	                    $line_total = $line_total + $v->line_total + $v->line_subtotal_tax;
