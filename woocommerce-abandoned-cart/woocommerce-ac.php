@@ -183,6 +183,8 @@ function woocommerce_ac_delete_lite() {
 
     delete_option( 'ac_lite_delete_abandoned_order_days' );
     delete_option( 'wcal_new_default_templates' );
+
+    delete_option( 'ac_lite_delete_redundant_queries' );
 }
     /**
      * woocommerce_abandon_cart_lite class
@@ -1386,6 +1388,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 //Delete the main settings record
                 delete_option( 'woocommerce_ac_settings' );
             }
+
+            if ( 'yes' != get_option( 'ac_lite_delete_redundant_queries' ) ) {
+                $ac_history_table_name = $wpdb->prefix."ac_abandoned_cart_history_lite";
+
+                $wpdb->delete( $ac_history_table_name, array( 'abandoned_cart_info' => '{"cart":[]}' ) );
+
+                update_option( 'ac_lite_delete_redundant_queries', 'yes' );
+            }
         }
     
         /**
@@ -1631,9 +1641,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 }
                 
                 $updated_cart_info = json_encode( $cart );
-                $updated_cart_info = addslashes ( $updated_cart_info );
+                //$updated_cart_info = addslashes ( $updated_cart_info );
                 
-                if ( count( $results ) > 0 ) {                    
+                if ( count( $results ) > 0 && '{"cart":[]}' != $updated_cart_info ) {                    
                     if ( $compare_time > $results[0]->abandoned_cart_time ) {                                                          
                         if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {
                             
@@ -1667,7 +1677,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         if ( 0 == count( $results ) ) {                        
                             $cart_info       = $updated_cart_info;
                             $blank_cart_info = '[]';                        
-                            if ( $blank_cart_info != $cart_info ) {
+                            if ( $blank_cart_info != $cart_info && '{"cart":[]}' != $cart_info ) {
                                 $insert_query = "INSERT INTO `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
                                                 ( abandoned_cart_info , abandoned_cart_time , cart_ignored , recovered_cart, user_type, session_id  )
                                                 VALUES ( '" . $cart_info."' , '" . $current_time . "' , '0' , '0' , 'GUEST', '". $get_cookie[0] ."' )";
@@ -1675,7 +1685,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             }                        
                         } elseif ( $compare_time > $results[0]->abandoned_cart_time ) {                        
                             $blank_cart_info = '[]';                                
-                            if ( $blank_cart_info != $updated_cart_info ) { 
+                            if ( $blank_cart_info != $updated_cart_info && '{"cart":[]}' != $updated_cart_info ) { 
                                 if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {                        
                                     $query_ignored = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE session_id ='" . $get_cookie[0] . "'";
                                     $wpdb->query( $query_ignored );
@@ -1687,7 +1697,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             }
                         } else {                        
                             $blank_cart_info = '[]';                        
-                            if ( $blank_cart_info != $updated_cart_info ) {                        
+                            if ( $blank_cart_info != $updated_cart_info && '{"cart":[]}' != $updated_cart_info ) {                        
                                 if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {
                                     $query_update = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET abandoned_cart_info = '" . $updated_cart_info . "', abandoned_cart_time  = '" . $current_time . "' WHERE session_id ='" . $get_cookie[0] . "' AND cart_ignored='0' ";
                                     $wpdb->query( $query_update );
@@ -2255,7 +2265,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         function wcal_enqueue_scripts_js( $hook ) {
             global $pagenow, $woocommerce;
              $page = isset( $_GET['page'] ) ? $_GET['page'] : '';
-            
+
             if (  $page === '' || $page !== 'woocommerce_ac_page' ) {
                 return;
             } else {                
@@ -2336,7 +2346,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             $page = isset( $_GET['page'] ) ? $_GET['page'] : '';
 
-            if ( $hook != 'woocommerce_page_woocommerce_ac_page' ) {
+            if ( $page != 'woocommerce_ac_page' ) {
                 return;
             } elseif ( $page === 'woocommerce_ac_page' ) {
                 
