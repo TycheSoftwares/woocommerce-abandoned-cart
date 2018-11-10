@@ -25,7 +25,7 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 
 			if ( true === $is_admin ) {
 
-                require_once( "component/woocommerce-check/ts-woo-active.php" );
+                require_once( "component/WooCommerce-Check/ts-woo-active.php" );
 
                 require_once( "component/tracking-data/ts-tracking.php" );
                 require_once( "component/deactivate-survey-popup/class-ts-deactivation.php" );
