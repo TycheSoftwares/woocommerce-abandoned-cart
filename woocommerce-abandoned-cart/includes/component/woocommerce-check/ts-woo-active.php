@@ -72,6 +72,12 @@ class Wcal_TS_Woo_Active {
 	 * Display a notice in the admin plugins page if the plugin is activated while WooCommerce is deactivated.
 	 */
 	public function ts_disabled_notice() {
+		global $current_screen;
+		$current_screen = get_current_screen();
+		if ( ( method_exists($current_screen, 'is_block_editor') && $current_screen->is_block_editor() )
+			|| ( function_exists('is_gutenberg_page') && is_gutenberg_page() ) ) {
+			return;
+		}
 		$class = 'notice notice-error';
 		$message = __( $this->plugin_name . ' plugin requires WooCommerce installed and activate.', $this->ts_locale );
 		printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );

@@ -251,6 +251,13 @@ class Wcal_TS_tracking {
 	 */
 	
 	public static function ts_track_usage_data() {
+		global $current_screen;
+		$current_screen = get_current_screen();
+		if ( ( method_exists($current_screen, 'is_block_editor') && $current_screen->is_block_editor() )
+			|| ( function_exists('is_gutenberg_page') && is_gutenberg_page() ) ) {
+			return;
+		}
+
 		$admin_url = get_admin_url();
 		echo '<input type="hidden" id="admin_url" value="' . $admin_url . '"/>';
 		self::ts_tracking_actions();

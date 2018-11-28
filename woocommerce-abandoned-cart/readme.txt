@@ -193,6 +193,14 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 5.1.2 (28.11.2018) =
+
+* Twaek - Compatibility with WordPress 5.0 fixes.
+
+* Bug - Fixed a warning which was generated when clicked on Cart or Checkout link in email.
+
+* Bug - Fixed errors occuring when WooCommerce Admin scripts were included in the plugin.
+
 = 5.1.1 (01.11.2018) =
 
 * Bug Fixed - Changed the file name in the plugin.
