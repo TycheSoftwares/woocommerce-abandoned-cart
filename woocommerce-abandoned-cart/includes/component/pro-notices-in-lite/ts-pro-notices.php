@@ -84,6 +84,14 @@ class Wcal_ts_pro_notices {
 	 * 
 	 */
 	public static function ts_notices_of_pro() {
+
+		global $current_screen;
+		$current_screen = get_current_screen();
+		if ( ( method_exists($current_screen, 'is_block_editor') && $current_screen->is_block_editor() )
+			|| ( function_exists('is_gutenberg_page') && is_gutenberg_page() ) ) {
+			return;
+		}
+
 		$activate_time       = get_option ( self::$plugin_prefix . '_activate_time' );
         $sixty_days          = strtotime ( '+60 Days', $activate_time );
 		$current_time  		 = current_time ( 'timestamp' );

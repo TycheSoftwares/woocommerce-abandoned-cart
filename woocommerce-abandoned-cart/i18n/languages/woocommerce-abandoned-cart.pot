@@ -1019,6 +1019,6 @@ msgstr ""
 msgid "Thank you for activating or updating to the latest version of "
 msgstr ""
 
-#: includes/component/WooCommerce-Check/ts-woo-active.php:77
+#: includes/component/woocommerce-check/ts-woo-active.php:77
 msgid " plugin requires WooCommerce installed and activate."
 msgstr ""
