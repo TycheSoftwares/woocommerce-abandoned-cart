@@ -193,6 +193,20 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 5.2.1 (18.02.2019) =
+
+* Bug - Fixed an issue where ajax url was missing for some sites preventing emails to be captured.
+
+= 5.2.0 (18.02.2019) =
+
+This is a security release with the following fixes:
+
+* Added sanitization checks for checkout field capture for guest users.
+
+* Fixed an issue where the emails were getting sent to customers even after purchasing the products.
+
+* Removed inline Javascript from checkout page and added to a minified file.
+
 = 5.1.3 (29.11.2018) =
 
 * Bug - Fixed a Fatal error related to including files.

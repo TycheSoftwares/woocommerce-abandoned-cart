@@ -49,6 +49,14 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
             '',
             true
         );
+
+        wp_localize_script( 
+            'wcal_guest_capture', 
+            'wcal_guest_capture_params', 
+            array(
+                'ajax_url'  =>  admin_url( 'admin-ajax.php' ) 
+            ) 
+        );
 	}
 	
     /**

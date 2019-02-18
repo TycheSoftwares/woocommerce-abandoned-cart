@@ -24,6 +24,6 @@ jQuery( 'input#billing_email' ).on( 'change', function() {
         ship_to_billing		: jQuery('#shiptobilling-checkbox').val(),
         action: 'save_data'
         };
-    jQuery.post( ajaxurl, data, function(response) {
+    jQuery.post( wcal_guest_capture_params.ajax_url, data, function(response) {
     });
 });
