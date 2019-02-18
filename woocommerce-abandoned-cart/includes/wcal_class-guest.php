@@ -41,39 +41,14 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
      * @since 2.2
      */
 	function user_side_js() {
-		?>
-		<script type="text/javascript">
-        	jQuery( 'input#billing_email' ).on( 'change', function() {
-                var data = {
-                    billing_first_name	: jQuery('#billing_first_name').val(),
-                    billing_last_name	: jQuery('#billing_last_name').val(),
-                    billing_company		: jQuery('#billing_company').val(),
-                    billing_address_1	: jQuery('#billing_address_1').val(),
-                    billing_address_2	: jQuery('#billing_address_2').val(),
-                    billing_city		: jQuery('#billing_city').val(),
-                    billing_state		: jQuery('#billing_state').val(),
-                    billing_postcode	: jQuery('#billing_postcode').val(),
-                    billing_country		: jQuery('#billing_country').val(),
-                    billing_phone		: jQuery('#billing_phone').val(),
-                    billing_email		: jQuery('#billing_email').val(),
-                    order_notes			: jQuery('#order_comments').val(),
-                    shipping_first_name	: jQuery('#shipping_first_name').val(),
-                    shipping_last_name	: jQuery('#shipping_last_name').val(),
-                    shipping_company	: jQuery('#shipping_company').val(),
-                    shipping_address_1	: jQuery('#shipping_address_1').val(),
-                    shipping_address_2	: jQuery('#shipping_address_2').val(),
-                    shipping_city		: jQuery('#shipping_city').val(),
-                    shipping_state		: jQuery('#shipping_state').val(),
-                    shipping_postcode	: jQuery('#shipping_postcode').val(),
-                    shipping_country	: jQuery('#shipping_country').val(),
-                    ship_to_billing		: jQuery('#shiptobilling-checkbox').val(),
-                    action: 'save_data'
-                    };					
-                jQuery.post( "<?php echo get_admin_url();?>admin-ajax.php", data, function(response) {
-                });					
-            });
-		</script>			
-	<?php
+
+        wp_enqueue_script( 
+            'wcal_guest_capture',
+            plugins_url( '../assets/js/wcal_guest_capture.min.js', __FILE__ ),
+            '',
+            '',
+            true
+        );
 	}
 	
     /**
