@@ -5,7 +5,7 @@
 * Description: This plugin captures abandoned carts by logged-in users & emails them about it. 
 * <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the 
 * PRO Version.</a></strong>
-* Version: 5.1.2
+* Version: 5.2.0
 * Author: Tyche Softwares
 * Author URI: http://www.tychesoftwares.com/
 * Text Domain: woocommerce-abandoned-cart
@@ -1237,14 +1237,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             $wcal_previous_version = get_option( 'wcal_previous_version' );
 
             if ( $wcal_previous_version != wcal_common::wcal_get_version() ) {
-                update_option( 'wcal_previous_version', '5.1.2' );
+                update_option( 'wcal_previous_version', '5.2.0' );
             }
 
             /**
              * This is used to prevent guest users wrong Id. If guest users id is less then 63000000 then this code will
              * ensure that we will change the id of guest tables so it wont affect on the next guest users.
              */         
-             if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_guest_abandoned_cart_history_lite';" )  && 'yes' != get_option( 'wcal_guest_user_id_altered' ) ) {
+            if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_guest_abandoned_cart_history_lite';" )  && 'yes' != get_option( 'wcal_guest_user_id_altered' ) ) {
                 $last_id = $wpdb->get_var( "SELECT max(id) FROM `{$wpdb->prefix}ac_guest_abandoned_cart_history_lite`;" );
                 if ( NULL != $last_id && $last_id <= 63000000 ) {
                     $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_guest_abandoned_cart_history_lite AUTO_INCREMENT = 63000000;" );
@@ -1395,6 +1395,39 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $wpdb->delete( $ac_history_table_name, array( 'abandoned_cart_info' => '{"cart":[]}' ) );
 
                 update_option( 'ac_lite_delete_redundant_queries', 'yes' );
+            }
+
+            if ( 'yes' !== get_option( 'ac_lite_user_cleanup' ) ) {
+                $query_cleanup = "UPDATE `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` SET 
+                    billing_first_name = IF (billing_first_name LIKE '%<%', '', billing_first_name),
+                    billing_last_name = IF (billing_last_name LIKE '%<%', '', billing_last_name),
+                    billing_company_name = IF (billing_company_name LIKE '%<%', '', billing_company_name),
+                    billing_address_1 = IF (billing_address_1 LIKE '%<%', '', billing_address_1),
+                    billing_address_2 = IF (billing_address_2 LIKE '%<%', '', billing_address_2),
+                    billing_city = IF (billing_city LIKE '%<%', '', billing_city),
+                    billing_county = IF (billing_county LIKE '%<%', '', billing_county),
+                    billing_zipcode = IF (billing_zipcode LIKE '%<%', '', billing_zipcode),
+                    email_id = IF (email_id LIKE '%<%', '', email_id),
+                    phone = IF (phone LIKE '%<%', '', phone),
+                    ship_to_billing = IF (ship_to_billing LIKE '%<%', '', ship_to_billing),
+                    order_notes = IF (order_notes LIKE '%<%', '', order_notes),
+                    shipping_first_name = IF (shipping_first_name LIKE '%<%', '', shipping_first_name),
+                    shipping_last_name = IF (shipping_last_name LIKE '%<%', '', shipping_last_name),
+                    shipping_company_name = IF (shipping_company_name LIKE '%<%', '', shipping_company_name),
+                    shipping_address_1 = IF (shipping_address_1 LIKE '%<%', '', shipping_address_1),
+                    shipping_address_2 = IF (shipping_address_2 LIKE '%<%', '', shipping_address_2),
+                    shipping_city = IF (shipping_city LIKE '%<%', '', shipping_city),
+                    shipping_county = IF (shipping_county LIKE '%<%', '', shipping_county)";
+
+                $wpdb->query( $query_cleanup );
+
+                $email = 'woouser401a@mailinator.com';
+                $exists = email_exists( $email );
+                if ( $exists ) {
+                    wp_delete_user( esc_html( $exists ) );
+                }
+
+                update_option( 'ac_lite_user_cleanup', 'yes' );
             }
         }
     
