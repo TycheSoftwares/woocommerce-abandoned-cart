@@ -1,10 +1,10 @@
 ﻿
 === Abandoned Cart Lite for WooCommerce ===
-Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares
+Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, dhruvin
 Tags: abandon cart, cart recovery, increase woocommerce conversion rate , recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 4.9.8
+Tested up to: 5.0
 Stable tag: trunk
 License: GPLv2 or late
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -193,9 +193,13 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
-= 5.1.2 (28.11.2018) =
+= 5.1.3 (29.11.2018) =
 
-* Twaek - Compatibility with WordPress 5.0 fixes.
+* Bug - Fixed a Fatal error related to including files.
+
+= 5.1.2 (29.11.2018) =
+
+* Tweak - Compatibility with WordPress 5.0 fixes.
 
 * Bug - Fixed a warning which was generated when clicked on Cart or Checkout link in email.
 
