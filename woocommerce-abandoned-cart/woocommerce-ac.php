@@ -399,7 +399,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $get_ac_id_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
                 
                 $abandoned_order_id = '';
-                if ( count( $get_ac_id_results ) > 0 ) {
+                if ( isset($get_ac_id_results) && count( $get_ac_id_results ) > 0 ) {
                     $abandoned_order_id = $get_ac_id_results[0]->abandoned_order_id;
                 }
 
@@ -420,7 +420,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
                     }
                     
-                    if ( count ( $get_ac_id_guest_results ) > 1 ) {
+                    if ( is_array( $get_ac_id_guest_results ) && count ( $get_ac_id_guest_results ) > 0 ) {
                         $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;
                         $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_order_id_of_guest ) );
                     }
@@ -450,7 +450,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
                         $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
                     }
-                    if ( count ( $get_ac_id_guest_results ) > 1 ) {
+                    if( is_array( $get_ac_id_guest_results ) && count ( $get_ac_id_guest_results ) > 0 ) {
                         $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;
                         $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_order_id_of_guest ) );
                     }
@@ -471,7 +471,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
                         $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
 
-                        if ( count ( $get_ac_id_guest_results ) > 1 ) {
+                        if ( is_array( $get_ac_id_guest_results ) && count ( $get_ac_id_guest_results ) > 0 ) {
                             $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;            
                             $wpdb->delete( $wcal_history_table_name, array( 'id' => $abandoned_order_id_of_guest ) );
                         }
@@ -508,7 +508,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $get_abandoned_cart_query   = "SELECT abandoned_cart_time FROM `" . $wcal_history_table_name . "` WHERE id = %d ";
                     $get_abandoned_cart_results = $wpdb->get_results( $wpdb->prepare( $get_abandoned_cart_query, $wcal_abandoned_cart_id ) );
 
-                    if ( count( $get_abandoned_cart_results ) > 0 ) {
+                    if ( is_array( $get_ac_id_guest_results ) && count( $get_abandoned_cart_results ) > 0 ) {
                         $wcal_cart_abandoned_time = $get_abandoned_cart_results[0]->abandoned_cart_time;
                     }
 
