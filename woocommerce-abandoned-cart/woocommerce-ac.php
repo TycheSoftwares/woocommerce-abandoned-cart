@@ -506,11 +506,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 if ( $wcal_abandoned_cart_id != '' ) {
 
                     $get_abandoned_cart_query   = "SELECT abandoned_cart_time FROM `" . $wcal_history_table_name . "` WHERE id = %d ";
-                    $get_abandoned_cart_results = $wpdb->get_results( $wpdb->prepare( $get_abandoned_cart_query, $wcal_abandoned_cart_id ) );
-
-                    if ( is_array( $get_ac_id_guest_results ) && count( $get_abandoned_cart_results ) > 0 ) {
-                        $wcal_cart_abandoned_time = $get_abandoned_cart_results[0]->abandoned_cart_time;
-                    }
+                    $wcal_cart_abandoned_time = $wpdb->get_var( $wpdb->prepare( $get_abandoned_cart_query, $wcal_abandoned_cart_id ) );
 
                     $ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
                     $cut_off_time   = $ac_cutoff_time * 60;
