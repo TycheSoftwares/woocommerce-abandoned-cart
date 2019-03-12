@@ -317,6 +317,9 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                     $product            = wc_get_product( $product_id );
                                                     $prod_image         = $product->get_image();
                                                     $image_url          = wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );
+                                                    if ( strpos( $image_url, '/' ) === 0 ) {
+                                                        $image_url = get_option('siteurl') . $image_url
+                                                    }
                                                     if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
                                                         $variation_id               = $v->variation_id;
                                                         $variation                  = wc_get_product( $variation_id );
