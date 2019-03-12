@@ -74,8 +74,8 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 $carts               = $this->wcal_get_carts( $time_to_send_template_after, $cart_abandon_cut_off_time );
                 $email_frequency     = $value->frequency;
                 $email_body_template = $value->body;
-                $email_subject       = stripslashes  ( $value->subject );
-                $email_subject       = convert_smilies ( $email_subject );
+                $template_email_subject       = stripslashes  ( $value->subject );
+                $template_email_subject       = convert_smilies ( $template_email_subject );
                 $wcal_from_name      = get_option ( 'wcal_from_name' );
                 $wcal_from_email     = get_option ( 'wcal_from_email' );
                 $wcal_reply_email    = get_option ( 'wcal_reply_email' );
@@ -172,6 +172,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                      false == $wcap_check_cart_staus_need_to_update ) {
 
                                     $cart_info_db = $value->abandoned_cart_info;
+                                    $email_subject = $template_email_subject;
                                     $email_body   = $email_body_template;
                                     $wcal_check_cart_total = $this->wcal_check_cart_total( $cart );
                                     if( true == $wcal_check_cart_total ) {
