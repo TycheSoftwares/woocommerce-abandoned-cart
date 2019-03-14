@@ -440,10 +440,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
                     $abandoned_cart_id_new_user = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
 
-                    $wcal_user_id_of_guest = '';
-                    if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
-                        $wcal_user_id_of_guest = $_SESSION['user_id'];
-                    }
+                    $wcal_user_id_of_guest = wcal_common::wcal_get_cart_session( 'user_id' );
+
                     /* Delete the guest record. As it become the logged in user */
                     $get_ac_id_guest_results = array();
                     if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) {
@@ -465,9 +463,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
                 if ( 'no' == $wcal_account_password_check && 'no' == $wcap_create_account ) {
                     
-                    $wcal_user_id_of_guest = '';
-                    if ( isset( $_SESSION['user_id'] ) && '' != $_SESSION['user_id'] ) {
-                        $wcal_user_id_of_guest    = $_SESSION['user_id'];
+                    $wcal_user_id_of_guest = wcal_common::wcal_get_cart_session( 'user_id' );
+                    if ( '' !== $wcal_user_id_of_guest ) {
                         $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
                         $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
 
