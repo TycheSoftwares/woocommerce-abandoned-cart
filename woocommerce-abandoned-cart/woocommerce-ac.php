@@ -2767,7 +2767,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             <div id="message" class="updated fade">
                                 <p>
                                     <strong>
-                                        <?php _e( 'The Email Template has been successfully added.', 'woocommerce-abandoned-cart' ); ?>
+                                        <?php _e( 'The Email Template has been successfully added. In order to start sending this email to your customers, please activate it.', 'woocommerce-abandoned-cart' ); ?>
                                     </strong>
                                 </p>
                             </div>
