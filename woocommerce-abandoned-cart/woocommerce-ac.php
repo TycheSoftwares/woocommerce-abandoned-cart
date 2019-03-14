@@ -387,13 +387,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
              */
             $email_sent_id = wcal_common::wcal_get_cart_session( 'email_sent_id' );
 
+            global $woocommerce, $wpdb;
+
+            $wcal_history_table_name    = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
+            $wcal_guest_table_name      = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
+            $wcal_sent_email_table_name = $wpdb->prefix . 'ac_sent_history_lite';
+
             if ( $email_sent_id !='' ) {
-
-                global $woocommerce, $wpdb;
-
-                $wcal_history_table_name    = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
-                $wcal_guest_table_name      = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
-                $wcal_sent_email_table_name = $wpdb->prefix . 'ac_sent_history_lite';
 
                 $get_ac_id_query    = "SELECT abandoned_order_id FROM ". $wcal_sent_email_table_name ." WHERE id = %d";
                 $get_ac_id_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
@@ -434,9 +434,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
                 $wcap_create_account = 'no';
                 /*if user becomes the registred user */
-                if ( isset( $_POST['createaccount'] ) && 
-                     $_POST['createaccount'] != ''    && 
-                     'no' == $wcal_account_password_check ) {
+                if ( ( isset( $_POST['createaccount'] ) && $_POST['createaccount'] != '' && 'no' == $wcal_account_password_check ) || 
+                    ( !isset( $_POST[ 'createaccount' ] ) && 'no' == get_option( 'woocommerce_enable_guest_checkout' ) ) ) {
 
                     $abandoned_cart_id_new_user = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
 
@@ -489,12 +488,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                  * the abandoned cart id. So we will refer this abandoned cart id when order staus is changed
                  * while placing the order.
                  */
-                global $woocommerce, $wpdb;
-
-                $wcal_history_table_name    = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
-                $wcal_guest_table_name      = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
-                $wcal_sent_email_table_name = $wpdb->prefix . 'ac_sent_history_lite';
-
                 $current_time             = current_time( 'timestamp' );
                 $wcal_cart_abandoned_time = '';
 
@@ -519,8 +512,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                          */ 
                   
                         /* If user becomes the registred user */
-
-                        if ( isset( $_POST['account_password'] ) && '' != $_POST['account_password'] ) {
+                        if ( ( isset( $_POST['account_password'] ) && '' != $_POST['account_password'] ) || 
+                            ( isset( $_POST['createaccount'] ) && $_POST['createaccount'] != '' ) || 
+                            ( !isset( $_POST[ 'createaccount' ] ) && 'no' == get_option( 'woocommerce_enable_guest_checkout' ) ) 
+                        ) {
 
                             $abandoned_cart_id_new_user = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
                             $wcal_user_id_of_guest      = wcal_common::wcal_get_cart_session( 'user_id' );
