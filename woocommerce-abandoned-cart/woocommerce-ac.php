@@ -3128,6 +3128,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
                                             $product_id     = $v->product_id;
                                             $product        = wc_get_product( $product_id );
+                                            if( ! $product ) { // product not found, exclude it from the cart display
+                                                continue;
+                                            }
                                             $prod_image     = $product->get_image(array(200, 200));
                                             $product_page_url = get_permalink( $product_id );
                                             $product_name   = $item_details[ 'product_name' ];
