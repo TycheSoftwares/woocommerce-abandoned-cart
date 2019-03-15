@@ -34,7 +34,7 @@ class Wcal_Admin_Notice {
 
         foreach ( $results as $key => $value) {
             if ( $value->Collation !== 'utf8mb4_unicode_ci' ) {
-                printf( __( '<div id="wcal_update" class="updated woocommerce-message" style="padding:15px;"><span>We need to update your email template database for some improvements. Please take a backup of your databases for your peice of mind</span><span class="submit"><a href="%s" class="button-primary" style="float:right;">Update</a></span></div>', 'woocommerce-abandoned-cart' ), 'admin.php?page=woocommerce_ac_page&action=listcart&ac_update=email_templates' );
+                printf( __( '<div id="wcal_update" class="updated woocommerce-message" style="padding:15px;"><span>We need to update your email template database for some improvements. Please take a backup of your databases for your piece of mind</span><span class="submit"><a href="%s" class="button-primary" style="float:right;">Update</a></span></div>', 'woocommerce-abandoned-cart' ), 'admin.php?page=woocommerce_ac_page&action=listcart&ac_update=email_templates' );
                 break;
             }
         }

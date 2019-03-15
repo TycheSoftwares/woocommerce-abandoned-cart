@@ -2936,31 +2936,17 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         </div>
                         <div id="recovered_stats" class="postbox" style="display:block">
                             <div class="inside" >
-                                <p style="font-size: 15px"><?php _e( 'During the selected range ', 'woocommerce-abandoned-cart' ); ?>
-                                    <strong>
-                                        <?php $count = $wcal_recover_orders_list->total_abandoned_cart_count; 
-                                              echo $count; ?> 
-                                    </strong>
-                                    <?php _e( 'carts totaling', 'woocommerce-abandoned-cart' ); ?> 
-                                    <strong> 
-                                        <?php $total_of_all_order = $wcal_recover_orders_list->total_order_amount; 
-                                               
-                                        echo $total_of_all_order; ?>
-                                     </strong>
-                                     <?php _e( ' were abandoned. We were able to recover', 'woocommerce-abandoned-cart' ); ?> 
-                                     <strong>
-                                        <?php 
-                                        $recovered_item = $wcal_recover_orders_list->recovered_item;
-                                        
-                                        echo $recovered_item; ?>
-                                     </strong>
-                                     <?php _e( ' of them, which led to an extra', 'woocommerce-abandoned-cart' ); ?> 
-                                     <strong>
-                                        <?php 
-                                            $recovered_total = $wcal_recover_orders_list->total_recover_amount;
-                                            echo wc_price( $recovered_total ); ?>
-                                     </strong>
-                                 </p>
+                                <?php
+                                $count = $wcal_recover_orders_list->total_abandoned_cart_count;
+                                $total_of_all_order = wc_price( $wcal_recover_orders_list->total_order_amount ); 
+                                $recovered_item = $wcal_recover_orders_list->recovered_item;
+                                $recovered_total = wc_price( $wcal_recover_orders_list->total_recover_amount );
+                                ?>
+                                <p style="font-size: 15px;">
+                                    <?php
+                                printf( __( 'During the selected range <strong>%d</strong> carts totaling <strong>%s</strong> were abandoned. We were able to recover <strong>%d</strong> of them, which led to an extra <strong>%s</strong>', 'woocommerce-abandoned-cart' ), $count, $total_of_all_order, $recovered_item, $recovered_total );
+                                ?>
+                                </p>
                             </div>
                         </div>
                         <div class="wrap">
