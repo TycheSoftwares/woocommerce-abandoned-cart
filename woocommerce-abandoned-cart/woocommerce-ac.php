@@ -296,7 +296,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 add_filter( 'ts_tracker_opt_out_data',                  array( 'wcal_common', 'ts_get_data_for_opt_out' ), 10, 1 );
                 add_filter( 'ts_deativate_plugin_questions',            array( &$this,  'wcal_deactivate_add_questions' ), 10, 1 );
             }
-                
+             
+            // Plugin Settings link in WP->Plugins page
+            $plugin = plugin_basename( __FILE__ );
+            add_action( "plugin_action_links_$plugin",                  array( &$this, 'wcal_settings_link' ) );
+               
             // Send Email on order recovery
             add_action( 'woocommerce_order_status_pending_to_processing_notification', array( &$this, 'wcal_email_admin_recovery' ) );
             add_action( 'woocommerce_order_status_pending_to_completed_notification',  array( &$this, 'wcal_email_admin_recovery' ) );
@@ -315,6 +319,16 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             add_action( 'admin_notices',                                               array( 'Wcal_Admin_Notice',   'wcal_show_db_update_notice' ) ); 
         }
 	
+        /**
+         * Add Settings link to WP->Plugins page
+         * @since 5.3.0
+         */
+        public static function wcal_settings_link( $links ) {
+            $settings_link = '<a href="admin.php?page=woocommerce_ac_page&action=emailsettings">' . __( 'Settings', 'woocommerce-abandoned-cart' ) . '</a>';
+            array_push( $links, $settings_link );
+            return $links;
+        }
+
 	    /**
          * It will load the boilerplate components file. In this file we have included all boilerplate files.
          * We need to inlcude this file after the init hook.
