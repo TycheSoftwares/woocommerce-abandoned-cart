@@ -151,7 +151,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                 $wcal_check_if_cart_is_present_in_post_meta   = "SELECT wpm.post_id, wpost.post_date, wpost.post_status  FROM `" . $wpdb->prefix . "postmeta` AS wpm
                                     LEFT JOIN `" . $wpdb->prefix . "posts` AS wpost
                                     ON wpm.post_id = wpost.ID
-                                    WHERE wpm.meta_key = 'wcap_recover_order_placed' AND
+                                    WHERE wpm.meta_key = 'wcal_recover_order_placed' AND
                                     wpm.meta_value = %s AND wpm.post_id = wpost.ID AND
                                     wpost.post_type = 'shop_order'
                                     ORDER BY wpm.post_id   DESC LIMIT 1";
@@ -545,10 +545,10 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 
                             $order_id = $wcal_results[0]->post_id;
 
-                            $order    = new WC_Order( $order_id );
+                            $order    = wc_get_order( $order_id );
 
-                            $query_order = "UPDATE `" . $wpdb->prefix."ac_abandoned_cart_history_lite` SET recovered_cart= '" . $order_id . "', cart_ignored = '1' WHERE id = '".$cart_id."' ";
-                            $wpdb->query( $query_order );
+                            $query_order = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET recovered_cart= %s, cart_ignored = '1' WHERE id = %s";
+                            $wpdb->query( $wpdb->prepare( $query_order, $order_id, $cart_id ) );
 
                             $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
 
@@ -557,13 +557,13 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                         }
                     }else{
 
-                        $query_ignored = "UPDATE `" . $wpdb->prefix."ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE id ='" . $cart_id . "'";
-                        $wpdb->query( $query_ignored );
+                        $query_ignored = "UPDATE `" . $wpdb->prefix."ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE id = %s";
+                        $wpdb->query( $wpdb->prepare( $query_ignored, $cart_id ) );
                     }
                     return 1;
                 }else if ( strtotime( $order_date_with_time ) > $abandoned_cart_time ) {
-                    $query_ignored = "UPDATE `" . $wpdb->prefix."ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE id ='" . $cart_id . "'";
-                    $wpdb->query( $query_ignored );
+                    $query_ignored = "UPDATE `" . $wpdb->prefix."ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE id = %s ";
+                    $wpdb->query( $wpdb->prepare( $query_ignored, $cart_id ) );
                     return 1;
                 } else if( "wc-pending" == $results_query_email[0]->post_status || "wc-failed" == $results_query_email[0]->post_status ) {
 
@@ -619,8 +619,8 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 
                             $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
 
-                            delete_post_meta( $order_id,  'wcap_recover_order_placed',         $cart_id );
-                            delete_post_meta( $order_id , 'wcap_recover_order_placed_sent_id', $wcal_check_email_sent_to_cart );
+                            delete_post_meta( $order_id,  'wcal_recover_order_placed',         $cart_id );
+                            delete_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $wcal_check_email_sent_to_cart );
                         }
                     }else {
 

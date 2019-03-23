@@ -17,9 +17,6 @@
 * @package Abandoned-Cart-Lite-for-WooCommerce
 */
 
-// Deletion Settings
-register_uninstall_hook( __FILE__, 'woocommerce_ac_delete_lite' );
-
 require_once( "includes/wcal_class-guest.php" );
 require_once( "includes/wcal_default-settings.php" );
 require_once( "includes/wcal_actions.php" );
@@ -84,107 +81,6 @@ function wcal_send_email_cron() {
     //require_once( ABSPATH.'wp-content/plugins/woocommerce-abandoned-cart/cron/send_email.php' );
     $plugin_dir_path = plugin_dir_path( __FILE__ );
     require_once( $plugin_dir_path . 'cron/wcal_send_email.php' );
-}
-
-/**
- * This function will delete plugin tables, options and usermeta when we delete the plugin.
- * @hook register_uninstall_hook
- * @globals mixed $wpdb
- * @since 1.0
- * @package Abandoned-Cart-Lite-for-WooCommerce/Uninstaller
- */
-function woocommerce_ac_delete_lite() { 
-    global $wpdb;
-    if ( ! is_multisite() ) {
-        $table_name_ac_abandoned_cart_history = $wpdb->prefix . "ac_abandoned_cart_history_lite";
-        $sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_abandoned_cart_history ;
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-        $wpdb->get_results( $sql_ac_abandoned_cart_history );
-    
-        $table_name_ac_email_templates = $wpdb->prefix . "ac_email_templates_lite";
-        $sql_ac_email_templates = "DROP TABLE " . $table_name_ac_email_templates ;
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-        $wpdb->get_results( $sql_ac_email_templates );
-    
-        $table_name_ac_sent_history = $wpdb->prefix . "ac_sent_history_lite";
-        $sql_ac_sent_history = "DROP TABLE " . $table_name_ac_sent_history ;
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-        $wpdb->get_results( $sql_ac_sent_history );
-        
-        $table_name_ac_guest_abandoned_cart_history = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
-        $sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_guest_abandoned_cart_history ;
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-        $wpdb->get_results( $sql_ac_abandoned_cart_history );
-        
-        $sql_table_user_meta_cart = "DELETE FROM `" . $wpdb->prefix . "usermeta` WHERE meta_key = '_woocommerce_persistent_cart'";
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-        $wpdb->get_results( $sql_table_user_meta_cart );
-        
-        $sql_table_user_meta_cart_modified = "DELETE FROM `" . $wpdb->prefix . "usermeta` WHERE meta_key = '_woocommerce_ac_modified_cart'";
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-        $wpdb->get_results( $sql_table_user_meta_cart_modified );   
-    } else {    
-        $query   = "SELECT blog_id FROM `".$wpdb->prefix."blogs`";
-        $results = $wpdb->get_results( $query );
-        
-        foreach( $results as $key => $value ) {      
-            $table_name_ac_abandoned_cart_history = $wpdb->prefix .$value->blog_id."_"."ac_abandoned_cart_history_lite";
-            $sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_abandoned_cart_history ;
-            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-            $wpdb->get_results( $sql_ac_abandoned_cart_history );
-             
-            $table_name_ac_email_templates = $wpdb->prefix .$value->blog_id."_"."ac_email_templates_lite";
-            $sql_ac_email_templates = "DROP TABLE " . $table_name_ac_email_templates ;
-            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-            $wpdb->get_results( $sql_ac_email_templates );
-             
-            $table_name_ac_sent_history = $wpdb->prefix .$value->blog_id."_"."ac_sent_history_lite";
-            $sql_ac_sent_history = "DROP TABLE " . $table_name_ac_sent_history ;
-            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-            $wpdb->get_results( $sql_ac_sent_history );
-            
-            $table_name_ac_guest_abandoned_cart_history = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
-            $sql_ac_abandoned_cart_history = "DROP TABLE " . $table_name_ac_guest_abandoned_cart_history ;
-            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-            $wpdb->get_results( $sql_ac_abandoned_cart_history );
-            
-            $sql_table_user_meta_cart = "DELETE FROM `" . $wpdb->prefix.$value->blog_id."_"."usermeta` WHERE meta_key = '_woocommerce_persistent_cart'";
-            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-            $wpdb->get_results( $sql_table_user_meta_cart );
-            
-            $sql_table_user_meta_cart_modified = "DELETE FROM `" . $wpdb->prefix.$value->blog_id."_"."usermeta` WHERE meta_key = '_woocommerce_ac_modified_cart'";
-            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-            $wpdb->get_results( $sql_table_user_meta_cart_modified );        
-        }
-    }   
-    delete_option( 'woocommerce_ac_email_body' );
-    delete_option( 'ac_lite_cart_abandoned_time' );
-    delete_option( 'ac_lite_email_admin_on_recovery' );
-    delete_option( 'ac_lite_settings_status' );
-    delete_option( 'woocommerce_ac_default_templates_installed' );  
-    delete_option( 'wcal_security_key' );
-    delete_option( 'ac_lite_track_guest_cart_from_cart_page' );
-    delete_option( 'wcal_from_name' );
-    delete_option( 'wcal_from_email' );
-    delete_option( 'wcal_reply_email' );
-
-    delete_option( 'ac_security_key' );
-    delete_option( 'wcal_activate_time' );
-    delete_option( 'ac_lite_alter_table_queries' );
-    delete_option( 'ac_lite_delete_alter_table_queries' );
-    delete_option( 'wcal_allow_tracking' );
-    delete_option( 'wcal_ts_tracker_last_send' );
-
-    delete_option( 'wcal_welcome_page_shown_time' );
-    delete_option( 'wcal_welcome_page_shown' );
-
-    delete_option( 'wcal_guest_cart_capture_msg' );
-    delete_option( 'wcal_logged_cart_capture_msg' );
-
-    delete_option( 'ac_lite_delete_abandoned_order_days' );
-    delete_option( 'wcal_new_default_templates' );
-
-    delete_option( 'ac_lite_delete_redundant_queries' );
 }
     /**
      * woocommerce_abandon_cart_lite class
@@ -256,10 +152,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             
             // Actions to be done on cart update
             add_action ( 'woocommerce_cart_updated',                    array( &$this, 'wcal_store_cart_timestamp' ) );
-            
-            // delete added temp fields after order is placed 
-            add_filter ( 'woocommerce_order_details_after_order_table', array( &$this, 'wcal_action_after_delivery_session' ) );
-            
+
             add_action ( 'admin_init',                                  array( &$this, 'wcal_action_admin_init' ) );
             
             // Update the options as per settings API
@@ -300,23 +193,21 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             // Plugin Settings link in WP->Plugins page
             $plugin = plugin_basename( __FILE__ );
             add_action( "plugin_action_links_$plugin",                  array( &$this, 'wcal_settings_link' ) );
-               
-            // Send Email on order recovery
-            add_action( 'woocommerce_order_status_pending_to_processing_notification', array( &$this, 'wcal_email_admin_recovery' ) );
-            add_action( 'woocommerce_order_status_pending_to_completed_notification',  array( &$this, 'wcal_email_admin_recovery' ) );
-            add_action( 'woocommerce_order_status_pending_to_on-hold_notification',    array( &$this, 'wcal_email_admin_recovery' ) );
-            add_action( 'woocommerce_order_status_failed_to_processing_notification',  array( &$this, 'wcal_email_admin_recovery' ) );
-            add_action( 'woocommerce_order_status_failed_to_completed_notification',   array( &$this, 'wcal_email_admin_recovery' ) );
-            
-            add_action('woocommerce_order_status_changed',                             array( &$this, 'wcal_email_admin_recovery_for_paypal' ), 10, 3);
             
             add_action( 'admin_init',                                                  array( $this,   'wcal_preview_emails' ) );
             add_action( 'init',                                                        array( $this,   'wcal_app_output_buffer') );         
-            add_action( 'woocommerce_checkout_order_processed',                        array( &$this,  'wcal_order_placed' ), 10 , 1 );         
-            add_filter( 'woocommerce_payment_complete_order_status',                   array( &$this,  'wcal_order_complete_action' ), 10 , 2 );        
+
             add_filter( 'admin_footer_text',                                           array( $this,   'wcal_admin_footer_text' ), 1 );
 
-            add_action( 'admin_notices',                                               array( 'Wcal_Admin_Notice',   'wcal_show_db_update_notice' ) ); 
+            add_action( 'admin_notices',                                               array( 'Wcal_Admin_Notice',   'wcal_show_db_update_notice' ) );
+
+            add_action( 'wp_login',                                    array( &$this, 'wcal_remove_action_hook' ), 1 );
+
+            include_once 'includes/frontend/wcal_frontend.php';
+        }
+
+        public static function wcal_remove_action_hook(){
+            remove_action( 'woocommerce_cart_updated', array( &$this, 'wcal_store_cart_timestamp' ) );
         }
 	
         /**
@@ -376,256 +267,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             );
             return $wcal_add_questions;
-        }
-        
-        /**
-         * When customer clicks on the "Place Order" button on the checkout page, it will identify if we need to keep that cart or 
-         * delete it.
-         * @hook woocommerce_checkout_order_processed
-         * @param int | string $order_id Order id
-         * @globals mixed $wpdb
-         * @globals mixed $woocommerce
-         * 
-         * @since 3.4
-         */    
-        public static function wcal_order_placed( $order_id ) {
-
-            /**
-             * When user comes from the abandoned cart reminder email this conditon will be executed.
-             * It will check the guest uers data in further 3 conditions.
-             * 1. When WC setting mandatory to become the logged in users. And places the order
-             * 2. When WC setting is non - mandatory to become the logged in users. And user choose to be the loggedin 
-             * to the site And places the order
-             * 3. When user places the orde as guest user. 
-             * It will consider the old cart of the customer as the recovered order and delete the unwanted new records.
-             */
-            $email_sent_id = wcal_common::wcal_get_cart_session( 'email_sent_id' );
-
-            global $woocommerce, $wpdb;
-
-            $wcal_history_table_name    = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
-            $wcal_guest_table_name      = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
-            $wcal_sent_email_table_name = $wpdb->prefix . 'ac_sent_history_lite';
-
-            if ( $email_sent_id !='' ) {
-
-                $get_ac_id_query    = "SELECT abandoned_order_id FROM ". $wcal_sent_email_table_name ." WHERE id = %d";
-                $get_ac_id_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
-                
-                $abandoned_order_id = '';
-                if ( isset($get_ac_id_results) && count( $get_ac_id_results ) > 0 ) {
-                    $abandoned_order_id = $get_ac_id_results[0]->abandoned_order_id;
-                }
-
-                $wcal_account_password_check = 'no';
-
-                /*if user becomes the registered user */
-                if ( isset( $_POST['account_password'] ) && '' != $_POST['account_password'] ) {
-
-                    $abandoned_cart_id_new_user = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
-
-                    $wcal_user_id_of_guest = wcal_common::wcal_get_cart_session( 'user_id' );
-
-                    /* delete the guest record. As it become the logged in user */
-
-                    $get_ac_id_guest_results = array();
-                    if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) { 
-                        $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
-                        $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
-                    }
-                    
-                    if ( is_array( $get_ac_id_guest_results ) && count ( $get_ac_id_guest_results ) > 0 ) {
-                        $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;
-                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_order_id_of_guest ) );
-                    }
-                    if ( isset( $abandoned_cart_id_new_user ) && '' != $abandoned_cart_id_new_user ) {
-                        /* it is the new registered users cart id */
-                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
-                    }
-
-                    $wcal_account_password_check = 'yes';
-                }
-
-                $wcap_create_account = 'no';
-                /*if user becomes the registred user */
-                if ( ( isset( $_POST['createaccount'] ) && $_POST['createaccount'] != '' && 'no' == $wcal_account_password_check ) || 
-                    ( !isset( $_POST[ 'createaccount' ] ) && 'no' == get_option( 'woocommerce_enable_guest_checkout' ) ) ) {
-
-                    $abandoned_cart_id_new_user = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
-
-                    $wcal_user_id_of_guest = wcal_common::wcal_get_cart_session( 'user_id' );
-
-                    /* Delete the guest record. As it become the logged in user */
-                    $get_ac_id_guest_results = array();
-                    if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) {
-                        $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
-                        $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
-                    }
-                    if( is_array( $get_ac_id_guest_results ) && count ( $get_ac_id_guest_results ) > 0 ) {
-                        $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;
-                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_order_id_of_guest ) );
-                    }
-
-                    /* It is the new registered users cart id */
-                    if ( isset( $wcal_user_id_of_guest ) && '' != $wcal_user_id_of_guest ) {
-                        $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
-                    }
-
-                    $wcap_create_account = 'yes';
-                }
-
-                if ( 'no' == $wcal_account_password_check && 'no' == $wcap_create_account ) {
-                    
-                    $wcal_user_id_of_guest = wcal_common::wcal_get_cart_session( 'user_id' );
-                    if ( '' !== $wcal_user_id_of_guest ) {
-                        $get_ac_id_guest_query    = "SELECT id FROM `" . $wcal_history_table_name ."` WHERE user_id = %d ORDER BY id DESC";
-                        $get_ac_id_guest_results  = $wpdb->get_results( $wpdb->prepare( $get_ac_id_guest_query, $wcal_user_id_of_guest ) );
-
-                        if ( is_array( $get_ac_id_guest_results ) && count ( $get_ac_id_guest_results ) > 0 ) {
-                            $abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;            
-                            $wpdb->delete( $wcal_history_table_name, array( 'id' => $abandoned_order_id_of_guest ) );
-                        }
-                    }
-                }
-
-                add_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $email_sent_id );
-                if ( isset( $abandoned_order_id ) && '' != $abandoned_order_id ) {
-                    add_post_meta( $order_id , 'wcal_recover_order_placed', $abandoned_order_id );
-                }
-
-            }else if ( wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' ) != '' ) {
-
-                /**
-                 * In this codition we are cheking that if the order is placed before the cart cut off time then we 
-                 * will delete the abandond cart records.
-                 * If the order is placed after the cart cutoff time then we will create the post meta with 
-                 * the abandoned cart id. So we will refer this abandoned cart id when order staus is changed
-                 * while placing the order.
-                 */
-                $current_time             = current_time( 'timestamp' );
-                $wcal_cart_abandoned_time = '';
-
-                $wcal_abandoned_cart_id   = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
-
-                if ( $wcal_abandoned_cart_id != '' ) {
-
-                    $get_abandoned_cart_query   = "SELECT abandoned_cart_time FROM `" . $wcal_history_table_name . "` WHERE id = %d ";
-                    $wcal_cart_abandoned_time = $wpdb->get_var( $wpdb->prepare( $get_abandoned_cart_query, $wcal_abandoned_cart_id ) );
-
-                    $ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
-                    $cut_off_time   = $ac_cutoff_time * 60;
-                    $compare_time   = $current_time - $cut_off_time;
-                
-                    if ( $compare_time > $wcal_cart_abandoned_time ) {
-                        /* cart is declared as adandoned */
-                        add_post_meta( $order_id , 'wcal_recover_order_placed', $wcal_abandoned_cart_id );
-                    } else {
-                        /**
-                         * Cart order is placed within the cutoff time.
-                         *  We will delete that abandoned cart.
-                         */ 
-                  
-                        /* If user becomes the registred user */
-                        if ( ( isset( $_POST['account_password'] ) && '' != $_POST['account_password'] ) || 
-                            ( isset( $_POST['createaccount'] ) && $_POST['createaccount'] != '' ) || 
-                            ( !isset( $_POST[ 'createaccount' ] ) && 'no' == get_option( 'woocommerce_enable_guest_checkout' ) ) 
-                        ) {
-
-                            $abandoned_cart_id_new_user = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
-                            $wcal_user_id_of_guest      = wcal_common::wcal_get_cart_session( 'user_id' );
-
-                            /* Delete the guest record. As it become the logged in user */
-
-                            $wpdb->delete( $wcal_history_table_name , array( 'user_id' => $wcal_user_id_of_guest ) );
-                            $wpdb->delete( $wcal_guest_table_name ,   array( 'id' => $wcal_user_id_of_guest ) );
-
-                            /* It is the new registered users cart id */
-                            $wpdb->delete( $wcal_history_table_name , array( 'id' => $abandoned_cart_id_new_user ) );
-                        } else {
-
-                            /**
-                             * It will delete the order from history table if the order is placed before any email sent to
-                             * the user.
-                             */
-                            $wpdb->delete( $wcal_history_table_name , array( 'id' => $wcal_abandoned_cart_id ) );
-
-                            /* This user id is set for the guest uesrs. */
-                            if ( wcal_common::wcal_get_cart_session( 'user_id' ) != '' ) {
-                                $wcal_user_id_of_guest = wcal_common::wcal_get_cart_session( 'user_id' );
-                                $wpdb->delete( $wcal_guest_table_name,  array( 'id' => $wcal_user_id_of_guest ) );
-                            }
-                        } 
-                    }
-                }
-            }
-        }
-        
-        /**
-         * It will check the WooCommerce order status. If the order status is pending or failed the we will keep that cart record 
-         * as an abandoned cart.
-         * It will be executed after order placed.
-         * @hook woocommerce_payment_complete_order_status
-         * @param string $order_status Order Status
-         * @param int | string $order_id Order Id
-         * @return string $order_status
-         * @globals mixed $wpdb
-         * @globals mixed $woocommerce
-         * @since 3.4
-         */
-        public function wcal_order_complete_action( $order_status, $order_id ) {                    
-            
-            /**
-             * If the order status is not pending or failed then we will check the order and its respective abandoned
-             * cart data. 
-             */
-            if ( 'pending' != $order_status && 'failed' != $order_status ) {
-                global $woocommerce, $wpdb;
-                $order = new WC_Order( $order_id );
-
-                $get_abandoned_id_of_order  = get_post_meta( $order_id, 'wcal_recover_order_placed', true );
-                $get_sent_email_id_of_order = get_post_meta( $order_id, 'wcal_recover_order_placed_sent_id', true );
-
-                $wcal_ac_table_name                 = $wpdb->prefix . "ac_abandoned_cart_history_lite";
-                $wcal_email_sent_history_table_name = $wpdb->prefix . "ac_sent_history_lite";
-                $wcal_guest_ac_table_name           = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
-                
-                /**
-                 * Here, in this condition we are checking that if abadoned cart id has any record for the reminder
-                 * email is sent or not.
-                 * If the reminde email is sent to the abandoned cart id the mark that cart as a recovered.
-                 */
-                if ( isset( $get_sent_email_id_of_order ) && '' != $get_sent_email_id_of_order ) {
-
-                    $query_order = "UPDATE $wcal_ac_table_name SET recovered_cart = '" . $order_id . "', cart_ignored = '1' WHERE id = '".$get_abandoned_id_of_order."' ";
-                    $wpdb->query( $query_order );
-        
-                    $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
-
-                    delete_post_meta( $order_id,  'wcal_recover_order_placed',         $get_abandoned_id_of_order );
-                    delete_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $get_sent_email_id_of_order );
-                } else if ( isset( $get_abandoned_id_of_order ) && '' != $get_abandoned_id_of_order ) {
-                    
-                    /**
-                     * If the recover email has not sent then we will delete the abandoned cart data.
-                     */
-                    $get_abandoned_cart_user_id_query   = "SELECT user_id FROM  $wcal_ac_table_name  WHERE id = %d ";
-                    $get_abandoned_cart_user_id_results = $wpdb->get_results( $wpdb->prepare( $get_abandoned_cart_user_id_query, $get_abandoned_id_of_order ) );
-
-                    $var = $wpdb->prepare( $get_abandoned_cart_user_id_query, $get_abandoned_id_of_order );
-                  
-                    if ( count( $get_abandoned_cart_user_id_results ) > 0 ) {
-                        $wcap_user_id = $get_abandoned_cart_user_id_results[0]->user_id;
-
-                        if ( $wcap_user_id >= 63000000 ) {
-                            $wpdb->delete( $wcal_guest_ac_table_name, array( 'id' => $wcap_user_id ) );
-                        }
-
-                        $wpdb->delete( $wcal_ac_table_name, array( 'id' => $get_abandoned_id_of_order ) );
-                        delete_post_meta( $order_id, 'wcap_recover_order_placed', $get_abandoned_id_of_order );
-                    }
-                }
-            }
-            return $order_status;
         }
 
         /**
@@ -1432,134 +1073,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 update_option( 'ac_lite_user_cleanup', 'yes' );
             }
         }
-    
-        /**
-         * Send email to admin when cart is recovered only via PayPal.
-         * @hook woocommerce_order_status_changed
-         * @param int | string $order_id Order id
-         * @param string $old Old status
-         * @param string $new_status New status
-         * @globals mixed $wpdb
-         * @globals mixed $woocommerce
-         * @since 2.9
-         */
-        public static function wcal_email_admin_recovery_for_paypal( $order_id, $old, $new_status ) {           
-            if ( 'pending' == $old && 'processing' == $new_status ) {
-                global $wpdb, $woocommerce;
-                $user_id                 = get_current_user_id();
-                $ac_email_admin_recovery = get_option( 'ac_lite_email_admin_on_recovery' );     
-                $order                   = new WC_Order( $order_id );
-                if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
-                    $user_id             = $order->get_user_id();          
-                } else {
-                    $user_id             = $order->user_id; 
-                }
-               
-                if ( 'on' == $ac_email_admin_recovery ) {
-                    $recovered_email_sent          = get_post_meta( $order_id, 'wcap_recovered_email_sent', true );
-                    $created_via                   = get_post_meta( $order_id, '_created_via', true );
-                    $wcal_check_order_is_recovered = woocommerce_abandon_cart_lite::wcal_check_order_is_recovered( $order_id );
-                    
-                    if ( 'checkout' == $created_via && 'yes' != $recovered_email_sent && true === $wcal_check_order_is_recovered ) { // indicates cart is abandoned
-                        $order          = new WC_Order( $order_id );
-                        $email_heading  = __( 'New Customer Order - Recovered', 'woocommerce-abandoned-cart' );
-                        $blogname       = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-                        $email_subject  = __( 'New Customer Order - Recovered', 'woocommerce-abandoned-cart' );
-                        $user_email     = get_option( 'admin_email' );
-                        $headers[]      = "From: Admin <".$user_email.">";
-                        $headers[]      = "Content-Type: text/html";
-                        // Buffer
-                        ob_start();
-                        // Get mail template
-                        wc_get_template( 'emails/admin-new-order.php', array(
-                            'order'         => $order,
-                            'email_heading' => $email_heading,
-                            'sent_to_admin' => false,
-                            'plain_text'    => false,
-                            'email'         => true
-                            )
-                        );
-                        // Get contents
-                        $email_body = ob_get_clean();
-                        wc_mail( $user_email, $email_subject, $email_body, $headers );                      
-                        update_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );                      
-                    }
-                }
-            }
-        }
-    
-        /**
-         * Send email to admin when cart is recovered via any other payment gateway other than PayPal.
-         * @hook woocommerce_order_status_pending_to_processing_notification
-         * @hook woocommerce_order_status_pending_to_completed_notification
-         * @hook woocommerce_order_status_pending_to_on-hold_notification
-         * @hook woocommerce_order_status_failed_to_processing_notification
-         * @hook woocommerce_order_status_failed_to_completed_notification
-         * @param int | string $order_id Order id
-         * @globals mixed $wpdb
-         * @globals mixed $woocommerce
-         * @since 2.3
-         */
-        function wcal_email_admin_recovery ( $order_id ) { 
-            global $wpdb, $woocommerce;
-                
-            $user_id                 = get_current_user_id();  
-            $ac_email_admin_recovery = get_option( 'ac_lite_email_admin_on_recovery' );         
-            if ( 'on' == $ac_email_admin_recovery ) {
-                $order = new WC_Order( $order_id );
-                
-                if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
-                    $user_id = $order->get_user_id();          
-                } else {
-                    $user_id = $order->user_id; 
-                }
-                $recovered_email_sent          = get_post_meta( $order_id, 'wcap_recovered_email_sent', true );
-                $created_via                   = get_post_meta( $order_id, '_created_via', true ); 
-                $wcal_check_order_is_recovered = woocommerce_abandon_cart_lite::wcal_check_order_is_recovered( $order_id );              
-                if ( 'checkout' == $created_via && 'yes' != $recovered_email_sent && true === $wcal_check_order_is_recovered ) { // indicates cart is abandoned                           
-                    $email_heading = __( 'New Customer Order - Recovered', 'woocommerce-abandoned-cart' );          
-                    $blogname      = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-                    $email_subject = __( 'New Customer Order - Recovered', 'woocommerce-abandoned-cart' ); 
-                    $user_email    = get_option( 'admin_email' );
-                    $headers[]     = "From: Admin <".$user_email.">";
-                    $headers[]     = "Content-Type: text/html";
-                    // Buffer
-                    ob_start();
-                    // Get mail template
-                    wc_get_template( 'emails/admin-new-order.php', array(
-                        'order'         => $order,
-                        'email_heading' => $email_heading,
-                        'sent_to_admin' => false,
-                        'plain_text'    => false,
-                        'email'         => true
-                    ) );
-                    // Get contents
-                    $email_body = ob_get_clean();
-                    
-                    wc_mail( $user_email, $email_subject, $email_body, $headers );
-                    
-                    update_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );
-                }
-            }
-        }
-
-        /**
-         * For sending Recovery Email to Admin, we will check that order is recovered or not.
-         * @param int | string $wcal_order_id Order id
-         * @return boolean true | false
-         * @globals mixed $wpdb
-         * @since 2.3
-         */
-        public static function wcal_check_order_is_recovered( $wcal_order_id ) {
-            global $wpdb;
-            $wcal_recover_order_query        = "SELECT `recovered_cart` FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE `recovered_cart` = %d";
-            $wcal_recover_order_query_result = $wpdb->get_results( $wpdb->prepare( $wcal_recover_order_query, $wcal_order_id ) );
-            if ( count( $wcal_recover_order_query_result ) > 0 ) {
-                return true;
-            }
-            return false;
-        }
-                 
+         
         /**
          * Add a submenu page under the WooCommerce.
          * @hook admin_menu
@@ -1578,13 +1092,22 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          */ 
         function wcal_store_cart_timestamp() {  
 
+            if ( get_transient( 'wcal_email_sent_id' ) !== false ) {
+                wcal_common::wcal_set_cart_session( 'email_sent_id', get_transient( 'wcal_email_sent_id' ) );
+                delete_transient( 'wcal_email_sent_id' );
+            }
+            if ( get_transient( 'wcal_abandoned_id' ) !== false ) {
+                wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', get_transient( 'wcal_abandoned_id' ) );
+                delete_transient( 'wcal_abandoned_id' );
+            }
+
             global $wpdb,$woocommerce;
             $current_time                    = current_time( 'timestamp' );
             $cut_off_time                    = get_option( 'ac_lite_cart_abandoned_time' );              
             $track_guest_cart_from_cart_page = get_option( 'ac_lite_track_guest_cart_from_cart_page' );
             $cart_ignored                    = 0;
             $recovered_cart                  = 0;  
-            
+
             $track_guest_user_cart_from_cart = "";          
             if ( isset( $track_guest_cart_from_cart_page ) ) {
                 $track_guest_user_cart_from_cart = $track_guest_cart_from_cart_page;
@@ -1610,14 +1133,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
                     $cart_info_meta = json_encode( get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true ) );
 
-                    if( '' !== $cart_info_meta && '{"cart":[]}' != $cart_info_meta ) {
+                    if( '' !== $cart_info_meta && '{"cart":[]}' != $cart_info_meta && '""' !== $cart_info_meta ) {
                         $cart_info    = $cart_info_meta;
                         $user_type    = "REGISTERED";
                         $insert_query = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
                                          ( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type )
                                          VALUES ( %d, %s, %d, %s, %s )";
                         $wpdb->query( $wpdb->prepare( $insert_query, $user_id, $cart_info,$current_time, $cart_ignored, $user_type ) );
-                        
+
                         $abandoned_cart_id = $wpdb->insert_id;
                         wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
                     }
@@ -1844,6 +1367,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $url                     = substr( $link_decode, $url_pos );             
                 $get_ac_id_query         = "SELECT abandoned_order_id FROM `".$wpdb->prefix."ac_sent_history_lite` WHERE id = %d";
                 $get_ac_id_results       = $wpdb->get_results( $wpdb->prepare( $get_ac_id_query, $email_sent_id ) );
+
+                wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $get_ac_id_results[0]->abandoned_order_id );
+                set_transient( 'wcal_abandoned_id', $get_ac_id_results[0]->abandoned_order_id, 5 );
+
                 $get_user_results        = array();
                 if ( count( $get_ac_id_results ) > 0 ) {
                     $get_user_id_query = "SELECT user_id FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE id = %d";
@@ -1870,9 +1397,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         wcal_common::wcal_set_cart_session( 'user_id', $user_id );
                     } else {
                         if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
-                            wp_redirect( get_permalink( wc_get_page_id( 'shop' ) ) );
+                            wp_safe_redirect( get_permalink( wc_get_page_id( 'shop' ) ) );
+                            exit;
                         } else {
-                            wp_redirect( get_permalink( woocommerce_get_page_id( 'shop' ) ) );
+                            wp_safe_redirect( get_permalink( woocommerce_get_page_id( 'shop' ) ) );
+                            exit;
                         }
                     }
                 }
@@ -2074,132 +1603,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }    
             return true;
         }
-    
-        /**
-         * When user places the order and reach the order recieved page, then it will check if it is abandoned cart and subsequently 
-         * recovered or not.
-         * @hook woocommerce_order_details_after_order_table
-         * @param array | object $order Order details
-         * @globals mixed $wpdb
-         * @globals mixed $woocommerce
-         * @since 1.0
-         */
-        function wcal_action_after_delivery_session( $order ) {
-            
-            if ( '' === session_id() ) {
-                //session has not started
-                session_start();
-            } 
-            global $wpdb, $woocommerce;
-            if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
-                $order_id = $order->get_id(); 
-            } else {
-                $order_id = $order->id; 
-            }
-            $get_abandoned_id_of_order  = '';
-            $get_sent_email_id_of_order = '';
-            $get_abandoned_id_of_order  = get_post_meta( $order_id, 'wcal_recover_order_placed', true );         
-            if ( isset( $get_abandoned_id_of_order ) && '' != $get_abandoned_id_of_order ) {  
-                $get_abandoned_id_of_order  = get_post_meta( $order_id, 'wcal_recover_order_placed', true );
-                $get_sent_email_id_of_order = get_post_meta( $order_id, 'wcal_recover_order_placed_sent_id', true );
-            
-                $query_order = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET recovered_cart= '" . $order_id . "', cart_ignored = '1'
-                                WHERE id = '".$get_abandoned_id_of_order."' ";
-                $wpdb->query( $query_order );
-            
-                $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
-                 
-                delete_post_meta( $order_id, 'wcal_recover_order_placed', $get_abandoned_id_of_order );
-                delete_post_meta( $order_id , 'wcal_recover_order_placed_sent_id', $get_sent_email_id_of_order );
-            }
-            $user_id    = get_current_user_id();
 
-            $sent_email = wcal_common::wcal_get_cart_session( 'email_sent_id' );
-
-            if( $user_id == "" ) {
-                $user_id = wcal_common::wcal_get_cart_session( 'user_id' );
-
-                //  Set the session variables to blanks
-                wcal_common::wcal_unset_cart_session( 'guest_first_name' );
-                wcal_common::wcal_unset_cart_session( 'guest_last_name' );
-                wcal_common::wcal_unset_cart_session( 'guest_email' );
-                wcal_common::wcal_unset_cart_session( 'user_id' );
-            }               
-            delete_user_meta( $user_id, '_woocommerce_ac_persistent_cart_time' );
-            delete_user_meta( $user_id, '_woocommerce_ac_persistent_cart_temp_time' );      
-            // get all latest abandoned carts that were modified
-            $cart_ignored   = 0;
-            $recovered_cart = 0;
-            $query = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-                      WHERE user_id      = %d
-                      AND cart_ignored   = %s
-                      AND recovered_cart = %d
-                      ORDER BY id DESC
-                      LIMIT 1";
-            $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id, $cart_ignored, $recovered_cart ) );            
-            if ( count( $results ) > 0 ) {                  
-                if ( get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "yes" ) || 
-                    get_user_meta( $user_id, '_woocommerce_ac_modified_cart', true ) == md5( "no" ) ) {
-                         
-                    if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
-                        $order_id = $order->get_id(); 
-                    } else {
-                        $order_id = $order->id; 
-                    }
-                    $updated_cart_ignored = 1;
-                    $query_order = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-                                    SET recovered_cart = %d,
-                                        cart_ignored   = %s
-                                    WHERE id = %d ";
-                    $wpdb->query( $wpdb->prepare( $query_order, $order_id, $updated_cart_ignored, $results[0]->id ) );
-                    delete_user_meta( $user_id, '_woocommerce_ac_modified_cart' );
-                    delete_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );                      
-                } else {
-                    $delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
-                                     WHERE id= %d ";
-                    $wpdb->query( $wpdb->prepare( $delete_query, $results[0]->id ) );
-                }
-            } else {
-                if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
-                    $email_id = $order->get_billing_email();
-                } else {
-                    $email_id = $order->billing_email;
-                }
-                $query      = "SELECT * FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE email_id = %s";
-                $results_id = $wpdb->get_results( $wpdb->prepare( $query, $email_id ) );
-                
-                if ( $results_id ) {
-                    $record_status  = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
-                                       WHERE user_id = %d AND recovered_cart = '0'";
-                    $results_status = $wpdb->get_results( $wpdb->prepare( $record_status, $results_id[0]->id ) );
-                        
-                    if ( $results_status ) {                             
-                        if ( get_user_meta( $results_id[0]->id, '_woocommerce_ac_modified_cart', true ) == md5("yes") ||
-                                get_user_meta( $results_id[0]->id, '_woocommerce_ac_modified_cart', true ) == md5("no") ) {
-                                
-                            if ( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {            
-                                $order_id = $order->get_id(); 
-                            } else {
-                                $order_id = $order->id; 
-                            }
-                            $query_order = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
-                                            SET recovered_cart= '".$order_id."', cart_ignored = '1' 
-                                            WHERE id='".$results_status[0]->id."' ";
-                            $wpdb->query( $query_order );
-                            delete_user_meta( $results_id[0]->id, '_woocommerce_ac_modified_cart' );
-                            delete_post_meta( $order_id, 'wcap_recovered_email_sent', 'yes' );
-                        } else {
-                            $delete_guest = "DELETE FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` WHERE id = '".$results_id[0]->id."'";
-                            $wpdb->query( $delete_guest );
-                            
-                            $delete_query = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE user_id='".$results_id[0]->id."' ";
-                            $wpdb->query( $delete_query );
-                        }
-                    }
-                }
-            }
-        }
-        
         /**
          * It will add the wp editor for email body on the email edit page.
          * @hook admin_init
@@ -2952,7 +2356,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             <div class="inside" >
                                 <?php
                                 $count = $wcal_recover_orders_list->total_abandoned_cart_count;
-                                $total_of_all_order = wc_price( $wcal_recover_orders_list->total_order_amount ); 
+                                $total_of_all_order = $wcal_recover_orders_list->total_order_amount; 
                                 $recovered_item = $wcal_recover_orders_list->recovered_item;
                                 $recovered_total = wc_price( $wcal_recover_orders_list->total_recover_amount );
                                 ?>
