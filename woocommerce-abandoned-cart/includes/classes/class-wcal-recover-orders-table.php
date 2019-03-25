@@ -230,7 +230,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		$ac_results       = $wpdb->get_results( $wpdb->prepare( $query_ac, $start_date, $end_date ) );
 		
 		$query_ac_carts   = "SELECT * FROM " . $wpdb->prefix . "ac_abandoned_cart_history_lite 
-		                     WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d AND abandoned_cart_time <= '$compare_time' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '$blank_cart' AND (cart_ignored <> '1') OR (cart_ignored = '1' AND recovered_cart > 0)";
+		                     WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d AND abandoned_cart_time <= '$compare_time' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '$blank_cart' AND cart_ignored <> '1'";
 		$ac_carts_results = $wpdb->get_results( $wpdb->prepare( $query_ac_carts, $start_date, $end_date ) );
 		
 		$recovered_item   = $recovered_total = $count_carts = $total_value = $order_total = 0;    		
@@ -257,22 +257,22 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	        }
 	        $total_value += $line_total; 
 		}
-		$total_value                      = wc_price( $total_value );    		
+		//$total_value                      = wc_price( $total_value );
 		$this->total_order_amount         = $total_value;
-		$this->total_abandoned_cart_count = $count_carts;    		
-		$recovered_order_total            = 0;    		
-		$this->total_recover_amount       = round( $recovered_order_total, $number_decimal );    		
-		$this->recovered_item             = 0;    		
+		$this->total_abandoned_cart_count = $count_carts;
+		$recovered_order_total            = 0;
+		$this->total_recover_amount       = round( $recovered_order_total, $number_decimal );
+		$this->recovered_item             = 0;
 		$table_data                       = "";
 		
-		foreach ( $ac_results as $key => $value ) {    		        		
-		    if( $value->recovered_cart != 0 ) {    		        
+		foreach ( $ac_results as $key => $value ) {
+		    if( $value->recovered_cart != 0 ) {
 		        $return_recovered_orders[$i] = new stdClass();
 		        $recovered_id       		 = $value->recovered_cart;
 		        $rec_order          		 = get_post_meta( $recovered_id );
 		        $woo_order 					 = array();
 		        try{
-		        	$woo_order          	   = new WC_Order( $recovered_id );
+		        	$woo_order          	   = wc_get_order( $recovered_id );
 					if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
 	    	        	$order 				   = get_post( $recovered_id );
 						$recovered_date 	   = strtotime ( $order->post_date );
@@ -321,16 +321,18 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 			        $return_recovered_orders[ $i ]->recover_order_date = $recovered_date;
 			        $return_recovered_orders[ $i ]->abandoned_date     = $value->abandoned_cart_time;
 			        $return_recovered_orders[ $i ]->order_total        = wc_price($recovered_order_total);
-			            		        
+
 			        $this->recovered_item = $recovered_item;
-			        $this->total_recover_amount = round( ( $recovered_order_total + $this->total_recover_amount ), $number_decimal );    		        
+			        $this->total_recover_amount = round( ( $recovered_order_total + $this->total_recover_amount ), $number_decimal );
 			        $i++;
 			    }catch (Exception $e){
 			    	
-			    } 
+			    }
 
-		    }   		    
+		    }
 		}
+		$this->total_order_amount = wc_price( $this->total_order_amount + $this->total_recover_amount );
+		$this->total_abandoned_cart_count = $this->total_abandoned_cart_count + $this->recovered_item;
 		$templates_count   = count( $return_recovered_orders );
 		$this->total_count = $templates_count;
     	// sort for order date

@@ -612,7 +612,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 
                             $order_id = $wcal_results[0]->post_id;
 
-                            $order    = new WC_Order( $order_id );
+                            $order    = wc_get_order( $order_id );
 
                             $query_order = "UPDATE `" . $wpdb->prefix."ac_abandoned_cart_history_lite` SET recovered_cart= '" . $order_id . "', cart_ignored = '1' WHERE id = '".$cart_id."' ";
                             $wpdb->query( $query_order );
