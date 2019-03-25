@@ -760,6 +760,9 @@ class wcal_common {
      * @since 7.11.0
      */
     public static function wcal_get_cart_session( $session_key ) {
+        if ( ! is_object( WC()->session ) ) {
+            return false;
+        }
         return WC()->session->get( $session_key );
     }
 

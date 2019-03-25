@@ -255,7 +255,14 @@ if ( !class_exists( 'Wcal_Checkout_Process' ) ) {
 		                $wpdb->delete( $wcal_history_table_name, array( 'id' => $wcal_abandoned_id ) );
 		            }
 		        }
-		    }
+		    }elseif ( 'pending' == $wc_old_status && 'cancelled' == $wc_new_status ) {
+		    	global $wpdb;
+
+		    	$wcal_history_table_name = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
+		    	$wcal_abandoned_id = get_post_meta( $order_id, 'wcal_abandoned_cart_id', true );
+
+				$wpdb->update( $wcal_history_table_name, array( 'cart_ignored' => '1' ), array( 'id' => $wcal_abandoned_id ) );
+			}
 		}
 
 		/**
