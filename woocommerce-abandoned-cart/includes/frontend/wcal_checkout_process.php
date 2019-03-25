@@ -148,6 +148,13 @@ if ( !class_exists( 'Wcal_Checkout_Process' ) ) {
                     'cart_ignored'        => '1',
                 );
 
+                $current_user_id = get_current_user_id();
+
+                if ( $current_user_id !== wcal_common::wcal_get_cart_session( 'user_id' ) && 
+                	 $current_user_id != 0 ) {
+                	$update_details['user_id'] = $current_user_id;
+                }
+
                 // check if more than one reminder email has been sent
                 $check_emails = "SELECT abandoned_order_id FROM `$wcal_sent_email_table_name` WHERE id = %d";
                 $get_old_cart_id = $wpdb->get_col( 
@@ -189,6 +196,10 @@ if ( !class_exists( 'Wcal_Checkout_Process' ) ) {
 
                 // Add Order Note
                 $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
+                delete_post_meta( $order_id, 'wcal_abandoned_cart_id' );
+                delete_post_meta( $order_id, 'wcal_recover_order_placed' );
+                delete_post_meta( $order_id, 'wcal_recover_order_placed_sent_id' );
+                delete_post_meta( $order_id, 'wcal_recovered_email_sent' );
             }
         }
 
@@ -430,6 +441,13 @@ if ( !class_exists( 'Wcal_Checkout_Process' ) ) {
                     'cart_ignored'        => '1'
                 );
 
+                $current_user_id = get_current_user_id();
+
+                if ( $current_user_id !== wcal_common::wcal_get_cart_session( 'user_id' ) && 
+                	 $current_user_id != 0 ) {
+                	$update_details['user_id'] = $current_user_id;
+                }
+
                 // check if more than one reminder email has been sent
                 $check_emails = "SELECT abandoned_order_id FROM `$wcal_email_sent_table` WHERE id = %d";
                 $get_old_cart_id = $wpdb->get_col( $wpdb->prepare( $check_emails, $wcal_check_email_sent_to_cart ) );
@@ -466,6 +484,10 @@ if ( !class_exists( 'Wcal_Checkout_Process' ) ) {
 
                 // Add Order Note
                 $order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
+                delete_post_meta( $order_id, 'wcal_abandoned_cart_id' );
+                delete_post_meta( $order_id, 'wcal_recover_order_placed' );
+                delete_post_meta( $order_id, 'wcal_recover_order_placed_sent_id' );
+                delete_post_meta( $order_id, 'wcal_recovered_email_sent' );
             }       
         }
 
@@ -528,10 +550,7 @@ if ( !class_exists( 'Wcal_Checkout_Process' ) ) {
 
 	                        add_post_meta( $order_id , 'wcal_abandoned_timestamp', $get_ac_id_guest_results[0]->abandoned_cart_time );
 
-	                        $wpdb->delete( 
-	                        	$wcal_history_table_name, 
-	                        	array( 'id' => $abandoned_order_id_of_guest ) 
-	                        );
+	                        $wpdb->delete( $wcal_guest_table_name , array( 'id' => $wcal_user_id_of_guest ) );
 	                    }
 	                    // it is the new registered users cart id
 	                    $abandoned_order_id_to_save = $abandoned_cart_id_new_user;
