@@ -682,61 +682,69 @@ class wcal_common {
     
         $quantity_total = $v->quantity;
         $product_id     = $v->product_id;
-        $prod_name      = get_post( $product_id );
-        $product_name   = $prod_name->post_title;  
+        $product        = wc_get_product( $product_id );
+        if ( $product ) {
+            $prod_name      = get_post( $product_id );
+            $product_name   = $prod_name->post_title;  
 
-        if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
-            $variation_id               = $v->variation_id;
-            $variation                  = wc_get_product( $variation_id );
-            
-            if( false != $variation ) {
-                $name                       = $variation->get_formatted_name() ;
-                $explode_all                = explode ( "&ndash;", $name );
-                if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
-                    $wcap_sku = '';
-                    if ( $variation->get_sku() ) {
-                        $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
+            if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
+                $variation_id               = $v->variation_id;
+                $variation                  = wc_get_product( $variation_id );
+                
+                if( false != $variation ) {
+                    $name                       = $variation->get_formatted_name() ;
+                    $explode_all                = explode ( "&ndash;", $name );
+                    if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {  
+                        $wcap_sku = '';
+                        if ( $variation->get_sku() ) {
+                            $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
+                        }
+                        $wcap_get_formatted_variation  =  wc_get_formatted_variation( $variation, true );
+        
+                        $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
+                                
+                        $pro_name_variation = (array) $add_product_name;
+                    }else{
+                        $pro_name_variation = array_slice( $explode_all, 1, -1 );
                     }
-                    $wcap_get_formatted_variation  =  wc_get_formatted_variation( $variation, true );
-    
-                    $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
-                            
-                    $pro_name_variation = (array) $add_product_name;
-                }else{
-                    $pro_name_variation = array_slice( $explode_all, 1, -1 );
-                }
-                $product_name_with_variable = '';
-                $explode_many_varaition     = array();
-                foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
-                    $explode_many_varaition = explode ( ",", $pro_name_variation_value );
-                    if( !empty( $explode_many_varaition ) ) {
-                        foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
+                    $product_name_with_variable = '';
+                    $explode_many_varaition     = array();
+                    foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
+                        $explode_many_varaition = explode ( ",", $pro_name_variation_value );
+                        if( !empty( $explode_many_varaition ) ) {
+                            foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
+                                $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
+                            }
+                        } else {
                             $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
                         }
-                    } else {
-                        $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
                     }
+                    $product_name = $product_name_with_variable;
                 }
-                $product_name = $product_name_with_variable;
             }
-        }
-        $item_subtotal = 0;
-        // Item subtotal is calculated as product total including taxes
-        if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
-            $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
-        } else {
-            $item_subtotal = $item_subtotal + $v->line_total;
-        }            
-        //  Line total
-        $item_total    = $item_subtotal;
-        $item_subtotal = $item_subtotal / $quantity_total;
-        $item_total    = wc_price( $item_total );
-        $item_subtotal = wc_price( $item_subtotal );
+            $item_subtotal = 0;
+            // Item subtotal is calculated as product total including taxes
+            if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
+                $item_subtotal = $item_subtotal + $v->line_total + $v->line_subtotal_tax;
+            } else {
+                $item_subtotal = $item_subtotal + $v->line_total;
+            }            
+            //  Line total
+            $item_total    = $item_subtotal;
+            $item_subtotal = $item_subtotal / $quantity_total;
+            $item_total    = wc_price( $item_total );
+            $item_subtotal = wc_price( $item_subtotal );
 
-        $item_details[ 'product_name' ] = $product_name;
-        $item_details[ 'item_total_formatted' ] = $item_subtotal;
-        $item_details[ 'item_total' ] = $item_total;
-        $item_details[ 'qty' ] = $quantity_total;
+            $item_details[ 'product_name' ] = $product_name;
+            $item_details[ 'item_total_formatted' ] = $item_subtotal;
+            $item_details[ 'item_total' ] = $item_total;
+            $item_details[ 'qty' ] = $quantity_total;
+        } else {
+            $item_details[ 'product_name' ] = __( 'This product no longer exists', 'woocommerce-abandoned-cart' );
+            $item_details[ 'item_total_formatted' ] = '';
+            $item_details[ 'item_total' ] = '';
+            $item_details[ 'qty' ] = '';
+        }
     
         return $item_details;
     }
