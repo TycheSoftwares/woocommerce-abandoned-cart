@@ -3022,6 +3022,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 }
 
                 $active = "1";
+
+                update_option( 'wcal_template_' . $template_id . '_time', current_time( 'timestamp' ) );
             } else {
                 $active = "0";
             }
