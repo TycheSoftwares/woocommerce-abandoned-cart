@@ -71,7 +71,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                     $time_to_send_template_after = $value->frequency * $hour_seconds;
                 }
                 
-                $carts               = $this->wcal_get_carts( $time_to_send_template_after, $cart_abandon_cut_off_time );
+                $carts               = $this->wcal_get_carts( $time_to_send_template_after, $cart_abandon_cut_off_time, $value->id );
                 $email_frequency     = $value->frequency;
                 $email_body_template = $value->body;
                 $template_email_subject       = stripslashes  ( $value->subject );
@@ -457,15 +457,23 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
          * @return array | object $results
          * @since 1.3
          */
-        function wcal_get_carts( $template_to_send_after_time, $cart_abandon_cut_off_time ) {
+        function wcal_get_carts( $template_to_send_after_time, $cart_abandon_cut_off_time, $template_id ) {
             global $wpdb;
             $cart_time = current_time( 'timestamp' ) - $template_to_send_after_time - $cart_abandon_cut_off_time;
+
+            $wcal_template_time = get_option( 'wcal_template_' . $template_id . '_time' );
+            $wcal_add_template_condition = '';
+            if ( $wcal_template_time > 0 ) {
+                $wcal_add_template_condition = ' AND abandoned_cart_time > ' . $wcal_template_time;
+            }
             $cart_ignored = 0;
             $unsubscribe  = 0;
-            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
-                      LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
-                      WHERE cart_ignored = %s AND unsubscribe_link = %s AND abandoned_cart_time < $cart_time
-                      ORDER BY `id` ASC ";
+            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email 
+                FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
+                LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
+                WHERE cart_ignored = %s AND unsubscribe_link = %s AND abandoned_cart_time < $cart_time
+                $wcal_add_template_condition
+                ORDER BY `id` ASC ";
 
             $results = $wpdb->get_results( $wpdb->prepare( $query, $cart_ignored, $unsubscribe ) );
             return $results;
