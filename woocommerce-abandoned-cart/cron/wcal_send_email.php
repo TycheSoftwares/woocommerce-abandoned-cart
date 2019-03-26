@@ -297,35 +297,37 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                 foreach ( $cart_details as $k => $v ) {
                                                     $quantity_total     = $v->quantity;
                                                     $product_id         = $v->product_id;
-                                                    $prod_name          = get_post( $product_id );
-                                                    $product_link_track = get_permalink( $product_id );
-                                                    $product_name = $prod_name->post_title;
-                                                    if( $sub_line_prod_name == '' ) {
-                                                        $sub_line_prod_name = $product_name;
-                                                    }
-                                                    // Item subtotal is calculated as product total including taxes
-                                                    if( $v->line_tax != 0 && $v->line_tax > 0 ) {
-                                                        $item_subtotal = $item_subtotal + $v->line_total + $v->line_tax;
-                                                    } else {
-                                                        $item_subtotal = $item_subtotal + $v->line_total;
-                                                    }
-                                                    //  Line total
-                                                    $item_total         = $item_subtotal;
-                                                    $item_subtotal      = $item_subtotal / $quantity_total;
-                                                    $item_total_display = wc_price( $item_total );
-                                                    $item_subtotal      = wc_price( $item_subtotal );
                                                     $product            = wc_get_product( $product_id );
-                                                    $prod_image         = $product->get_image();
-                                                    $image_url          = wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );
-                                                    if ( strpos( $image_url, '/' ) === 0 ) {
-                                                        $image_url = get_option('siteurl') . $image_url;
-                                                    }
-                                                    if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
-                                                        $variation_id               = $v->variation_id;
-                                                        $variation                  = wc_get_product( $variation_id );
-                                                        $name                       = $variation->get_formatted_name() ;
-                                                        $explode_all                = explode ( "&ndash;", $name );
-                                                        if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
+                                                    if ( $product ) {
+                                                        $prod_name          = get_post( $product_id );
+                                                        $product_link_track = get_permalink( $product_id );
+                                                        $product_name = $prod_name->post_title;
+                                                        if( $sub_line_prod_name == '' ) {
+                                                            $sub_line_prod_name = $product_name;
+                                                        }
+                                                        // Item subtotal is calculated as product total including taxes
+                                                        if( $v->line_tax != 0 && $v->line_tax > 0 ) {
+                                                            $item_subtotal = $item_subtotal + $v->line_total + $v->line_tax;
+                                                        } else {
+                                                            $item_subtotal = $item_subtotal + $v->line_total;
+                                                        }
+                                                        //  Line total
+                                                        $item_total         = $item_subtotal;
+                                                        $item_subtotal      = $item_subtotal / $quantity_total;
+                                                        $item_total_display = wc_price( $item_total );
+                                                        $item_subtotal      = wc_price( $item_subtotal );
+                                                        //$product            = wc_get_product( $product_id );
+                                                        $prod_image         = $product->get_image();
+                                                        $image_url          = wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );
+                                                        if ( strpos( $image_url, '/' ) === 0 ) {
+                                                            $image_url = get_option('siteurl') . $image_url;
+                                                        }
+                                                        if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
+                                                            $variation_id               = $v->variation_id;
+                                                            $variation                  = wc_get_product( $variation_id );
+                                                            $name                       = $variation->get_formatted_name() ;
+                                                            $explode_all                = explode ( "&ndash;", $name );
+                                                            if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
                                                                 $wcap_sku = '';
                                                                 if ( $variation->get_sku() ) {
                                                                     $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
@@ -361,7 +363,16 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                             </tr>';
                                                         $cart_total += $item_total;
                                                         $item_subtotal = $item_total = 0;
+                                                        $p_exists = true;
+                                                    }else {
+                                                        $cart_total = 0;
+                                                        $item_subtotal = $item_total = 0;
+
+                                                        $p_exists = false;
                                                     }
+                                                }
+
+                                                if ( $p_exists ) {
                                                     $cart_total = wc_price( $cart_total );
                                                     $var .= '<tr align="center">
                                                             <td> </td>
@@ -374,7 +385,11 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                                             ';
                                                     $email_body    = str_replace( "{{products.cart}}", $var, $email_body );
                                                     $email_subject = str_replace( "{{product.name}}", __( $sub_line_prod_name, 'woocommerce-abandoned-cart' ), $email_subject );
+                                                }else {
+                                                    $email_body    = str_replace( "{{products.cart}}", 'Product no longer exists', $email_body );
+                                                    $email_subject = str_replace( "{{product.name}}", __( $sub_line_prod_name, 'woocommerce-abandoned-cart' ), $email_subject );
                                                 }
+                                            }
 
                                                 $user_email       = $value->user_email;
                                                 $email_body_final = stripslashes( $email_body );
