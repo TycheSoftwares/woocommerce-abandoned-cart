@@ -193,6 +193,10 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 5.3.0 (26.03.2019) =
+
+* Bug - 
+
 = 5.2.1 (18.02.2019) =
 
 * Bug - Fixed an issue where ajax url was missing for some sites preventing emails to be captured.
