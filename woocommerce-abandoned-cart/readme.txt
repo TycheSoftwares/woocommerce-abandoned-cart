@@ -195,7 +195,17 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 = 5.3.0 (26.03.2019) =
 
-* Bug - 
+* Enhancement - Corrected the way recovered orders were tracked. Replaced the hooks tracking orders.
+
+* Bug - Newly created Email Templates will be inactive by default.
+
+* Bug - When an email template is activated, the emails will not be sent to older abandoned carts.
+
+* Bug - Fixed an issue where Recovered Order note was getting added to all the Orders.
+
+* Bug - Fixed an issue where notices were getting displayed in abandoned details page if the product was deleted.
+
+* Tweak - Updated the pot file with some new strings added. Also corrected the display of a few strings.
 
 = 5.2.1 (18.02.2019) =
 
