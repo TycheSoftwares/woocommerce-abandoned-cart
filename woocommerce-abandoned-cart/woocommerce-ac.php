@@ -5,7 +5,7 @@
 * Description: This plugin captures abandoned carts by logged-in users & emails them about it. 
 * <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the 
 * PRO Version.</a></strong>
-* Version: 5.3.1
+* Version: 5.3.2
 * Author: Tyche Softwares
 * Author URI: http://www.tychesoftwares.com/
 * Text Domain: woocommerce-abandoned-cart
@@ -1173,8 +1173,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                      AND   cart_ignored = %s ";
                     $wpdb->query( $wpdb->prepare( $query_update, $updated_cart_info, $current_time, $user_id, $cart_ignored ) );
                     
-                    $query_update         = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_id ='" . $user_id . "' AND cart_ignored='0' ";                   
-                    $get_abandoned_record = $wpdb->get_results( $query_update );
+                    $query_update         = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored='0' ";                    
+                    $get_abandoned_record = $wpdb->get_results( $wpdb->prepare( $query_update, $user_id ) );
                     if ( count( $get_abandoned_record ) > 0 ) {
                         $abandoned_cart_id   = $get_abandoned_record[0]->id;
                         wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
@@ -1204,8 +1204,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
                             $query_ignored = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
                                              SET cart_ignored = '1' 
-                                             WHERE user_id ='".$user_id."'";
-                            $wpdb->query( $query_ignored );
+                                             WHERE user_id = %d";
+                            $wpdb->query( $wpdb->prepare( $query_ignored, $user_id ) );
                             $user_type    = 'GUEST';                
                             $query_update = "INSERT INTO `".$wpdb->prefix."ac_abandoned_cart_history_lite`
                                      (user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type)
@@ -1217,9 +1217,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         }  
                     } else {
                         $query_update = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite` 
-                                         SET abandoned_cart_info = '".$updated_cart_info."', abandoned_cart_time = '".$current_time."' 
-                                         WHERE user_id='".$user_id."' AND cart_ignored='0' ";
-                        $wpdb->query( $query_update );
+                                         SET abandoned_cart_info = %s, abandoned_cart_time = %d
+                                         WHERE user_id= %d AND cart_ignored='0' ";
+                        $wpdb->query( $wpdb->prepare( $query_update, $updated_cart_info, $current_time, $user_id ) );
                     }
                 } else {                   
                     /**
@@ -1235,27 +1235,28 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             if ( $blank_cart_info != $cart_info && '{"cart":[]}' != $cart_info ) {
                                 $insert_query = "INSERT INTO `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
                                                 ( abandoned_cart_info , abandoned_cart_time , cart_ignored , recovered_cart, user_type, session_id  )
-                                                VALUES ( '" . $cart_info."' , '" . $current_time . "' , '0' , '0' , 'GUEST', '". $get_cookie[0] ."' )";
-                                $wpdb->query( $insert_query );
+                                                VALUES ( %s , %d , '0' , '0' , 'GUEST', %s )";
+                                $wpdb->query( $wpdb->prepare( $insert_query, $cart_info, $current_time, $get_cookie[0] ) );
                             }                        
                         } elseif ( $compare_time > $results[0]->abandoned_cart_time ) {                        
                             $blank_cart_info = '[]';                                
                             if ( $blank_cart_info != $updated_cart_info && '{"cart":[]}' != $updated_cart_info ) { 
                                 if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {                        
-                                    $query_ignored = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE session_id ='" . $get_cookie[0] . "'";
-                                    $wpdb->query( $query_ignored );
+                                    $query_ignored = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE session_id = %s";
+                                    $wpdb->query( $wpdb->prepare( $query_ignored, $get_cookie[0] ) );
+
                                     $query_update = "INSERT INTO `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
                                                     ( abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type, session_id )
-                                                    VALUES ( '" . $updated_cart_info . "', '" . $current_time . "', '0', '0', 'GUEST', '". $get_cookie[0] ."' )";
-                                    $wpdb->query( $query_update );
+                                                    VALUES ( %s, %d, '0', '0', 'GUEST', %s )";
+                                    $wpdb->query( $wpdb->prepare( $query_update, $updated_cart_info, $current_time, $get_cookie[0] ) );
                                 }
                             }
                         } else {                        
                             $blank_cart_info = '[]';                        
                             if ( $blank_cart_info != $updated_cart_info && '{"cart":[]}' != $updated_cart_info ) {                        
                                 if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {
-                                    $query_update = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET abandoned_cart_info = '" . $updated_cart_info . "', abandoned_cart_time  = '" . $current_time . "' WHERE session_id ='" . $get_cookie[0] . "' AND cart_ignored='0' ";
-                                    $wpdb->query( $query_update );
+                                    $query_update = "UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET abandoned_cart_info = %s, abandoned_cart_time  = %d WHERE session_id = %d AND cart_ignored='0' ";
+                                    $wpdb->query( $wpdb->prepare( $query_update, $updated_cart_info,  $current_time, $get_cookie[0] ) );
                                 }
                             }
                         }
@@ -2153,19 +2154,19 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             } else {
                                 $active = "1";
 
-                                $query_update                  = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite` WHERE id ='" . $template_id . "'";
-                                $get_selected_template_result  = $wpdb->get_results( $query_update );
+                                $query_update                  = "SELECT * FROM `".$wpdb->prefix."ac_email_templates_lite` WHERE id = %s";
+                                $get_selected_template_result  = $wpdb->get_results( $wpdb->prepare( $query_update, $template_id) );
                                 $email_frequncy                = $get_selected_template_result[0]->frequency;
                                 $email_day_or_hour             = $get_selected_template_result[0]->day_or_hour;
                                 
-                                $query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite` SET is_active='0' WHERE frequency='" . $email_frequncy . "' AND day_or_hour='" . $email_day_or_hour . "' ";
-                                $wcap_updated = $wpdb->query( $query_update );
+                                $query_update = "UPDATE `".$wpdb->prefix."ac_email_templates_lite` SET is_active='0' WHERE frequency=%s AND day_or_hour=%s ";
+                                $wcap_updated = $wpdb->query( $wpdb->prepare( $query_update, $email_frequncy, $email_day_or_hour ) );
                             }
                             $query_update = "UPDATE `" . $wpdb->prefix . "ac_email_templates_lite`
                                     SET
-                                    is_active       = '" . $active . "'
-                                    WHERE id        = '" . $template_id . "' ";
-                            $wpdb->query( $query_update );
+                                    is_active       = %s
+                                    WHERE id        = %s";
+                            $wpdb->query( $wpdb->prepare( $query_update, $active, $template_id ) );
                         
                             wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=emailtemplates' ) );
                         }
@@ -2993,16 +2994,16 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             $current_template_status = $_POST['current_state'];
 
             if ( "on" == $current_template_status ) {
-                $query_update                 = "SELECT * FROM `" . $wpdb->prefix . "ac_email_templates_lite` WHERE id ='" . $template_id . "'";
-                $get_selected_template_result = $wpdb->get_results( $query_update );
+                $query_update                 = "SELECT * FROM `" . $wpdb->prefix . "ac_email_templates_lite` WHERE id = %s";
+                $get_selected_template_result = $wpdb->get_results( $wpdb->prepare( $query_update, $template_id ) );
                 $email_frequncy               = $get_selected_template_result[0]->frequency;
                 $email_day_or_hour            = $get_selected_template_result[0]->day_or_hour;
-                $query_update                 = "UPDATE `" . $wpdb->prefix . "ac_email_templates_lite` SET is_active='0' WHERE frequency='" . $email_frequncy . "' AND day_or_hour='" . $email_day_or_hour . "' ";
-                $wcal_updated                 = $wpdb->query( $query_update );
+                $query_update                 = "UPDATE `" . $wpdb->prefix . "ac_email_templates_lite` SET is_active='0' WHERE frequency= %s AND day_or_hour= %s ";
+                $wcal_updated                 = $wpdb->query( $wpdb->prepare( $query_update,$email_frequncy, $email_day_or_hour ) );
 
                 if ( 1 == $wcal_updated ){
-                    $query_update_get_id = "SELECT id FROM  `" . $wpdb->prefix . "ac_email_templates_lite` WHERE id != $template_id AND frequency='" . $email_frequncy . "' AND day_or_hour='" . $email_day_or_hour . "' ";
-                    $wcal_updated_get_id = $wpdb->get_results( $query_update_get_id );
+                    $query_update_get_id = "SELECT id FROM  `" . $wpdb->prefix . "ac_email_templates_lite` WHERE id != %s AND frequency = %s AND day_or_hour = %s";
+                    $wcal_updated_get_id = $wpdb->get_results( $wpdb->prepare( $query_update_get_id, $template_id, $email_frequncy, $email_day_or_hour ) );
                     $wcal_all_ids = '';
                     foreach ( $wcal_updated_get_id as $wcal_updated_get_id_key => $wcal_updated_get_id_value ) {
                         # code...
@@ -3023,9 +3024,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
             $query_update = "UPDATE `" . $wpdb->prefix . "ac_email_templates_lite`
                     SET
-                    is_active = '" . $active . "'
-                    WHERE id  = '" . $template_id . "' ";
-            $wpdb->query( $query_update );
+                    is_active = %s
+                    WHERE id  = %s";
+            $wpdb->query( $wpdb->prepare($query_update, $active, $template_id ) );
             wp_die();
 
         }

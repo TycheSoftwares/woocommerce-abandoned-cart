@@ -193,6 +193,10 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 5.3.2 (16.04.2019) =
+
+* Tweak - Optimizing SQL queries by escaping the parameters passed.
+
 = 5.3.1 (04.04.2019) =
 
 * Bug - Fixed a bug where the login was conflicting with sites hosted on WP Engine.
