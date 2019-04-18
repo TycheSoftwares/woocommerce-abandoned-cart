@@ -193,6 +193,14 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 5.3.4 (18.04.2019) =
+
+* This is a minor update to the plugin to remove the unwanted abandoned carts created for some customers after updating to the 5.3.2 release.
+
+= 5.3.3 (18.04.2019) =
+
+* We have reversed the changes of the previous release as it created an issue with some sites where carts that were abandoned a while back were receiving the abandoned cart email after the update.
+
 = 5.3.2 (16.04.2019) =
 
 * Tweak - Optimizing SQL queries by escaping the parameters passed.
