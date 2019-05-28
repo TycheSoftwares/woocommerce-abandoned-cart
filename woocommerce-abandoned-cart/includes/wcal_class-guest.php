@@ -18,7 +18,8 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 	class woocommerce_guest_ac {		
 		var $a;		
 		public function __construct() {
-			add_action( 'woocommerce_after_checkout_billing_form', 'user_side_js' );
+            add_action( 'woocommerce_after_checkout_billing_form', 'user_side_js' );
+            add_action( 'wfacp_footer_before_print_scripts', 'user_side_js' ); //Compatibility with Aero Checkout           
 			add_action( 'init','load_ac_ajax' );
 			add_filter( 'woocommerce_checkout_fields', 'guest_checkout_fields' );
 		}
