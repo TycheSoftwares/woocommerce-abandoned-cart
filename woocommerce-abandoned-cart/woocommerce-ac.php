@@ -151,7 +151,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             add_action ( 'admin_menu',                                  array( &$this, 'wcal_admin_menu' ) );
             
             // Actions to be done on cart update
-            add_action ( 'woocommerce_cart_updated',                    array( &$this, 'wcal_store_cart_timestamp' ) );
+            add_action( 'woocommerce_add_to_cart',                      array( &$this, 'wcal_store_cart_timestamp' ), 100 );
+            add_action( 'woocommerce_cart_item_removed',                array( &$this, 'wcal_store_cart_timestamp' ), 100 );
+            add_action( 'woocommerce_cart_item_restored',               array( &$this, 'wcal_store_cart_timestamp' ), 100 );
+            add_action( 'woocommerce_after_cart_item_quantity_update',  array( &$this, 'wcal_store_cart_timestamp' ), 100 );
+            add_action( 'woocommerce_calculate_totals',                 array( &$this, 'wcal_store_cart_timestamp' ), 100 );
 
             add_action ( 'admin_init',                                  array( &$this, 'wcal_action_admin_init' ) );
             
