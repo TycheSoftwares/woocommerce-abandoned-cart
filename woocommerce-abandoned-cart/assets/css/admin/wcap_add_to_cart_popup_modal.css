@@ -1,0 +1,547 @@
+.wcap_popup_main_div{
+    width: 100%; 
+    height: 100%
+}
+.wcap_popup_main_table{
+    width: 100%; 
+    height: 100%
+}
+.wcap_popup_main_table_tr{
+    width: 100%; 
+    height: 100%
+}
+.wcap_popup_main_table_td_settings{
+    float:left; 
+    width:52% ;
+}
+.wcap_popup_main_table_td_preview{
+    float:right; 
+    width: 45%;
+}
+
+/* heading section */
+.wcap_heading_section_table{
+    width: 100%;
+}
+.wcap_heading_section_tr{
+    width: 100%;
+}
+.wcap_heading_section_table_heading{
+    float: left;
+}
+.wcap_heading_section_text_field{
+    float:left; 
+    width:52% ;
+}
+.wcap_heading_section_text_field_color{
+    float:right; 
+    width: 45%;
+}
+
+.wcap_heading_section_text_email{
+    width: 95%;
+    font-size: 1em;
+}
+.wcap_popup_heading_color_picker{
+    width: 40%;
+    font-size: 1em;
+}
+
+/* text section */
+.wcap_text_section_table{
+    width: 100%;
+}
+.wcap_text_section_tr{
+    width: 100%;
+}
+.wcap_text_section_table_heading{
+    float: left;
+}
+.wcap_text_section_text_field{
+    float:left; 
+    width:52% ;
+}
+.wcap_text_section_field_color{
+    float:right; 
+    width: 45%;
+}
+
+.wcap_text_section_input_text{
+    width: 95%;
+    font-size: 1em;
+}
+.wcap_popup_text_color_picker{
+    width: 40%;
+    font-size: 1em;
+}
+
+/* Email placeholder section */
+.wcap_email_placeholder_section_table{
+    width: 100%;
+}
+.wcap_email_placeholder_section_tr{
+    width: 100%;
+}
+.wcap_email_placeholder_section_table_heading{
+    float: left;
+}
+.wcap_email_placeholder_section_text_field{
+    float:left; 
+    width:80% ;
+}
+.wcap_email_placeholder_section_input_text{
+    width: 95%;
+    font-size: 1em;
+}
+
+/* button section */
+.wcap_button_section_table{
+    width: 100%;
+}
+.wcap_button_section_tr{
+    width: 100%;
+}
+.wcap_button_section_table_heading{
+    float: left;
+}
+.wcap_button_section_text_field{
+    float:left; 
+    width:95% ;
+}
+.wcap_button_section_input_text{
+    width: 80%;
+    font-size: 1em;
+}
+
+.wcap_button_color_section_tr{
+    width: 100%;
+}
+
+.wcap_button_color_section_text_field{
+    float:left; 
+    width:49% ;
+}
+.wcap_button_text_color_section_text_field{
+    float:right; 
+    width:49% ;
+    margin-left: 5px;
+}
+
+.wcap_button_color_picker{
+    width: 46%;
+    font-size: 1em; 
+}
+.wcap_button_text_color_picker{
+    width: 46%;
+    font-size: 1em;
+}
+
+/* Non mandatory field text section */
+.wcap_non_mandatory_modal_section_fields_div_table{
+    width: 100%;
+}
+.wcap_non_mandatory_modal_section_fields_tr{
+    width: 100%;
+}
+.wcap_non_mandatory_modal_section_fields_table_heading{
+    float: left;
+}
+.wcap_non_mandatory_modal_section_fields_text_field{
+    float:left; 
+    width:95% ;
+}
+.wcap_non_mandatory_modal_section_fields_input_text{
+    width: 80%;
+    font-size: 1em;
+}
+
+/* popup preview */
+.wcap_container {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    overflow: auto;
+    padding: 0 10px;
+    background-color: transparent;
+}
+
+.wcap_popup_close{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    color: #bbb;
+    z-index: 100;
+    padding: 9px;
+    background-size: 18px;
+    background-position: center;
+    background-image: url("../../images/atc_cancel_icon.svg");
+    background-repeat: no-repeat;
+}
+
+.wcap_container .wcap_popup_heading_container{
+    position: relative;
+    background: #f8f9fb;
+    border-bottom: 1px solid #dedede;
+    -webkit-border-radius: 5px 5px 0 0;
+    -moz-border-radius: 5px 5px 0 0;
+    -ms-border-radius: 5px 5px 0 0;
+    border-radius: 5px 5px 0 0;
+    padding-top: 18px;
+    padding-bottom: 16px;
+    text-align: center;
+}
+
+.wcap_container .wcap_popup_content {
+    position: relative;
+    z-index: 2;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.wcap_container .wcap_popup_content > * {
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+.wcap_container .wcap_popup_icon {
+
+    background-image: url("../../images/atc_popup_icon.svg");
+    background-repeat: no-repeat;
+    display: block;
+    background-size: 65px;
+    background-position: center;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    border: 2px solid #ecedf3;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-right: 5px;
+    margin-left: 2px;
+    position: relative;
+    height: 98px;
+    width: 98px;
+}
+
+.wcap_container .wcap_popup_heading {
+    padding-top: 10px;
+    margin: 0;
+    font-family: "Lato", sans-serif !important;
+    font-size: 37px;
+    font-weight: bold;
+    line-height: 36px;
+    color: #737f97;
+    text-align: center;
+    display: block;
+    text-transform: initial;
+}
+
+.wcap_container .wcap_popup_text {
+    color: #bbc9d2;
+    font-size: 16px;
+    line-height: 20px;
+    font-family: "Lato", sans-serif !important;
+    text-align: center;
+    text-transform: initial;
+}
+
+.wcap_container .wcap_popup_form {
+    position: relative;
+    text-align: left;
+    font-family: inherit;
+    padding-top: 26px;
+    padding-bottom: 15px;
+    background-color: #FFFFFF !important;
+}
+
+.wcap_container div {
+    display: block;
+}
+
+.wcap_container .wcap_popup_form:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: -1px;
+    width: 0;
+    height: 0;
+    margin-left: -16px;
+}
+
+.wcap_container .wcap_popup_form:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: -1px;
+    width: 0;
+    height: 0;
+    margin-left: -16px;
+}
+
+.wcap_container .wcap_popup_form:before {
+    left: 50%;
+    margin-left: -17px;
+    border-left: 17px solid transparent;
+    border-right: 17px solid transparent;
+    border-top: 17px solid #dedede;
+}
+
+.wcap_container .wcap_popup_form:after {
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-top: 16px solid #f8f9fb;
+}
+
+.wcap_container .wcap_popup_input_field_container {
+    position: relative;
+}
+
+.wcap_container input[type="text"].wcap_popup_input {
+    -webkit-appearance: none;
+    background: #fff !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: #ccc;
+    color: rgba(0, 0, 0, 0.75) !important;
+    display: block;
+    font-family: "Lato", sans-serif !important;
+    font-size: 18px !important;
+    font-style: normal;
+    line-height: 20px !important;
+    margin: 0 0 16px 0;
+    padding: 8px;
+    height: 42px;
+    width: 100%;
+    max-width: none !important;
+    margin-bottom: 10px;
+    outline: none !important;
+    box-shadow: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.wcap_container .wcap_popup_button {
+    position: relative;
+    cursor: pointer;
+    font-family: "Lato", sans-serif !important;
+    font-size: 20px;
+    font-weight: normal;
+    line-height: 20px;
+    text-decoration: none;
+    text-align: center;
+    text-shadow: none;
+    text-transform: initial;
+    width: auto;
+    height: auto;
+    min-width: initial;
+    outline: 0;
+    display: inline-block;
+    background-color: #228fff ;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    color: #ffffff;
+    width: 100%;
+    margin: 0;
+    padding: 10px 0;
+    font-weight: bold;
+    cursor: pointer;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.wcap_container .wcap_popup_wrapper {
+    position: relative;
+    top: 50%;
+    -webkit-backface-visibility: hidden;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+}
+
+.wcap_popup_wrapper {
+    border: 1px solid #EBEBEC;
+}
+
+.wcap_container .wcap_popup_plus_sign {
+    background-image: url("../../images/atc_plus_icon.png");
+    background-repeat: no-repeat;
+    background-color: #228fff ;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px;
+    border-radius: 50%;
+    height: 24px;
+    left: 74px;
+    top: -3px;
+    position: absolute;
+    width: 24px;
+}
+@media (min-width: 530px){
+    .wcap_container .wcap_popup_icon_container {
+        position: relative;
+        padding-right: 6px;
+        display: table-cell;
+        vertical-align: middle;
+        width: 105px;
+    }
+
+    .wcap_container .wcap_popup_text_container {
+        display: table-cell;
+        vertical-align: top;
+    }
+    .wcap_popup_main_table_td_preview{
+        margin-top: 5%;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        padding-top: 75px;
+    }
+    .wcap_container .wcap_popup_text {
+        text-align: left;
+    }
+}
+
+.iris-picker {
+    z-index: 100;
+    display: none;
+    position: absolute !important;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.colorpickpreview {
+    padding: 3px;
+    padding-left: 20px;
+    border: 1px solid #ddd;
+    border-right: 0;
+    margin-left: -3px;
+}
+
+/* To enable the popup modal */
+.wcap-enable-atc-modal {
+    cursor: pointer;
+    text-indent: -999em;
+    display: block;
+    width: 38px;
+    height: 22px;
+    border-radius: 30px;
+    border: none;
+    position: relative;
+    box-sizing: border-box;
+    -webkit-transition: all .3s ease;
+          transition: all .3s ease;
+    box-shadow: inset 0 0 0 0 transparent; 
+}
+.wcap-enable-atc-modal:focus {
+    outline: none; 
+}
+.wcap-enable-atc-modal:before {
+    border-radius: 50%;
+    background: #ffffff;
+    content: '';
+    position: absolute;
+    display: block;
+    width: 18px;
+    height: 18px;
+    top: 2px;
+    left: 2px;
+    -webkit-transition: all .15s ease;
+          transition: all .15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); 
+}
+.wcap-enable-atc-modal[wcap-atc-switch-modal-enable="on"] {
+    box-shadow: inset 0 0 0 11px #008000; 
+}
+.wcap-enable-atc-modal[wcap-atc-switch-modal-enable="on"]:before {
+    -webkit-transform: translateX(16px);
+            transform: translateX(16px); 
+}
+.wcap-enable-atc-modal[wcap-atc-switch-modal-enable="off"] {
+    background: #ccc; 
+}
+.wcap-enable-atc-modal.wcap-loading {
+    cursor: default;
+    opacity: 0.5; 
+}
+
+.wcap_non_mandatory_text_wrapper{
+    text-align: center;
+}
+
+.wcap_non_mandatory_text_wrapper a{
+    text-decoration:none;
+}
+
+ /* To display the popup modal mandatory*/
+.wcap-switch-atc-modal-mandatory {
+    cursor: pointer;
+    text-indent: -999em;
+    display: block;
+    width: 38px;
+    height: 22px;
+    border-radius: 30px;
+    border: none;
+    position: relative;
+    box-sizing: border-box;
+    -webkit-transition: all .3s ease;
+          transition: all .3s ease;
+    box-shadow: inset 0 0 0 0 transparent; 
+}
+.wcap-switch-atc-modal-mandatory:focus {
+    outline: none; 
+}
+.wcap-switch-atc-modal-mandatory:before {
+    border-radius: 50%;
+    background: #ffffff;
+    content: '';
+    position: absolute;
+    display: block;
+    width: 18px;
+    height: 18px;
+    top: 2px;
+    left: 2px;
+    -webkit-transition: all .15s ease;
+          transition: all .15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); 
+}
+.wcap-switch-atc-modal-mandatory[
+wcap-atc-switch-modal-mandatory="on"] {
+    box-shadow: inset 0 0 0 11px #008000; 
+}
+.wcap-switch-atc-modal-mandatory[wcap-atc-switch-modal-mandatory="on"]:before {
+    -webkit-transform: translateX(16px);
+            transform: translateX(16px); 
+}
+.wcap-switch-atc-modal-mandatory[wcap-atc-switch-modal-mandatory="off"] {
+    background: #ccc; 
+}
+.wcap-switch-atc-modal-mandatory.wcap-loading {
+    cursor: default;
+    opacity: 0.5; 
+}
+
+.wcap_atc_between_fields_space {
+    margin-top: 2%;
+}
+
+.wcap_reset_button {
+    margin-left: 5% !important;
+}
