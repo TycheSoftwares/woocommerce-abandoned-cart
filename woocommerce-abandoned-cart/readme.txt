@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, d
 Tags: abandon cart, cart recovery, increase woocommerce conversion rate , recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.1
+Tested up to: 5.2.2
 Stable tag: trunk
 License: GPLv2 or late
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -192,6 +192,14 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 6. Product Report Tab.
 
 == Changelog ==
+
+= 5.4 (10.07.2019) =
+
+* Bug - Fixed an issue where carts were being marked as abandoned even after they have been successfully recovered. 
+* Bug - Unsubscribe link in the test reminder email displayed some HTML content in Outlook. 
+* Bug - The data tracking notice in the plugin when dismissed affected other dismissible notices as well.
+* Tweak - Made the plugin compatible with AeroCheckout plugin.
+* Tweak - The settings for the Pro version will now be displayed in the Lite version of the plugin.
 
 = 5.3.4 (18.04.2019) =
 
