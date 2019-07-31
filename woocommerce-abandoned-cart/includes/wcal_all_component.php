@@ -3,7 +3,7 @@
  * It will Add all the Boilerplate component when we activate the plugin.
  * @author  Tyche Softwares
  * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Component
- * 
+ *
  */
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
@@ -12,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'Wcal_All_Component' ) ) {
 	/**
 	 * It will Add all the Boilerplate component when we activate the plugin.
-	 * 
+	 *
 	 */
 	class Wcal_All_Component {
-	    
+
 		/**
 		 * It will Add all the Boilerplate component when we activate the plugin.
 		 */
@@ -33,7 +33,7 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
                 require_once( "component/welcome-page/ts-welcome.php" );
                 require_once( "component/faq-support/ts-faq-support.php" );
                 require_once( "component/pro-notices-in-lite/ts-pro-notices.php" );
-                
+
                 $wcal_plugin_name          = 'Abandoned Cart Lite for WooCommerce';
                 $wcal_locale               = 'woocommerce-abandoned-cart';
                 $wcal_file_name            = 'woocommerce-abandoned-cart/woocommerce-ac.php';
@@ -66,16 +66,16 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
                 $wcal_deativate->init ( $wcal_file_name, $wcal_plugin_name );
 
                 /*new Wcal_TS_Welcome ( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_dir_name, $wcal_get_previous_version );*/
-                
+
                 $ts_pro_faq = self::wcal_get_faq ();
                 new Wcal_TS_Faq_Support( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_plugins_page, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_slug, $ts_pro_faq );
-                
+
                 /*$ts_pro_notices = self::wcal_get_notice_text ();
 				new Wcal_ts_pro_notices( $wcal_plugin_name, $wcal_lite_plugin_prefix, $wcal_plugin_prefix, $ts_pro_notices, $wcal_file_name, $wcal_pro_file_name );*/
 
             }
         }
-        
+
         /**
          * It will Display the notices in the admin dashboard for the pro vesion of the plugin.
          * @return array $ts_pro_notices All text of the notices
@@ -85,35 +85,44 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 
             $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wpnotice&utm_medium=first&utm_campaign=AbandonedCartLitePlugin';
             $wcal_pro_diff    = 'https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/';
-            $message_first    = wp_kses_post ( __( 'Now that you are all set with the Lite version, you can upgrade to Pro version to take your abandoned cart recovery to the next level. You can capture  customer’s email address when they click Add to Cart, get access to 11 unique, fully responsive email templates, send text messages for recovery & <strong><a target="_blank" href= "'.$wcal_pro_diff.'">much more</a></strong>. <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'">Purchase now</a></strong>.', 'woocommerce-abandoned-cart' ) );  
+            /* translators: %1$s Link to Differences article, %2$s link to pro version */
+            $message_first    = wp_kses_post( sprintf( __( 'Now that you are all set with the Lite version, you can upgrade to Pro version to take your abandoned cart recovery to the next level. You can capture  customer’s email address when they click Add to Cart, get access to 11 unique, fully responsive email templates, send text messages for recovery & <strong><a target="_blank" href= "%1$s">much more</a></strong>. <strong><a target="_blank" href= "%2$s">Purchase now</a></strong>.', 'woocommerce-abandoned-cart' ), $wcal_pro_diff, $wcal_ac_pro_link ) );
 
             $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wpnotice&utm_medium=second&utm_campaign=AbandonedCartLitePlugin';
-            $message_two      = wp_kses_post ( __( 'Boost your sales by recovering up to 60% of the abandoned carts with our Abandoned Cart Pro for WooCommerce plugin. You can capture customer email addresses right when they click the Add To Cart button. <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'"> Grab your copy of Abandon Cart Pro plugin now!</a></strong>', 'woocommerce-abandoned-cart' ) );
+            /* translators: %s Link to Abandoned Cart Pro */
+            $message_two      = wp_kses_post( sprintf( __( 'Boost your sales by recovering up to 60% of the abandoned carts with our Abandoned Cart Pro for WooCommerce plugin. You can capture customer email addresses right when they click the Add To Cart button. <strong><a target="_blank" href= "%s"> Grab your copy of Abandon Cart Pro plugin now!</a></strong>', 'woocommerce-abandoned-cart' ), $wcal_ac_pro_link ) );
 
             $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wpnotice&utm_medium=third&utm_campaign=AbandonedCartLitePlugin';
-            $message_three    = wp_kses_post ( __( 'Don\'t loose your sales to abandoned carts. Use our Abandon Cart Pro plugin & start recovering your lost sales in less then 60 seconds. <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'">Grab it now!</a></strong>.', 'woocommerce-abandoned-cart' ) );
+            /* translators: %s Link to Abandoned Cart Pro */
+            $message_three    = wp_kses_post( sprintf( __( 'Don\'t loose your sales to abandoned carts. Use our Abandon Cart Pro plugin & start recovering your lost sales in less then 60 seconds. <strong><a target="_blank" href= "%s">Grab it now!</a></strong>.', 'woocommerce-abandoned-cart' ), $wcal_ac_pro_link ) );
 
             $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wpnotice&utm_medium=fourth&utm_campaign=AbandonedCartLitePlugin';
-            $message_four     = wp_kses_post ( __( 'Send Abandoned Cart reminders that actually convert. Take advantage of our fully responsive email templates designed specially with an intent to trigger conversion. <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'">Purchase now</a></strong>.', 'woocommerce-abandoned-cart' ) );
+            /* translators: %s Link to Abandoned Cart Pro */
+            $message_four     = wp_kses_post( sprintf( __( 'Send Abandoned Cart reminders that actually convert. Take advantage of our fully responsive email templates designed specially with an intent to trigger conversion. <strong><a target="_blank" href= "%s">Purchase now</a></strong>.', 'woocommerce-abandoned-cart' ), $wcal_ac_pro_link ) );
 
             $wcal_ac_pro_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wpnotice&utm_medium=fifth&utm_campaign=AbandonedCartLitePlugin';
-            $message_five     = wp_kses_post ( __( 'Increase your store sales by recovering your abandoned carts for just $119. No profit sharing, no monthly fees. Our Abandoned Cart Pro plugin comes with a 30 day money back guarantee as well. :) Use coupon code ACPRO20 & save $24!<br>
-            <strong><a target="_blank" href= "'.$wcal_ac_pro_link.'">Grab your copy now!</a></strong>', 'woocommerce-abandoned-cart' ) );
+            /* translators: %s Link to Abandoned Cart Pro */
+            $message_five     = wp_kses_post( sprintf( __( 'Increase your store sales by recovering your abandoned carts for just $119. No profit sharing, no monthly fees. Our Abandoned Cart Pro plugin comes with a 30 day money back guarantee as well. :) Use coupon code ACPRO20 & save $24!<br>
+            <strong><a target="_blank" href= "%s">Grab your copy now!</a></strong>', 'woocommerce-abandoned-cart' ), $wcal_ac_pro_link ) );
 
             $_link            = 'https://www.tychesoftwares.com/store/premium-plugins/order-delivery-date-for-woocommerce-pro-21/?utm_source=wpnotice&utm_medium=sixth&utm_campaign=AbandonedCartLitePlugin';
-            $message_six      = wp_kses_post ( __( 'Reduce cart abandonment rate by 57% with our Order Delivery Date Pro WooCommerce plugin. You can Create Delivery Settings by Shipping Zones & Shipping Classes. <br>Use discount code "ORDPRO20" and grab 20% discount on the purchase of the plugin. The discount code is valid only for the first 20 customers. <strong><a target="_blank" href= "'.$_link.'">Purchase now</a></strong>', 'woocommerce-abandoned-cart' ) );
+            /* translators: %s Link to Order Delivery Date Pro */
+            $message_six      = wp_kses_post( sprintf( __( 'Reduce cart abandonment rate by 57% with our Order Delivery Date Pro WooCommerce plugin. You can Create Delivery Settings by Shipping Zones & Shipping Classes. <br>Use discount code "ORDPRO20" and grab 20% discount on the purchase of the plugin. The discount code is valid only for the first 20 customers. <strong><a target="_blank" href= "%s">Purchase now</a></strong>', 'woocommerce-abandoned-cart' ), $_link ) );
 
             $_link            = 'https://www.tychesoftwares.com/store/premium-plugins/product-delivery-date-pro-for-woocommerce/?utm_source=wpnotice&utm_medium=seventh&utm_campaign=AbandonedCartLitePlugin';
-            $message_seven    = wp_kses_post ( __( 'Allow your customers to select the Delivery Date on Single Product Page using our Product Delivery Date pro for WooCommerce Plugin. <br> 
-            <strong><a target="_blank" href= "'.$_link.'">Shop now</a></strong> & be one of the 20 customers to get 20% discount on the plugin price. Use the code "PRDPRO20". Hurry!!', 'woocommerce-abandoned-cart' ) );
-            
+            /* translators: %s Link to Order Delivery Date Pro */
+            $message_seven    = wp_kses_post( sprintf( __( 'Allow your customers to select the Delivery Date on Single Product Page using our Product Delivery Date pro for WooCommerce Plugin. <br>
+            <strong><a target="_blank" href= "%s">Shop now</a></strong> & be one of the 20 customers to get 20% discount on the plugin price. Use the code "PRDPRO20". Hurry!!', 'woocommerce-abandoned-cart' ), $_link ) );
+
             $_link            = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-booking-plugin/?utm_source=wpnotice&utm_medium=eight&utm_campaign=AbandonedCartLitePlugin';
-            $message_eight    = wp_kses_post ( __( ' Allow your customers to book an appointment or rent an apartment with our Booking and Appointment for WooCommerce plugin. You can also sell your product as a resource or integrate with a few Vendor plugins. <br>Shop now & Save 20% on the plugin with the code "BKAP20". Only for first 20 customers. <strong><a target="_blank" href= "'.$_link.'">Have it now!</a></strong>', 'woocommerce-abandoned-cart' ) );
-            
+            /* translators: %s Link to WooCommerce Booking Plugin */
+            $message_eight    = wp_kses_post( sprintf( __( 'Allow your customers to book an appointment or rent an apartment with our Booking and Appointment for WooCommerce plugin. You can also sell your product as a resource or integrate with a few Vendor plugins. <br>Shop now & Save 20% on the plugin with the code "BKAP20". Only for first 20 customers. <strong><a target="_blank" href= "%s">Have it now!</a></strong>', 'woocommerce-abandoned-cart' ), $_link ) );
+
             $_link            = 'https://www.tychesoftwares.com/store/premium-plugins/deposits-for-woocommerce/?utm_source=wpnotice&utm_medium=eight&utm_campaign=AbandonedCartLitePlugin';
-            $message_nine     = wp_kses_post ( __( ' Allow your customers to pay deposits on products using our Deposits for WooCommerce plugin. <br>
-            <strong><a target="_blank" href= "'.$_link.'">Purchase now</a></strong> & Grab 20% discount with the code "DFWP20". The discount code is valid only for the first 20 customers.', 'woocommerce-abandoned-cart' ) );
-			
+            /* translators: %s Link to Deposits for WooCommerce */
+            $message_nine     = wp_kses_post( sprintf( __( ' Allow your customers to pay deposits on products using our Deposits for WooCommerce plugin. <br>
+            <strong><a target="_blank" href= "%s">Purchase now</a></strong> & Grab 20% discount with the code "DFWP20". The discount code is valid only for the first 20 customers.', 'woocommerce-abandoned-cart' ), $_link ) );
+
             $ts_pro_notices = array (
                 1 => $message_first,
                 2 => $message_two,
@@ -128,11 +137,11 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 
             return $ts_pro_notices;
         }
-		
+
 		/**
          * It will contain all the FAQ which need to be display on the FAQ page.
          * @return array $ts_faq All questions and answers.
-         * 
+         *
          */
         public static function wcal_get_faq () {
 
@@ -144,7 +153,7 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
                         'answer'   => 'Please ensure you have at least one Email template "Active". As only active email templates are sent to recover the abandoned carts.
                         <br/><br/>
                         For sending the abandoned cart notification emails automatically, we use WP-Cron. If you have Email templates activated and still notification are not sent, then you can debug the issue by following this <a href = "https://www.tychesoftwares.com/docs/docs/abandoned-cart-pro-for-woocommerce/wp_alternate_cron/?utm_source=userwebsite&utm_medium=link&utm_campaign=AbandonedCartProFAQTab" target="_blank" >post</a>.'
-                    ), 
+                    ),
                 2 => array (
                         'question' => 'How is the email address of the customers captured?',
                         'answer'   => 'Our plugin captures visitor emails in real-time as they are typing it in to the email address field on the checkout page, so you don\'t need to worry about them changing their mind at the last second.
@@ -188,7 +197,7 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
                 10 => array (
 						'question' => 'There was a problem creating an email template on Multisite.',
 						'answer'   => 'On Multisite, if you have activated the plugin from Network site then please deactivate it and activate the Abandoned Cart Lite plugin from an Individual site. So, one default email template will be created on the activation of the plugin and you can create new email template.'
-                )    
+                )
             );
 
             return $ts_faq;
