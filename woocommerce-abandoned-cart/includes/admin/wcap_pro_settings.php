@@ -53,7 +53,7 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
             wp_enqueue_style( 'wcap_add_to_cart_popup_modal', WCAL_PLUGIN_URL . '/assets/css/admin/wcap_add_to_cart_popup_modal.min.css' );
 
 
-            $purchase_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/';
+            $purchase_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=acupgradetopro&utm_medium=link&utm_campaign=AbandonCartLite';
 
             ?>
 
@@ -108,9 +108,8 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
 
 
-        	$upgrade_pro_msg = __( '<br><b><i>Upgrade to <a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/" target="_blank">Abandoned Cart Pro for WooCommerce</a> to enable the setting.</i></b>', 'woocommerce-abandoned-cart' );
 
-
+        	$upgrade_pro_msg = '<br><b><i>Upgrade to <a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=acupgradetopro&utm_medium=link&utm_campaign=AbandonCartLite" target="_blank">Abandoned Cart Pro for WooCommerce</a> to enable the setting.</i></b>';
 
         	add_settings_field(
 
@@ -465,7 +464,7 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
 
 
-            $upgrade_pro_msg = '<br><b><i>Upgrade to <a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/" target="_blank">Abandoned Cart Pro for WooCommerce</a> to enable the setting.</i></b>';
+            $upgrade_pro_msg = '<br><b><i>Upgrade to <a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=acupgradetopro&utm_medium=link&utm_campaign=AbandonCartLite" target="_blank">Abandoned Cart Pro for WooCommerce</a> to enable the setting.</i></b>';
 
             /**
 
