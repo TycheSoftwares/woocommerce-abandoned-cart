@@ -38,13 +38,8 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
      * It will send the automatic reminder emails to the customers
      * @since 1.3
      */
-    class woocommerce_abandon_cart_cron {
-        var $cart_settings_cron;
-        var $cart_abandon_cut_off_time_cron;
-        public function __construct() {
-            $this->cart_settings_cron = get_option( 'ac_lite_cart_abandoned_time' );
-            $this->cart_abandon_cut_off_time_cron = ( $this->cart_settings_cron ) * 60;
-        }
+    class woocommerce_abandon_cart_cron { 
+
         /**
          * It will send the reminder emails to the cutomers.
          * It will also replace the merge code to its original data.
@@ -57,6 +52,11 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
             global $wpdb, $woocommerce;
             //Grab the cart abandoned cut-off time from database.
             $cart_settings             = get_option( 'ac_lite_cart_abandoned_time' );
+
+            if( $cart_settings == '' ) {
+                $cart_settings = 10;
+            }
+
             $cart_abandon_cut_off_time = $cart_settings * 60;
             //Fetch all active templates present in the system
             $query        = "SELECT wpet . * FROM `".$wpdb->prefix."ac_email_templates_lite` AS wpet
