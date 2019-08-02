@@ -1432,7 +1432,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $my_temp = $this->wcal_load_guest_persistent_cart( $user_id );
 
                 if ( $email_sent_id > 0 && is_numeric( $email_sent_id ) ) {
-                    header( "Location: $url" );
+                    wp_safe_redirect( $url );
+                    exit;
                 }
             } else
                 return $template;
