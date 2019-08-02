@@ -70,7 +70,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 } elseif ( $value->day_or_hour == 'Hours' ) {
                     $time_to_send_template_after = $value->frequency * $hour_seconds;
                 }
-                
+
                 $carts               = $this->wcal_get_carts( $time_to_send_template_after, $cart_abandon_cut_off_time, $value->id );
                 $email_frequency     = $value->frequency;
                 $email_body_template = $value->body;
@@ -356,7 +356,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                         }
                                                         $var .='<tr align="center">
                                                                 <td> <a href="'.$cart_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
-                                                                <td> <a href="'.$cart_link_track.'">'.__( $product_name, 'woocommerce-abandoned-cart' ).'</a></td>
+                                                                <td> <a href="'.$cart_link_track.'">'.$product_name.'</a></td>
                                                                 <td> '.$quantity_total.'</td>
                                                                 <td> '.$item_subtotal.'</td>
                                                                 <td> '.$item_total_display.'</td>
@@ -384,10 +384,10 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                     $var .= '</table>
                                                                             ';
                                                     $email_body    = str_replace( "{{products.cart}}", $var, $email_body );
-                                                    $email_subject = str_replace( "{{product.name}}", __( $sub_line_prod_name, 'woocommerce-abandoned-cart' ), $email_subject );
+                                                    $email_subject = str_replace( "{{product.name}}", $sub_line_prod_name, $email_subject );
                                                 }else {
-                                                    $email_body    = str_replace( "{{products.cart}}", 'Product no longer exists', $email_body );
-                                                    $email_subject = str_replace( "{{product.name}}", __( $sub_line_prod_name, 'woocommerce-abandoned-cart' ), $email_subject );
+                                                    $email_body    = str_replace( "{{products.cart}}", __( 'Product no longer exists', 'woocommerce-abandoned-cart' ), $email_body );
+                                                    $email_subject = str_replace( "{{product.name}}", $sub_line_prod_name, $email_subject );
                                                 }
                                             }
 
@@ -413,7 +413,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                     wc_mail( $user_email, $email_subject, $final_email_body, $headers );
 
                                                 } else {
-                                                    wp_mail( $user_email, $email_subject, __( $email_body_final, 'woocommerce-abandoned-cart' ), $headers );
+                                                    wp_mail( $user_email, $email_subject, $email_body_final, $headers );
                                                 }
                                             }
                                         }
@@ -483,7 +483,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
             }
             $cart_ignored = 0;
             $unsubscribe  = 0;
-            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email 
+            $query = "SELECT wpac . * , wpu.user_login, wpu.user_email
                 FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` AS wpac
                 LEFT JOIN ".$wpdb->base_prefix."users AS wpu ON wpac.user_id = wpu.id
                 WHERE cart_ignored = %s AND unsubscribe_link = %s AND abandoned_cart_time < $cart_time
