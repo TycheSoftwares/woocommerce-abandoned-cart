@@ -570,6 +570,24 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 array( __( '<br>In compliance with GDPR, add a message on the Shop & Product pages to inform Registered users of how their data is being used.<br><i>For example: Please check our Privacy Policy to see how we use your personal data.</i>', 'woocommerce-abandoned-cart' ) )
             );
 
+            add_settings_field(
+                'wcal_gdpr_allow_opt_out',
+                __( 'Allow the visitor to opt out of cart tracking.', 'woocommerce-abandoned-cart' ),
+                array( $this, 'wcal_gdpr_allow_opt_out_callback' ),
+                'woocommerce_ac_page',
+                'ac_lite_general_settings_section',
+                array( __( '<br>In compliance with GDPR, allow the site visitor (guests & registered users) to opt out from cart tracking. This message will be displayed in conjunction with the GDPR message above.</i>', 'woocommerce-abandoned-cart' ) )
+            );
+            
+            add_settings_field(
+                'wcal_gdpr_opt_out_message',
+                __( 'Message to be displayed when the user chooses to opt out of cart tracking.', 'woocommerce-abandoned-cart' ),
+                array( $this, 'wcal_gdpr_opt_out_msg_callback' ),
+                'woocommerce_ac_page',
+                'ac_lite_general_settings_section',
+                array( __( '<br>Message to be displayed when the user chooses to opt out of cart tracking.</i>', 'woocommerce-abandoned-cart' ) )
+            );
+
             /**
              * New section for the Adding the abandoned cart setting.
              * @since  4.7
@@ -645,6 +663,16 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             register_setting(
                 'woocommerce_ac_settings',
                 'wcal_logged_cart_capture_msg'
+            );
+
+            register_setting(
+                'woocommerce_ac_settings',
+                'wcal_gdpr_allow_opt_out'
+            );
+
+            register_setting(
+                'woocommerce_ac_settings',
+                'wcal_gdpr_opt_out_message'
             );
 
             register_setting(
@@ -816,7 +844,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             $guest_msg = get_option( 'wcal_guest_cart_capture_msg' );
 
-            $html = "<textarea rows='4' cols='80' id='wcal_guest_cart_capture_msg' name='wcal_guest_cart_capture_msg'>$guest_msg</textarea>";
+            $html = "<textarea rows='4' cols='80' id='wcal_guest_cart_capture_msg' name='wcal_guest_cart_capture_msg'>" . htmlspecialchars( $guest_msg, ENT_QUOTES ) . "</textarea>";
 
             $html .= '<label for="wcal_guest_cart_capture_msg"> ' . $args[0] . '</label>';
             echo $html;
@@ -831,9 +859,38 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             $logged_msg = get_option( 'wcal_logged_cart_capture_msg' );
 
-            $html = "<input type='text' class='regular-text' id='wcal_logged_cart_capture_msg' name='wcal_logged_cart_capture_msg' value='$logged_msg' />";
+            $html = "<input type='text' id='wcal_logged_cart_capture_msg' name='wcal_logged_cart_capture_msg' value='" . htmlspecialchars( $logged_msg, ENT_QUOTES ) . "' style='width:60%;'/>";
 
             $html .= '<label for="wcal_logged_cart_capture_msg"> ' . $args[0] . '</label>';
+            echo $html;
+        }
+
+
+        /**
+         * Text to allow the user the choice to opt out of cart tracking
+         * @since 5.5
+         */
+        public static function wcal_gdpr_allow_opt_out_callback( $args ) {
+            
+            $wcal_gdpr_allow_opt_out = get_option( 'wcal_gdpr_allow_opt_out' );
+           
+            $html = "<input type='text' class='regular-text' id='wcal_gdpr_allow_opt_out' name='wcal_gdpr_allow_opt_out' value='" . htmlspecialchars( $wcal_gdpr_allow_opt_out, ENT_QUOTES ) . "' />";
+            
+            $html .= '<label for="wcal_gdpr_allow_opt_out"> ' . $args[0] . '</label>';
+            echo $html;
+        }
+
+        /**
+         * Message to display when the user chooses to opt out of cart tracking.
+         * @since 5.5
+         */
+        public static function wcal_gdpr_opt_out_msg_callback( $args ) {
+            
+            $wcal_gdpr_opt_out_message = get_option( 'wcal_gdpr_opt_out_message' );
+            
+            $html = "<input type='text' id='wcal_gdpr_opt_out_message' name='wcal_gdpr_opt_out_message' value='" . htmlspecialchars( $wcal_gdpr_opt_out_message, ENT_QUOTES ) . "' style='width:60%;'/>";
+            
+            $html .= '<label for="wcal_gdpr_opt_out_message"> ' . $args[0] . '</label>';
             echo $html;
         }
 
