@@ -21,6 +21,7 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
             add_action( 'woocommerce_after_checkout_billing_form', 'user_side_js' );
             add_action( 'wfacp_footer_before_print_scripts', 'user_side_js' ); //Compatibility with Aero Checkout           
 			add_action( 'init','load_ac_ajax' );
+            add_action( 'wp_ajax_nopriv_wcal_gdpr_refused', array( 'wcal_common', 'wcal_gdpr_refused' ) );
 			add_filter( 'woocommerce_checkout_fields', 'guest_checkout_fields' );
 		}
 	}			
@@ -51,12 +52,24 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
             true
         );
 
+        $guest_msg = get_option( 'wcal_guest_cart_capture_msg' );
+         $vars = array();       
+        if ( isset( $guest_msg ) && '' != $guest_msg ) {
+            $vars = array( 
+            '_show_gdpr_message'        => true,
+            '_gdpr_message'             => htmlspecialchars( get_option( 'wcal_guest_cart_capture_msg' ), ENT_QUOTES ),
+            '_gdpr_nothanks_msg'        => htmlspecialchars( get_option( 'wcal_gdpr_allow_opt_out'), ENT_QUOTES ),
+            '_gdpr_after_no_thanks_msg' => htmlspecialchars( get_option( 'wcal_gdpr_opt_out_message' ), ENT_QUOTES ),
+            'enable_ca_tracking'        => true,
+            );
+        }
+
+        $vars[ 'ajax_url' ] =  admin_url( 'admin-ajax.php' );
+        
         wp_localize_script( 
             'wcal_guest_capture', 
             'wcal_guest_capture_params', 
-            array(
-                'ajax_url'  =>  admin_url( 'admin-ajax.php' ) 
-            ) 
+            $vars 
         );
 	}
 	

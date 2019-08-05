@@ -783,5 +783,34 @@ class wcal_common {
     public static function wcal_unset_cart_session( $session_key ) {
         WC()->session->__unset( $session_key );
     }
+
+    /**
+     * Delete the AC record and create a user meta record (for registered users)
+     * when the user chooses to opt out of cart tracking
+     * @since 5.5
+     */
+    public static function wcal_gdpr_refused() {
+        
+        $abandoned_cart_id = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
+
+        global $wpdb;
+
+        if( isset( $abandoned_cart_id ) && $abandoned_cart_id > 0 ) {
+            // fetch the user ID - if greater than 0, we need to check & delete guest table record is applicable.
+            $query_user = "SELECT user_id FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE id = %d";
+            $user_id = $wpdb->get_var( $wpdb->prepare( $query_user, $abandoned_cart_id ) );
+
+            if( $user_id >= 63000000 ) { // guest user
+                // delete the guest record
+                $wpdb->delete( $wpdb->prefix . "ac_guest_abandoned_cart_history_lite", array( 'id' => $user_id ) );
+            } else { // registered cart
+                // save the user choice of not being tracked
+                add_user_meta( $user_id, 'wcal_gdpr_tracking_choice', 0 );
+            }
+
+            // finally delete the cart history record
+            $wpdb->delete( $wpdb->prefix . "ac_abandoned_cart_history_lite", array( 'id' => $abandoned_cart_id ) );
+        }
+    }
 }
 ?>
