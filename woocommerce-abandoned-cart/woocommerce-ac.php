@@ -1347,6 +1347,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                 ( abandoned_cart_info , abandoned_cart_time , cart_ignored , recovered_cart, user_type, session_id  )
                                                 VALUES ( '" . $cart_info."' , '" . $current_time . "' , '0' , '0' , 'GUEST', '". $get_cookie[0] ."' )";
                                 $wpdb->query( $insert_query );
+                                $abandoned_cart_id = $wpdb->insert_id;
                             }
                         } elseif ( $compare_time > $results[0]->abandoned_cart_time ) {
                             $blank_cart_info = '[]';
@@ -1358,6 +1359,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                     ( abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type, session_id )
                                                     VALUES ( '" . $updated_cart_info . "', '" . $current_time . "', '0', '0', 'GUEST', '". $get_cookie[0] ."' )";
                                     $wpdb->query( $query_update );
+                                    $abandoned_cart_id = $wpdb->insert_id;
                                 }
                             }
                         } else {
@@ -1368,6 +1370,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                     $wpdb->query( $query_update );
                                 }
                             }
+                        }
+                        if( isset( $abandoned_cart_id ) ) {
+                            // add the abandoned id in the session
+                            wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
                         }
                     }
                 }
