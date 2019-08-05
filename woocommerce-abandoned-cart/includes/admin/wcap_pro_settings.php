@@ -111,22 +111,6 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
         	$upgrade_pro_msg = '<br><b><i>Upgrade to <a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=acupgradetopro&utm_medium=link&utm_campaign=AbandonCartLite" target="_blank">Abandoned Cart Pro for WooCommerce</a> to enable the setting.</i></b>';
 
-        	add_settings_field(
-
-                'ac_enable_cart_emails',
-
-                __( 'Enable abandoned cart emails', 'woocommerce-abandoned-cart' ),
-
-                array( 'WCAP_Pro_Settings_Callbacks', 'wcap_enable_cart_emails_callback' ),
-
-                'woocommerce_ac_page',
-
-                'ac_lite_general_settings_section',
-
-                array( __( "Yes, enable the abandoned cart emails.", 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
-
-            );
-
             add_settings_field(
 
                 'ac_cart_abandoned_time_guest',

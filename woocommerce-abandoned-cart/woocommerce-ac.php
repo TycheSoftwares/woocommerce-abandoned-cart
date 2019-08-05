@@ -506,6 +506,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             );
 
             add_settings_field(
+                'wcal_enable_cart_emails',
+                __( 'Enable abandoned cart emails', 'woocommerce-abandoned-cart' ),
+                array( $this, 'wcal_enable_cart_emails_callback' ),
+                'woocommerce_ac_page',
+                'ac_lite_general_settings_section',
+                array( __( "Yes, enable the abandoned cart emails.", 'woocommerce-abandoned-cart' ) )
+            );
+
+            add_settings_field(
                 'ac_lite_cart_abandoned_time',
                 __( 'Cart abandoned cut-off time', 'woocommerce-abandoned-cart' ),
                 array( $this, 'ac_lite_cart_abandoned_time_callback' ),
@@ -603,6 +612,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             // Finally, we register the fields with WordPress
             register_setting(
                 'woocommerce_ac_settings',
+                'wcal_enable_cart_emails'
+            );
+
+            register_setting(
+                'woocommerce_ac_settings',
                 'ac_lite_cart_abandoned_time',
                 array ( $this, 'ac_lite_cart_time_validation' )
             );
@@ -655,6 +669,22 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          */
         function ac_lite_general_options_callback() {
 
+        }
+
+        /**
+         * Settings API callback for the enable cart reminder emails
+         * @since 5.5
+         */
+        public static function wcal_enable_cart_emails_callback( $args ) {
+
+            $enable_cart_emails = get_option( 'wcal_enable_cart_emails' );
+
+            if  (isset( $enable_cart_emails ) &&  $enable_cart_emails == "" ) {
+                $enable_cart_emails = 'off';
+            }
+            $html = '<input type="checkbox" id="wcal_enable_cart_emails" name="wcal_enable_cart_emails" value="on" ' . checked( 'on', $enable_cart_emails, false ) . ' />';
+            $html .= '<label for="wcal_enable_cart_emails"> ' . $args[0] . '</label>';
+            echo $html;
         }
 
         /**
@@ -1082,6 +1112,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $wpdb->query( $query_delete );
 
                 update_option( 'ac_lite_remove_abandoned_data', 'yes' );
+            }
+
+            if( ! get_option( 'wcal_enable_cart_emails' ) ) {
+                add_option( 'wcal_enable_cart_emails', 'on' );
             }
         }
 

@@ -267,36 +267,6 @@ if ( ! class_exists('WCAP_Pro_Settings_Callbacks' ) ) {
 
         }
 
-
-
-        public static function wcap_enable_cart_emails_callback( $args ) {
-
-            
-
-            $enable_cart_emails = get_option( 'ac_enable_cart_emails' );
-
-            
-
-            if  (isset( $enable_cart_emails ) &&  $enable_cart_emails == "" ) {
-
-                $enable_cart_emails = 'off';
-
-            }
-
-
-
-            $html = '<input type="checkbox" id="ac_enable_cart_emails" name="ac_enable_cart_emails" value="on" ' . checked( 'on', $enable_cart_emails, false ) . ' readonly disabled/>';
-
-
-
-            $html .= '<label for="ac_enable_cart_emails"> ' . $args[0] . '</label>';
-
-            echo $html;
-
-        }
-
-
-
         public static function wcap_cart_abandoned_time_guest_callback($args) {
 
             
