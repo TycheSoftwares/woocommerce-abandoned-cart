@@ -189,7 +189,7 @@ if ( ! class_exists('WCAP_Pro_Settings_Callbacks' ) ) {
 
 
 
-            $checkbox_value = get_option( $args[2] );
+            $checkbox_value = isset( $args[2]) ? get_option( $args[2] ) : '';
 
         
 
@@ -219,11 +219,14 @@ if ( ! class_exists('WCAP_Pro_Settings_Callbacks' ) ) {
 
 
 
-            $saved_value = get_option( $args[2] );
+            $saved_value = isset( $args[2] ) ? get_option( $args[2] ) : '';
 
         
-
-            $html = "<input type='text' id='$args[2]' name='$args[2]' value='$saved_value' readonly />";
+            if( isset( $args[2] ) ) {
+                $html = "<input type='text' id='$args[2]' name='$args[2]' value='$saved_value' readonly />";
+            } else {
+                $html = "<input type='text' id='wcap_fb' name='wcap_fb' readonly />";
+            }
 
         
 
@@ -239,24 +242,26 @@ if ( ! class_exists('WCAP_Pro_Settings_Callbacks' ) ) {
 
 
 
-            $selected_value = get_option( $args[2] );
+            $selected_value = isset( $args[2] ) ? get_option( $args[2] ) : '';
 
             $selected = '';
 
 
+            if( isset( $args[2], $args[3] ) ) {
+                $html = "<select name='$args[2]' id='$args[2]' disabled>";
 
-            $html = "<select name='$args[2]' id='$args[2]' disabled>";
 
 
+                foreach ( $args[3] as $key => $value ) {
 
-            foreach ( $args[3] as $key => $value ) {
+                    $selected = $selected_value === $key ? 'selected="selected"' : '';
 
-                $selected = $selected_value === $key ? 'selected="selected"' : '';
+                    $html .= "<option value='$key' " . $selected . ">$value</option>";
 
-                $html .= "<option value='$key' " . $selected . ">$value</option>";
-
+                }
+            } else {
+                $html = "select name='wcap_fb_user_icon' id='wcap_fb_user_icon' disabled>";
             }
-
 
 
             $html .= "</select>";
