@@ -51,7 +51,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
         function wcal_send_email_notification() {
             global $wpdb, $woocommerce;
 
-            if( 'on' != get_option( 'wcal_enable_cart_emails' ) ) {
+            if( 'on' == get_option( 'wcal_enable_cart_emails' ) ) {
                 //Grab the cart abandoned cut-off time from database.
                 $cart_settings             = get_option( 'ac_lite_cart_abandoned_time' );
 
