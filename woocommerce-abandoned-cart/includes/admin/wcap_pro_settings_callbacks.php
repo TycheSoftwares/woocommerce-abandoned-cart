@@ -189,7 +189,13 @@ if ( ! class_exists('WCAP_Pro_Settings_Callbacks' ) ) {
 
 
 
-            $checkbox_value = isset( $args[2]) ? get_option( $args[2] ) : '';
+            if( isset( $args[2]) ) {
+                $checkbox_value = get_option( $args[2] );
+                $args_2 = $args[2];
+            } else {
+                $checkbox_value = '';
+                $args_2 = 'wcap_fb_check';
+            }
 
         
 
@@ -200,12 +206,11 @@ if ( ! class_exists('WCAP_Pro_Settings_Callbacks' ) ) {
             }
 
         
-
-            $html = "<input type='checkbox' id='$args[2]' name='$args[2]' value='on' " . checked( 'on', $checkbox_value, false ) . " readonly disabled/>";
+            $html = "<input type='checkbox' id='$args_2' name='$args_2' value='on' " . checked( 'on', $checkbox_value, false ) . " readonly disabled/>";
 
         
 
-            $html .= '<label for="$args[2]"> ' . $args[0] . '</label>';
+            $html .= '<label for="$args_2"> ' . $args[0] . '</label>';
 
 
 
