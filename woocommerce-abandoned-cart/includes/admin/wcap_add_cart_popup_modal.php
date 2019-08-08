@@ -106,9 +106,9 @@ if ( ! class_exists( 'Wcap_Add_Cart_Popup_Modal' ) ) {
 
     							<p class = "submit">
 
-    								<input type = "submit" name = "submit" id = "submit" class = "button button-primary" value = "Save Changes" <?php echo $wcap_disabled_field; ?> >
+    								<input type = "submit" name = "submit" id = "submit" disabled class = "button button-primary" value = "Save Changes" <?php echo $wcap_disabled_field; ?> >
 
-    								<input type = "submit" name = "submit" id = "submit" class = "wcap_reset_button button button-primary" value = "Reset to default configuration" <?php echo $wcap_disabled_field; ?> >
+    								<input type = "submit" name = "submit" id = "submit" disabled class = "wcap_reset_button button button-primary" value = "Reset to default configuration" <?php echo $wcap_disabled_field; ?> >
 
     							</p>
 
