@@ -265,7 +265,7 @@ if ( ! class_exists('WCAP_Pro_Settings_Callbacks' ) ) {
 
                 }
             } else {
-                $html = "select name='wcap_fb_user_icon' id='wcap_fb_user_icon' disabled>";
+                $html = "<select name='wcap_fb_user_icon' id='wcap_fb_user_icon' disabled>";
             }
 
 
