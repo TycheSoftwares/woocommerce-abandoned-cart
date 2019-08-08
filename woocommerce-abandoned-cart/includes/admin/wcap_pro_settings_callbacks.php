@@ -252,7 +252,7 @@ if ( ! class_exists('WCAP_Pro_Settings_Callbacks' ) ) {
             $selected = '';
 
 
-            if( isset( $args[2], $args[3] ) ) {
+            if( is_array( $args ) && isset( $args[2] ) && isset( $args[3] ) ) {
                 $html = "<select name='$args[2]' id='$args[2]' disabled>";
 
 
