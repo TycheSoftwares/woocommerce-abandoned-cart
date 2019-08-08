@@ -3033,7 +3033,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                 $button_value = __( "Update Changes", 'woocommerce-abandoned-cart' );
                             }
                         ?>
-                        <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr( $button_value ); ?>"  />
+                        <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( $button_value ); ?>"  />
                       </p>
                     </form>
               </div>
