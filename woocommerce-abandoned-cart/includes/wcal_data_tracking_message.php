@@ -61,7 +61,7 @@ if ( ! class_exists( 'Wcal_Tracking_msg' ) ) {
                     );
                     
                     $registered_msg .= " <span id='wcal_gdpr_no_thanks'><a style='cursor: pointer' id='wcal_gdpr_no_thanks'>" . htmlspecialchars( get_option( 'wcal_gdpr_allow_opt_out' ), ENT_QUOTES ) . "</a></span>";
-                    echo "<span id='wcal_gdpr_message_block'><p><small>" . htmlspecialchars( get_option( 'wcal_logged_cart_capture_msg' ), ENT_QUOTES ) . "</small></p></span>";
+                    echo "<span id='wcal_gdpr_message_block'><p><small>" . $registered_msg . "</small></p></span>";
                 }
             }
         }
