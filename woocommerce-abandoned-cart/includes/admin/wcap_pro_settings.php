@@ -92,7 +92,7 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
                     do_settings_sections( 'woocommerce_ac_fb_page' );
 
-                    submit_button();
+                    submit_button( 'Save Changes', 'woocommerce-abandoned-cart' ), 'primary', 'submit', true, array( 'disabled' => 'disabled' ) );
 
                     ?>
 
@@ -392,7 +392,7 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
                 do_settings_sections( 'woocommerce_ac_sms_page' );
 
-                submit_button();
+                submit_button( 'Save Changes', 'woocommerce-abandoned-cart' ), 'primary', 'submit', true, array( 'disabled' => 'disabled' ) );
 
                 ?>
 

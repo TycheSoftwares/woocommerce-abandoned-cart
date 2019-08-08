@@ -252,22 +252,21 @@ if ( ! class_exists('WCAP_Pro_Settings_Callbacks' ) ) {
             $selected = '';
 
 
-            if( isset( $args[2], $args[3] ) ) {
+            if( is_array( $args ) && isset( $args[2] ) && isset( $args[3] ) ) {
                 $html = "<select name='$args[2]' id='$args[2]' disabled>";
-
-
-
-                foreach ( $args[3] as $key => $value ) {
-
-                    $selected = $selected_value === $key ? 'selected="selected"' : '';
-
-                    $html .= "<option value='$key' " . $selected . ">$value</option>";
-
-                }
+                $icon_array = $args[3];
             } else {
-                $html = "select name='wcap_fb_user_icon' id='wcap_fb_user_icon' disabled>";
+                $html = "<select name='wcap_fb_user_icon' id='wcap_fb_user_icon' disabled>";
+                $icon_array = array( 'small' => 'Small', 'medium' => 'Medium' );
             }
+                
+            foreach ( $icon_array as $key => $value ) {
 
+                $selected = $selected_value === $key ? 'selected="selected"' : '';
+
+                $html .= "<option value='$key' " . $selected . ">$value</option>";
+
+            }
 
             $html .= "</select>";
 

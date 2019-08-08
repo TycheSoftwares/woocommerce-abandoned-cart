@@ -107,3 +107,4 @@ delete_option( 'ac_lite_delete_abandoned_order_days' );
 delete_option( 'wcal_new_default_templates' );
 
 delete_option( 'ac_lite_delete_redundant_queries' );
+delete_option( 'wcal_enable_cart_emails' );
