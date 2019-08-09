@@ -807,6 +807,8 @@ class wcal_common {
                 // save the user choice of not being tracked
                 add_user_meta( $user_id, 'wcal_gdpr_tracking_choice', 0 );
             }
+            // add in the session, that the user has refused tracking
+            wcal_common::wcal_set_cart_session( 'wcal_cart_tracking_refused', 'yes' );
 
             // finally delete the cart history record
             $wpdb->delete( $wpdb->prefix . "ac_abandoned_cart_history_lite", array( 'id' => $abandoned_cart_id ) );

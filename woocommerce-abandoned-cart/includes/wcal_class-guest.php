@@ -53,10 +53,14 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
         );
 
         $guest_msg = get_option( 'wcal_guest_cart_capture_msg' );
+
+        $session_gdpr = wcal_common::wcal_get_cart_session( 'wcal_cart_tracking_refused' );
+        $show_gdpr = isset( $session_gdpr ) && 'yes' == $session_gdpr ? false : true;
+        
          $vars = array();       
         if ( isset( $guest_msg ) && '' != $guest_msg ) {
             $vars = array( 
-            '_show_gdpr_message'        => true,
+            '_show_gdpr_message'        => $show_gdpr,
             '_gdpr_message'             => htmlspecialchars( get_option( 'wcal_guest_cart_capture_msg' ), ENT_QUOTES ),
             '_gdpr_nothanks_msg'        => htmlspecialchars( get_option( 'wcal_gdpr_allow_opt_out'), ENT_QUOTES ),
             '_gdpr_after_no_thanks_msg' => htmlspecialchars( get_option( 'wcal_gdpr_opt_out_message' ), ENT_QUOTES ),
