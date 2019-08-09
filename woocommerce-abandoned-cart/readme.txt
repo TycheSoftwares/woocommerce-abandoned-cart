@@ -193,6 +193,13 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 == Changelog ==
 
+= 5.5 (12.08.2019) =
+
+* Enhancement - Added a setting to allow the admin the ability to enable/disable the sending of reminder emails.
+* Tweak - Added a setting to allow the admin to add text for GDPR messages which will be displayed as links and allows the end user to opt out of cart tracking.
+* Bug - Fixed some warnings displayed from the plugin.
+* Bug - Carts were not accessible for guest users from links in the reminder emails.
+
 = 5.4 (10.07.2019) =
 
 * Bug - Fixed an issue where carts were being marked as abandoned even after they have been successfully recovered. 
