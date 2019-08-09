@@ -1,7 +1,7 @@
 var gdpr_consent = true;
 jQuery( 'input#billing_email' ).on( 'change', function() {
 
-    if( gdpr_consent ) {
+    if( gdpr_consent && wcal_guest_capture_params._show_gdpr_message ) {
         var data = {
             billing_first_name	: jQuery('#billing_first_name').val(),
             billing_last_name	: jQuery('#billing_last_name').val(),
