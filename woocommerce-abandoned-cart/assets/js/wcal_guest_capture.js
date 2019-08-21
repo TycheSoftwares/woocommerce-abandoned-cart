@@ -1,7 +1,9 @@
 var gdpr_consent = true;
 jQuery( 'input#billing_email' ).on( 'change', function() {
 
-    if( gdpr_consent && wcal_guest_capture_params._show_gdpr_message ) {
+    var message_data = wcal_guest_capture_params._show_gdpr_message ? wcal_guest_capture_params._show_gdpr_message : true;
+
+    if( gdpr_consent && message_data ) {
         var data = {
             billing_first_name	: jQuery('#billing_first_name').val(),
             billing_last_name	: jQuery('#billing_last_name').val(),
@@ -26,7 +28,7 @@ jQuery( 'input#billing_email' ).on( 'change', function() {
             shipping_country	: jQuery('#shipping_country').val(),
             ship_to_billing		: jQuery('#shiptobilling-checkbox').val(),
             action: 'save_data'
-            };
+        };
         jQuery.post( wcal_guest_capture_params.ajax_url, data, function(response) {
         });
     }
@@ -45,7 +47,7 @@ jQuery( document ).ready( function() {
         
         // run an ajax call and save the data that user did not give consent
         var data = {
-            action          : 'wcal_gdpr_refused'
+            action : 'wcal_gdpr_refused'
         };
         jQuery.post( wcal_guest_capture_params.ajax_url, data, function() {
             jQuery("#wcal_gdpr_message_block").empty().append("<span style='font-size: small'>" + 

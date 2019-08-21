@@ -1,7 +1,7 @@
 ﻿
 === Abandoned Cart Lite for WooCommerce ===
 Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, dhruvin
-Tags: abandon cart, cart recovery, increase woocommerce conversion rate , recover woocommerce cart, increase sales with woocommerce
+Tags: abandon cart, cart recovery, increase woocommerce conversion rate, recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
 Tested up to: 5.2.2
@@ -192,6 +192,11 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 6. Product Report Tab.
 
 == Changelog ==
+
+= 5.5.1 (21.08.2019) =
+
+* Tweak - Modified the WooCommerce tested upto tag to 3.7.
+* Bug - Fixed an issue where guest email was not getting captured when GDPR message was not set.
 
 = 5.5 (12.08.2019) =
 
