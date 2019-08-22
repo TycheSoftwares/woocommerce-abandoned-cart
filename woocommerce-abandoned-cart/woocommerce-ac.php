@@ -12,7 +12,7 @@
 * Domain Path: /i18n/languages/
 * Requires PHP: 5.6
 * WC requires at least: 3.0.0
-* WC tested up to: 3.7
+* WC tested up to: 3.7.0
 *
 * @package Abandoned-Cart-Lite-for-WooCommerce
 */
@@ -1240,9 +1240,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $results = $wpdb->get_results( $wpdb->prepare( $query, $user_id, $cart_ignored, $recovered_cart ) );
 
                     if ( 0 == count( $results ) ) {
-                        $wcal_woocommerce_persistent_cart =version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ;
+                        //$wcal_woocommerce_persistent_cart =version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ;
 
-                        $cart_info_meta = json_encode( get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true ) );
+                        //$cart_info_meta = json_encode( get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true ) );
+
+                        $cart_info_meta         = array();
+                        $cart_info_meta['cart'] = WC()->session->cart;
+                        $cart_info_meta         = json_encode( $cart_info_meta );
 
                         if( '' !== $cart_info_meta && '{"cart":[]}' != $cart_info_meta && '""' !== $cart_info_meta ) {
                             $cart_info    = $cart_info_meta;
@@ -1256,8 +1260,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
                         }
                     } elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {
-                        $wcal_woocommerce_persistent_cart = version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ;
-                        $updated_cart_info                = json_encode( get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true ) );
+                        //$wcal_woocommerce_persistent_cart = version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ;
+                        //$updated_cart_info                = json_encode( get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true ) );
+
+                        $updated_cart_info         = array();
+                        $updated_cart_info['cart'] = WC()->session->cart;
+                        $updated_cart_info         = json_encode( $updated_cart_info );
 
                         if ( ! $this->wcal_compare_carts( $user_id, $results[0]->abandoned_cart_info ) ) {
                             $updated_cart_ignored = 1;
@@ -1280,8 +1288,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             update_user_meta ( $user_id, '_woocommerce_ac_modified_cart', md5( "no" ) );
                         }
                     } else {
-                        $wcal_woocommerce_persistent_cart = version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ;
-                        $updated_cart_info                = json_encode( get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true ) );
+                        //$wcal_woocommerce_persistent_cart = version_compare( $woocommerce->version, '3.1.0', ">=" ) ? '_woocommerce_persistent_cart_' . get_current_blog_id() : '_woocommerce_persistent_cart' ;
+                        //$updated_cart_info                = json_encode( get_user_meta( $user_id, $wcal_woocommerce_persistent_cart, true ) );
+
+                        $updated_cart_info         = array();
+                        $updated_cart_info['cart'] = WC()->session->cart;
+                        $updated_cart_info         = json_encode( $updated_cart_info );
 
                         $query_update = "UPDATE `".$wpdb->prefix."ac_abandoned_cart_history_lite`
                                          SET abandoned_cart_info = %s,

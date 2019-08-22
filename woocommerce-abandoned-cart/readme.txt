@@ -197,6 +197,7 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 
 * Tweak - Modified the WooCommerce tested upto tag to 3.7.
 * Bug - Fixed an issue where guest email was not getting captured when GDPR message was not set.
+* Bug - Fixed an issue where the cart price was recorded as 0 with WooCommerce 3.7.0.
 
 = 5.5 (12.08.2019) =
 
