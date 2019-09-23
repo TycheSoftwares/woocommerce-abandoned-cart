@@ -278,9 +278,9 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                                 <tr>
                                                                 <th>'.__( "Item", "woocommerce-abandoned-cart" ).'</th>
                                                                 <th>'.__( "Name", "woocommerce-abandoned-cart" ).'</th>
-                                                                <th>'.__( "Quantity", "woocommerce-abandoned-cart" ).'</th>
+                                                                <th style="display:none;">'.__( "Quantity", "woocommerce-abandoned-cart" ).'</th>
                                                                 <th>'.__( "Price", "woocommerce-abandoned-cart" ).'</th>
-                                                                <th>'.__( "Line Subtotal", "woocommerce-abandoned-cart" ).'</th>
+                                                                <th style="display:none;">'.__( "Line Subtotal", "woocommerce-abandoned-cart" ).'</th>
                                                                 </tr>';
                                                     } else {
                                                         $var = '<h3>'.__( "Your Shopping Cart", "woocommerce-abandoned-cart" ).'</h3>
@@ -288,9 +288,9 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                                 <tr>
                                                                 <th>'.__( "Item", 'woocommerce-abandoned-cart' ).'</th>
                                                                 <th>'.__( "Name", 'woocommerce-abandoned-cart' ).'</th>
-                                                                <th>'.__( "Quantity", 'woocommerce-abandoned-cart' ).'</th>
+                                                                <th style="display:none;">'.__( "Quantity", 'woocommerce-abandoned-cart' ).'</th>
                                                                 <th>'.__( "Price", 'woocommerce-abandoned-cart' ).'</th>
-                                                                <th>'.__( "Line Subtotal", 'woocommerce-abandoned-cart' ).'</th>
+                                                                <th style="display:none;">'.__( "Line Subtotal", 'woocommerce-abandoned-cart' ).'</th>
                                                                 </tr>';
                                                     }
                                                     $cart_details = $cart_info_db_field->cart;
@@ -359,9 +359,9 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                             $var .='<tr align="center">
                                                                     <td> <a href="'.$cart_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
                                                                     <td> <a href="'.$cart_link_track.'">'.$product_name.'</a></td>
-                                                                    <td> '.$quantity_total.'</td>
+                                                                    <td style="display:none;"> '.$quantity_total.'</td>
                                                                     <td> '.$item_subtotal.'</td>
-                                                                    <td> '.$item_total_display.'</td>
+                                                                    <td style="display:none;"> '.$item_total_display.'</td>
                                                                 </tr>';
                                                             $cart_total += $item_total;
                                                             $item_subtotal = $item_total = 0;
@@ -380,8 +380,8 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                                 <td> </td>
                                                                 <td> </td>
                                                                 <td> </td>
-                                                                <td>'.__( "Cart Total:", 'woocommerce-abandoned-cart' ).'</td>
-                                                                <td> '.$cart_total.'</td>
+                                                                <td style="display:none;">'.__( "Cart Total:", 'woocommerce-abandoned-cart' ).'</td>
+                                                                <td style="display:none;"> '.$cart_total.'</td>
                                                             </tr>';
                                                         $var .= '</table>
                                                                                 ';
