@@ -3055,6 +3055,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             <input type="text" id="send_test_email" name="send_test_email" class="regular-text" >
                                             <input type="button" value="Send a test email" id="preview_email" onclick="javascript:void(0);">
                                             <img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the email id to which the test email needs to be sent.', 'woocommerce-abandoned-cart') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
+                                            <br>
+                                            <img class="ajax_img" src="<?php echo plugins_url() . '/woocommerce-abandoned-cart/assets/images/ajax-loader.gif';?>" style="display:none;" />
                                             <div id="preview_email_sent_msg" style="display:none;"></div>
                                         </td>
                                     </tr>
@@ -3131,6 +3133,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 {
                     $( "table#addedit_template input#preview_email" ).click( function()
                     {
+                        $( '.ajax_img' ).show();
                         var email_body = '';
                         if ( jQuery("#wp-woocommerce_ac_email_body-wrap").hasClass( "tmce-active" ) ) {
                             email_body = tinyMCE.get('woocommerce_ac_email_body').getContent();
@@ -3153,6 +3156,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
                         // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
                         $.post( ajaxurl, data, function( response ) {
+                            $( '.ajax_img' ).hide();
                             if ( 'not sent' == response ) {
                                 $( "#preview_email_sent_msg" ).html( "Test email is not sent as the Email body is empty." );
                                 $( "#preview_email_sent_msg" ).fadeIn();
