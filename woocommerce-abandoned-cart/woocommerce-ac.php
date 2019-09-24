@@ -18,13 +18,13 @@
 */
 
 require_once( "includes/wcal_class-guest.php" );
-require_once( "includes/wcal_default-settings.php" );
-require_once( "includes/wcal_actions.php" );
+require_once( "includes/class-wcal-default-template-settings.php" );
+require_once( "includes/class-wcal-delete-handler.php" );
 require_once( "includes/classes/class-wcal-aes.php" );
 require_once( "includes/classes/class-wcal-aes-counter.php" );
 require_once( "includes/wcal-common.php" );
 
-require_once( "includes/wcal_admin_notice.php");
+require_once( "includes/class-wcal-admin-notice.php");
 require_once( 'includes/wcal_data_tracking_message.php' );
 require_once( 'includes/admin/wcal_privacy_erase.php' );
 require_once( 'includes/admin/wcal_privacy_export.php' );
@@ -115,6 +115,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             if ( !defined( 'WCAL_PLUGIN_URL' ) ) {
                 define('WCAL_PLUGIN_URL', untrailingslashit(plugins_url('/', __FILE__)) );
             }
+
+			if ( ! defined( 'WCAL_PLUGIN_VERSION' ) ) {
+				define( 'WCAL_PLUGIN_VERSION', '5.5.1' );
+            }
             $this->one_hour     = 60 * 60;
             $this->three_hours  = 3 * $this->one_hour;
             $this->six_hours    = 6 * $this->one_hour;
@@ -185,8 +189,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             add_action ( 'admin_enqueue_scripts',                       array( &$this, 'wcal_enqueue_scripts_js' ) );
             add_action ( 'admin_enqueue_scripts',                       array( &$this, 'wcal_enqueue_scripts_css' ) );
 			//delete abandoned order after X number of days
-            if ( class_exists( 'wcal_delete_bulk_action_handler' ) ) {
-                add_action( 'wcal_clear_carts',                         array( 'wcal_delete_bulk_action_handler', 'wcal_delete_abandoned_carts_after_x_days' ) );
+			if ( class_exists( 'Wcal_Delete_Handler' ) ) {
+				add_action( 'wcal_clear_carts', array( 'Wcal_Delete_Handler', 'wcal_delete_abandoned_carts_after_x_days' ) );
             }
 
             if ( is_admin() ) {
@@ -427,7 +431,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             if ( ! get_option( 'wcal_new_default_templates' ) ) {
                 if ( 0 == $check_table_empty ) {
-                    $default_template = new wcal_default_template_settings;
+                    $default_template = new Wcal_Default_Template_Settings;
                     $default_template->wcal_create_default_templates();
                     update_option( 'wcal_new_default_templates', "yes" );
                 }
@@ -987,7 +991,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
 
             if( !get_option( 'wcal_new_default_templates' ) ) {
-                    $default_template = new wcal_default_template_settings;
+                    $default_template = new Wcal_Default_Template_Settings;
                     $default_template->wcal_create_default_templates();
                     add_option( 'wcal_new_default_templates', "yes" );
 
@@ -2045,7 +2049,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         $ids = array( $ids );
                     }
                     foreach ( $ids as $id ) {
-                        $class = new wcal_delete_bulk_action_handler();
+                        $class = new Wcal_Delete_Handler();
                         $class->wcal_delete_bulk_action_handler_function( $id );
                     }
                 }
@@ -2056,7 +2060,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $ids = array( $ids );
                     }
                     foreach ( $ids as $id ) {
-                    $class = new wcal_delete_bulk_action_handler();
+                    $class = new Wcal_Delete_Handler();
                     $class->wcal_delete_template_bulk_action_handler_function( $id );
                     }
                 }
