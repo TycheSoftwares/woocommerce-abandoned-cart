@@ -146,8 +146,17 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    $value 					= '';
 	    $abandoned_order_id 	= 0;
 	    if( isset( $abandoned_row_info->email ) ) {	    
-		    $abandoned_order_id    = $abandoned_row_info->id ; 
-		    $row_actions['edit']   = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'orderdetails', 'id' => $abandoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'View order', 'woocommerce-abandoned-cart' ) . '</a>';
+			$abandoned_order_id    = $abandoned_row_info->id ; 
+			
+			$wcal_array = array(
+				'action' => 'wcap_abandoned_cart_info',
+				'cart_id' => $abandoned_order_id
+			);
+			$wcal_url 	= add_query_arg(
+				$wcal_array , admin_url( 'admin-ajax.php' )
+			);
+
+		    $row_actions['edit']   = '<a oncontextmenu="return false;" class="wcal-button-icon wcal-js-open-modal" data-modal-type="ajax" data-wcal-cart-id="' . $abandoned_order_id . '" href="' . $wcal_url . '">' . __( 'View order', 'woocommerce-abandoned-cart' ) . '</a>';
 		    $row_actions['delete'] = '<a href="' . wp_nonce_url( add_query_arg( array( 'action' => 'wcal_delete', 'abandoned_order_id' => $abandoned_row_info->id ), $this->base_url ), 'abandoned_order_nonce') . '">' . __( 'Delete', 'woocommerce-abandoned-cart' ) . '</a>';	
 		    $email                 = $abandoned_row_info->email;
 		    $value                 = $email . $this->row_actions( $row_actions );	    
