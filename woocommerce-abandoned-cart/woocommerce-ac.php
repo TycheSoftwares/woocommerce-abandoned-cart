@@ -1917,6 +1917,17 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 wp_enqueue_script( 'tinyMce_ac',$js_src );
                 wp_enqueue_script( 'ac_email_variables', plugins_url() . '/woocommerce-abandoned-cart/assets/js/abandoncart_plugin_button.js' );
                 wp_enqueue_script( 'wcal_activate_template', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_template_activate.js' );
+
+                // needed only on the dashboard page
+                wp_enqueue_script ( 
+                    'bootstrap_js', 
+                    plugins_url() . '/woocommerce-abandoned-cart/assets/js/bootstrap.min.js', 
+                    '', 
+                    '', 
+                    false );
+
+                // needed only on the abandoned orders page
+                wp_enqueue_script( 'wcal_abandoned_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_abandoned_cart_detail_modal.js' );
             }
         }
 
@@ -1966,6 +1977,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             if ( $page != 'woocommerce_ac_page' ) {
                 return;
+            } else if ( $page === 'woocommerce_ac_page' && isset( $_GET['action'] ) && 'report' === $_GET[ 'action' ] ) {
+                wp_enqueue_style( 'wcal-dashboard-adv',           plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/wcal_reports_adv.css' );
+
+                wp_register_style( 'bootstrap_css', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/bootstrap.min.css', '', '', 'all' );
+                wp_enqueue_style( 'bootstrap_css' );
+
+                wp_enqueue_style( 'wcap-font-awesome', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/font-awesome.css' );
+        
+                wp_enqueue_style( 'wcap-font-awesome-min', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/font-awesome.min.css' );
             } elseif ( $page === 'woocommerce_ac_page' ) {
 
                 wp_enqueue_style( 'jquery-ui',                plugins_url() . '/woocommerce-abandoned-cart/assets/css/jquery-ui.css', '', '', false );
@@ -2818,6 +2838,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             </div>
                         </div>
             <?php } elseif ( $action == 'report' ) {
+
+                        include_once( 'includes/classes/class-wcal-dashboard-report.php' );
+                        Wcal_Dashboard_Report::wcal_dashboard_display();
+
+                        ?>
+                        <p><h1><?php esc_html_e( 'Product Report', 'woocommerce-abandoned-cart' ); ?></h1></p>
+                        <?php
+
                         include_once('includes/classes/class-wcal-product-report-table.php');
                         $wcal_product_report_list = new WCAL_Product_Report_Table();
                         $wcal_product_report_list->wcal_product_report_prepare_items();
