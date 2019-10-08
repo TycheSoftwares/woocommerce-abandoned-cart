@@ -17,10 +17,12 @@ class Wcal_Default_Template_Settings {
 	/**
 	 * This function will load default template while activating the plugin.
 	 *
+	 * @param string $db_prefix - DB prefix.
+	 * @param int    $blog_id - Blog ID.
 	 * @globals mixed $wpdb
 	 * @since 2.5
 	 */
-	public function wcal_create_default_templates() {
+	public function wcal_create_default_templates( $db_prefix, $blog_id ) {
 		global $wpdb;
 		$template_name_array    = 'Initial';
 		$template_subject_array = 'Hey {{customer.firstname}}!! You left something in your cart';
@@ -41,7 +43,7 @@ class Wcal_Default_Template_Settings {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$wpdb->query(
 			$wpdb->prepare(
-				'INSERT INTO `' . $wpdb->prefix . 'ac_email_templates_lite`
+				'INSERT INTO `' . $db_prefix . 'ac_email_templates_lite`
 		   		( subject, body, is_active, frequency, day_or_hour, template_name, is_wc_template, default_template, wc_email_header )
 		   		VALUES ( 
 					%s,
@@ -65,5 +67,11 @@ class Wcal_Default_Template_Settings {
 				$header_text
 			)
 		);
+
+		if ( 0 === $blog_id ) {
+			add_option( 'wcal_new_default_templates', 'yes' );
+		} else {
+			add_blog_option( $blog_id, 'wcal_new_default_templates', 'yes' );
+		}
 	}
 }
