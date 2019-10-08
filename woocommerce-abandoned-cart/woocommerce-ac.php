@@ -17,6 +17,7 @@
 * @package Abandoned-Cart-Lite-for-WooCommerce
 */
 
+require_once( 'class-wcal-update.php' );
 require_once( "includes/wcal_class-guest.php" );
 require_once( "includes/class-wcal-default-template-settings.php" );
 require_once( "includes/class-wcal-delete-handler.php" );
@@ -28,6 +29,7 @@ require_once( "includes/class-wcal-admin-notice.php");
 require_once( 'includes/wcal_data_tracking_message.php' );
 require_once( 'includes/admin/wcal_privacy_erase.php' );
 require_once( 'includes/admin/wcal_privacy_export.php' );
+require_once( 'includes/admin/class-wcal-abandoned-cart-details.php' );
 
 require_once( 'includes/admin/wcap_pro_settings.php' );
 require_once( 'includes/admin/wcap_pro_settings_callbacks.php' );
@@ -170,7 +172,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             add_action ( 'admin_init',                                  array( &$this, 'wcal_action_admin_init' ) );
 
             // Update the options as per settings API
-            add_action ( 'admin_init',                                  array( &$this, 'wcal_update_db_check' ) );
+            add_action ( 'admin_init',                                  array( 'Wcal_Update', 'wcal_update_db_check' ) );
 
             // Wordpress settings API
             add_action( 'admin_init',                                   array( &$this, 'wcal_initialize_plugin_options' ) );
@@ -198,6 +200,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 add_action ( 'admin_head',                              array( &$this, 'wcal_action_send_preview' ) );
                 add_action ( 'wp_ajax_wcal_preview_email_sent',         array( &$this, 'wcal_preview_email_sent' ) );
                 add_action ( 'wp_ajax_wcal_toggle_template_status',     array( &$this, 'wcal_toggle_template_status' ) );
+                add_action( 'wp_ajax_wcal_abandoned_cart_info',         array( &$this, 'wcal_abandoned_cart_info' ) );
 
                 add_filter( 'ts_tracker_data',                          array( 'wcal_common', 'ts_add_plugin_tracking_data' ), 10, 1 );
                 add_filter( 'ts_tracker_opt_out_data',                  array( 'wcal_common', 'ts_get_data_for_opt_out' ), 10, 1 );
@@ -359,13 +362,40 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          * @globals mixed $wpdb
          * @since 1.0
          */
-        function wcal_activate() {
+        public static function wcal_activate() {
+
+            // check whether its a multi site install or a single site install
+	    	if ( is_multisite() ) {
+        		
+        		$blog_list = get_sites();
+        		foreach ( $blog_list as $blog_list_key => $blog_list_value ) {
+             		if ( $blog_list_value->blog_id > 1 ) { // child sites
+                		$blog_id = $blog_list_value->blog_id;
+                		self::wcal_process_activate( $blog_id );
+            		} else { // parent site
+            			self::wcal_process_activate();
+            		}
+            	}
+            } else { // single site
+            	self::wcal_process_activate();
+            }
+        }
+
+        /**
+         * Activation code: Create tables, default settings etc.
+         *
+         * @param int $blog_id - Greater than 0 for subsites in a multisite install, 0 for single sites.
+         */
+        public static function wcal_process_activate( $blog_id = 0 ) {
             global $wpdb;
+
+            $db_prefix = ( $blog_id === 0 ) ? $wpdb->prefix : $wpdb->prefix . $blog_id . "_";
+
             $wcap_collate = '';
             if ( $wpdb->has_cap( 'collation' ) ) {
                 $wcap_collate = $wpdb->get_charset_collate();
             }
-            $table_name = $wpdb->prefix . "ac_email_templates_lite";
+            $table_name = $db_prefix . "ac_email_templates_lite";
             $sql = "CREATE TABLE IF NOT EXISTS $table_name (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
                     `subject` text NOT NULL,
@@ -383,19 +413,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
 
-            // $table_name = $wpdb->prefix . "ac_email_templates_lite";
-            // $check_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'is_wc_template' ";
-            // $results = $wpdb->get_results( $check_template_table_query );
-
-            // if ( count( $results ) == 0 ) {
-            //     $alter_template_table_query = "ALTER TABLE $table_name
-            //     ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL AFTER `template_name`,
-            //     ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";
-
-            //     $wpdb->get_results( $alter_template_table_query );
-            // }
-
-            $sent_table_name = $wpdb->prefix . "ac_sent_history_lite";
+            $sent_table_name = $db_prefix . "ac_sent_history_lite";
 
             $sql_query = "CREATE TABLE IF NOT EXISTS $sent_table_name (
                         `id` int(11) NOT NULL auto_increment,
@@ -409,7 +427,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta ( $sql_query );
 
-            $ac_history_table_name = $wpdb->prefix . "ac_abandoned_cart_history_lite";
+            $ac_history_table_name = $db_prefix . "ac_abandoned_cart_history_lite";
 
             $history_query = "CREATE TABLE IF NOT EXISTS $ac_history_table_name (
                              `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -426,23 +444,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $history_query );
-            // Default templates:  function call to create default templates.
-            $check_table_empty  = $wpdb->get_var( "SELECT COUNT(*) FROM `" . $wpdb->prefix . "ac_email_templates_lite`" );
-
-            if ( ! get_option( 'wcal_new_default_templates' ) ) {
-                if ( 0 == $check_table_empty ) {
-                    $default_template = new Wcal_Default_Template_Settings;
-                    $default_template->wcal_create_default_templates();
-                    update_option( 'wcal_new_default_templates', "yes" );
-                }
-            }
-
-            $guest_table        = $wpdb->prefix."ac_guest_abandoned_cart_history_lite" ;
+            
+            $guest_table        = $db_prefix."ac_guest_abandoned_cart_history_lite" ;
             $query_guest_table  = "SHOW TABLES LIKE '$guest_table' ";
             $result_guest_table = $wpdb->get_results( $query_guest_table );
 
             if ( 0 == count( $result_guest_table ) ) {
-                $ac_guest_history_table_name = $wpdb->prefix . "ac_guest_abandoned_cart_history_lite";
+                $ac_guest_history_table_name = $db_prefix . "ac_guest_abandoned_cart_history_lite";
                 $ac_guest_history_query = "CREATE TABLE IF NOT EXISTS $ac_guest_history_table_name (
                 `id` int(15) NOT NULL AUTO_INCREMENT,
                 `billing_first_name` text,
@@ -472,25 +480,58 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $wpdb->query( $ac_guest_history_query );
             }
 
+            // Default templates:  function call to create default templates.
+            $check_table_empty  = $wpdb->get_var( "SELECT COUNT(*) FROM `" . $db_prefix . "ac_email_templates_lite`" );
+
             /**
              * This is add for thos user who Install the plguin first time.
              * So for them this option will be cheked.
              */
-            if ( ! get_option( 'ac_lite_track_guest_cart_from_cart_page' ) ) {
-                add_option( 'ac_lite_track_guest_cart_from_cart_page', 'on' );
-            }
-            if ( ! get_option( 'wcal_from_name' ) ) {
-                add_option( 'wcal_from_name', 'Admin' );
-            }
-            $wcal_get_admin_email = get_option( 'admin_email' );
-            if ( ! get_option( 'wcal_from_email' ) ) {
-                add_option( 'wcal_from_email', $wcal_get_admin_email );
-            }
+            if( 0 === $blog_id ) {
+                if ( ! get_option( 'wcal_new_default_templates' ) ) {
+                    if ( 0 == $check_table_empty ) {
+                        $default_template = new Wcal_Default_Template_Settings;
+                        $default_template->wcal_create_default_templates( $db_prefix, $blog_id );
+                    }
+                }
 
-            if ( ! get_option( 'wcal_reply_email' ) ) {
-                add_option( 'wcal_reply_email', $wcal_get_admin_email );
-            }
+                if ( ! get_option( 'ac_lite_track_guest_cart_from_cart_page' ) ) {
+                    add_option( 'ac_lite_track_guest_cart_from_cart_page', 'on' );
+                }
+                if ( ! get_option( 'wcal_from_name' ) ) {
+                    add_option( 'wcal_from_name', 'Admin' );
+                }
+                $wcal_get_admin_email = get_option( 'admin_email' );
+                if ( ! get_option( 'wcal_from_email' ) ) {
+                    add_option( 'wcal_from_email', $wcal_get_admin_email );
+                }
 
+                if ( ! get_option( 'wcal_reply_email' ) ) {
+                    add_option( 'wcal_reply_email', $wcal_get_admin_email );
+                }
+            } else {
+                if ( ! get_blog_option( $blog_id, 'wcal_new_default_templates' ) ) {
+                    if ( 0 == $check_table_empty ) {
+                        $default_template = new Wcal_Default_Template_Settings();
+                        $default_template->wcal_create_default_templates( $db_prefix, $blog_id );
+                    }
+                }
+                
+                if ( ! get_blog_option( $blog_id, 'ac_lite_track_guest_cart_from_cart_page' ) ) {
+                    add_blog_option( $blog_id, 'ac_lite_track_guest_cart_from_cart_page', 'on' );
+                }
+                if ( ! get_blog_option( $blog_id, 'wcal_from_name' ) ) {
+                    add_blog_option( $blog_id, 'wcal_from_name', 'Admin' );
+                }
+                $wcal_get_admin_email = get_option( 'admin_email' );
+                if ( ! get_blog_option( $blog_id, 'wcal_from_email' ) ) {
+                    add_blog_option( $blog_id, 'wcal_from_email', $wcal_get_admin_email );
+                }
+    
+                if ( ! get_blog_option( $blog_id, 'wcal_reply_email' ) ) {
+                    add_blog_option( $blog_id, 'wcal_reply_email', $wcal_get_admin_email );
+                }
+            }
             do_action( 'wcal_activate' );
         }
 
@@ -961,224 +1002,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             // Here, we'll take the first argument of the array and add it to a label next to the checkbox
             $html = '<label for="wcal_reply_email_label"> '  . $args[0] . '</label>';
             echo $html;
-        }
-
-        /**
-         * It will be executed when the plugin is upgraded.
-         * @hook admin_init
-         * @globals mixed $wpdb
-         * @since 1.0
-         */
-        function wcal_update_db_check() {
-            global $wpdb;
-
-            $wcal_previous_version = get_option( 'wcal_previous_version' );
-
-            if ( $wcal_previous_version != wcal_common::wcal_get_version() ) {
-                update_option( 'wcal_previous_version', '5.5.1' );
-            }
-
-            /**
-             * This is used to prevent guest users wrong Id. If guest users id is less then 63000000 then this code will
-             * ensure that we will change the id of guest tables so it wont affect on the next guest users.
-             */
-            if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_guest_abandoned_cart_history_lite';" )  && 'yes' != get_option( 'wcal_guest_user_id_altered' ) ) {
-                $last_id = $wpdb->get_var( "SELECT max(id) FROM `{$wpdb->prefix}ac_guest_abandoned_cart_history_lite`;" );
-                if ( NULL != $last_id && $last_id <= 63000000 ) {
-                    $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_guest_abandoned_cart_history_lite AUTO_INCREMENT = 63000000;" );
-                    update_option ( 'wcal_guest_user_id_altered', 'yes' );
-                }
-            }
-
-            if( !get_option( 'wcal_new_default_templates' ) ) {
-                    $default_template = new Wcal_Default_Template_Settings;
-                    $default_template->wcal_create_default_templates();
-                    add_option( 'wcal_new_default_templates', "yes" );
-
-            }
-            if ( 'yes' != get_option( 'ac_lite_alter_table_queries' ) ) {
-                $ac_history_table_name = $wpdb->prefix."ac_abandoned_cart_history_lite";
-                $check_table_query     = "SHOW COLUMNS FROM $ac_history_table_name LIKE 'user_type'";
-                $results               = $wpdb->get_results( $check_table_query );
-
-                if ( 0 == count( $results ) ) {
-                    $alter_table_query = "ALTER TABLE $ac_history_table_name ADD `user_type` text AFTER  `recovered_cart`";
-                    $wpdb->get_results( $alter_table_query );
-                }
-
-                $table_name                 = $wpdb->prefix . "ac_email_templates_lite";
-                $check_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'is_wc_template' ";
-                $results                    = $wpdb->get_results( $check_template_table_query );
-
-                if ( 0 == count( $results ) ) {
-                    $alter_template_table_query = "ALTER TABLE $table_name
-                    ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `template_name`,
-                    ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`";
-                    $wpdb->get_results( $alter_template_table_query );
-                }
-
-                $table_name                       = $wpdb->prefix . "ac_email_templates_lite";
-                $check_email_template_table_query = "SHOW COLUMNS FROM $table_name LIKE 'wc_email_header' ";
-                $results_email                    = $wpdb->get_results( $check_email_template_table_query );
-
-                if ( 0 == count( $results_email ) ) {
-                    $alter_email_template_table_query = "ALTER TABLE $table_name
-                    ADD COLUMN `wc_email_header` varchar(50) NOT NULL AFTER `default_template`";
-                    $wpdb->get_results( $alter_email_template_table_query );
-                }
-
-                if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_abandoned_cart_history_lite';" ) ) {
-                    if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_abandoned_cart_history_lite` LIKE 'unsubscribe_link';" ) ) {
-                        $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_abandoned_cart_history_lite ADD `unsubscribe_link` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `user_type`;" );
-                    }
-                }
-
-                if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_abandoned_cart_history_lite';" ) ) {
-                    if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_abandoned_cart_history_lite` LIKE 'session_id';" ) ) {
-                        $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_abandoned_cart_history_lite ADD `session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `unsubscribe_link`;" );
-                    }
-                }
-
-                /**
-                 * We have moved email templates fields in the setings section. SO to remove that fields column fro the db we need it.
-                 * For existing user we need to fill this setting with the first template.
-                 * @since 4.7
-                 */
-                if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}ac_email_templates_lite';" ) ) {
-                    if ( $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_email_templates_lite` LIKE 'from_email';" ) ) {
-                        $get_email_template_query  = "SELECT `from_email` FROM {$wpdb->prefix}ac_email_templates_lite WHERE `is_active` = '1' ORDER BY `id` ASC LIMIT 1";
-                        $get_email_template_result = $wpdb->get_results ( $get_email_template_query );
-                        $wcal_from_email = '';
-                        if ( isset( $get_email_template_result ) && count ( $get_email_template_result ) > 0 ){
-                            $wcal_from_email =  $get_email_template_result[0]->from_email;
-                            /* Store data in setings api*/
-                            update_option ( 'wcal_from_email', $wcal_from_email );
-                            /* Delete table from the Db*/
-                            $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_email_templates_lite DROP COLUMN `from_email`;" );
-                        }
-                    }
-
-                    if ( $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_email_templates_lite` LIKE 'from_name';" ) ) {
-                        $get_email_template_from_name_query  = "SELECT `from_name` FROM {$wpdb->prefix}ac_email_templates_lite WHERE `is_active` = '1' ORDER BY `id` ASC LIMIT 1";
-                        $get_email_template_from_name_result = $wpdb->get_results ( $get_email_template_from_name_query );
-                        $wcal_from_name = '';
-                        if ( isset( $get_email_template_from_name_result ) && count ( $get_email_template_from_name_result ) > 0 ){
-                            $wcal_from_name =  $get_email_template_from_name_result[0]->from_name;
-                            /* Store data in setings api*/
-                            add_option ( 'wcal_from_name', $wcal_from_name );
-                            /* Delete table from the Db*/
-                            $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_email_templates_lite DROP COLUMN `from_name`;" );
-                        }
-                    }
-
-                    if ( $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ac_email_templates_lite` LIKE 'reply_email';" ) ) {
-                        $get_email_template_reply_email_query  = "SELECT `reply_email` FROM {$wpdb->prefix}ac_email_templates_lite WHERE `is_active` = '1' ORDER BY `id` ASC LIMIT 1";
-                        $get_email_template_reply_email_result = $wpdb->get_results ( $get_email_template_reply_email_query);
-                        $wcal_reply_email = '';
-                        if ( isset( $get_email_template_reply_email_result ) && count ( $get_email_template_reply_email_result ) > 0 ){
-                            $wcal_reply_email =  $get_email_template_reply_email_result[0]->reply_email;
-                            /* Store data in setings api*/
-                            update_option ( 'wcal_reply_email', $wcal_reply_email );
-                            /* Delete table from the Db*/
-                            $wpdb->query( "ALTER TABLE {$wpdb->prefix}ac_email_templates_lite DROP COLUMN `reply_email`;" );
-                        }
-                    }
-                }
-
-                if ( ! get_option( 'wcal_security_key' ) ) {
-                    update_option( 'wcal_security_key', 'qJB0rGtIn5UB1xG03efyCp' );
-                }
-
-                update_option( 'ac_lite_alter_table_queries', 'yes' );
-            }
-
-            //get the option, if it is not set to individual then convert to individual records and delete the base record
-            $ac_settings = get_option( 'ac_lite_settings_status' );
-            if ( 'INDIVIDUAL' != $ac_settings ) {
-                //fetch the existing settings and save them as inidividual to be used for the settings API
-                $woocommerce_ac_settings = json_decode( get_option( 'woocommerce_ac_settings' ) );
-
-                if ( isset( $woocommerce_ac_settings[0]->cart_time ) ) {
-                    add_option( 'ac_lite_cart_abandoned_time', $woocommerce_ac_settings[0]->cart_time );
-                } else {
-                    add_option( 'ac_lite_cart_abandoned_time', '10' );
-                }
-
-                if ( isset( $woocommerce_ac_settings[0]->delete_order_days ) ) {
-                    add_option( 'ac_lite_delete_abandoned_order_days', $woocommerce_ac_settings[0]->delete_order_days );
-                } else {
-                    add_option( 'ac_lite_delete_abandoned_order_days', "" );
-                }
-
-                if ( isset( $woocommerce_ac_settings[0]->email_admin ) ) {
-                    add_option( 'ac_lite_email_admin_on_recovery', $woocommerce_ac_settings[0]->email_admin );
-                } else {
-                    add_option( 'ac_lite_email_admin_on_recovery', "" );
-                }
-
-                if ( isset( $woocommerce_ac_settings[0]->disable_guest_cart_from_cart_page ) ) {
-                   add_option( 'ac_lite_track_guest_cart_from_cart_page',  $woocommerce_ac_settings[0]->disable_guest_cart_from_cart_page );
-                } else {
-                   add_option( 'ac_lite_track_guest_cart_from_cart_page', "" );
-                }
-
-                update_option( 'ac_lite_settings_status', 'INDIVIDUAL' );
-                //Delete the main settings record
-                delete_option( 'woocommerce_ac_settings' );
-            }
-
-            if ( 'yes' != get_option( 'ac_lite_delete_redundant_queries' ) ) {
-                $ac_history_table_name = $wpdb->prefix."ac_abandoned_cart_history_lite";
-
-                $wpdb->delete( $ac_history_table_name, array( 'abandoned_cart_info' => '{"cart":[]}' ) );
-
-                update_option( 'ac_lite_delete_redundant_queries', 'yes' );
-            }
-
-            if ( 'yes' !== get_option( 'ac_lite_user_cleanup' ) ) {
-                $query_cleanup = "UPDATE `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite` SET
-                    billing_first_name = IF (billing_first_name LIKE '%<%', '', billing_first_name),
-                    billing_last_name = IF (billing_last_name LIKE '%<%', '', billing_last_name),
-                    billing_company_name = IF (billing_company_name LIKE '%<%', '', billing_company_name),
-                    billing_address_1 = IF (billing_address_1 LIKE '%<%', '', billing_address_1),
-                    billing_address_2 = IF (billing_address_2 LIKE '%<%', '', billing_address_2),
-                    billing_city = IF (billing_city LIKE '%<%', '', billing_city),
-                    billing_county = IF (billing_county LIKE '%<%', '', billing_county),
-                    billing_zipcode = IF (billing_zipcode LIKE '%<%', '', billing_zipcode),
-                    email_id = IF (email_id LIKE '%<%', '', email_id),
-                    phone = IF (phone LIKE '%<%', '', phone),
-                    ship_to_billing = IF (ship_to_billing LIKE '%<%', '', ship_to_billing),
-                    order_notes = IF (order_notes LIKE '%<%', '', order_notes),
-                    shipping_first_name = IF (shipping_first_name LIKE '%<%', '', shipping_first_name),
-                    shipping_last_name = IF (shipping_last_name LIKE '%<%', '', shipping_last_name),
-                    shipping_company_name = IF (shipping_company_name LIKE '%<%', '', shipping_company_name),
-                    shipping_address_1 = IF (shipping_address_1 LIKE '%<%', '', shipping_address_1),
-                    shipping_address_2 = IF (shipping_address_2 LIKE '%<%', '', shipping_address_2),
-                    shipping_city = IF (shipping_city LIKE '%<%', '', shipping_city),
-                    shipping_county = IF (shipping_county LIKE '%<%', '', shipping_county)";
-
-                $wpdb->query( $query_cleanup );
-
-                $email = 'woouser401a@mailinator.com';
-                $exists = email_exists( $email );
-                if ( $exists ) {
-                    wp_delete_user( esc_html( $exists ) );
-                }
-
-                update_option( 'ac_lite_user_cleanup', 'yes' );
-            }
-
-            if ( 'yes' !== get_option( 'ac_lite_remove_abandoned_data' ) ){
-                $query_delete = "DELETE FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite` WHERE abandoned_cart_time > 1555372800";
-                $wpdb->query( $query_delete );
-
-                update_option( 'ac_lite_remove_abandoned_data', 'yes' );
-            }
-
-            if( ! get_option( 'wcal_enable_cart_emails' ) ) {
-                add_option( 'wcal_enable_cart_emails', 'on' );
-            }
-        }
+        }   
 
         /**
          * Add a submenu page under the WooCommerce.
@@ -1917,6 +1741,17 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 wp_enqueue_script( 'tinyMce_ac',$js_src );
                 wp_enqueue_script( 'ac_email_variables', plugins_url() . '/woocommerce-abandoned-cart/assets/js/abandoncart_plugin_button.js' );
                 wp_enqueue_script( 'wcal_activate_template', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_template_activate.js' );
+
+                // needed only on the dashboard page
+                wp_enqueue_script ( 
+                    'bootstrap_js', 
+                    plugins_url() . '/woocommerce-abandoned-cart/assets/js/bootstrap.min.js', 
+                    '', 
+                    '', 
+                    false );
+
+                // needed only on the abandoned orders page
+                wp_enqueue_script( 'wcal_abandoned_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_abandoned_cart_detail_modal.min.js' );
             }
         }
 
@@ -1966,6 +1801,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             if ( $page != 'woocommerce_ac_page' ) {
                 return;
+            } else if ( $page === 'woocommerce_ac_page' && isset( $_GET['action'] ) && 'report' === $_GET[ 'action' ] ) {
+                wp_enqueue_style( 'wcal-dashboard-adv',           plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/wcal_reports_adv.css' );
+
+                wp_register_style( 'bootstrap_css', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/bootstrap.min.css', '', '', 'all' );
+                wp_enqueue_style( 'bootstrap_css' );
+
+                wp_enqueue_style( 'wcap-font-awesome', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/font-awesome.css' );
+        
+                wp_enqueue_style( 'wcap-font-awesome-min', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/font-awesome.min.css' );
             } elseif ( $page === 'woocommerce_ac_page' ) {
 
                 wp_enqueue_style( 'jquery-ui',                plugins_url() . '/woocommerce-abandoned-cart/assets/css/jquery-ui.css', '', '', false );
@@ -1974,7 +1818,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 wp_enqueue_style( 'jquery-ui-style',          plugins_url() . '/woocommerce-abandoned-cart/assets/css/jquery-ui-smoothness.css' );
                 wp_enqueue_style( 'abandoned-orders-list', plugins_url() . '/woocommerce-abandoned-cart/assets/css/view.abandoned.orders.style.css' );
                 wp_enqueue_style( 'wcal_email_template', plugins_url() . '/woocommerce-abandoned-cart/assets/css/wcal_template_activate.css' );
-
+                wp_enqueue_style( 'wcal_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/wcal_abandoned_cart_detail_modal.min.css' );
             }
         }
 
@@ -2818,6 +2662,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             </div>
                         </div>
             <?php } elseif ( $action == 'report' ) {
+
+                        include_once( 'includes/classes/class-wcal-dashboard-report.php' );
+                        Wcal_Dashboard_Report::wcal_dashboard_display();
+
+                        ?>
+                        <p><h1><?php esc_html_e( 'Product Report', 'woocommerce-abandoned-cart' ); ?></h1></p>
+                        <?php
+
                         include_once('includes/classes/class-wcal-product-report-table.php');
                         $wcal_product_report_list = new WCAL_Product_Report_Table();
                         $wcal_product_report_list->wcal_product_report_prepare_items();
@@ -3172,6 +3024,18 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 });
                 </script>
                 <?php
+        }
+
+        /**
+         * Ajax function used to add the details in the abandoned order
+         * popup view.
+         *
+         * @since 5.6
+         */
+        public static function wcal_abandoned_cart_info() {
+
+            Wcal_Abandoned_Cart_Details::wcal_get_cart_detail_view( $_POST );
+            die();
         }
 
         /**
