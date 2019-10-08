@@ -388,6 +388,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 			}
 			$wcal_cart_total = $wcal_cart_total . '<br>' . $wcal_quantity_total . ' ' . $item_disp;
 
+			$wcal_cart_email_sent = '';
 			if ( ! empty( $wcal_get_abandoned_sent_result ) && count( $wcal_get_abandoned_sent_result ) > 0 ) {
 				foreach ( $wcal_get_abandoned_sent_result as $wcal_get_abandoned_sent_key => $wcal_get_abandoned_sent_value ) {
 

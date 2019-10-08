@@ -29,6 +29,7 @@ require_once( "includes/class-wcal-admin-notice.php");
 require_once( 'includes/wcal_data_tracking_message.php' );
 require_once( 'includes/admin/wcal_privacy_erase.php' );
 require_once( 'includes/admin/wcal_privacy_export.php' );
+require_once( 'includes/admin/class-wcal-abandoned-cart-details.php' );
 
 require_once( 'includes/admin/wcap_pro_settings.php' );
 require_once( 'includes/admin/wcap_pro_settings_callbacks.php' );

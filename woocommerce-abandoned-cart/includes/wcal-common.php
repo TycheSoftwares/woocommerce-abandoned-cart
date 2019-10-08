@@ -928,5 +928,51 @@ class wcal_common {
 			$wpdb->delete( $wpdb->prefix . 'ac_abandoned_cart_history_lite', array( 'id' => $abandoned_cart_id ) );
 		}
 	}
+
+	/**
+	 * Returns formatted price.
+	 *
+	 * @param float   $price - Price to be formatted
+	 * @param string  $currency - Currency.
+	 * @return string $price - Formatted price with currency symbol.
+	 * @since 5.6
+	 */
+	public static function wcal_get_price( $price, $currency ) {
+
+		if ( function_exists( 'icl_object_id' ) && isset( $currency ) && $currency !== '' ) {
+			return wc_price( $price, array( 'currency' => $currency ) );
+		}else{
+			return wc_price( $price );
+		}
+	}
+
+	/**
+	 * Returns the user role for registered users.
+	 *
+	 * @param int    $uid - user ID.
+	 * @return array $roles - List of roles.
+	 * @since 5.6
+	 */
+	public  static function wcal_get_user_role( $uid ) {
+		global $wpdb;
+		$role = $wpdb->get_var("SELECT meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'wp_capabilities' AND user_id = {$uid}");
+		
+		if( !$role ){
+		  return '';  
+		} 
+		$rarr  = unserialize($role);
+		
+		$roles = is_array($rarr) ? array_keys( $rarr ) : array('non-user');
+
+		/**
+		 * When store have the wpml it have so many user roles to fix the user role for admin we have applied this fix. 
+		 */ 
+		if ( in_array( 'administrator' , $roles) ){
+			
+			$roles[0] = 'administrator';
+		}
+
+		return ucfirst ( $roles[0] );
+	}
 }
 ?>
