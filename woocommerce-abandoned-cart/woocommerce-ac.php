@@ -199,6 +199,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 add_action ( 'admin_head',                              array( &$this, 'wcal_action_send_preview' ) );
                 add_action ( 'wp_ajax_wcal_preview_email_sent',         array( &$this, 'wcal_preview_email_sent' ) );
                 add_action ( 'wp_ajax_wcal_toggle_template_status',     array( &$this, 'wcal_toggle_template_status' ) );
+                add_action( 'wp_ajax_wcal_abandoned_cart_info',         array( &$this, 'wcal_abandoned_cart_info' ) );
 
                 add_filter( 'ts_tracker_data',                          array( 'wcal_common', 'ts_add_plugin_tracking_data' ), 10, 1 );
                 add_filter( 'ts_tracker_opt_out_data',                  array( 'wcal_common', 'ts_get_data_for_opt_out' ), 10, 1 );
@@ -1749,7 +1750,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     false );
 
                 // needed only on the abandoned orders page
-                wp_enqueue_script( 'wcal_abandoned_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_abandoned_cart_detail_modal.js' );
+                wp_enqueue_script( 'wcal_abandoned_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_abandoned_cart_detail_modal.min.js' );
             }
         }
 
@@ -1816,7 +1817,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 wp_enqueue_style( 'jquery-ui-style',          plugins_url() . '/woocommerce-abandoned-cart/assets/css/jquery-ui-smoothness.css' );
                 wp_enqueue_style( 'abandoned-orders-list', plugins_url() . '/woocommerce-abandoned-cart/assets/css/view.abandoned.orders.style.css' );
                 wp_enqueue_style( 'wcal_email_template', plugins_url() . '/woocommerce-abandoned-cart/assets/css/wcal_template_activate.css' );
-
+                wp_enqueue_style( 'wcal_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/wcal_abandoned_cart_detail_modal.min.css' );
             }
         }
 
@@ -3022,6 +3023,18 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 });
                 </script>
                 <?php
+        }
+
+        /**
+         * Ajax function used to add the details in the abandoned order
+         * popup view.
+         *
+         * @since 5.6
+         */
+        public static function wcal_abandoned_cart_info() {
+
+            Wcal_Abandoned_Cart_Details::wcal_get_cart_detail_view( $_POST );
+            die();
         }
 
         /**
