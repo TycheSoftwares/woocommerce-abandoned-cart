@@ -193,7 +193,7 @@ $allowed_html = [
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<th>Cart Total:</th>
-					<td><?php wp_kses( $wcal_total_price, $allowed_html ); ?></td>
+					<td><?php echo wp_kses( $wcal_total_price, $allowed_html ); ?></td>
 				</tr>
 
 			</tbody>
