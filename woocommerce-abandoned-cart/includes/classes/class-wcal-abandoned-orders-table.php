@@ -345,9 +345,9 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		   
 		    if( count( get_object_vars( $cart_details ) ) > 0 ) {    		
 		        foreach( $cart_details as $k => $v ) {    		     
-		            if( $v->line_tax != 0 && $v->line_tax > 0 ) {
+		            if( isset( $v->line_tax, $v->line_total ) && $v->line_tax != 0 && $v->line_tax > 0 ) {
 		                $line_total = $line_total + $v->line_total + $v->line_tax;
-		            } else {
+		            } else if( isset( $v->line_total ) ) {
 		                $line_total = $line_total + $v->line_total;
 		            }
 		        }
