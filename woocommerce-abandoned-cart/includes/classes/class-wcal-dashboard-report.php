@@ -38,28 +38,51 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 
 		/**
 		 * Total count of recovered orders.
-		 * 
+		 *
 		 * @var int recovered_count - Count
 		 */
 		public static $recovered_count = 0;
+
+		/**
+		 * Total count of abandoned carts.
+		 *
+		 * @var int $abandoned_count - Count.
+		 */
+		public static $abandoned_count = 0;
 
 		/**
 		 * HTML Code for dashboard.
 		 */
 		public static function wcal_dashboard_display() {
 			$purchase_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=acupgradetopro&utm_medium=link&utm_campaign=AbandonCartLite';
+
 			?>
 			<div id="wcal_dashboard_report" style="text-align: left;">
 			<br class="clear">
 				<form id="wcal_dash" method="get">
 					<input type="hidden" name="page" value="woocommerce_ac_page" />
-					<input type="hidden" name="action" value="report" />
-					
+
 					<?php
 					self::wcal_dashboard_filter();
 					self::wcal_setup_filter_parms();
+
+					$guest_emails_captured        = self::wcal_get_collected_email_count();
+					$emails_sent_count            = self::wcal_get_emails_sent_count();
+					$abandoned_carts_count        = self::wcal_get_abandoned_cart_count();
+					$recovered_amount_unformatted = self::wcal_get_recovered_amount();
+					$abandoned_amount_unformatted = self::wcal_abandoned_orders_amount();
+					$placed_orders_amount         = self::wcal_placed_orders_amount();
+
+					if ( self::$recovered_count > 0 ) {
+						$percent_recovered = round( ( self::$recovered_count * 100 ) / ( self::$abandoned_count ), 2 );
+						$percent_of_sales  = round( ( $recovered_amount_unformatted * 100 ) / ( $placed_orders_amount ), 2 );
+					} else {
+						$percent_recovered = 0;
+						$percent_of_sales  = 0;
+					}
+
 					?>
-				
+
 				</form>
 
 				<div class="container-fluid">
@@ -71,7 +94,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 								<div class="card panel-primary wcap-center">
 									<div class="card-header panel-heading">
 										<div class="huge padding-25">
-											<?php echo esc_attr( get_woocommerce_currency_symbol() . self::wcal_get_recovered_amount() ); ?>
+											<?php echo esc_attr( get_woocommerce_currency_symbol() . $recovered_amount_unformatted ); ?>
 										</div>
 									</div>
 									<div class="card-body panel-heading panel-body">
@@ -89,9 +112,26 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 										</button>
 										<div id="recoveredDetails" class="collapse" aria-labelledby="headingOne">
 											<div class="card-body">
-												<span><?php printf( __( '<strong>%s</strong> Recovered Orders', 'woocommerce-abandoned-cart' ), self::$recovered_count ); ?></span>
+												<span>
+												<?php
+												// translators: Count of carts recovered.
+												echo wp_kses_post( sprintf( __( '<strong>%s</strong> Recovered Orders', 'woocommerce-abandoned-cart' ), esc_attr( self::$recovered_count ) ) );
+												?>
+												</span>
 												<br>
-												<span><?php printf( __( "Upgrade to <a href='%s' target='_blank'>Abandoned Cart Pro for WooCommerce</a> to view detailed reports.", 'woocommerce-abandoned-cart' ), $purchase_link); ?></span>
+												<span>
+												<?php
+												// translators: recovered percent of carts.
+												echo wp_kses_post( sprintf( __( '<strong>%s%%</strong> of Abandoned Carts Recovered', 'woocommerce-abandoned-cart' ), esc_attr( $percent_recovered ) ) );
+												?>
+												</span>
+												<br>
+												<span>
+												<?php
+												// translators: Percent of sales.
+												echo wp_kses_post( sprintf( __( '<strong>%s%%</strong> of Total Revenue', 'woocommerce-abandoned-cart' ), esc_attr( $percent_of_sales ) ) );
+												?>
+												</span>
 											</div>
 										</div>
 									</div>
@@ -103,7 +143,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 								<div class="card panel-red wcap-center">
 									<div class="card-header panel-heading">
 										<div class="huge padding-25">
-											<?php echo esc_attr( self::wcal_get_abandoned_cart_count() ); ?>
+											<?php echo esc_attr( $abandoned_carts_count ); ?>
 										</div>
 									</div>
 									<div class="card-body panel-heading panel-body">
@@ -121,7 +161,12 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 										</button>
 										<div id="abandonedCount" class="collapse" aria-labelledby="headingOne">
 											<div class="card-body">
-												<span><?php printf( __( "Upgrade to <a href='%s' target='_blank'>Abandoned Cart Pro for WooCommerce</a> to view detailed reports.", 'woocommerce-abandoned-cart' ), $purchase_link); ?></span>
+												<span>
+												<?php
+												// translators: Abandoned Orders amount.
+												echo esc_html( sprintf( __( '%s amount of Abandoned Orders', 'woocommerce-abandoned-cart' ), esc_attr( get_woocommerce_currency_symbol() . $abandoned_amount_unformatted ) ) );
+												?>
+												</span>
 											</div>
 										</div>
 									</div>
@@ -133,7 +178,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 								<div class="card panel-green wcap-center">
 									<div class="card-header panel-heading">
 										<div class="huge padding-25">
-											<?php echo esc_attr( self::wcal_get_emails_sent_count() ); ?>
+											<?php echo esc_attr( $emails_sent_count ); ?>
 										</div>
 									</div>
 									<div class="card-body panel-heading panel-body">
@@ -143,7 +188,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 									</div>
 									<div class="card-footer panel-footer">
 										<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#emailsCount" aria-expanded="true" aria-controls="emailsCount">
-											<span class="pull-left"><?php _e( 'View Details', 'woocommerce-abandoned-cart' ); ?></span> &nbsp;
+											<span class="pull-left"><?php esc_html_e( 'View Details', 'woocommerce-abandoned-cart' ); ?></span> &nbsp;
 											<span class="pull-right">
 												<i class="fa fa-arrow-circle-right"></i>
 											</span>
@@ -151,7 +196,12 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 										</button>
 										<div id="emailsCount" class="collapse" aria-labelledby="headingOne">
 											<div class="card-body">
-												<span><?php printf( __( "Upgrade to <a href='%s' target='_blank'>Abandoned Cart Pro for WooCommerce</a> to view the number of emails opened and links clicked.", 'woocommerce-abandoned-cart' ), $purchase_link); ?></span><br>
+												<span>
+												<?php
+												// translators: Link to Purchase the Pro version of the plugin.
+												echo wp_kses_post( sprintf( __( "Upgrade to <a href='%s' target='_blank'>Abandoned Cart Pro for WooCommerce</a> to view the number of emails opened and links clicked.", 'woocommerce-abandoned-cart' ), esc_attr( $purchase_link ) ) );
+												?>
+												</span><br>
 											</div>
 										</div>
 									</div>
@@ -163,7 +213,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 								<div class="card panel-yellow wcap-center">
 									<div class="card-header panel-heading">
 										<div class="huge padding-25">
-											<?php echo esc_attr( self::wcal_get_collected_email_count() ); ?>
+											<?php echo esc_attr( $guest_emails_captured ); ?>
 										</div>
 									</div>
 									<div class="card-body panel-heading panel-body">
@@ -173,7 +223,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 									</div>
 									<div class="card-footer panel-footer">
 										<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#atcCount" aria-expanded="true" aria-controls="atcCount">
-											<span class="pull-left"><?php _e( 'View Details', 'woocommerce-abandoned-cart' ); ?></span> &nbsp;
+											<span class="pull-left"><?php esc_html_e( 'View Details', 'woocommerce-abandoned-cart' ); ?></span> &nbsp;
 											<span class="pull-right">
 												<i class="fa fa-arrow-circle-right"></i>
 											</span>
@@ -181,7 +231,18 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 										</button>
 										<div id="atcCount" class="collapse" aria-labelledby="headingOne">
 											<div class="card-body">
-												<span><?php printf( __( "Upgrade to <a href='%s' target='_blank'>Abandoned Cart Pro for WooCommerce</a> to capture more guest carts.", 'woocommerce-abandoned-cart' ), $purchase_link); ?> Emails Captured</span>
+												<span>
+												<?php
+												// translators: Number of guest emails captured.
+												echo esc_html( sprintf( __( '%s Guest emails captured.', 'woocommerce-abandoned-cart' ), esc_attr( $guest_emails_captured ) ) );
+												?>
+												</span>
+												<span>
+												<?php
+												// translators: Link to Purchase the Pro version.
+												echo wp_kses_post( sprintf( __( "Upgrade to <a href='%s' target='_blank'>Abandoned Cart Pro for WooCommerce</a> to capture more guest carts.", 'woocommerce-abandoned-cart' ), esc_attr( $purchase_link ) ) );
+												?>
+												</span>
 											</div>
 										</div>
 									</div>
@@ -190,6 +251,11 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 						</div>
 					</div>
 				</div>
+
+				<div class="chartgraph">
+					<img src="<?php echo esc_attr( plugins_url() ) . '/woocommerce-abandoned-cart/assets/images/Coming_Soon.png'; ?>" />
+				</div>
+
 			</div>
 			<?php
 		}
@@ -201,16 +267,20 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 
 			$duration_range_select = array(
 
-				'last_week'    => __( 'Last 7 Days', 'woocommerce-abandoned-cart' ),
 				'this_month'   => __( 'This Month', 'woocommerce-abandoned-cart' ),
 				'last_month'   => __( 'Last Month', 'woocommerce-abandoned-cart' ),
 				'this_quarter' => __( 'This Quarter', 'woocommerce-abandoned-cart' ),
 				'last_quarter' => __( 'Last Quarter', 'woocommerce-abandoned-cart' ),
 				'this_year'    => __( 'This Year', 'woocommerce-abandoned-cart' ),
 				'last_year'    => __( 'Last Year', 'woocommerce-abandoned-cart' ),
+				'custom'       => __( 'Custom', 'woocommerce-abandoned-cart' ),
 			);
 
-			$duration_range = isset( $_GET['duration_select'] ) ? sanitize_text_field( wp_unslash( $_GET['duration_select'] ) ) : 'last_week'; //phpcs:ignore
+			$duration_range = isset( $_GET['duration_select'] ) ? sanitize_text_field( wp_unslash( $_GET['duration_select'] ) ) : 'this_month'; //phpcs:ignore
+
+			$start_date_range        = isset( $_GET['wcal_start_date'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_start_date'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+			$end_date_range          = isset( $_GET['wcal_end_date'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_end_date'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+			$start_end_date_div_show = ( ! isset( $_GET['duration_select'] ) || 'custom' !== $_GET['duration_select'] ) ? 'none' : 'block'; // phpcs:ignore WordPress.Security.NonceVerification
 			?>
 			<br>
 
@@ -226,16 +296,21 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 						<?php
 						foreach ( $duration_range_select as $key => $value ) {
 							$sel = '';
-							if ( $key == $duration_range ) {
+							if ( $key == $duration_range ) { // phpcs:ignore
 								$sel = 'selected';
 							}
-							echo sprintf( "<option value='%s' %s>%s</option>", esc_attr( $key ), esc_attr( $sel ), esc_attr( __( $value, 'woocommerce-abandoned-cart' ) ) );
+							echo sprintf( "<option value='%s' %s>%s</option>", esc_attr( $key ), esc_attr( $sel ), esc_attr( __( $value, 'woocommerce-abandoned-cart' ) ) ); //phpcs:ignore
 						}
 						?>
 					</select>
-					&nbsp;&nbsp;&nbsp;
-					<button type="submit" class="button-secondary" id="wcal_search" value="go"><?php esc_html_e( 'Go', 'woocommerce-abandoned-cart' ); ?></button>
-					
+					<div class = "wcal_start_end_date_div" id = "wcal_start_end_date_div" style="display: <?php echo esc_attr( $start_end_date_div_show ); ?>;"  >
+						<input type="text" id="wcal_start_date" name="wcal_start_date" readonly="readonly" value="<?php echo esc_attr( $start_date_range ); ?>" placeholder="yyyy-mm-dd"/>
+						<input type="text" id="wcal_end_date" name="wcal_end_date" readonly="readonly" value="<?php echo esc_attr( $end_date_range ); ?>" placeholder="yyyy-mm-dd"/>
+					</div>
+					<div id="wcal_submit_button" class="wcal_submit_button">
+						<button type="submit" class="button-secondary" id="wcal_search" value="go"><?php esc_html_e( 'Go', 'woocommerce-abandoned-cart' ); ?></button>
+					</div>
+
 				</div>
 			</div>
 
@@ -247,7 +322,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 		 */
 		public static function wcal_setup_filter_parms() {
 
-			$duration_select = isset( $_GET['duration_select'] ) ? sanitize_text_field( wp_unslash( $_GET['duration_select'] ) ) : 'last_week'; //phpcs:ignore
+			$duration_select = isset( $_GET['duration_select'] ) ? sanitize_text_field( wp_unslash( $_GET['duration_select'] ) ) : 'this_month'; //phpcs:ignore
 
 			$current_time  = current_time( 'timestamp' );
 			$current_month = date( 'n' ); //phpcs:ignore
@@ -304,9 +379,23 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 					self::$end_timestamp   = mktime( 23, 59, 59, 12, 31, $current_year - 1 );
 					break;
 
-				case 'last_week':
-					self::$start_timestamp = mktime( 00, 01, 01, $current_month, date( 'd' ) - 7 ); //phpcs:ignore
-					self::$end_timestamp   = $current_time;
+				case 'custom':
+					$user_start = isset( $_GET['wcal_start_date'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_start_date'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+					$user_end   = isset( $_GET['wcal_end_date'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_end_date'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+
+					if ( '' === $user_start ) {
+						$user_start = date( 'Y-m-d', mktime( 00, 01, 01, $current_month, 1 ) ); //phpcs:ignore
+						$user_end   = date( 'Y-m-d', $current_time ); //phpcs:ignore
+					}
+
+					if ( '' === $user_end ) {
+						$user_end = date( 'Y-m-d', $current_time ); //phpcs:ignore
+					}
+
+					$start_explode         = explode( '-', $user_start );
+					$end_explode           = explode( '-', $user_end );
+					self::$start_timestamp = mktime( 00, 01, 01, $start_explode[1], $start_explode[2], $start_explode[0] ); //phpcs:ignore
+					self::$end_timestamp   = mktime( 23, 59, 59, $end_explode[1], $end_explode[2], $end_explode[0] );
 					break;
 
 			}
@@ -351,9 +440,9 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 			$ids    = self::wcal_get_recovered_order_ids( $start_time, $end_time );
 			$amount = 0;
 			if ( is_array( $ids ) && count( $ids ) > 0 ) {
-				
+
 				self::$recovered_count = count( $ids );
-			
+
 				foreach ( $ids as $order_id ) {
 					$amount += get_post_meta( $order_id, '_order_total', true );
 				}
@@ -390,6 +479,73 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 			$get_email_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(id) FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE abandoned_cart_time >= %s AND abandoned_cart_time <= %s AND user_id >= %d AND user_type = %s', $start_time, $end_time, 63000000, 'GUEST' ) ); //phpcs:ignore
 
 			return $get_email_count;
+		}
+
+		/**
+		 * Returns the amount for abandoned orders in the selected date range.
+		 *
+		 * @since 5.6
+		 */
+		public static function wcal_abandoned_orders_amount() {
+
+			global $wpdb;
+
+			$start_time            = self::$start_timestamp;
+			$end_time              = self::$end_timestamp;
+			$blank_cart_info       = '{"cart":[]}';
+			$blank_cart_info_guest = '[]';
+
+			$get_carts = $wpdb->get_col( $wpdb->prepare( "SELECT abandoned_cart_info FROM `$wpdb->prefix" . "ac_abandoned_cart_history_lite` WHERE abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_time >= %s AND abandoned_cart_time <= %s AND recovered_cart = '0' AND cart_ignored <> '1'", $blank_cart_info, $blank_cart_info_guest, $start_time, $end_time ) ); //phpcs:ignore
+
+			$abandoned_amount = 0;
+			$abandoned_count  = 0;
+			if ( is_array( $get_carts ) && count( $get_carts ) > 0 ) {
+
+				foreach ( $get_carts as $cart_value ) {
+
+					$cart_info = json_decode( stripslashes( $cart_value ) );
+
+					if ( isset( $cart_info ) && false !== $cart_info && count( get_object_vars( $cart_info ) ) > 0 ) {
+						$abandoned_count++;
+						foreach ( $cart_info->cart as $cart ) {
+							$abandoned_amount += $cart->line_total;
+						}
+					}
+				}
+			}
+
+			self::$abandoned_count = $abandoned_count;
+			return $abandoned_amount;
+		}
+
+		/**
+		 * Returns the amount for all the placed orders in the selected date range.
+		 *
+		 * @since 5.6
+		 */
+		public static function wcal_placed_orders_amount() {
+
+			global $wpdb;
+			$count_month         = 0;
+			$begin_date_of_month = date( 'Y-m-d H:i:s', self::$start_timestamp ); //phpcs:ignore
+			$end_date_of_month   = date( 'Y-m-d H:i:s', self::$end_timestamp ); //phpcs:ignore
+
+			$order_totals = $wpdb->get_row( //phpcs:ignore
+				$wpdb->prepare(
+					"SELECT SUM(meta.meta_value) AS total_sales, COUNT(posts.ID) AS total_orders FROM {$wpdb->posts} AS posts
+					LEFT JOIN {$wpdb->postmeta} AS meta ON posts.ID = meta.post_id
+					WHERE meta.meta_key = '_order_total'			
+					AND posts.post_type = 'shop_order'
+					AND posts.post_date >= %s
+					AND posts.post_date <= %s
+					AND posts.post_status IN ( '" . implode( "','", array( 'wc-completed', 'wc-processing', 'wc-on-hold' ) ) . "' )", //phpcs:ignore
+					$begin_date_of_month,
+					$end_date_of_month
+				)
+			);
+
+			$count_month = null === $order_totals->total_sales ? 0 : $order_totals->total_sales;
+			return $count_month;
 		}
 	}
 

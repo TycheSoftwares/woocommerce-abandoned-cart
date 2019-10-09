@@ -1630,34 +1630,43 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          */
         function wcal_display_tabs() {
 
-            if ( isset( $_GET['action'] ) ) {
-                $action = $_GET['action'];
-            } else {
-                $action                = "";
-                $active_listcart       = "";
-                $active_emailtemplates = "";
-                $active_settings       = "";
-                $active_stats          = "";
+            $action                = '';
+            $active_listcart       = '';
+            $active_emailtemplates = '';
+            $active_settings       = '';
+            $active_stats          = '';
+            $active_dash           = '';
+
+            $action = isset( $_GET[ 'action' ] ) ? $_GET[ 'action' ] : '';
+            
+            switch( $action ) {
+                case '':
+                case 'dashboard':
+                    $active_dash = 'nav-tab-active';
+                    break;
+                case 'listcart':
+                case 'orderdetails':
+                    $active_listcart = 'nav-tab-active';
+                    break;
+                case 'emailtemplates':
+                    $active_emailtemplates = 'nav-tab-active';
+                    break;
+                case 'emailsettings':
+                    $active_settings = 'nav-tab-active';
+                    break;
+                case 'stats':
+                    $active_stats = 'nav-tab-active';
+                    break;
+                case 'report':
+                    $active_report = 'nav-tab-active';
+					break;
             }
-            if ( ( 'listcart' == $action || 'orderdetails' == $action ) || '' == $action ) {
-                $active_listcart = "nav-tab-active";
-            }
-            if ( 'emailtemplates' == $action ) {
-                $active_emailtemplates = "nav-tab-active";
-            }
-            if ( 'emailsettings' == $action ) {
-                $active_settings = "nav-tab-active";
-            }
-            if ( 'stats' == $action ) {
-                $active_stats = "nav-tab-active";
-            }
-            if ( 'report' == $action ) {
-                $active_report = "nav-tab-active";
-            }
+
             ?>
             <div style="background-image: url('<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/assets/images/ac_tab_icon.png') !important;" class="icon32"><br>
             </div>
             <h2 class="nav-tab-wrapper woo-nav-tab-wrapper">
+                <a href="admin.php?page=woocommerce_ac_page&action=dashboard" class="nav-tab <?php if ( isset( $active_dash ) ) echo $active_dash; ?>"> <?php _e( 'Dashboard', 'woocommerce-abandoned-cart' );?> </a>
                 <a href="admin.php?page=woocommerce_ac_page&action=listcart" class="nav-tab <?php if ( isset( $active_listcart ) ) echo $active_listcart; ?>"> <?php _e( 'Abandoned Orders', 'woocommerce-abandoned-cart' );?> </a>
                 <a href="admin.php?page=woocommerce_ac_page&action=emailtemplates" class="nav-tab <?php if ( isset( $active_emailtemplates ) ) echo $active_emailtemplates; ?>"> <?php _e( 'Email Templates', 'woocommerce-abandoned-cart' );?> </a>
                 <a href="admin.php?page=woocommerce_ac_page&action=emailsettings" class="nav-tab <?php if ( isset( $active_settings ) ) echo $active_settings; ?>"> <?php _e( 'Settings', 'woocommerce-abandoned-cart' );?> </a>
@@ -1743,15 +1752,25 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 wp_enqueue_script( 'wcal_activate_template', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_template_activate.js' );
 
                 // needed only on the dashboard page
+                wp_register_script( 'jquery-ui-datepicker',  plugins_url() . '/woocommerce/assets/js/admin/ui-datepicker.js' );
+				wp_enqueue_script( 'jquery-ui-datepicker' );
+
                 wp_enqueue_script ( 
                     'bootstrap_js', 
-                    plugins_url() . '/woocommerce-abandoned-cart/assets/js/bootstrap.min.js', 
+                    plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/bootstrap.min.js', 
                     '', 
                     '', 
                     false );
 
+                wp_enqueue_script (
+                    'reports_js',
+                    plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/wcal_adv_dashboard.min.js',
+                    '',
+                    '',
+                    false
+                );
                 // needed only on the abandoned orders page
-                wp_enqueue_script( 'wcal_abandoned_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_abandoned_cart_detail_modal.min.js' );
+                wp_enqueue_script( 'wcal_abandoned_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/wcal_abandoned_cart_detail_modal.min.js' );
             }
         }
 
@@ -1801,15 +1820,21 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             if ( $page != 'woocommerce_ac_page' ) {
                 return;
-            } else if ( $page === 'woocommerce_ac_page' && isset( $_GET['action'] ) && 'report' === $_GET[ 'action' ] ) {
+            } else if ( $page === 'woocommerce_ac_page' && ( isset( $_GET['action'] ) && 'dashboard' === $_GET[ 'action' ] ) || ! isset( $_GET[ 'action' ] ) ) {
                 wp_enqueue_style( 'wcal-dashboard-adv',           plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/wcal_reports_adv.css' );
 
                 wp_register_style( 'bootstrap_css', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/bootstrap.min.css', '', '', 'all' );
                 wp_enqueue_style( 'bootstrap_css' );
 
-                wp_enqueue_style( 'wcap-font-awesome', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/font-awesome.css' );
+                wp_enqueue_style( 'wcal-font-awesome', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/font-awesome.css' );
         
-                wp_enqueue_style( 'wcap-font-awesome-min', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/font-awesome.min.css' );
+                wp_enqueue_style( 'wcal-font-awesome-min', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/font-awesome.min.css' );
+
+                wp_enqueue_style( 'jquery-ui',                plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/jquery-ui.css', '', '', false );
+                wp_enqueue_style( 'woocommerce_admin_styles', plugins_url() . '/woocommerce/assets/css/admin.css' );
+				wp_enqueue_style( 'jquery-ui-style',          plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/jquery-ui-smoothness.css' );
+				wp_enqueue_style( 'wcal-reports', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/wcal_reports.min.css' );
+                
             } elseif ( $page === 'woocommerce_ac_page' ) {
 
                 wp_enqueue_style( 'jquery-ui',                plugins_url() . '/woocommerce-abandoned-cart/assets/css/jquery-ui.css', '', '', false );
@@ -2006,7 +2031,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                         ?>
                     </div>
                   <?php
-                  } elseif ( $action == 'listcart' || '' == $action || '-1' == $action || '-1' == $action_two ) {
+                  } else if ( 'dashboard' === $action || '' === $action || '-1' === $action || '1' === $action_two ) {
+                        include_once( 'includes/classes/class-wcal-dashboard-report.php' );
+                        Wcal_Dashboard_Report::wcal_dashboard_display();
+
+                    } else if ( $action == 'listcart' ) {
+                
                         ?>
                         <p> <?php _e( 'The list below shows all Abandoned Carts which have remained in cart for a time higher than the "Cart abandoned cut-off time" setting.', 'woocommerce-abandoned-cart' );?> </p>
                         <?php
@@ -2662,13 +2692,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                             </div>
                         </div>
             <?php } elseif ( $action == 'report' ) {
-
-                        include_once( 'includes/classes/class-wcal-dashboard-report.php' );
-                        Wcal_Dashboard_Report::wcal_dashboard_display();
-
-                        ?>
-                        <p><h1><?php esc_html_e( 'Product Report', 'woocommerce-abandoned-cart' ); ?></h1></p>
-                        <?php
 
                         include_once('includes/classes/class-wcal-product-report-table.php');
                         $wcal_product_report_list = new WCAL_Product_Report_Table();
