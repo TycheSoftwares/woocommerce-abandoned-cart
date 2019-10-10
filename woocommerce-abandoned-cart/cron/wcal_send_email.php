@@ -105,8 +105,10 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                     $query_guest       = "SELECT billing_first_name, billing_last_name, email_id FROM `".$wpdb->prefix."ac_guest_abandoned_cart_history_lite`
                                                         WHERE id = %d";
                                     $results_guest     = $wpdb->get_results( $wpdb->prepare( $query_guest, $value->user_id ) );
-                                    if ( count( $results_guest ) > 0 && isset( $results_guest[0]->email_id ) ) {
+                                    if ( count( $results_guest ) > 0 && isset( $results_guest[0]->email_id ) && '' !== $results_guest[0]->email_id ) {
                                         $value->user_email = $results_guest[0]->email_id;
+                                    } else {
+                                        continue;
                                     }
                                 } else {
                                     if( isset( $value->user_id ) ) {
