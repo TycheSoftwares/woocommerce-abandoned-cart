@@ -2809,10 +2809,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                                 <?php
                                                  _e( 'Message to be sent in the reminder email.', 'woocommerce-abandoned-cart' );
                                                 ?>
-                                                <img width="16" height="16" src="<?php echo plugins_url(); ?>/woocommerce-abandon-cart-pro/assets/images/information.png" onClick="wcal_show_help_tips()"/>
+                                                <img width="16" height="16" src="<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/assets/images/information.png" onClick="wcal_show_help_tips()"/>
                                             </span>
                                             <span id="help_message" style="display:none">
-                                                1. You can add customer & cart information in the template using this icon <img width="20" height="20" src="<?php echo plugins_url(); ?>/woocommerce-abandon-cart-pro/assets/images/ac_editor_icon.png" /> in top left of the editor.<br>
+                                                1. You can add customer & cart information in the template using this icon <img width="20" height="20" src="<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/assets/images/ac_editor_icon.png" /> in top left of the editor.<br>
                                                 2. The product information/cart contents table will be added in emails using the {{products.cart}} merge field.<br>
                                                 3. Insert/Remove any of the new shortcodes that have been included for the default template.<br>
                                                 4. Change the look and feel of the table by modifying the table style properties using CSS in "Text" mode. <br>
