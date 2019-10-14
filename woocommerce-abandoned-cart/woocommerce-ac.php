@@ -1837,10 +1837,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 
             } elseif ( $page === 'woocommerce_ac_page' ) {
 
-                wp_enqueue_style( 'jquery-ui',                plugins_url() . '/woocommerce-abandoned-cart/assets/css/jquery-ui.css', '', '', false );
+                wp_enqueue_style( 'jquery-ui',                plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/jquery-ui.css', '', '', false );
                 wp_enqueue_style( 'woocommerce_admin_styles', plugins_url() . '/woocommerce/assets/css/admin.css' );
 
-                wp_enqueue_style( 'jquery-ui-style',          plugins_url() . '/woocommerce-abandoned-cart/assets/css/jquery-ui-smoothness.css' );
+                wp_enqueue_style( 'jquery-ui-style',          plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/jquery-ui-smoothness.css' );
                 wp_enqueue_style( 'abandoned-orders-list', plugins_url() . '/woocommerce-abandoned-cart/assets/css/view.abandoned.orders.style.css' );
                 wp_enqueue_style( 'wcal_email_template', plugins_url() . '/woocommerce-abandoned-cart/assets/css/wcal_template_activate.css' );
                 wp_enqueue_style( 'wcal_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/wcal_abandoned_cart_detail_modal.min.css' );
