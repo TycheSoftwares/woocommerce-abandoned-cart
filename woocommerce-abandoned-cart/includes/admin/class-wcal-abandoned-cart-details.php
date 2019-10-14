@@ -35,7 +35,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 			$wcal_cart_id          = isset( $cart_details['wcal_cart_id'] ) ? $cart_details['wcal_cart_id'] : 0;
 			$wcal_email_address    = isset( $cart_details['wcal_email_address'] ) ? $cart_details['wcal_email_address'] : '';
 			$wcal_customer_details = isset( $cart_details['wcal_email_address'] ) ? $cart_details['wcal_email_address'] : '';
-			$wcal_cart_total       = isset( $cart_details['wcal_cart_total'] ) ? $cart_details['wcal_cart_total'] : '';
+			$wcal_cart_total       = isset( $cart_details['wcal_cart_total'] ) ? $cart_details['wcal_cart_total'] : 0;
 			$wcal_abandoned_date   = isset( $cart_details['wcal_abandoned_date'] ) ? $cart_details['wcal_abandoned_date'] : '';
 			$wcal_current_page     = isset( $cart_details['wcal_current_page'] ) ? $cart_details['wcal_current_page'] : '';
 
@@ -718,7 +718,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 							$item_total_display = $item_total_display . ' (' . __( 'includes Tax: ', 'woocommerce-abandon-cart' ) . $line_subtotal_tax_display . ')';
 					}
 
-					$wcal_cart_total = $after_item_subtotal + $wcal_cart_total;
+					$wcal_cart_total += $after_item_subtotal;
 
 					$product = wc_get_product( $product_id );
 					// If bundled product, get the list of sub products.
