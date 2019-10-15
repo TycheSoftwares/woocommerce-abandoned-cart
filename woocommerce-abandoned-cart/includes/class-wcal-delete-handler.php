@@ -59,7 +59,7 @@ class Wcal_Delete_Handler {
 				)
 			);
 		}
-		wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&wcal_deleted=YES' ) );
+		wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=listcart&wcal_deleted=YES' ) );
 	}
 
 	/**
