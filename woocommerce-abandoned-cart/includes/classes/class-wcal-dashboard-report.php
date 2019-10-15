@@ -73,7 +73,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 					$abandoned_amount_unformatted = self::wcal_abandoned_orders_amount();
 					$placed_orders_amount         = self::wcal_placed_orders_amount();
 
-					if ( self::$recovered_count > 0 ) {
+					if ( self::$recovered_count > 0 && self::$abandoned_count > 0 ) {
 						$percent_recovered = round( ( self::$recovered_count * 100 ) / ( self::$abandoned_count ), 2 );
 						$percent_of_sales  = round( ( $recovered_amount_unformatted * 100 ) / ( $placed_orders_amount ), 2 );
 					} else {
@@ -495,7 +495,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 			$blank_cart_info       = '{"cart":[]}';
 			$blank_cart_info_guest = '[]';
 
-			$get_carts = $wpdb->get_col( $wpdb->prepare( "SELECT abandoned_cart_info FROM `$wpdb->prefix" . "ac_abandoned_cart_history_lite` WHERE abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_time >= %s AND abandoned_cart_time <= %s AND recovered_cart = '0' AND cart_ignored <> '1'", $blank_cart_info, $blank_cart_info_guest, $start_time, $end_time ) ); //phpcs:ignore
+			$get_carts = $wpdb->get_results( $wpdb->prepare( "SELECT abandoned_cart_info, recovered_cart FROM `$wpdb->prefix" . "ac_abandoned_cart_history_lite` WHERE abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_time >= %s AND abandoned_cart_time <= %s", $blank_cart_info, $blank_cart_info_guest, $start_time, $end_time ) ); //phpcs:ignore
 
 			$abandoned_amount = 0;
 			$abandoned_count  = 0;
@@ -503,13 +503,19 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 
 				foreach ( $get_carts as $cart_value ) {
 
-					$cart_info = json_decode( stripslashes( $cart_value ) );
-
-					if ( isset( $cart_info ) && false !== $cart_info && count( get_object_vars( $cart_info ) ) > 0 ) {
+					if( $cart_value->recovered_cart > 0 ) {
+						$abandoned_amount += get_post_meta( $cart_value->recovered_cart, '_order_total', true );
 						$abandoned_count++;
-						foreach ( $cart_info->cart as $cart ) {
-							if ( isset( $cart->line_total ) ) {
-								$abandoned_amount += $cart->line_total;
+					} else {
+
+						$cart_info = json_decode( stripslashes( $cart_value->abandoned_cart_info ) );
+
+						if ( isset( $cart_info ) && false !== $cart_info && count( get_object_vars( $cart_info ) ) > 0 ) {
+							$abandoned_count++;
+							foreach ( $cart_info->cart as $cart ) {
+								if ( isset( $cart->line_total ) ) {
+									$abandoned_amount += $cart->line_total;
+								}
 							}
 						}
 					}
