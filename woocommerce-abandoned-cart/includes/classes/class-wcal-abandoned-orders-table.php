@@ -149,7 +149,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 			$abandoned_order_id    = $abandoned_row_info->id ; 
 			
 			$wcal_array = array(
-				'action' => 'wcap_abandoned_cart_info',
+				'action' => 'wcal_abandoned_cart_info',
 				'cart_id' => $abandoned_order_id
 			);
 			$wcal_url 	= add_query_arg(
@@ -513,7 +513,19 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    switch( $column_name ) {
 			case 'id' :
 			    if( isset($wcal_abandoned_orders->id ) ) {
-			     $value = '<strong><a href="admin.php?page=woocommerce_ac_page&action=orderdetails&id='.$wcal_abandoned_orders->id.' ">'.$wcal_abandoned_orders->id.'</a> </strong>';
+
+					$abandoned_order_id = $wcal_abandoned_orders->id;
+					$wcal_array = array(
+						'action' => 'wcal_abandoned_cart_info',
+						'cart_id' => $abandoned_order_id
+					);
+					$wcal_url 	= add_query_arg(
+						$wcal_array , admin_url( 'admin-ajax.php' )
+					);
+		
+					$row_actions['edit']   = '' . __( 'View order', 'woocommerce-abandoned-cart' ) . '</a>';
+					
+			     	$value = '<strong><a oncontextmenu="return false;" class="wcal-button-icon wcal-js-open-modal" data-modal-type="ajax" data-wcal-cart-id="' . $abandoned_order_id . '" href="' . $wcal_url . '">'.$abandoned_order_id.'</a> </strong>';
 			    }
 				break;
 			case 'customer' :
