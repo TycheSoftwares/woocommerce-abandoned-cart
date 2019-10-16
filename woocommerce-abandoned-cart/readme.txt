@@ -1,7 +1,7 @@
 ﻿
 === Abandoned Cart Lite for WooCommerce ===
 Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, dhruvin
-Tags: abandon cart, cart recovery, increase woocommerce conversion rate, recover woocommerce cart, increase sales with woocommerce
+Tags: cart abandonment, abandon cart, cart recovery, increase woocommerce conversion rate, recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
 Tested up to: 5.2.4
@@ -39,6 +39,8 @@ Abandoned Cart Lite plugin enables to do the following things:
 8. Add custom variables like **Customer First Name, Customer Last name, Customer full name, Cart Link & Product Cart Information** in the email template.
 9. Copy HTML from anywhere & create templates using the powerful **Rich Text Editor**.
 10. **Automatically stops email notifications** when a customer makes a purchase or uses the cart recovery link.
+
+### Differences between Lite & PRO version:
 
 You can check the detailed difference between Pro and Lite version **[here](https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/?utm_source=wprepo&utm_medium=litelink&utm_campaign=AbandonedCartLite "Lite and Pro version Difference")**
 
@@ -104,11 +106,23 @@ Abandoned Cart Plugin relies on a function called WP-Cron, and this function onl
 
 1. **[Order Delivery Date for WooCommerce](https://wordpress.org/plugins/order-delivery-date-for-woocommerce/ "Order Delivery Date for WooCommerce")**
 
-2. **[Product Delivery Date for WooCommerce](https://wordpress.org/plugins/product-delivery-date-for-woocommerce-lite/ "Product Delivery Date for WooCommerce")**
+2. **[Product Delivery Date for WooCommerce - Lite](https://wordpress.org/plugins/product-delivery-date-for-woocommerce-lite/ "Product Delivery Date for WooCommerce")**
 
-3. **[Prevent Customers To Cancel WooCommerce Orders](https://wordpress.org/plugins/woo-prevent-cancel-order/ "Prevent Customers To Cancel WooCommerce Orders")**
+3. **[WooCommerce Print Invoice & Delivery Note](https://wordpress.org/plugins/woocommerce-delivery-notes/ "WooCommerce Print Invoice & Delivery Note")**
 
-4. **[WooCommerce Print Invoice & Delivery Note](https://wordpress.org/plugins/woocommerce-delivery-notes/ "WooCommerce Print Invoice & Delivery Note")**
+4. **[Payment Gateway Based Fees and Discounts for WooCommerce](https://wordpress.org/plugins/checkout-fees-for-woocommerce/ "Payment Gateway Based Fees and Discounts for WooCommerce")**
+
+5. **[Custom Order Status for WooCommerce](https://wordpress.org/plugins/custom-order-statuses-woocommerce/ "Custom Order Status for WooCommerce")**
+
+6. **[Custom Order Numbers for WooCommerce](https://wordpress.org/plugins/custom-order-numbers-for-woocommerce/ "Custom Order Numbers for WooCommerce")**
+
+7. **[Product Input Fields for WooCommerce](https://wordpress.org/plugins/product-input-fields-for-woocommerce/ "Product Input Fields for WooCommerce")**
+
+8. **[Call for Price for WooCommerce](https://wordpress.org/plugins/woocommerce-call-for-price/ "Call for Price for WooCommerce")**
+
+9. **[Price based on User Role for WooCommerce](https://wordpress.org/plugins/price-by-user-role-for-woocommerce/ "Price based on User Role for WooCommerce")**
+
+10. **[Currency per Product for WooCommerce](https://wordpress.org/plugins/currency-per-product-for-woocommerce/ "Currency per Product for WooCommerce")**
 
 **[Documentation](https://www.tychesoftwares.com/docs/docs/abandoned-cart-for-woocommerce-lite/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite "Documentation")**
 
@@ -146,6 +160,10 @@ Method 3:
 
 == Frequently Asked Questions ==
 
+= What is the difference between Lite and Pro version of the plugin? =
+
+To see how the PRO version can help you recover more abandoned carts compared to Lite, you can refer **[here](https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/?utm_source=wprepo&utm_medium=faqlink&utm_campaign=AbandonedCartLite "Lite and Pro version Difference")**
+
 = How is the email address of the customers captured? =
 
 Our plugin captures visitor emails in real-time as they're typing it in to the email address field on the checkout page, so you don't need to worry about them changing their mind at the last second.
@@ -171,10 +189,6 @@ When the products in the cart is not purchased within the set 'Cart abandoned cu
 = How to unsubscribe the abandoned cart notification emails? =
 
 The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. It will be replaced with a url in the abandoned cart email notification sent to the customer. When clicked, the reminder email notification for the particular email will be unsubscribed.
-
-= Difference between Lite and Pro version of the plugin =
-
-You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/?utm_source=wprepo&utm_medium=faqlink&utm_campaign=AbandonedCartLite "Lite and Pro version Difference")**
 
 
 == Screenshots ==
