@@ -196,11 +196,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             }
 
             if ( is_admin() ) {
-                // Load "admin-only" scripts here
-                add_action ( 'admin_head',                              array( &$this, 'wcal_action_send_preview' ) );
-                add_action ( 'wp_ajax_wcal_preview_email_sent',         array( &$this, 'wcal_preview_email_sent' ) );
-                add_action ( 'wp_ajax_wcal_toggle_template_status',     array( &$this, 'wcal_toggle_template_status' ) );
-                add_action( 'wp_ajax_wcal_abandoned_cart_info',         array( &$this, 'wcal_abandoned_cart_info' ) );
+                // Load "admin-only" scripts here.
+                add_action( 'admin_head', array( &$this, 'wcal_action_send_preview' ) );
+                add_action( 'wp_ajax_wcal_preview_email_sent', array( &$this, 'wcal_preview_email_sent' ) );
+                add_action( 'wp_ajax_wcal_toggle_template_status', array( &$this, 'wcal_toggle_template_status' ) );
+                add_action( 'wp_ajax_wcal_abandoned_cart_info', array( &$this, 'wcal_abandoned_cart_info' ) );
 
                 add_filter( 'ts_tracker_data',                          array( 'wcal_common', 'ts_add_plugin_tracking_data' ), 10, 1 );
                 add_filter( 'ts_tracker_opt_out_data',                  array( 'wcal_common', 'ts_get_data_for_opt_out' ), 10, 1 );
