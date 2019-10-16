@@ -581,6 +581,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 			$after_item_subtotal         = 0;
 			$after_item_subtotal_display = 0;
 			$line_subtotal_tax_total     = 0;
+			$wcal_cart_total             = 0;
 
 			$line_subtotal_tax   = 0;
 			$wcal_quantity_total = 0;
@@ -665,9 +666,9 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 					// Item subtotal is calculated as product total including taxes.
 					if ( isset( $wcal_include_tax ) && 'no' === $wcal_include_tax &&
 						isset( $wcal_include_tax_setting ) && 'yes' === $wcal_include_tax_setting ) {
+							$item_subtotal     = $item_subtotal + $v->line_total;  // This is fix.
+							$line_subtotal_tax = $v->line_tax; // This is fix.
 
-							$item_subtotal       = $item_subtotal + $v->line_total;  // This is fix.
-							$line_subtotal_tax  += $v->line_tax; // This is fix.
 							$after_item_subtotal = $item_subtotal;
 							// On sent email we need this for first row.
 							$line_subtotal_tax_total += $line_subtotal_tax;
@@ -676,7 +677,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 						isset( $wcal_include_tax_setting ) && 'yes' === $wcal_include_tax_setting ) {
 							// Item subtotal is calculated as product total including taxes.
 						if ( is_numeric( $v->line_tax ) && $v->line_tax > 0 ) {
-							$line_subtotal_tax_display += $v->line_tax;
+							$line_subtotal_tax_display = $v->line_tax;
 
 							// After copon code price.
 							$after_item_subtotal = $item_subtotal + $v->line_total + $v->line_tax;
@@ -691,7 +692,6 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 							$line_subtotal_tax_display += $v->line_tax;
 						}
 					} else {
-
 						$item_subtotal       = $item_subtotal + $v->line_total;
 						$after_item_subtotal = $v->line_total;
 					}
@@ -708,14 +708,14 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 					if ( isset( $wcal_include_tax ) && 'no' === $wcal_include_tax &&
 						isset( $wcal_include_tax_setting ) && 'yes' === $wcal_include_tax_setting ) {
 
-						$line_subtotal_tax  = apply_filters( 'acfac_change_currency', wcal_common::wcal_get_price( $line_subtotal_tax, $currency ), $wcal_cart_id, $line_subtotal_tax, 'wcal_ajax' );
-						$item_total_display = $item_total_display . '<br>' . __( 'Tax: ', 'woocommerce-abandon-cart' ) . $line_subtotal_tax;
+						$line_tax_currency  = apply_filters( 'acfac_change_currency', wcal_common::wcal_get_price( $line_subtotal_tax, $currency ), $wcal_cart_id, $line_subtotal_tax, 'wcal_ajax' );
+						$item_total_display = $item_total_display . '<br>' . __( 'Tax: ', 'woocommerce-abandon-cart' ) . $line_tax_currency;
 					} elseif ( isset( $wcal_include_tax ) && 'yes' === $wcal_include_tax &&
 							isset( $wcal_include_tax_setting ) && 'yes' === $wcal_include_tax_setting ) {
 
-							$line_subtotal_tax_display = apply_filters( 'acfac_change_currency', wcal_common::wcal_get_price( $line_subtotal_tax_display, $currency ), $wcal_cart_id, $line_subtotal_tax_display, 'wcal_ajax' );
+							$line_tax_currency = apply_filters( 'acfac_change_currency', wcal_common::wcal_get_price( $line_subtotal_tax_display, $currency ), $wcal_cart_id, $line_subtotal_tax_display, 'wcal_ajax' );
 
-							$item_total_display = $item_total_display . ' (' . __( 'includes Tax: ', 'woocommerce-abandon-cart' ) . $line_subtotal_tax_display . ')';
+							$item_total_display = $item_total_display . ' (' . __( 'includes Tax: ', 'woocommerce-abandon-cart' ) . $line_tax_currency . ')';
 					}
 
 					$wcal_cart_total += $after_item_subtotal;
