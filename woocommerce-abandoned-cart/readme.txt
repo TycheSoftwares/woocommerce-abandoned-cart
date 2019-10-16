@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, d
 Tags: abandon cart, cart recovery, increase woocommerce conversion rate, recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.2.2
+Tested up to: 5.2.4
 Stable tag: trunk
 License: GPLv2 or late
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -192,6 +192,18 @@ You can refer **[here](https://www.tychesoftwares.com/differences-between-pro-an
 6. Product Report Tab.
 
 == Changelog ==
+
+= 5.6 (16.10.2019) =
+
+* Enhancement - Added a dashboard for the plugin to display statistics.
+* Enhancement - Made the plugin compatible with WPCS.
+* Enhancement - Made the plugin compatible with Multisite installations.
+* Enhancement - The Abandoned Order details will now be displayed in a popup view.
+* Tweak - Modified the WooCommerce tested upto tag to 3.7.1
+* Tweak - Added a loader to be displayed while the plugin sends the test email in the Add/Edit Email template page.
+* Bug - Fixed an issue where product price is logged as 0.
+* Bug - Optimized the code to ensure the plugin doesn't attempt to send reminder emails to guests whose email addressed are not tracked.
+* Bug - Fixed some errors displayed in the console by the plugin.
 
 = 5.5.1 (21.08.2019) =
 
