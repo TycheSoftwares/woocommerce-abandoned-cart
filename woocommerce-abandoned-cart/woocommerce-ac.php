@@ -1637,7 +1637,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             $active_stats          = '';
             $active_dash           = '';
 
-            $action = isset( $_GET[ 'action' ] ) ? $_GET[ 'action' ] : '';
+            if( isset( $_GET[ 'action' ] ) ) {
+                $action = $_GET[ 'action' ];
+            } else {
+                $action = '';
+                $action = apply_filters( 'wcal_default_tab', $action );
+            }
             
             switch( $action ) {
                 case '':
@@ -1893,6 +1898,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $action = $_GET['action'];
                 } else {
                     $action = "";
+                    $action = apply_filters( 'wcal_default_tab', $action );
                 }
                 if ( isset( $_GET['mode'] ) ) {
                     $mode = $_GET['mode'];
