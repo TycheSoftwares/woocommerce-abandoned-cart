@@ -116,8 +116,8 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 			$user_shipping_city      = '';
 			$user_shipping_state     = '';
 			$user_shipping_country   = '';
-			$billing_field_display   = 'none';
-			$shipping_field_display  = 'none';
+			$billing_field_display   = 'block';
+			$shipping_field_display  = 'block';
 
 			if ( 'GUEST' === $user_type && 0 !== $user_id ) {
 				$results_guest = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite` WHERE id = %d', $user_id ) ); //phpcs:ignore
@@ -269,11 +269,20 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 			}
 
 			$wcal_billing_address_text   = __( 'Billing Address:', 'woocommerce-abandon-cart' );
-			$wcal_create_billing_address = '<br>' . $user_billing_company . '</br>' .
-												$user_billing_address_1 . '</br>' .
-												$user_billing_address_2 . '</br>' .
-												$user_billing_city . '</br>' .
-												$user_billing_postcode;
+
+			$wcal_create_billing_address = '' !== $user_billing_company ? '<br>' . $user_billing_company . '</br>' : '<br>';
+			if ( '' !== $user_billing_address_1 ) {
+				$wcal_create_billing_address .= $user_billing_address_1 . '</br>';	
+			}
+			if ( '' !== $user_billing_address_2 ) {
+				$wcal_create_billing_address .= $user_billing_address_2 . '</br>';	
+			}
+			if ( '' !== $user_billing_city ) {
+				$wcal_create_billing_address .= $user_billing_city . '</br>';	
+			}
+			if ( '' !== $user_billing_postcode ) {
+				$wcal_create_billing_address .= $user_billing_postcode;	
+			}
 
 			$wcal_shipping_address_text = __( 'Shipping Address:', 'woocommerce-abandon-cart' );
 
@@ -287,12 +296,19 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 
 				$wcal_create_shipping_address = 'Shipping Address same as Billing Address';
 			} else {
-				$wcal_create_shipping_address = '<br>' . $user_shipping_company . '</br>' .
-
-				$user_shipping_address_1 . '</br>' .
-				$user_shipping_address_2 . '</br>' .
-				$user_shipping_city . '</br>' .
-				$user_shipping_postcode;
+				$wcal_create_shipping_address = '' !== $user_shipping_company ? '<br>' . $user_shipping_company . '</br>' : '<br>';
+				if ( '' !== $user_shipping_address_1 ) {
+					$wcal_create_shipping_address .= $user_shipping_address_1 . '</br>';	
+				}
+				if ( '' !== $user_shipping_address_2 ) {
+					$wcal_create_shipping_address .= $user_shipping_address_2 . '</br>';	
+				}
+				if ( '' !== $user_shipping_city ) {
+					$wcal_create_shipping_address .= $user_shipping_city . '</br>';	
+				}
+				if ( '' !== $user_shipping_postcode ) {
+					$wcal_create_shipping_address .= $user_shipping_postcode;	
+				}
 			}
 
 			if ( '' !== $shipping_charges ) {
