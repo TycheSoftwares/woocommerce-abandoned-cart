@@ -1691,7 +1691,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          */
         function wcal_enqueue_scripts_js( $hook ) {
             global $pagenow, $woocommerce;
-             $page = isset( $_GET['page'] ) ? $_GET['page'] : '';
+            $page   = isset( $_GET['page'] ) ? $_GET['page'] : '';
+            $action = isset( $_GET['action'] ) ? $_GET['action'] : '';
 
             if (  $page === '' || $page !== 'woocommerce_ac_page' ) {
                 return;
@@ -1757,23 +1758,25 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 wp_enqueue_script( 'wcal_activate_template', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_template_activate.js' );
 
                 // needed only on the dashboard page
-                wp_register_script( 'jquery-ui-datepicker',  plugins_url() . '/woocommerce/assets/js/admin/ui-datepicker.js' );
-				wp_enqueue_script( 'jquery-ui-datepicker' );
+                if( 'woocommerce_ac_page' === $page && ( '' === $action || 'dashboard' === $action ) ) {
+                    wp_register_script( 'jquery-ui-datepicker',  plugins_url() . '/woocommerce/assets/js/admin/ui-datepicker.js' );
+                    wp_enqueue_script( 'jquery-ui-datepicker' );
 
-                wp_enqueue_script ( 
-                    'bootstrap_js', 
-                    plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/bootstrap.min.js', 
-                    '', 
-                    '', 
-                    false );
+                    wp_enqueue_script ( 
+                        'bootstrap_js', 
+                        plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/bootstrap.min.js', 
+                        '', 
+                        '', 
+                        false );
 
-                wp_enqueue_script (
-                    'reports_js',
-                    plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/wcal_adv_dashboard.min.js',
-                    '',
-                    '',
-                    false
-                );
+                    wp_enqueue_script (
+                        'reports_js',
+                        plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/wcal_adv_dashboard.min.js',
+                        '',
+                        '',
+                        false
+                    );
+                }
                 // needed only on the abandoned orders page
                 wp_enqueue_script( 'wcal_abandoned_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/wcal_abandoned_cart_detail_modal.min.js' );
             }
