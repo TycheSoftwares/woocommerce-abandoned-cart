@@ -50,37 +50,41 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 	 */
 	function user_side_js() {
 
-		wp_enqueue_script(
-			'wcal_guest_capture',
-			plugins_url( '../assets/js/wcal_guest_capture.min.js', __FILE__ ),
-			'',
-			WCAL_PLUGIN_VERSION,
-			true
-		);
+		if( ! is_user_logged_in() ) {
+			wp_nonce_field( 'save_data', 'wcal_guest_capture_nonce' );
+			
+			wp_enqueue_script(
+				'wcal_guest_capture',
+				plugins_url( '../assets/js/wcal_guest_capture.min.js', __FILE__ ),
+				'',
+				WCAL_PLUGIN_VERSION,
+				true
+			);
 
-		$guest_msg = get_option( 'wcal_guest_cart_capture_msg' );
+			$guest_msg = get_option( 'wcal_guest_cart_capture_msg' );
 
-		$session_gdpr = wcal_common::wcal_get_cart_session( 'wcal_cart_tracking_refused' );
-		$show_gdpr    = isset( $session_gdpr ) && 'yes' === $session_gdpr ? false : true;
+			$session_gdpr = wcal_common::wcal_get_cart_session( 'wcal_cart_tracking_refused' );
+			$show_gdpr    = isset( $session_gdpr ) && 'yes' === $session_gdpr ? false : true;
 
-		$vars = array();
-		if ( isset( $guest_msg ) && '' !== $guest_msg ) {
-			$vars = array(
-				'_show_gdpr_message'        => $show_gdpr,
-				'_gdpr_message'             => htmlspecialchars( get_option( 'wcal_guest_cart_capture_msg' ), ENT_QUOTES ),
-				'_gdpr_nothanks_msg'        => htmlspecialchars( get_option( 'wcal_gdpr_allow_opt_out' ), ENT_QUOTES ),
-				'_gdpr_after_no_thanks_msg' => htmlspecialchars( get_option( 'wcal_gdpr_opt_out_message' ), ENT_QUOTES ),
-				'enable_ca_tracking'        => true,
+			$vars = array();
+			if ( isset( $guest_msg ) && '' !== $guest_msg ) {
+				$vars = array(
+					'_show_gdpr_message'        => $show_gdpr,
+					'_gdpr_message'             => htmlspecialchars( get_option( 'wcal_guest_cart_capture_msg' ), ENT_QUOTES ),
+					'_gdpr_nothanks_msg'        => htmlspecialchars( get_option( 'wcal_gdpr_allow_opt_out' ), ENT_QUOTES ),
+					'_gdpr_after_no_thanks_msg' => htmlspecialchars( get_option( 'wcal_gdpr_opt_out_message' ), ENT_QUOTES ),
+					'enable_ca_tracking'        => true,
+				);
+			}
+
+			$vars['ajax_url'] = admin_url( 'admin-ajax.php' );
+
+			wp_localize_script(
+				'wcal_guest_capture',
+				'wcal_guest_capture_params',
+				$vars
 			);
 		}
-
-		$vars['ajax_url'] = admin_url( 'admin-ajax.php' );
-
-		wp_localize_script(
-			'wcal_guest_capture',
-			'wcal_guest_capture_params',
-			$vars
-		);
 	}
 
 	/**
@@ -93,6 +97,11 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 	 */
 	function save_data() {
 		if ( ! is_user_logged_in() ) {
+
+			if( ! isset( $_POST[ 'wcal_guest_capture_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'wcal_guest_capture_nonce'], 'save_data' ) ) {
+				die();
+			}
+			
 			global $wpdb, $woocommerce;
 			if ( isset( $_POST['billing_first_name'] ) && '' !== $_POST['billing_first_name'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_first_name', sanitize_text_field( wp_unslash( $_POST['billing_first_name'] ) ) );
