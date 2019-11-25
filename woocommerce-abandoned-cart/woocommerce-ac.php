@@ -1040,8 +1040,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
             $track_guest_user_cart_from_cart = "";
             if ( isset( $track_guest_cart_from_cart_page ) ) {
-                //$track_guest_user_cart_from_cart = $track_guest_cart_from_cart_page;
-                $track_guest_user_cart_from_cart = 'off';
+                $track_guest_user_cart_from_cart = $track_guest_cart_from_cart_page;
             }
 
             if ( isset( $cut_off_time ) ) {
