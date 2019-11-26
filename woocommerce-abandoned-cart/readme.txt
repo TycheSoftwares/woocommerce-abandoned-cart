@@ -223,8 +223,8 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 = 5.6.2 (26.11.2019) = 
 
 * Tweak - Added nonce for guest user data capture.
-* Tweak - Visitor carts will not be tracked and logged if the 'Start tracking from Cart page' setting is on.
-* Tweak - Updated FAQ.
+* Tweak - Visitor carts will be tracked and logged if the 'Start tracking from Cart page' setting is on.
+* Tweak - Updated FAQ to show how to avoid unwanted visitor carts.
 * Fix - Missing zipcode for guest users in the Abandoned Order details view.
 * Fix - The Recovered Order tab did not filter the data based on the selected date range.
 * Fix - User role displayed as 'Guest' for registered users in the Abandoned Order details view.
