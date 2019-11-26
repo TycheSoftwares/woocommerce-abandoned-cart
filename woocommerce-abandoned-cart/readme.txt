@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, d
 Tags: cart abandonment, abandon cart, cart recovery, increase woocommerce conversion rate, recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.2.4
+Tested up to: 5.3
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -220,6 +220,14 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.6.2 (26.11.2019) = 
+
+* Tweak - Added nonce for guest user data capture.
+* Tweak - Visitor carts will not be tracked and logged if the 'Start tracking from Cart page' setting is on.
+* Tweak - Updated FAQ.
+* Fix - Missing zipcode for guest users in the Abandoned Order details view.
+* Fix - The Recovered Order tab did not filter the data based on the selected date range.
+* Fix - User role displayed as 'Guest' for registered users in the Abandoned Order details view.
 
 = 5.6.1 (25.10.2019) =
 
