@@ -104,6 +104,10 @@
     <div class="panel">
         <p><?php echo $ts_faq[10]['answer'] ?></p>
     </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[11]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[11]['answer'] ?></p>
+    </div>
 </div>
 
 <div class="support-panel">

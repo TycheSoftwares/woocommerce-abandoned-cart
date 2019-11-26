@@ -197,6 +197,11 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
                 10 => array (
 						'question' => 'There was a problem creating an email template on Multisite.',
 						'answer'   => 'On Multisite, if you have activated the plugin from Network site then please deactivate it and activate the Abandoned Cart Lite plugin from an Individual site. So, one default email template will be created on the activation of the plugin and you can create new email template.'
+                ),
+                11 => array(
+                    'question' => 'Abnormal amount of carts are being logged by the plugin.',
+                    'answer'   => "This might be due to a bot executing 'Add to Cart' urls on the site. Adding a few lines in the robots.txt file can stop the bots from actually adding products to the cart.
+                    Please follow the instructions mentioned <a href='https://www.tychesoftwares.com/docs/docs/abandoned-cart-for-woocommerce-lite/track-only-genuine-visitor-carts/' target='_blank'>here.</a>"
                 )
             );
 
