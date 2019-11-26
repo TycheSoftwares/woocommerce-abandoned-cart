@@ -55,7 +55,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 			if ( isset( $wcal_get_abandoned_cart_result[0]->user_id ) ) {
 				$user_id   = $wcal_get_abandoned_cart_result[0]->user_id;
 				$user_type = $wcal_get_abandoned_cart_result[0]->user_type;
-				if ( 0 === $wcal_get_abandoned_cart_result[0]->user_id > 0 && $wcal_get_abandoned_cart_result[0] < 63000000 ) {
+				if ( $wcal_get_abandoned_cart_result[0]->user_id > 0 && $wcal_get_abandoned_cart_result[0]->user_id < 63000000 ) {
 					$user_role = wcal_common::wcal_get_user_role( $user_id );
 				} else {
 					$user_role = 'Guest';
