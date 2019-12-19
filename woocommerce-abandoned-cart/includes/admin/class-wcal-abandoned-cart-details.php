@@ -97,6 +97,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 			$wcal_get_abandoned_sent_result = $wpdb->get_results( $wpdb->prepare( 'SELECT wcet.`template_name`, wsht.`sent_time`, wsht.`id`, wsht.`sent_email_id` FROM `' . $wpdb->prefix . 'ac_sent_history_lite` as wsht LEFT JOIN `' . $wpdb->prefix . 'ac_email_templates_lite` AS wcet ON wsht.template_id = wcet.id WHERE abandoned_order_id = %d', $wcal_cart_id ) ); //phpcs:ignore
 
 			$shipping_charges         = 0;
+			$currency                 = '';
 			$currency_symbol          = get_woocommerce_currency_symbol();
 			$billing_field_display    = 'block';
 			$email_field_display      = 'block';
@@ -108,12 +109,14 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 			$user_billing_address_1  = '';
 			$user_billing_address_2  = '';
 			$user_billing_city       = '';
+			$user_billing_postcode   = '';
 			$user_billing_state      = '';
 			$user_billing_country    = '';
 			$user_shipping_company   = '';
 			$user_shipping_address_1 = '';
 			$user_shipping_address_2 = '';
 			$user_shipping_city      = '';
+			$user_shipping_postcode  = '';
 			$user_shipping_state     = '';
 			$user_shipping_country   = '';
 			$billing_field_display   = 'block';
@@ -163,7 +166,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 
 					if ( isset( $wcal_get_abandoned_cart_result[0] ) ) {
 						$current_user_data = get_userdata( $wcal_get_abandoned_cart_result[0]->user_id );
-						$user_email        = $current_user_data->user_email;
+						$user_email        = isset( $current_user_data->user_email ) && '' !== $current_user_data->user_email ? $current_user_data->user_email : '';
 					}
 				}
 
@@ -179,7 +182,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 
 				if ( isset( $user_first_name_temp ) && '' === $user_first_name_temp ) {
 					$user_data       = get_userdata( $user_id );
-					$user_first_name = $user_data->first_name;
+					$user_first_name = isset( $user_data->first_name ) && '' !== $user_data->first_name ? $user_data->first_name : '';
 				} else {
 					$user_first_name = $user_first_name_temp;
 				}
@@ -187,7 +190,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 				$user_last_name_temp = get_user_meta( $user_id, 'billing_last_name', true );
 				if ( isset( $user_last_name_temp ) && '' === $user_last_name_temp ) {
 					$user_data      = get_userdata( $user_id );
-					$user_last_name = $user_data->last_name;
+					$user_last_name = isset( $user_data->last_name ) && '' !== $user_data->last_name ? $user_data->last_name : '';
 				} else {
 					$user_last_name = $user_last_name_temp;
 				}
@@ -335,6 +338,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 
             </div>";
 
+			$wcal_cart_content_var = '';
 			if ( isset( $wcal_get_abandoned_cart_result[0] ) && ! empty( $wcal_get_abandoned_cart_result ) ) {
 
 				$wcal_cart_info = json_decode( stripslashes( $wcal_get_abandoned_cart_result[0]->abandoned_cart_info ) );
@@ -343,7 +347,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 					$wcal_cart_info = json_decode( $wcal_get_abandoned_cart_result[0]->abandoned_cart_info );
 				}
 
-				$wcal_cart_details = $wcal_cart_info->cart;
+				$wcal_cart_details = isset( $wcal_cart_info->cart ) ? $wcal_cart_info->cart : array();
 
 				// Currency selected.
 				$currency = isset( $wcal_cart_info->currency ) ? $wcal_cart_info->currency : '';
@@ -357,26 +361,27 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 
 				$line_subtotal_tax_total = ( $display_cart_details ['line_subtotal_tax_total'] > 0 ) ? $display_cart_details ['line_subtotal_tax_total'] : 0;
 
-				$wcal_cart_content_var = '';
-				foreach ( $wcal_cart_details as $k => $v ) {
-					$product_id         = $display_cart_details[ $k ]['product_id'];
-					$product_page_url   = get_permalink( $product_id );
-					$product_name       = $display_cart_details[ $k ]['product_name'];
-					$item_total_display = $display_cart_details[ $k ]['item_total_formatted'];
-					$quantity_total     = $display_cart_details[ $k ]['qty'];
-					$line_tax_total     = $display_cart_details[ $k ]['line_tax'];
+				if ( count( get_object_vars( $wcal_cart_details ) ) > 0 ) {
 
-					$qty_item_text = 'item';
-					if ( $quantity_total > 1 ) {
-						$qty_item_text = 'items';
+					foreach ( $wcal_cart_details as $k => $v ) {
+						$product_id         = $display_cart_details[ $k ]['product_id'];
+						$product_page_url   = get_permalink( $product_id );
+						$product_name       = $display_cart_details[ $k ]['product_name'];
+						$item_total_display = $display_cart_details[ $k ]['item_total_formatted'];
+						$quantity_total     = $display_cart_details[ $k ]['qty'];
+						$line_tax_total     = $display_cart_details[ $k ]['line_tax'];
+
+						$qty_item_text = 'item';
+						if ( $quantity_total > 1 ) {
+							$qty_item_text = 'items';
+						}
+
+						$wcal_cart_content_var .= '<tr>';
+						$wcal_cart_content_var .= '<td> <a href="' . $product_page_url . '"> ' . $product_name . '</a></td>';
+						$wcal_cart_content_var .= '<td> ' . $item_total_display . '</td>';
+						$wcal_cart_content_var .= '<td> ' . $quantity_total . ' ' . $qty_item_text . '</td>';
+						$wcal_cart_content_var .= '</tr>';
 					}
-
-					$wcal_cart_content_var .= '<tr>';
-					$wcal_cart_content_var .= '<td> <a href="' . $product_page_url . '"> ' . $product_name . '</a></td>';
-					$wcal_cart_content_var .= '<td> ' . $item_total_display . '</td>';
-					$wcal_cart_content_var .= '<td> ' . $quantity_total . ' ' . $qty_item_text . '</td>';
-					$wcal_cart_content_var .= '</tr>';
-
 				}
 
 				$wcal_include_tax         = get_option( 'woocommerce_prices_include_tax' );
@@ -385,7 +390,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 
 			$wcal_cart_total = apply_filters( 'acfac_change_currency', wcal_common::wcal_get_price( $wcal_cart_total, $currency ), $wcal_cart_id, $wcal_cart_total, 'wcal_ajax' );
 
-			$item_disp = ( 1 === $wcal_quantity_total ) ? __( 'item', 'woocommerce-abandon-cart' ) : __( 'items', 'woocommerce-abandon-cart' );
+			$item_disp = isset( $wcal_quantity_total ) && 1 === $wcal_quantity_total ? __( 'item', 'woocommerce-abandon-cart' ) : __( 'items', 'woocommerce-abandon-cart' );
 
 			$show_taxes = apply_filters( 'wcal_show_taxes', true );
 
