@@ -512,9 +512,11 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 
 						if ( isset( $cart_info ) && false !== $cart_info && count( get_object_vars( $cart_info ) ) > 0 ) {
 							$abandoned_count++;
-							foreach ( $cart_info->cart as $cart ) {
-								if ( isset( $cart->line_total ) ) {
-									$abandoned_amount += $cart->line_total;
+							if( isset( $cart_info->cart ) && count( get_object_vars( $cart_info->cart ) ) > 0 ) {
+								foreach ( $cart_info->cart as $cart ) {
+									if ( isset( $cart->line_total ) ) {
+										$abandoned_amount += $cart->line_total;
+									}
 								}
 							}
 						}
