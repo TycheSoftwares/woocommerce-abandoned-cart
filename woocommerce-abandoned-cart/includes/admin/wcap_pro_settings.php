@@ -295,7 +295,7 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
                 'wcap_cron_time_duration',
 
-                __( 'Schedule Action to send reminder emails after X minutes', 'woocommerce-abandoned-cart'  ),
+                __( 'Run automated Scheduler every X minutes', 'woocommerce-abandoned-cart'  ),
 
                 array( 'WCAP_Pro_Settings_Callbacks', 'wcap_cron_time_duration_callback' ),
 
@@ -303,7 +303,7 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
                 'ac_cron_job_settings_section',
 
-                array( __( "The duration in minutes after which an action should be automatically scheduled to send email, SMS & FB reminders to customers. In a scenario where WP Cron is disabled, the action will run automatically at the set frequency when admin page requests occur.", 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+                array( __( "The duration in minutes after which an action should be automatically scheduled to send email, SMS & FB reminders to customers.", 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
 
             );
 
