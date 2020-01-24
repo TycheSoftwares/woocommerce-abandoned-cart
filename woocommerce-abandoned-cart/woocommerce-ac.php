@@ -34,34 +34,6 @@ require_once( 'includes/admin/class-wcal-abandoned-cart-details.php' );
 require_once( 'includes/admin/wcap_pro_settings.php' );
 require_once( 'includes/admin/wcap_pro_settings_callbacks.php' );
 require_once( 'includes/admin/wcap_add_cart_popup_modal.php' );
-// Add a new interval of 15 minutes
-add_filter( 'cron_schedules', 'wcal_add_cron_schedule' );
-
-/**
- * It will add a cron job for sending the Abandonend cart reminder emails.
- * By default it will set 15 minutes of interval.
- * @hook cron_schedules
- * @param array $schedules
- * @return array $schedules
- * @since 1.3
- * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
- */
-function wcal_add_cron_schedule( $schedules ) {
-    $schedules['15_minutes_lite'] = array(
-                'interval'  => 900, // 15 minutes in seconds
-                'display'   => __( 'Once Every Fifteen Minutes' ),
-    );
-    return $schedules;
-}
-
-/**
- * Schedule an action if it's not already scheduled.
- * @since 1.3
- * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
- */
-if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
-    wp_schedule_event( time(), '15_minutes_lite', 'woocommerce_ac_send_email_action' );
-}
 
 /**
  * Schedule an action to delete old carts once a day
@@ -71,25 +43,10 @@ if ( ! wp_next_scheduled( 'woocommerce_ac_send_email_action' ) ) {
 if( ! wp_next_scheduled( 'wcal_clear_carts' ) ) {
     wp_schedule_event( time(), 'daily', 'wcal_clear_carts' );
 }
-/**
- * Hook into that action that'll fire every 15 minutes
- */
-add_action( 'woocommerce_ac_send_email_action', 'wcal_send_email_cron' );
 
 /**
- * It will add the wcal_send_email.php file which is responsible for sending the abandoned cart reminde emails.
- * @hook woocommerce_ac_send_email_action
- * @since 1.3
- * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
- */
-function wcal_send_email_cron() {
-    //require_once( ABSPATH.'wp-content/plugins/woocommerce-abandoned-cart/cron/send_email.php' );
-    $plugin_dir_path = plugin_dir_path( __FILE__ );
-    require_once( $plugin_dir_path . 'cron/wcal_send_email.php' );
-}
-    /**
-     * woocommerce_abandon_cart_lite class
-     **/
+ * woocommerce_abandon_cart_lite class
+ **/
 if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 
@@ -155,10 +112,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             // Initialize settings
             register_activation_hook ( __FILE__,                        array( &$this, 'wcal_activate' ) );
 
-            // Background Processing for Cron
+            // Action Scheduler for Cron.
+            require_once( 'includes/libraries/action-scheduler/action-scheduler.php' );
+            add_action( 'init', array( &$this, 'wcal_add_scheduled_action' ) );
             require_once( 'cron/wcal_send_email.php' );
-            require_once( 'includes/background-processes/wcal_process_base.php' );
-
+            require_once( 'includes/wcal_process_base.php' );
+            
             // WordPress Administration Menu
             add_action ( 'admin_menu',                                  array( &$this, 'wcal_admin_menu' ) );
 
@@ -221,6 +180,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
             include_once 'includes/frontend/wcal_frontend.php';
         }
 
+        /**
+         * Add Recurring Scheduled Action.
+         */
+        public static function wcal_add_scheduled_action() {
+            if ( false === as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) ) {
+                as_schedule_recurring_action( time(), 900, 'woocommerce_ac_send_email_action' );
+            }
+        }
+        
         /**
          * Add Settings link to WP->Plugins page
          * @since 5.3.0
@@ -1195,7 +1163,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                          * Here we capture the guest cart from the cart page.
                          * @since 3.5
                          */
-                        if ( 'on' == $track_guest_user_cart_from_cart && '' != $get_cookie[0] ) {
+                        if ( 'on' == $track_guest_user_cart_from_cart && isset( $get_cookie[0] ) && '' != $get_cookie[0] ) {
                             $query   = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE session_id LIKE %s AND cart_ignored = '0' AND recovered_cart = '0' ";
                             $results = $wpdb->get_results( $wpdb->prepare( $query, $get_cookie[0] ) );
                             if ( 0 == count( $results ) ) {
