@@ -3098,23 +3098,23 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 $from_email_preview    = get_option ( 'wcal_reply_email' );
                 $subject_email_preview = stripslashes ( $_POST['subject_email_preview'] );
                 $subject_email_preview = convert_smilies ( $subject_email_preview );
-                $subject_email_preview    = str_replace( '{{customer.firstname}}', 'John', $subject_email_preview );
+                $subject_email_preview    = str_ireplace( '{{customer.firstname}}', 'John', $subject_email_preview );
                 $body_email_preview    = convert_smilies ( $_POST['body_email_preview'] );
                 $is_wc_template        = $_POST['is_wc_template'];
                 $wc_template_header    = stripslashes( $_POST['wc_template_header'] );
 
-                $body_email_preview    = str_replace( '{{customer.firstname}}', 'John', $body_email_preview );
-                $body_email_preview    = str_replace( '{{customer.firstname}}', 'John', $body_email_preview );
-                $body_email_preview    = str_replace( '{{customer.lastname}}', 'Doe', $body_email_preview );
-                $body_email_preview    = str_replace( '{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview );
+                $body_email_preview    = str_ireplace( '{{customer.firstname}}', 'John', $body_email_preview );
+                $body_email_preview    = str_ireplace( '{{customer.firstname}}', 'John', $body_email_preview );
+                $body_email_preview    = str_ireplace( '{{customer.lastname}}', 'Doe', $body_email_preview );
+                $body_email_preview    = str_ireplace( '{{customer.fullname}}', 'John'." ".'Doe', $body_email_preview );
                 $current_time_stamp    = current_time( 'timestamp' );
                 $date_format           = date_i18n( get_option( 'date_format' ), $current_time_stamp );
                 $time_format           = date_i18n( get_option( 'time_format' ), $current_time_stamp );
                 $test_date             = $date_format . ' ' . $time_format;
-                $body_email_preview    = str_replace( '{{cart.abandoned_date}}', $test_date, $body_email_preview );
+                $body_email_preview    = str_ireplace( '{{cart.abandoned_date}}', $test_date, $body_email_preview );
                 $cart_url              = wc_get_page_permalink( 'cart' );
-                $body_email_preview    = str_replace( '{{cart.link}}', $cart_url, $body_email_preview );
-                $body_email_preview    = str_replace( '{{cart.unsubscribe}}', '#', $body_email_preview );
+                $body_email_preview    = str_ireplace( '{{cart.link}}', $cart_url, $body_email_preview );
+                $body_email_preview    = str_ireplace( '{{cart.unsubscribe}}', '#', $body_email_preview );
                 $wcal_price            = wc_price( '100' );
                 $wcal_total_price      = wc_price( '200' );
                 if ( class_exists( 'WP_Better_Emails' ) ) {
@@ -3188,7 +3188,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                                             </tr>
                                          </table>';
                 }
-                $body_email_preview     = str_replace( '{{products.cart}}', $var, $body_email_preview );
+                $body_email_preview     = str_ireplace( '{{products.cart}}', $var, $body_email_preview );
                 if ( isset( $_POST['send_email_id'] ) ) {
                       $to_email_preview = $_POST['send_email_id'];
                 } else {
@@ -3210,7 +3210,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                     $final_email_body = $email_body_template_header . $body_email_final_preview . $email_body_template_footer;
 
                     $site_title                 = get_bloginfo( 'name' );
-                    $email_body_template_footer = str_replace( '{site_title}', $site_title, $email_body_template_footer );
+                    $email_body_template_footer = str_ireplace( '{site_title}', $site_title, $email_body_template_footer );
 
                     wc_mail( $to_email_preview, $subject_email_preview, $final_email_body , $headers );
                 }
