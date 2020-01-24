@@ -263,7 +263,7 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
                 'ac_cron_job_settings_section',           // ID used to identify this section and with which to register options
 
-                __( 'Setting for sending Emails & SMS using WP Cron', 'woocommerce-abandoned-cart' ),      // Title to be displayed on the administration page
+                __( 'Setting for sending Emails & SMS using Action Scheduler', 'woocommerce-abandoned-cart' ),      // Title to be displayed on the administration page
 
                 array( 'WCAP_Pro_Settings_Callbacks', 'wcap_cron_job_callback' ),// Callback used to render the description of the section
 
@@ -277,7 +277,7 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
                 'wcap_use_auto_cron',
 
-                __( 'Send  Abandoned cart emails automatically using WP Cron', 'woocommerce-abandoned-cart'  ),
+                __( 'Send  Abandoned cart emails automatically using Action Scheduler', 'woocommerce-abandoned-cart'  ),
 
                 array( 'WCAP_Pro_Settings_Callbacks', 'wcap_use_auto_cron_callback' ),
 
@@ -285,7 +285,7 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
                 'ac_cron_job_settings_section',
 
-                array( __( "Enabling this setting will send the abandoned cart reminder emails to the customer after the set time. If disabled, abandoned cart reminder emails will not be sent using WP Cron. You will need to set cron job manually from cPanel. If you are unsure how to set the cron job, please <a href= mailto:support@tychesoftwares.com>contact us</a> for it.", 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+                array( __( "Enabling this setting will send the abandoned cart reminder emails to the customer after the set time. If disabled, abandoned cart reminder emails will not be sent using the Action Scheduler. You will need to set cron job manually from cPanel. If you are unsure how to set the cron job, please <a href= mailto:support@tychesoftwares.com>contact us</a> for it.", 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
 
             );
 
@@ -295,7 +295,7 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
                 'wcap_cron_time_duration',
 
-                __( 'Run Automated WP Cron after X minutes', 'woocommerce-abandoned-cart'  ),
+                __( 'Schedule Action to send reminder emails after X minutes', 'woocommerce-abandoned-cart'  ),
 
                 array( 'WCAP_Pro_Settings_Callbacks', 'wcap_cron_time_duration_callback' ),
 
@@ -303,7 +303,7 @@ if ( ! class_exists('WCAP_Pro_Settings' ) ) {
 
                 'ac_cron_job_settings_section',
 
-                array( __( "The duration in minutes after which a WP Cron job will run automatically for sending the abandoned cart reminder emails & SMS to the customers.", 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+                array( __( "The duration in minutes after which an action should be automatically scheduled to send email, SMS & FB reminders to customers. In a scenario where WP Cron is disabled, the action will run automatically at the set frequency when admin page requests occur.", 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
 
             );
 
