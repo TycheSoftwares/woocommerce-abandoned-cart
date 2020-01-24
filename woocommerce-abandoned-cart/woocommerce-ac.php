@@ -1163,7 +1163,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                          * Here we capture the guest cart from the cart page.
                          * @since 3.5
                          */
-                        if ( 'on' == $track_guest_user_cart_from_cart && '' != $get_cookie[0] ) {
+                        if ( 'on' == $track_guest_user_cart_from_cart && isset( $get_cookie[0] ) && '' != $get_cookie[0] ) {
                             $query   = "SELECT * FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE session_id LIKE %s AND cart_ignored = '0' AND recovered_cart = '0' ";
                             $results = $wpdb->get_results( $wpdb->prepare( $query, $get_cookie[0] ) );
                             if ( 0 == count( $results ) ) {
