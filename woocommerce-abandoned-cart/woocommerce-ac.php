@@ -185,7 +185,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
          */
         public static function wcal_add_scheduled_action() {
             if ( false === as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) ) {
-                as_schedule_recurring_action( time(), 900, 'woocommerce_ac_send_email_action' );
+                wp_clear_scheduled_hook( 'woocommerce_ac_send_email_action' ); // Remove the cron job is present.
+                as_schedule_recurring_action( time(), 900, 'woocommerce_ac_send_email_action' ); // Schedule recurring action.
             }
         }
         
