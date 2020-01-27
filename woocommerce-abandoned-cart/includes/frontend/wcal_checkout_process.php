@@ -557,7 +557,8 @@ if ( !class_exists( 'Wcal_Checkout_Process' ) ) {
 
 	                        add_post_meta( $order_id , 'wcal_abandoned_timestamp', $get_ac_id_guest_results[0]->abandoned_cart_time );
 
-	                        $wpdb->delete( $wcal_guest_table_name , array( 'id' => $wcal_user_id_of_guest ) );
+							$wpdb->delete( $wcal_guest_table_name , array( 'id' => $wcal_user_id_of_guest ) );
+							$wpdb->delete( $wcal_history_table_name, array( 'id' => $get_ac_id_guest_results[0]->id ) );
 	                    }
 	                    // it is the new registered users cart id
 	                    $abandoned_order_id_to_save = $abandoned_cart_id_new_user;
