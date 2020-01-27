@@ -339,6 +339,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
             </div>";
 
 			$wcal_cart_content_var = '';
+			$wcal_quantity_total = 0;
 			if ( isset( $wcal_get_abandoned_cart_result[0] ) && ! empty( $wcal_get_abandoned_cart_result ) ) {
 
 				$wcal_cart_info = json_decode( stripslashes( $wcal_get_abandoned_cart_result[0]->abandoned_cart_info ) );
