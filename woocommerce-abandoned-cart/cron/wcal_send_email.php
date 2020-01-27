@@ -68,9 +68,9 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                 $day_seconds  = 86400; // 24 * 60 * 60
                 foreach ( $results as $key => $value ) {
                     if ( $value->day_or_hour == 'Days' ) {
-                        $time_to_send_template_after = $value->frequency * $day_seconds;
+                        $time_to_send_template_after = intval( $value->frequency ) * $day_seconds;
                     } elseif ( $value->day_or_hour == 'Hours' ) {
-                        $time_to_send_template_after = $value->frequency * $hour_seconds;
+                        $time_to_send_template_after = intval( $value->frequency ) * $hour_seconds;
                     }
 
                     $carts               = $this->wcal_get_carts( $time_to_send_template_after, $cart_abandon_cut_off_time, $value->id );
