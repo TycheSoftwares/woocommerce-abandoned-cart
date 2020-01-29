@@ -29,7 +29,7 @@ class Wcal_Admin_Notice {
 	 */
 	public static function wcal_show_db_update_notice() {
 
-		if ( isset( $_GET['page'], $_GET['action'] ) && 'woocommerce_ac_page' === $_GET['page'] && 'listcart' === $_GET['action'] ) {
+		if ( isset( $_GET['page'] ) && 'woocommerce_ac_page' === $_GET['page'] ) {
 
 			if ( ! get_option( 'wcal_scheduler_update_dismiss', FALSE ) ) {
 				$post_link = '<a href="https://www.tychesoftwares.com/moving-to-the-action-scheduler-library/?utm_source=AcLiteNotice&utm_medium=link&utm_campaign=AbandonCartLite" target="_blank">here</a>';
