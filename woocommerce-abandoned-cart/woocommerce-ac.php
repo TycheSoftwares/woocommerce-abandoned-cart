@@ -160,6 +160,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 add_action( 'wp_ajax_wcal_preview_email_sent', array( &$this, 'wcal_preview_email_sent' ) );
                 add_action( 'wp_ajax_wcal_toggle_template_status', array( &$this, 'wcal_toggle_template_status' ) );
                 add_action( 'wp_ajax_wcal_abandoned_cart_info', array( &$this, 'wcal_abandoned_cart_info' ) );
+                add_action( 'wp_ajax_wcal_dismiss_admin_notice', array( &$this, 'wcal_dismiss_admin_notice' ) );
 
                 add_filter( 'ts_tracker_data',                          array( 'wcal_common', 'ts_add_plugin_tracking_data' ), 10, 1 );
                 add_filter( 'ts_tracker_opt_out_data',                  array( 'wcal_common', 'ts_get_data_for_opt_out' ), 10, 1 );
@@ -1748,6 +1749,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
                 }
                 // needed only on the abandoned orders page
                 wp_enqueue_script( 'wcal_abandoned_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/wcal_abandoned_cart_detail_modal.min.js' );
+
+                wp_enqueue_script( 'wcal_admin_notices', plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/wcal_ts_dismiss_notice.js' );
+                wp_localize_script( 'wcal_admin_notices', 'wcal_dismiss_params', array(
+                	'ajax_url' => admin_url( 'admin-ajax.php' )
+                    )
+                );
             }
         }
 
@@ -3036,6 +3043,20 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
         public static function wcal_abandoned_cart_info() {
 
             Wcal_Abandoned_Cart_Details::wcal_get_cart_detail_view( $_POST );
+            die();
+        }
+
+        /**
+         * Ajax function which will save the notice state as dismissed.
+         *
+         * @since 5.7
+         */
+        public static function wcal_dismiss_admin_notice() {
+
+        	$notice_key = isset( $_POST[ 'notice' ] ) ? $_POST[ 'notice' ] : '';
+        	if ( '' !== $notice_key ) {
+        		update_option( $notice_key, true );
+            }
             die();
         }
 
