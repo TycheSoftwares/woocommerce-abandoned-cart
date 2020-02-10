@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, d
 Tags: cart abandonment, abandon cart, cart recovery, increase woocommerce conversion rate, recover woocommerce cart, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.3.2
+Tested up to: 5.3
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -220,6 +220,10 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.7.1 (10.02.2020) =
+
+* Tweak - Bots and Crawlers used to log lot of Abandoned Carts. This is now fixed.
+
 = 5.7 (29.01.2020) =
 
 * Enhancement - Updated the plugin to use the Action Scheduler Library instead of WP Cron to send reminders.
