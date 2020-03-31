@@ -35,6 +35,8 @@ require_once( 'includes/admin/wcap_pro_settings.php' );
 require_once( 'includes/admin/wcap_pro_settings_callbacks.php' );
 require_once( 'includes/admin/wcap_add_cart_popup_modal.php' );
 
+load_plugin_textdomain( 'woocommerce-abandoned-cart', false, basename( dirname( __FILE__ ) ) . '/i18n/languages' );
+
 /**
  * Schedule an action to delete old carts once a day
  *
