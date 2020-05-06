@@ -273,6 +273,73 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
+		 * Replace Merge tags in email previews.
+		 * @since 5.8
+		 */
+		function replace_mergetags( $content ) {
+		
+			$admin_args = array(
+				'role'   => 'administrator',
+				'fields' => array( 'id' ),
+			);
+
+			$admin_usr        = get_users( $admin_args );
+			$uid              = $admin_usr[0]->id;
+			$admin_phone      = get_user_meta( $uid, 'billing_phone', true );
+
+			$wcal_price       = wc_price( '150' );
+			$wcal_total_price = wc_price( '300' );
+
+			$allowed_html = [
+				'span' => [
+					'class' => [],
+				],
+			];
+			$plugins_url = esc_url( plugins_url() );
+			$replace_data['products_cart'] = "<table border='0' width='100%' cellspacing='0' cellpadding='0'><b>Your Shopping Cart</b>
+			<tbody>
+				<tr>
+					<td style='background-color: #666666; color: #ffffff; text-align: center; font-size: 13px; text-transform: uppercase; padding: 5px;' align='center' bgcolor='#666666'></td>
+
+					<td style='background-color: #666666; color: #ffffff; text-align: center; font-size: 13px; text-transform: uppercase; padding: 5px;' align='center' bgcolor='#666666'>Product</td>
+
+					<td style='background-color: #666666; color: #ffffff; text-align: center; font-size: 13px; text-transform: uppercase; padding: 5px;' align='center' bgcolor='#666666'>Price</td>
+
+					<td style='background-color: #666666; color: #ffffff; text-align: center; font-size: 13px; text-transform: uppercase; padding: 5px;' align='center' bgcolor='#666666'>Quantity</td>
+
+					<td style='background-color: #666666; color: #ffffff; text-align: center; font-size: 13px; text-transform: uppercase; padding: 5px;' align='center' bgcolor='#666666'>Total</td>
+
+				</tr>
+				<tr style='background-color:#f4f5f4;'>
+					<td><img src = '$plugins_url/woocommerce-abandoned-cart/assets/images/spectre.jpg' height='40px' width='40px'></td><td>Spectre</td><td>" . wp_kses( $wcal_price, $allowed_html ) . "</td><td>2</td><td>" . wp_kses( $wcal_total_price, $allowed_html ) . "</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<th>Cart Total:</th>
+					<td>" . wp_kses( $wcal_total_price, $allowed_html ) . "</td>
+				</tr>
+
+			</tbody>
+			</table>";
+			$replace_data['admin_phone'] = $admin_phone;
+			$replace_data['site_title']  = get_bloginfo( 'name' );
+			$replace_data['site_url']    = get_option( 'siteurl' );
+
+		
+			$content = str_ireplace( '{{products.cart}}', $replace_data['products_cart'], $content );
+			$content = str_ireplace( '{{admin.phone}}',   $replace_data['admin_phone'], $content );
+			$content = str_ireplace( '{{customer.firstname}}', "John", $content );
+			$content = str_ireplace( '{{customer.lastname}}', "Doe", $content );
+			$content = str_ireplace( '{{customer.fullname}}', "John Doe", $content );
+			$content = str_ireplace( 'site_title', $replace_data['site_title'], $content );
+			$content = str_ireplace( 'site_url', $replace_data['site_url'], $content );
+			
+			return $content;
+		}
+		
+		/**
 		 * It will ganerate the preview email template.
 		 * @hook admin_init
 		 * @globals mixed $woocommerce
@@ -280,6 +347,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public function wcal_preview_emails() {
 			global $woocommerce;
+			
+			if ( isset( $_GET[ 'id' ] ) && 0 < $_GET['id'] ) {
+				global $wpdb;
+				$content = $wpdb->get_var( $wpdb->prepare( "SELECT body FROM `" . $wpdb->prefix . "ac_email_templates_lite` WHERE id = %d", absint( $_GET['id'] ) ) );
+				$content = $this->replace_mergetags( $content );
+			}
+
 			if ( isset( $_GET['wcal_preview_woocommerce_mail'] ) ) {
 				if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'woocommerce-abandoned-cart' ) ) {
 					die( 'Security check' );
@@ -302,8 +376,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$email_heading = __( 'Abandoned cart Email Template', 'woocommerce-abandoned-cart' );
 					// get the preview email content
 					ob_start();
-					include( 'views/wcal-wc-email-template-preview.php' );
-					$message       = ob_get_clean();
+					if ( isset( $_GET[ 'id' ] ) && 0 < $_GET['id'] ) {
+						$message = stripslashes( $content );
+					} else {
+						include( 'views/wcal-wc-email-template-preview.php' );
+						$message = ob_get_clean();
+					}
 					// create a new email
 					$email         = new WC_Email();
 					// wrap the content with the email template and then add styles
@@ -319,8 +397,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 				// get the preview email content
 				ob_start();
-				include( 'views/wcal-email-template-preview.php' );
-				$message = ob_get_clean();
+				if ( isset( $_GET[ 'id' ] ) && 0 < $_GET['id'] ) {
+					$message = stripslashes( $content );
+				} else {
+					include_once( 'views/wcal-email-template-preview.php' );
+					$message = ob_get_clean();
+				}
 				// print the preview email
 				echo $message;
 				exit;
@@ -2762,6 +2844,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( isset( $_GET['mode'] ) ) {
 				$mode = $_GET['mode'];
 			}
+			$edit_id = 0;
 			if ( 'emailtemplates' == $action && ( 'addnewtemplate' == $mode || 'edittemplate' == $mode ) ) {
 				if ( 'edittemplate' == $mode ) {
 					$results = array();
@@ -2897,8 +2980,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 												}
 											}
 											print'<input type="checkbox" name="is_wc_template" id="is_wc_template" ' . $is_wc_template . '>  </input>'; ?>
-											<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Use WooCommerce default style template for abandoned cart reminder emails.', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /> <a target = '_blank' href= <?php  echo wp_nonce_url( admin_url( '?wcal_preview_woocommerce_mail=true' ), 'woocommerce-abandoned-cart' ) ; ?> >
-											Click here to preview </a>how the email template will look with WooCommerce Template Style enabled. Alternatively, if this is unchecked, the template will appear as <a target = '_blank' href=<?php  echo wp_nonce_url( admin_url( '?wcal_preview_mail=true' ), 'woocommerce-abandoned-cart' ) ; ?>>shown here</a>. <br> <strong>Note: </strong>When this setting is enabled, then "Send From This Name:" & "Send From This Email Address:" will be overwritten with WooCommerce -> Settings -> Email -> Email Sender Options.
+											<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Use WooCommerce default style template for abandoned cart reminder emails.', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /> <a target = '_blank' href= <?php  echo wp_nonce_url( admin_url( "?wcal_preview_woocommerce_mail=true&id=$edit_id" ), 'woocommerce-abandoned-cart' ) ; ?> >
+											Click here to preview </a>how the email template will look with WooCommerce Template Style enabled. Alternatively, if this is unchecked, the template will appear as <a target = '_blank' href=<?php  echo wp_nonce_url( admin_url( "?wcal_preview_mail=true&id=$edit_id" ), 'woocommerce-abandoned-cart' ) ; ?>>shown here</a>. <br> <strong>Note: </strong>When this setting is enabled, then "Send From This Name:" & "Send From This Email Address:" will be overwritten with WooCommerce -> Settings -> Email -> Email Sender Options.
 										</td>
 									 </tr>
 
