@@ -274,25 +274,29 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                 $email_body                    = str_ireplace( "{{cart.unsubscribe}}" , $unsubscribe_link_track , $email_body );
                                                 $var = '';
                                                 if( preg_match( "{{products.cart}}", $email_body, $matched ) ) {
+                                                    $qty_header = __( "Quantity", "woocommerce-abandoned-cart" );
+                                                    $price_header = __( "Price", "woocommerce-abandoned-cart" );
+                                                    $line_subtotal_header = __( "Line Subtotal", "woocommerce-abandoned-cart" );
+                                                    
                                                     if ( class_exists( 'WP_Better_Emails' ) ) {
-                                                        $var = '<table width = 100%>
+                                                        $var = '<table width = 100% style="margin-right: auto; margin-left:auto;">
                                                                 <tr> <td colspan="5"> <h3>'.__( "Your Shopping Cart", "woocommerce-abandoned-cart" ).'</h3> </td></tr>
                                                                 <tr>
                                                                 <th>'.__( "Item", "woocommerce-abandoned-cart" ).'</th>
                                                                 <th>'.__( "Name", "woocommerce-abandoned-cart" ).'</th>
-                                                                <th>'.__( "Quantity", "woocommerce-abandoned-cart" ).'</th>
-                                                                <th>'.__( "Price", "woocommerce-abandoned-cart" ).'</th>
-                                                                <th>'.__( "Line Subtotal", "woocommerce-abandoned-cart" ).'</th>
+                                                                <th>' . apply_filters( 'wcal_reminder_email_qty_header', $qty_header ) . '</th>
+                                                                <th>' . apply_filters( 'wcal_reminder_email_price_header', $price_header ) . '</th>
+                                                                <th>' . apply_filters( 'wcal_reminder_email_line_subtotal_header', $line_subtotal_header ) . '</th>
                                                                 </tr>';
                                                     } else {
-                                                        $var = '<h3>'.__( "Your Shopping Cart", "woocommerce-abandoned-cart" ).'</h3>
-                                                            <table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
+                                                        $var = '<table border="0" cellpadding="10" cellspacing="0" class="templateDataTable" style="margin-right: auto; margin-left:auto;">
+                                                            <tr> <td colspan="5"> <h3>'.__( "Your Shopping Cart", "woocommerce-abandoned-cart" ).'</h3> </td></tr>
                                                                 <tr>
                                                                 <th>'.__( "Item", 'woocommerce-abandoned-cart' ).'</th>
                                                                 <th>'.__( "Name", 'woocommerce-abandoned-cart' ).'</th>
-                                                                <th>'.__( "Quantity", 'woocommerce-abandoned-cart' ).'</th>
-                                                                <th>'.__( "Price", 'woocommerce-abandoned-cart' ).'</th>
-                                                                <th>'.__( "Line Subtotal", 'woocommerce-abandoned-cart' ).'</th>
+                                                                <th>' . apply_filters( 'wcal_reminder_email_qty_header', $qty_header ) . '</th>
+                                                                <th>' . apply_filters( 'wcal_reminder_email_price_header', $price_header ) . '</th>
+                                                                <th>' . apply_filters( 'wcal_reminder_email_line_subtotal_header', $line_subtotal_header ) . '</th>
                                                                 </tr>';
                                                     }
                                                     $cart_details = $cart_info_db_field->cart;
@@ -362,9 +366,9 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                             $var .='<tr align="center">
                                                                     <td> <a href="'.$cart_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
                                                                     <td> <a href="'.$cart_link_track.'">'.$product_name.'</a></td>
-                                                                    <td> '.$quantity_total.'</td>
-                                                                    <td> '.$item_subtotal.'</td>
-                                                                    <td> '.$item_total_display.'</td>
+                                                                    <td> ' . apply_filters( 'wcal_reminder_email_qty_value', $quantity_total ) . '</td>
+                                                                    <td> ' . apply_filters( 'wcal_reminder_email_price_value', $item_subtotal ) . '</td>
+                                                                    <td> ' . apply_filters( 'wcal_reminder_email_line_subtotal_value', $item_total_display ) . '</td>
                                                                 </tr>';
                                                             $cart_total += $item_total;
                                                             $item_subtotal = $item_total = 0;
@@ -379,15 +383,16 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 
                                                     if ( $p_exists ) {
                                                         $cart_total = wc_price( $cart_total );
+                                                        $cart_total = apply_filters( 'wcal_reminder_email_cart_total', $cart_total );
+                                                        $cart_total_title = __( "Cart Total:", 'woocommerce-abandoned-cart' );
                                                         $var .= '<tr align="center">
                                                                 <td> </td>
                                                                 <td> </td>
                                                                 <td> </td>
-                                                                <td>'.__( "Cart Total:", 'woocommerce-abandoned-cart' ).'</td>
+                                                                <td>' . apply_filters( 'wcal_reminder_email_cart_total_title', $cart_total_title ) . '</td>
                                                                 <td> '.$cart_total.'</td>
                                                             </tr>';
-                                                        $var .= '</table>
-                                                                                ';
+                                                        $var .= '</table>';
                                                         $email_body    = str_ireplace( "{{products.cart}}", $var, $email_body );
                                                         $email_subject = str_ireplace( "{{product.name}}", $sub_line_prod_name, $email_subject );
                                                     }else {

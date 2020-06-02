@@ -1139,7 +1139,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$gdpr_consent = true;
 				}
 
-				if( $gdpr_consent ) {
+				$wcal_user_restricted = false;
+				$wcal_user_restricted = apply_filters( 'wcal_restrict_user', $wcal_user_restricted, $user_id );
+				
+				if( $gdpr_consent && ! $wcal_user_restricted ) {
 
 					$query   = "SELECT * FROM `".$wpdb->prefix."ac_abandoned_cart_history_lite`
 								WHERE user_id      = %d
