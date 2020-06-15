@@ -131,6 +131,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			// Initialize settings.
 			register_activation_hook( __FILE__, array( &$this, 'wcal_activate' ) );
+			register_deactivation_hook( __FILE__, array( &$this, 'wcal_deactivate' ) );
 
 			// Action Scheduler for Cron.
 			require_once( 'includes/libraries/action-scheduler/action-scheduler.php' );
@@ -453,6 +454,18 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			} else { // single site
 				self::wcal_process_activate();
 			}
+		}
+
+		/**
+		 * Things to do when the plugin is deactivated.
+		 *
+		 * @since 5.8.0
+		 */
+		public static function wcal_deactivate() {
+			if ( false !== as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) ) {
+				as_unschedule_action( 'woocommerce_ac_send_email_action' ); // Remove the scheduled action.
+			}
+			do_action( 'wcal_deactivate' );
 		}
 
 		/**
