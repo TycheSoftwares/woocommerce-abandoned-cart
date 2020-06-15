@@ -131,7 +131,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			// Initialize settings.
 			register_activation_hook( __FILE__, array( &$this, 'wcal_activate' ) );
-			register_deactivation_hook ( __FILE__, array( &$this, 'wcal_deactivate' ) );
+			register_deactivation_hook( __FILE__, array( &$this, 'wcal_deactivate' ) );
 
 			// Action Scheduler for Cron.
 			require_once( 'includes/libraries/action-scheduler/action-scheduler.php' );
