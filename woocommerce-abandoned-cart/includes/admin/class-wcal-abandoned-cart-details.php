@@ -688,8 +688,8 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 					// Item subtotal is calculated as product total including taxes.
 					if ( isset( $wcal_include_tax ) && 'no' === $wcal_include_tax &&
 						isset( $wcal_include_tax_setting ) && 'yes' === $wcal_include_tax_setting ) {
-							$item_subtotal     = $item_subtotal + $v->line_total;  // This is fix.
-							$line_subtotal_tax = $v->line_tax; // This is fix.
+							$item_subtotal    += isset( $v->line_total ) ? $v->line_total : 0;  // This is fix.
+							$line_subtotal_tax = isset( $v->line_tax ) ? $v->line_tax : 0; // This is fix.
 
 							$after_item_subtotal = $item_subtotal;
 							// On sent email we need this for first row.
