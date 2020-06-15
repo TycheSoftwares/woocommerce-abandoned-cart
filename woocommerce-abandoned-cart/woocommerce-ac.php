@@ -2059,7 +2059,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 				// Detect when a bulk action is being triggered on abandoned orders page.
 				if ( 'wcal_delete' === $action || 'wcal_delete' === $action_two ) {
-					$ids = isset( $_GET['abandoned_order_id'] ) ? $_GET['abandoned_order_id'] : false;
+					$ids = isset( $_GET['abandoned_order_id'] ) ? sanitize_text_field( wp_unslash( $_GET['abandoned_order_id'] ) ) : false;
 					if ( ! is_array( $ids ) ) {
 						$ids = array( $ids );
 					}
@@ -2088,36 +2088,38 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$class = new Wcal_Delete_Handler();
 					$class->wcal_bulk_action_delete_all_carts_handler();
 				}
-				
-				//Detect when a bulk action is being triggered on temnplates page.
+
+				// Detect when a bulk action is being triggered on templates page.
 				if ( 'wcal_delete_template' === $action || 'wcal_delete_template' === $action_two ) {
-					$ids = isset( $_GET['template_id'] ) ? $_GET['template_id'] : false;
+					$ids = isset( $_GET['template_id'] ) ? sanitize_text_field( wp_unslash( $_GET['template_id'] ) ) : false;
 					if ( ! is_array( $ids ) ) {
-					$ids = array( $ids );
+						$ids = array( $ids );
 					}
 					foreach ( $ids as $id ) {
-					$class = new Wcal_Delete_Handler();
-					$class->wcal_delete_template_bulk_action_handler_function( $id );
+						$class = new Wcal_Delete_Handler();
+						$class->wcal_delete_template_bulk_action_handler_function( $id );
 					}
 				}
 
-				if ( isset( $_GET['wcal_deleted'] ) && 'YES' == $_GET['wcal_deleted'] ) {
+				if ( isset( $_GET['wcal_deleted'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted'] ) ) ) {
 					$msg = __( 'The Abandoned cart has been successfully deleted.', 'woocommerce-abandoned-cart' ); // Default Msg.
-					if ( isset( $_GET['wcal_deleted_all'] ) && 'YES' === $_GET['wcal_deleted_all'] ) {
+					if ( isset( $_GET['wcal_deleted_all'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all'] ) ) ) {
 						$msg = __( 'All Abandoned Carts have been successfully deleted.', 'woocommerce-abandoned-cart' ); // Delete All Carts.
-					} else if ( isset( $_GET['wcal_deleted_all_visitor'] ) && 'YES' === $_GET['wcal_deleted_all_visitor'] ) {
+					} elseif ( isset( $_GET['wcal_deleted_all_visitor'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all_visitor'] ) ) ) {
 						$msg = __( 'All Visitor carts have been successfully deleted.', 'woocommerce-abandoned-cart' ); // Delete all visitor carts.
-					} else if ( isset( $_GET['wcal_deleted_all_guest'] ) && 'YES' === $_GET['wcal_deleted_all_guest'] ) {
+					} elseif ( isset( $_GET['wcal_deleted_all_guest'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all_guest'] ) ) ) {
 						$msg = __( 'All Guest carts have been successfully deleted.', 'woocommerce-abandoned-cart' ); // Delete all Guest carts.
-					} else if ( $_GET['wcal_deleted_all_registered'] && 'YES' === $_GET['wcal_deleted_all_registered'] ) {
+					} elseif ( isset( $_GET['wcal_deleted_all_registered'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all_registered'] ) ) ) {
 						$msg = __( 'All Registered carts have been deleted.', 'woocommerce-abandoned-cart' ); // Delete all registered carts.
 					}
 					?>
 					<div id="message" class="updated fade">
 						<p><strong><?php echo esc_html( $msg ); ?></strong></p>
 					</div>
-				<?php }
-				 if ( isset( $_GET ['wcal_template_deleted'] ) && 'YES' == $_GET['wcal_template_deleted'] ) { ?>
+					<?php
+				}
+				if ( isset( $_GET ['wcal_template_deleted'] ) && 'YES' == $_GET['wcal_template_deleted'] ) {
+					?>
 					<div id="message" class="updated fade">
 						<p><strong><?php _e( 'The Template has been successfully deleted.', 'woocommerce-abandoned-cart' ); ?></strong></p>
 					</div>

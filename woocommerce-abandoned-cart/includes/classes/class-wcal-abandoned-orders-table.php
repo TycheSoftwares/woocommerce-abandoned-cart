@@ -554,22 +554,23 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	    }		
 		return apply_filters( 'wcal_abandoned_orders_column_default', $value, $wcal_abandoned_orders, $column_name );
 	}
-	
+
 	/**
-	 * It will add the bulk action, here Delete
+	 * Add bulk actions in the Abandoned Order tab.
+	 *
 	 * @return array
 	 * @since 2.5.2
 	 */
 	public function get_bulk_actions() {
-	    return array(
-			'wcal_delete' => __( 'Delete', 'woocommerce-abandoned-cart' ),
+		return array(
+			'wcal_delete'                => __( 'Delete', 'woocommerce-abandoned-cart' ),
 			'wcal_delete_all_registered' => __( 'Delete All Registered User Carts', 'woocommerce-abandoned-cart' ),
 			'wcal_delete_all_guest'      => __( 'Delete All Guest User Carts', 'woocommerce-abandoned-cart' ),
 			'wcal_delete_all_visitor'    => __( 'Delete All Visitor Carts', 'woocommerce-abandoned-cart' ),
 			'wcal_delete_all'            => __( 'Delete All Carts', 'woocommerce-abandoned-cart' ),
-	    );
+		);
 	}
-	
+
 	/**
 	 * It will give the section name.
 	 * @return string $section Name of the current section
