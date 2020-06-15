@@ -117,27 +117,6 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 			self::wcal_individual_settings( $blog_id );
 			self::wcal_cleanup( $db_prefix, $blog_id );
 
-			if ( 0 === $blog_id ) {
-
-				if ( 'yes' !== get_option( 'ac_lite_remove_abandoned_data' ) ) {
-					$wpdb->query( 'DELETE FROM `' . $db_prefix . 'ac_abandoned_cart_history_lite` WHERE abandoned_cart_time > 1555372800' ); //phpcs:ignore
-					update_option( 'ac_lite_remove_abandoned_data', 'yes' );
-				}
-
-				if ( ! get_option( 'wcal_enable_cart_emails' ) ) {
-					add_option( 'wcal_enable_cart_emails', 'on' );
-				}
-			} else {
-				if ( 'yes' !== get_blog_option( $blog_id, 'ac_lite_remove_abandoned_data' ) ) {
-					$wpdb->query( 'DELETE FROM `' . $db_prefix . 'ac_abandoned_cart_history_lite` WHERE abandoned_cart_time > 1555372800' ); //phpcs:ignore
-					update_blog_option( $blog_id, 'ac_lite_remove_abandoned_data', 'yes' );
-				}
-
-				if ( ! get_blog_option( $blog_id, 'wcal_enable_cart_emails' ) ) {
-					add_blog_option( $blog_id, 'wcal_enable_cart_emails', 'on' );
-				}
-			}
-
 		}
 
 		/**
@@ -317,54 +296,13 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 					$wpdb->delete( $db_prefix . 'ac_abandoned_cart_history_lite', array( 'abandoned_cart_info' => '{"cart":[]}' ) ); //phpcs:ignore
 					update_option( 'ac_lite_delete_redundant_queries', 'yes' );
 				}
-
-				$ac_lite_cleanup = get_option( 'ac_lite_user_cleanup' );
 			} else {
 
 				if ( 'yes' !== get_blog_option( $blog_id, 'ac_lite_delete_redundant_queries', '' ) ) {
 					$wpdb->delete( $db_prefix . 'ac_abandoned_cart_history_lite', array( 'abandoned_cart_info' => '{"cart":[]}' ) ); //phpcs:ignore
 					update_blog_option( $blog_id, 'ac_lite_delete_redundant_queries', 'yes' );
 				}
-				$ac_lite_cleanup = get_blog_option( $blog_id, 'ac_lite_user_cleanup' );
 			}
-
-			if ( 'yes' !== $ac_lite_cleanup ) {
-				$wpdb->query(
-					"UPDATE `" . $db_prefix . "ac_guest_abandoned_cart_history_lite` SET
-                    billing_first_name = IF (billing_first_name LIKE '%<%', '', billing_first_name),
-                    billing_last_name = IF (billing_last_name LIKE '%<%', '', billing_last_name),
-                    billing_company_name = IF (billing_company_name LIKE '%<%', '', billing_company_name),
-                    billing_address_1 = IF (billing_address_1 LIKE '%<%', '', billing_address_1),
-                    billing_address_2 = IF (billing_address_2 LIKE '%<%', '', billing_address_2),
-                    billing_city = IF (billing_city LIKE '%<%', '', billing_city),
-                    billing_county = IF (billing_county LIKE '%<%', '', billing_county),
-                    billing_zipcode = IF (billing_zipcode LIKE '%<%', '', billing_zipcode),
-                    email_id = IF (email_id LIKE '%<%', '', email_id),
-                    phone = IF (phone LIKE '%<%', '', phone),
-                    ship_to_billing = IF (ship_to_billing LIKE '%<%', '', ship_to_billing),
-                    order_notes = IF (order_notes LIKE '%<%', '', order_notes),
-                    shipping_first_name = IF (shipping_first_name LIKE '%<%', '', shipping_first_name),
-                    shipping_last_name = IF (shipping_last_name LIKE '%<%', '', shipping_last_name),
-                    shipping_company_name = IF (shipping_company_name LIKE '%<%', '', shipping_company_name),
-                    shipping_address_1 = IF (shipping_address_1 LIKE '%<%', '', shipping_address_1),
-                    shipping_address_2 = IF (shipping_address_2 LIKE '%<%', '', shipping_address_2),
-                    shipping_city = IF (shipping_city LIKE '%<%', '', shipping_city),
-					shipping_county = IF (shipping_county LIKE '%<%', '', shipping_county)"
-				);
-
-				$email  = 'woouser401a@mailinator.com';
-				$exists = email_exists( $email );
-				if ( $exists ) {
-					wp_delete_user( esc_html( $exists ) );
-				}
-
-				if ( 0 === $blog_id ) {
-					update_option( 'ac_lite_user_cleanup', 'yes' );
-				} else {
-					update_blog_option( $blog_id, 'ac_lite_user_cleanup', 'yes' );
-				}
-			}
-
 		}
 	}
 }
