@@ -63,6 +63,78 @@ class Wcal_Delete_Handler {
 	}
 
 	/**
+	 * Delete all registered user carts from the Bulk Actions menu in Abandoned Orders page.
+	 *
+	 * @since 5.8.0
+	 */
+	public function wcal_bulk_action_delete_registered_carts_handler() {
+		global $wpdb;
+
+		$wpdb->query( // phpcs:ignore
+			'DELETE FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`
+			WHERE user_id < 63000000
+			AND user_id > 0'
+		);
+
+		wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=listcart&wcal_deleted=YES&wcal_deleted_all_registered=YES' ) );
+	}
+
+	/**
+	 * Delete all guest user carts from the Bulk Actions menu in Abandoned Orders page.
+	 *
+	 * @since 5.8.0
+	 */
+	public function wcal_bulk_action_delete_guest_carts_handler() {
+		global $wpdb;
+
+		$wpdb->query( // phpcs:ignore
+			'DELETE FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`
+			WHERE user_id >= 63000000'
+		);
+
+		$wpdb->query( // phpcs:ignore
+			'DELETE FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite`'
+		);
+
+		wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=listcart&wcal_deleted=YES&wcal_deleted_all_guest=YES' ) );
+	}
+
+	/**
+	 * Delete all visitor user carts from the Bulk Actions menu in Abandoned Orders page.
+	 *
+	 * @since 5.8.0
+	 */
+	public function wcal_bulk_action_delete_visitor_carts_handler() {
+		global $wpdb;
+
+		$wpdb->query( // phpcs:ignore
+			'DELETE FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`
+			WHERE user_id = 0'
+		);
+
+		wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=listcart&wcal_deleted=YES&wcal_deleted_all_visitor=YES' ) );
+	}
+
+	/**
+	 * Delete all carts from the Bulk Actions menu in Abandoned Orders page.
+	 *
+	 * @since 5.8.0
+	 */
+	public function wcal_bulk_action_delete_all_carts_handler() {
+		global $wpdb;
+
+		$wpdb->query( // phpcs:ignore
+			'DELETE FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`'
+		);
+
+		$wpdb->query( // phpcs:ignore
+			'DELETE FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite`'
+		);
+
+		wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=listcart&wcal_deleted=YES&wcal_deleted_all=YES' ) );
+	}
+
+	/**
 	 * Trigger when we delete the template.
 	 *
 	 * @param int | string $template_id Template id.

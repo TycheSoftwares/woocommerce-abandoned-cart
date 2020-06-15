@@ -562,7 +562,11 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	 */
 	public function get_bulk_actions() {
 	    return array(
-	        'wcal_delete' => __( 'Delete', 'woocommerce-abandoned-cart' )
+			'wcal_delete' => __( 'Delete', 'woocommerce-abandoned-cart' ),
+			'wcal_delete_all_registered' => __( 'Delete All Registered User Carts', 'woocommerce-abandoned-cart' ),
+			'wcal_delete_all_guest'      => __( 'Delete All Guest User Carts', 'woocommerce-abandoned-cart' ),
+			'wcal_delete_all_visitor'    => __( 'Delete All Visitor Carts', 'woocommerce-abandoned-cart' ),
+			'wcal_delete_all'            => __( 'Delete All Carts', 'woocommerce-abandoned-cart' ),
 	    );
 	}
 	
