@@ -551,7 +551,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 			default:			    
 				$value = isset( $wcal_abandoned_orders->$column_name ) ? $wcal_abandoned_orders->$column_name : '';
 				break;
-	    }		
+		}
 		return apply_filters( 'wcal_abandoned_orders_column_default', $value, $wcal_abandoned_orders, $column_name );
 	}
 
@@ -573,6 +573,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 
 	/**
 	 * It will give the section name.
+	 *
 	 * @return string $section Name of the current section
 	 * @since 2.5.2
 	 */

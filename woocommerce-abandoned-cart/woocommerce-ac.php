@@ -2059,7 +2059,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 				// Detect when a bulk action is being triggered on abandoned orders page.
 				if ( 'wcal_delete' === $action || 'wcal_delete' === $action_two ) {
-					$ids = isset( $_GET['abandoned_order_id'] ) ? sanitize_text_field( wp_unslash( $_GET['abandoned_order_id'] ) ) : false;
+					$ids = isset( $_GET['abandoned_order_id'] ) ? sanitize_text_field( wp_unslash( $_GET['abandoned_order_id'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification
 					if ( ! is_array( $ids ) ) {
 						$ids = array( $ids );
 					}
@@ -2101,15 +2101,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					}
 				}
 
-				if ( isset( $_GET['wcal_deleted'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted'] ) ) ) {
+				if ( isset( $_GET['wcal_deleted'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 					$msg = __( 'The Abandoned cart has been successfully deleted.', 'woocommerce-abandoned-cart' ); // Default Msg.
-					if ( isset( $_GET['wcal_deleted_all'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all'] ) ) ) {
+					if ( isset( $_GET['wcal_deleted_all'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 						$msg = __( 'All Abandoned Carts have been successfully deleted.', 'woocommerce-abandoned-cart' ); // Delete All Carts.
-					} elseif ( isset( $_GET['wcal_deleted_all_visitor'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all_visitor'] ) ) ) {
+					} elseif ( isset( $_GET['wcal_deleted_all_visitor'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all_visitor'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 						$msg = __( 'All Visitor carts have been successfully deleted.', 'woocommerce-abandoned-cart' ); // Delete all visitor carts.
-					} elseif ( isset( $_GET['wcal_deleted_all_guest'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all_guest'] ) ) ) {
+					} elseif ( isset( $_GET['wcal_deleted_all_guest'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all_guest'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 						$msg = __( 'All Guest carts have been successfully deleted.', 'woocommerce-abandoned-cart' ); // Delete all Guest carts.
-					} elseif ( isset( $_GET['wcal_deleted_all_registered'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all_registered'] ) ) ) {
+					} elseif ( isset( $_GET['wcal_deleted_all_registered'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_deleted_all_registered'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 						$msg = __( 'All Registered carts have been deleted.', 'woocommerce-abandoned-cart' ); // Delete all registered carts.
 					}
 					?>
@@ -2118,10 +2118,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					</div>
 					<?php
 				}
-				if ( isset( $_GET ['wcal_template_deleted'] ) && 'YES' == $_GET['wcal_template_deleted'] ) {
+				if ( isset( $_GET ['wcal_template_deleted'] ) && 'YES' === sanitize_text_field( wp_unslash( $_GET['wcal_template_deleted'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 					?>
 					<div id="message" class="updated fade">
-						<p><strong><?php _e( 'The Template has been successfully deleted.', 'woocommerce-abandoned-cart' ); ?></strong></p>
+						<p><strong><?php esc_html_e( 'The Template has been successfully deleted.', 'woocommerce-abandoned-cart' ); ?></strong></p>
 					</div>
 				<?php }
 				 if ( 'emailsettings' == $action ) {
