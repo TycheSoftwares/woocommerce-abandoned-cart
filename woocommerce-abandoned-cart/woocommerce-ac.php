@@ -2059,7 +2059,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 				// Detect when a bulk action is being triggered on abandoned orders page.
 				if ( 'wcal_delete' === $action || 'wcal_delete' === $action_two ) {
-					$ids = isset( $_GET['abandoned_order_id'] ) ? sanitize_text_field( wp_unslash( $_GET['abandoned_order_id'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification
+					$ids = isset( $_GET['abandoned_order_id'] ) ? array_map( 'intval', wp_unslash( $_GET['abandoned_order_id'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification
 					if ( ! is_array( $ids ) ) {
 						$ids = array( $ids );
 					}
