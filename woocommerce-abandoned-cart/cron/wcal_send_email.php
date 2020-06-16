@@ -362,7 +362,7 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                                 }
                                                                 $product_name = $product_name_with_variable;
                                                             }
-                                                            $product_name = apply_filters( 'wcal_after_product_name', $product_name, $v );
+                                                            $product_name = apply_filters( 'wcal_reminder_email_after_product_name', $product_name, $v );
                                                             $var .='<tr align="center">
                                                                     <td> <a href="'.$cart_link_track.'"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
                                                                     <td> <a href="'.$cart_link_track.'">'.$product_name.'</a></td>
