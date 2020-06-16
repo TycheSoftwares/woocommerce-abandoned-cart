@@ -349,6 +349,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 				}
 
 				$wcal_cart_details = isset( $wcal_cart_info->cart ) ? $wcal_cart_info->cart : array();
+				$wcal_cart_details = isset( $wcal_cart_details->cart_contents ) ? $wcal_cart_details->cart_contents : $wcal_cart_details;
 
 				// Currency selected.
 				$currency = isset( $wcal_cart_info->currency ) ? $wcal_cart_info->currency : '';
