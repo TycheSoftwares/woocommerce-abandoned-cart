@@ -186,10 +186,10 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
                         <br/><br/>
                         You can refer to this document for creating a <a href="https://documentation.cpanel.net/display/68Docs/Cron+Jobs">cron job</a> in cPanel.'
                 ),
-                8 => array (
-						'question' => 'Does the plugin consider the cart as abandoned for Pending and Failed order status?',
-						'answer'   => 'Yes, our plugin considers such carts (Pending Payment and Failed orders) as abandoned. It will send the abandoned cart reminder email to the customers if they fail to proceed with the payment after Cart abandoned cut off time reached.'
-                ),
+				8  => array(
+					'question' => 'Does the plugin consider the cart as abandoned for Pending and Failed order status?',
+					'answer'   => 'No, our plugin does not consider such carts (Pending Payment and Failed orders) as abandoned. It will not send the abandoned cart reminder email to the customers if they fail to proceed with the payment.',
+				),
                 9 => array (
 						'question' => 'How can we translate the strings of {{products.cart}} merge tag in the email?',
 						'answer'   => 'To translate the strings, you need to generate ".po" and ".mo" files in your respective language. These files then need to be added to the following path: "woocommerce-abandoned-cart/i18n/languages"'
