@@ -271,20 +271,20 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 				$billing_field_display = 'none';
 			}
 
-			$wcal_billing_address_text   = __( 'Billing Address:', 'woocommerce-abandon-cart' );
+			$wcal_billing_address_text = __( 'Billing Address:', 'woocommerce-abandon-cart' );
 
 			$wcal_create_billing_address = '' !== $user_billing_company ? '<br>' . $user_billing_company . '</br>' : '<br>';
 			if ( '' !== $user_billing_address_1 ) {
-				$wcal_create_billing_address .= $user_billing_address_1 . '</br>';	
+				$wcal_create_billing_address .= $user_billing_address_1 . '</br>';
 			}
 			if ( '' !== $user_billing_address_2 ) {
-				$wcal_create_billing_address .= $user_billing_address_2 . '</br>';	
+				$wcal_create_billing_address .= $user_billing_address_2 . '</br>';
 			}
 			if ( '' !== $user_billing_city ) {
-				$wcal_create_billing_address .= $user_billing_city . '</br>';	
+				$wcal_create_billing_address .= $user_billing_city . '</br>';
 			}
 			if ( '' !== $user_billing_postcode ) {
-				$wcal_create_billing_address .= $user_billing_postcode;	
+				$wcal_create_billing_address .= $user_billing_postcode;
 			}
 
 			$wcal_shipping_address_text = __( 'Shipping Address:', 'woocommerce-abandon-cart' );
@@ -301,16 +301,16 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 			} else {
 				$wcal_create_shipping_address = '' !== $user_shipping_company ? '<br>' . $user_shipping_company . '</br>' : '<br>';
 				if ( '' !== $user_shipping_address_1 ) {
-					$wcal_create_shipping_address .= $user_shipping_address_1 . '</br>';	
+					$wcal_create_shipping_address .= $user_shipping_address_1 . '</br>';
 				}
 				if ( '' !== $user_shipping_address_2 ) {
-					$wcal_create_shipping_address .= $user_shipping_address_2 . '</br>';	
+					$wcal_create_shipping_address .= $user_shipping_address_2 . '</br>';
 				}
 				if ( '' !== $user_shipping_city ) {
-					$wcal_create_shipping_address .= $user_shipping_city . '</br>';	
+					$wcal_create_shipping_address .= $user_shipping_city . '</br>';
 				}
 				if ( '' !== $user_shipping_postcode ) {
-					$wcal_create_shipping_address .= $user_shipping_postcode;	
+					$wcal_create_shipping_address .= $user_shipping_postcode;
 				}
 			}
 
@@ -339,7 +339,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
             </div>";
 
 			$wcal_cart_content_var = '';
-			$wcal_quantity_total = 0;
+			$wcal_quantity_total   = 0;
 			if ( isset( $wcal_get_abandoned_cart_result[0] ) && ! empty( $wcal_get_abandoned_cart_result ) ) {
 
 				$wcal_cart_info = json_decode( stripslashes( $wcal_get_abandoned_cart_result[0]->abandoned_cart_info ) );
@@ -448,8 +448,15 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 				$recovered_date    = "$order_date_format $order_time_format";
 
 				$order_url = admin_url( "post.php?post=$recovered_order&action=edit" );
-				// translators: Recovered Order Link, Order ID, Recovered Date.
-				printf( '<h1>' . esc_html__( 'Order', 'woocommerce-abandon-cart' ) . " <a href='%s' target='_blank'>#%s</a><h1>" . esc_html__( ' <h5>recovered on %s</h5>' ), esc_url( $order_url ), esc_attr( $recovered_order ), esc_attr( $recovered_date ) );
+				echo wp_kses_post(
+					sprintf(
+						// translators: Recovered Order Link, Order ID, Recovered Date.
+						'<h1>' . __( 'Order', 'woocommerce-abandon-cart' ) . " <a href='%s' target='_blank'>#%s</a><h1> <h5>" . __( 'Recovered on %s', 'woocommerce-abandon-cart' ) . '</h5>',
+						esc_url( $order_url ),
+						esc_attr( $recovered_order ),
+						esc_attr( $recovered_date )
+					)
+				);
 			}
 			?>
 		</div>
