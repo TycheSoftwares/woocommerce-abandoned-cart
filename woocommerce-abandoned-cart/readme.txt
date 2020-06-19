@@ -1,7 +1,7 @@
 ﻿
 === Abandoned Cart Lite for WooCommerce ===
 Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, dhruvin
-Tags: cart abandonment, abandon cart, cart recovery, increase woocommerce conversion rate, recover woocommerce cart, increase sales with woocommerce
+Tags: cart abandonment, abandon cart, cart recovery, recover woocommerce cart, increase woocommerce conversion rate, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
 Tested up to: 5.4.2
@@ -239,7 +239,7 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 
 = 5.7.1 (10.02.2020) =
 
-* Tweak - Bots and Crawlers used to log lot of Abandoned Carts. This is now fixed.
+* Tweak - Bots and Crawlers used to log lot of Abandoned Carts. We have now prevented logging such carts and now only genuine carts will be tracked.
 
 = 5.7 (29.01.2020) =
 
