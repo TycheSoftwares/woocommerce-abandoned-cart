@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, d
 Tags: cart abandonment, abandon cart, cart recovery, recover woocommerce cart, increase woocommerce conversion rate, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.4
+Tested up to: 5.4.2
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -220,6 +220,18 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+
+= 5.8.0 (19.06.2020) = 
+* Fix - Some error warnings logged in debug.log
+* Tweak - Added the ability to delete all carts based on user type. This can be found in WooCommerce->Abandoned Carts->Abandoned Orders->Bulk Actions.
+* Fix - Added textdomain to ensure plugin strings are translated correctly.
+* Fix - Scheduled action continues to recur after the plugin has been deactivated.
+* Fix - WooCommerce Preview email doesn't reflect changes done in templates.
+* Tweak - Added a filter to allow the site admin the ability to restrict the logging of registered user carts.
+* Tweak - Removed some update code which deleted cart records with certain email addresses and were logged after particular time.
+* Tweak - Introduced compatibility with Improved Variable Product Attributes for WooCommerce.
+* Fix - Updated FAQ to reflect correct plugin behaviour with Pending and Failed order statuses.
+* Tweak - Introduced some filters for {{products.cart}} merge tag. These filters allow the site admin to edit/hide columns such as Quantity, Price, Subtotal, Cart totals & Product Name.
 
 = 5.7.2 (10.02.2020) =
 * Update compatibility with WooCommerce 4.0.0.
