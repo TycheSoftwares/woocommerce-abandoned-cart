@@ -333,33 +333,35 @@ if ( !class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                             if ( isset( $v->variation_id ) && '' != $v->variation_id ) {
                                                                 $variation_id               = $v->variation_id;
                                                                 $variation                  = wc_get_product( $variation_id );
-                                                                $name                       = $variation->get_formatted_name() ;
-                                                                $explode_all                = explode ( "&ndash;", $name );
+																$name                       = false !== $variation ? $variation->get_formatted_name() : '';
+																$explode_all                = '' !== $name ? explode ( "&ndash;", $name ) : array();
                                                                 if( version_compare( $woocommerce->version, '3.0.0', ">=" ) ) {
                                                                     $wcap_sku = '';
-                                                                    if ( $variation->get_sku() ) {
+																	if ( false !== $variation ) {
                                                                         $wcap_sku = "SKU: " . $variation->get_sku() . "<br>";
                                                                     }
-                                                                    $wcap_get_formatted_variation  =  wc_get_formatted_variation( $variation, true );
+																	$wcap_get_formatted_variation  =  false !== $variation ? wc_get_formatted_variation( $variation, true ) : '';
 
                                                                     $add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
 
                                                                     $pro_name_variation = (array) $add_product_name;
                                                                 }else{
-                                                                    $pro_name_variation = array_slice( $explode_all, 1, -1 );
+																	$pro_name_variation = count( $explode_all ) > 0 ? array_slice( $explode_all, 1, -1 ) : array();
                                                                 }
                                                                 $product_name_with_variable = '';
                                                                 $explode_many_varaition     = array();
-                                                                foreach( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
-                                                                $explode_many_varaition = explode ( ",", $pro_name_variation_value );
-                                                                    if( !empty( $explode_many_varaition ) ) {
-                                                                        foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
-                                                                            $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
-                                                                        }
-                                                                    } else {
-                                                                        $product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
-                                                                    }
-                                                                }
+																if ( is_array( $pro_name_variation ) && count( $pro_name_variation ) > 0 ) {
+																	foreach ( $pro_name_variation as $pro_name_variation_key => $pro_name_variation_value ) {
+																		$explode_many_varaition = explode ( ",", $pro_name_variation_value );
+																		if( !empty( $explode_many_varaition ) ) {
+																			foreach( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
+																				$product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
+																			}
+																		} else {
+																			$product_name_with_variable = $product_name_with_variable .  html_entity_decode ( $explode_many_varaition_value ) . "<br>";
+																		}
+																	}
+																}
                                                                 $product_name = $product_name_with_variable;
                                                             }
                                                             $product_name = apply_filters( 'wcal_reminder_email_after_product_name', $product_name, $v );
