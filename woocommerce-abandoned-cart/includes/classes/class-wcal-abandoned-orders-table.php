@@ -217,7 +217,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 							"%$blank_cart_info%",
 							$blank_cart_info_guest,
 							$blank_cart,
-							$compare_time,
+							$compare_time
 						)
 					);
 				} else {
@@ -228,7 +228,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 							"%$blank_cart_info%",
 							$blank_cart_info_guest,
 							$blank_cart,
-							$compare_time,
+							$compare_time
 						)
 					);
 				}
@@ -244,7 +244,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 							"%$blank_cart_info%",
 							$blank_cart_info_guest,
 							$blank_cart,
-							$compare_time,
+							$compare_time
 						)
 					);
 				} else {
@@ -255,7 +255,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 							"%$blank_cart_info%",
 							"%$blank_cart%",
 							$blank_cart,
-							$compare_time,
+							$compare_time
 						)
 					);
 				}
@@ -271,7 +271,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 							$blank_cart_info_guest,
 							$blank_cart_info,
 							$blank_cart,
-							$compare_time,
+							$compare_time
 						)
 					);
 				} else {
@@ -282,7 +282,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 							$blank_cart_info_guest,
 							$blank_cart_info,
 							$blank_cart,
-							$compare_time,
+							$compare_time
 						)
 					);
 				}
@@ -298,7 +298,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 							$blank_cart_info_guest,
 							$blank_cart_info,
 							$blank_cart,
-							$compare_time,
+							$compare_time
 						)
 					);
 				} else {
@@ -309,7 +309,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 							$blank_cart_info_guest,
 							$blank_cart_info,
 							$blank_cart,
-							$compare_time,
+							$compare_time
 						)
 					);
 				}
