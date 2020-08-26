@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, d
 Tags: cart abandonment, abandon cart, cart recovery, recover woocommerce cart, increase woocommerce conversion rate, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.4.2
+Tested up to: 5.5
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -220,6 +220,11 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+
+= 5.8.1 (26.08.2020) =
+* Fix - When the plugin contained thousands of records, the Abandoned Orders page failed to load.
+* Fix - The send email action schedule raised some warnings.
+* Fix - Error displayed in Settings->Facebook Messenger.
 
 = 5.8.0 (19.06.2020) = 
 * Fix - Some error warnings logged in debug.log
