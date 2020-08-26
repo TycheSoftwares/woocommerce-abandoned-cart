@@ -5,14 +5,14 @@
 * Description: This plugin captures abandoned carts by logged-in users & emails them about it.
 * <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the
 * PRO Version.</a></strong>
-* Version: 5.8.0
+* Version: 5.8.1
 * Author: Tyche Softwares
 * Author URI: http://www.tychesoftwares.com/
 * Text Domain: woocommerce-abandoned-cart
 * Domain Path: /i18n/languages/
 * Requires PHP: 5.6
 * WC requires at least: 3.0.0
-* WC tested up to: 4.2.0
+* WC tested up to: 4.4.1
 *
 * @package Abandoned-Cart-Lite-for-WooCommerce
 */
@@ -80,7 +80,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			if ( ! defined( 'WCAL_PLUGIN_VERSION' ) ) {
-				define( 'WCAL_PLUGIN_VERSION', '5.8.0' );
+				define( 'WCAL_PLUGIN_VERSION', '5.8.1' );
 			}
 			$this->one_hour     = 60 * 60;
 			$this->three_hours  = 3 * $this->one_hour;
