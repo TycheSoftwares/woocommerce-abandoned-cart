@@ -1,0 +1,68 @@
+/**
+ * Decrease the width of the Id column.
+ *
+ */
+table.wp-list-table .column-id {
+	width:5%;
+}
+
+/**
+ * Decrease the width of the email column.
+ */
+table.wp-list-table .column-email {
+	width:15%;
+}
+
+/**
+ * Decrease the width of the abandoned order date column.
+ */
+table.wp-list-table .column-date {
+	width:20%;
+}
+
+/**
+ * Decrease the width of the abandoned order total column.
+ */
+table.wp-list-table .column-order_total {
+	width:20%;
+}
+
+/**
+ * This is for the new cart and checkout button in tinymce.
+ */
+#woocommerce_ac_email_body_abandoncart_email_variables_css{
+
+	width : 60px !important;
+}
+span.mce_abandoncart_email_variables_css {
+	width : 60px !important;
+}
+
+/**
+ * Decrease the width of the sr column in templates tab.
+ */
+table.wp-list-table .column-sr {
+	width:4% !important;
+}
+
+i.mce-i-abandoncart_email_variables {
+    background-image: url(../images/ac_editor_icon.png) ;
+    width: 30px;
+    height: 30px;
+}
+
+/**
+ * Resize product image to fit within td.
+ */
+table.wp-list-table td img {
+    max-width: 100%;
+    height: auto;
+}
+
+/**
+ * Add left/right margin to h3 titles.
+ */
+h3.details-title {
+    margin-left: 12px;
+    margin-right: 12px;
+}
