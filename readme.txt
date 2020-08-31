@@ -53,6 +53,8 @@ You can check the detailed difference between Pro and Lite version **[here](http
 
 **Pro Version:**
 
+[youtube https://www.youtube.com/watch?v=BemNllbQW1c]
+
 **[Abandoned Cart Pro for WooCommerce](http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite "Abandoned Cart Pro for WooCommerce")** enables to do the following additional things:
 
 1. Super powerful feature, **Add To Cart Popup Modal** - Grab your visitors' attention and build your mailing list. It offers an innovative, exclusive Add to Cart Popup Modal to abandoners to re-engage and capture emails from more of your guest customers before the checkout page.
