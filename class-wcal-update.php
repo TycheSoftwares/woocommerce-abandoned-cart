@@ -115,7 +115,6 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 			self::wcal_alter_tables( $db_prefix, $blog_id );
 			self::wcal_individual_settings( $blog_id );
-			self::wcal_cleanup( $db_prefix, $blog_id );
 
 		}
 
@@ -281,28 +280,5 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 		}
 
-		/**
-		 * Cleanup the redundant data.
-		 *
-		 * @param string $db_prefix - DB prefix to be used.
-		 * @param int    $blog_id - Blog ID (needed for multisites).
-		 */
-		public static function wcal_cleanup( $db_prefix, $blog_id ) {
-
-			global $wpdb;
-
-			if ( 0 === $blog_id ) {
-				if ( 'yes' !== get_option( 'ac_lite_delete_redundant_queries', '' ) ) {
-					$wpdb->delete( $db_prefix . 'ac_abandoned_cart_history_lite', array( 'abandoned_cart_info' => '{"cart":[]}' ) ); //phpcs:ignore
-					update_option( 'ac_lite_delete_redundant_queries', 'yes' );
-				}
-			} else {
-
-				if ( 'yes' !== get_blog_option( $blog_id, 'ac_lite_delete_redundant_queries', '' ) ) {
-					$wpdb->delete( $db_prefix . 'ac_abandoned_cart_history_lite', array( 'abandoned_cart_info' => '{"cart":[]}' ) ); //phpcs:ignore
-					update_blog_option( $blog_id, 'ac_lite_delete_redundant_queries', 'yes' );
-				}
-			}
-		}
 	}
 }
