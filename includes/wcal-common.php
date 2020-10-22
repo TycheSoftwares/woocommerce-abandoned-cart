@@ -974,5 +974,40 @@ class wcal_common {
 
 		return ucfirst ( $roles[0] );
 	}
+
+	/**
+	 * Return the template ID & Frequency of the last active email reminder.
+	 *
+	 * @return array Last Active email template ID & frequency.
+	 * @since 5.8.2
+	 */
+	public static function wcal_get_last_email_template() {
+		global $wpdb;
+		$get_active = $wpdb->get_results( // phpcs:ignore
+			"SELECT id, frequency, day_or_hour FROM `" . $db_prefix . "ac_email_templates_lite` WHERE is_active = '1' ORDER BY `day_or_hour` DESC, `frequency` ASC" //phpcs:ignore
+		);
+		$hour_seconds     = 3600; // 60 * 60
+		$day_seconds      = 86400; // 24 * 60 * 60
+		$list_frequencies = array();
+		foreach ( $get_active as $active ) {
+			switch ( $active->day_or_hour ) {
+				case 'Days':
+					$template_freq = $active->frequency * $day_seconds;
+					break;
+				case 'Hours':
+					$template_freq = $active->frequency * $hour_seconds;
+					break;
+			}
+			$list_frequencies[ $active->id ] = (int) $template_freq;
+		}
+
+		arsort( $list_frequencies, SORT_NUMERIC );
+		reset( $list_frequencies );
+		$template_id = key( $list_frequencies );
+
+		return array(
+			$template_id => array_shift( $list_frequencies )
+		);
+	}
 }
 ?>
