@@ -89,7 +89,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				$wcal_previous_version = get_option( 'wcal_previous_version' );
 
 				if ( wcal_common::wcal_get_version() !== $wcal_previous_version ) {
-					update_option( 'wcal_previous_version', '5.7.1' );
+					update_option( 'wcal_previous_version', '5.8.2' );
 				}
 			} else { // multi site - child sites.
 				$wcal_guest_user_id_altered = get_blog_option( $blog_id, 'wcal_guest_user_id_altered' );
@@ -102,7 +102,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				$wcal_previous_version = get_blog_option( $blog_id, 'wcal_previous_version' );
 
 				if ( wcal_common::wcal_get_version() !== $wcal_previous_version ) {
-					update_blog_option( $blog_id, 'wcal_previous_version', '5.7.1' );
+					update_blog_option( $blog_id, 'wcal_previous_version', '5.8.2' );
 				}
 			}
 
