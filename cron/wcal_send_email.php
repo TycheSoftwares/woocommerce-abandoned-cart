@@ -68,6 +68,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 				$results      = $wpdb->get_results( $query );
 				$hour_seconds = 3600;   // 60 * 60
 				$day_seconds  = 86400; // 24 * 60 * 60
+
+				// Find the template which is last in the sequence.
+				$last_email_template = wcal_common::wcal_get_last_email_template();
+				if ( is_array( $last_email_template ) && count( $last_email_template ) > 0 ) {
+					reset( $last_email_template );
+					$last_template_id = key( $last_email_template );
+				} else {
+					$last_template_id = 0;
+				}
 				foreach ( $results as $key => $value ) {
 					if ( $value->day_or_hour == 'Days' ) {
 						$time_to_send_template_after = intval( $value->frequency ) * $day_seconds;
@@ -174,6 +183,17 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 											$wcap_check_cart_staus_need_to_update = self::wcal_update_abandoned_cart_status_for_placed_orders( $time_to_send_template_after, $cart_update_time, $value->user_id, $value->user_type, $value->id, $value->user_email );
 										}
 
+										if ( false === $wcal_check_cart_needed_for_multiple_template && (int) $template_id === (int) $last_template_id ) {
+											$wpdb->update(
+												$wpdb->prefix . 'ac_abandoned_cart_history_lite',
+												array(
+													'email_reminder_status' => 'complete',
+												),
+												array(
+													'id' => $value->id,
+												)
+											);
+										}
 										if ( false == $wcal_check_cart_needed_for_multiple_template &&
 										 false == $wcap_check_cart_staus_need_to_update ) {
 
@@ -502,7 +522,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 			$query        = 'SELECT wpac . * , wpu.user_login, wpu.user_email
                 FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` AS wpac
                 LEFT JOIN ' . $wpdb->base_prefix . "users AS wpu ON wpac.user_id = wpu.id
-                WHERE cart_ignored = %s AND unsubscribe_link = %s AND abandoned_cart_time < $cart_time
+				WHERE cart_ignored = %s AND unsubscribe_link = %s AND abandoned_cart_time < $cart_time
+				AND email_reminder_status <> 'complete'
                 $wcal_add_template_condition
                 ORDER BY `id` ASC ";
 

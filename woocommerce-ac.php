@@ -5,7 +5,7 @@
 * Description: This plugin captures abandoned carts by logged-in users & emails them about it.
 * <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the
 * PRO Version.</a></strong>
-* Version: 5.8.1
+* Version: 5.8.2
 * Author: Tyche Softwares
 * Author URI: http://www.tychesoftwares.com/
 * Text Domain: woocommerce-abandoned-cart
@@ -80,7 +80,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			if ( ! defined( 'WCAL_PLUGIN_VERSION' ) ) {
-				define( 'WCAL_PLUGIN_VERSION', '5.8.1' );
+				define( 'WCAL_PLUGIN_VERSION', '5.8.2' );
 			}
 			$this->one_hour     = 60 * 60;
 			$this->three_hours  = 3 * $this->one_hour;
@@ -154,7 +154,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_action( 'admin_init', array( &$this, 'wcal_action_admin_init' ) );
 
 			// Update the options as per settings API.
-			add_action( 'admin_init', array( 'Wcal_Update', 'wcal_update_db_check' ) );
+			add_action( 'admin_init', array( 'Wcal_Update', 'wcal_schedule_update_action' ) );
 
 			// Wordpress settings API
 			add_action( 'admin_init',                                   array( &$this, 'wcal_initialize_plugin_options' ) );
@@ -210,7 +210,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_add_scheduled_action() {
 			if ( false === as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) ) {
 				wp_clear_scheduled_hook( 'woocommerce_ac_send_email_action' ); // Remove the cron job is present.
-				as_schedule_recurring_action( time(), 900, 'woocommerce_ac_send_email_action' ); // Schedule recurring action.
+				as_schedule_recurring_action( time() + 60, 900, 'woocommerce_ac_send_email_action' ); // Schedule recurring action.
 			}
 		}
 		
