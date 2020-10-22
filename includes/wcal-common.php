@@ -984,7 +984,7 @@ class wcal_common {
 	public static function wcal_get_last_email_template() {
 		global $wpdb;
 		$get_active = $wpdb->get_results( // phpcs:ignore
-			"SELECT id, frequency, day_or_hour FROM `" . $db_prefix . "ac_email_templates_lite` WHERE is_active = '1' ORDER BY `day_or_hour` DESC, `frequency` ASC" //phpcs:ignore
+			"SELECT id, frequency, day_or_hour FROM `" . $wpdb->prefix . "ac_email_templates_lite` WHERE is_active = '1' ORDER BY `day_or_hour` DESC, `frequency` ASC" //phpcs:ignore
 		);
 		$hour_seconds     = 3600; // 60 * 60
 		$day_seconds      = 86400; // 24 * 60 * 60
