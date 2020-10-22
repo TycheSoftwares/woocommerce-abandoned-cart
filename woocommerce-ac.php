@@ -155,6 +155,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			// Update the options as per settings API.
 			add_action( 'admin_init', array( 'Wcal_Update', 'wcal_schedule_update_action' ) );
+			add_action( 'wcal_update_db', array( 'Wcal_Update', 'wcal_update_db_check' ) );
 
 			// Wordpress settings API
 			add_action( 'admin_init',                                   array( &$this, 'wcal_initialize_plugin_options' ) );
