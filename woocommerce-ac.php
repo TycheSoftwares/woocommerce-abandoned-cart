@@ -527,6 +527,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							 `user_type` text,
 							 `unsubscribe_link` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
 							 `session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+							 `email_reminder_status` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 							 PRIMARY KEY (`id`)
 							 ) $wcap_collate";
 
@@ -582,7 +583,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$default_template->wcal_create_default_templates( $db_prefix, $blog_id );
 					}
 				}
-
+				if ( ! get_option( 'ac_lite_cart_abandoned_time' ) ) {
+					add_option( 'ac_lite_cart_abandoned_time', 10 );
+				}
 				if ( ! get_option( 'ac_lite_track_guest_cart_from_cart_page' ) ) {
 					add_option( 'ac_lite_track_guest_cart_from_cart_page', 'on' );
 				}
@@ -604,7 +607,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$default_template->wcal_create_default_templates( $db_prefix, $blog_id );
 					}
 				}
-				
+				if ( ! get_blog_option( $blog_id, 'ac_lite_cart_abandoned_time' ) ) {
+					add_blog_option( $blog_id, 'ac_lite_cart_abandoned_time', 10 );
+				}
 				if ( ! get_blog_option( $blog_id, 'ac_lite_track_guest_cart_from_cart_page' ) ) {
 					add_blog_option( $blog_id, 'ac_lite_track_guest_cart_from_cart_page', 'on' );
 				}
