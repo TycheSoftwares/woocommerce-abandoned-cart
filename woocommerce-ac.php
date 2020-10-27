@@ -297,7 +297,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					'class' => [],
 				],
 			];
-			$plugins_url = esc_url( plugins_url() );
+			$spectre_img_src = esc_url( plugins_url( '/assets/images/spectre.jpg', __FILE__ ) );
 			$replace_data['products_cart'] = "<table border='0' width='100%' cellspacing='0' cellpadding='0'><b>Your Shopping Cart</b>
 			<tbody>
 				<tr>
@@ -313,7 +313,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 				</tr>
 				<tr style='background-color:#f4f5f4;'>
-					<td><img src = '$plugins_url/woocommerce-abandoned-cart/assets/images/spectre.jpg' height='40px' width='40px'></td><td>Spectre</td><td>" . wp_kses( $wcal_price, $allowed_html ) . "</td><td>2</td><td>" . wp_kses( $wcal_total_price, $allowed_html ) . "</td>
+					<td><img src = '$spectre_img_src' height='40px' width='40px'></td><td>Spectre</td><td>" . wp_kses( $wcal_price, $allowed_html ) . "</td><td>2</td><td>" . wp_kses( $wcal_total_price, $allowed_html ) . "</td>
 				</tr>
 				<tr>
 					<td>&nbsp;</td>
@@ -1805,7 +1805,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			?>
-			<div style="background-image: url('<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/assets/images/ac_tab_icon.png') !important;" class="icon32"><br>
+			<div style="background-image: url('<?php echo plugins_url( '/assets/images/ac_tab_icon.png', __FILE__ ); ?>') !important;" class="icon32"><br>
 			</div>
 			<h2 class="nav-tab-wrapper woo-nav-tab-wrapper">
 				<a href="admin.php?page=woocommerce_ac_page&action=dashboard" class="nav-tab <?php if ( isset( $active_dash ) ) echo $active_dash; ?>"> <?php _e( 'Dashboard', 'woocommerce-abandoned-cart' );?> </a>
@@ -1850,38 +1850,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								   '',
 								   false
 				);
-
-
-				wp_register_script( 'woocommerce_admin', plugins_url() . '/woocommerce/assets/js/admin/woocommerce_admin.min.js', array( 'jquery', 'jquery-tiptip' ) );
-					wp_register_script( 'woocommerce_tip_tap', plugins_url() . '/woocommerce/assets/js/jquery-tiptip/jquery.tipTip.min.js', array( 'jquery') );
-					wp_enqueue_script( 'woocommerce_tip_tap');
-					wp_enqueue_script( 'woocommerce_admin');
-					$locale  = localeconv();
-					$decimal = isset( $locale['decimal_point'] ) ? $locale['decimal_point'] : '.';
-					$params  = array(
-						/* translators: %s: decimal */
-						'i18n_decimal_error'                => sprintf( __( 'Please enter in decimal (%s) format without thousand separators.', 'woocommerce' ), $decimal ),
-						/* translators: %s: price decimal separator */
-						'i18n_mon_decimal_error'            => sprintf( __( 'Please enter in monetary decimal (%s) format without thousand separators and currency symbols.', 'woocommerce' ), wc_get_price_decimal_separator() ),
-						'i18n_country_iso_error'            => __( 'Please enter in country code with two capital letters.', 'woocommerce' ),
-						'i18_sale_less_than_regular_error'  => __( 'Please enter in a value less than the regular price.', 'woocommerce' ),
-						'decimal_point'                     => $decimal,
-						'mon_decimal_point'                 => wc_get_price_decimal_separator(),
-						'strings' => array(
-							'import_products' => __( 'Import', 'woocommerce' ),
-							'export_products' => __( 'Export', 'woocommerce' ),
-						),
-						'urls' => array(
-							'import_products' => esc_url_raw( admin_url( 'edit.php?post_type=product&page=product_importer' ) ),
-							'export_products' => esc_url_raw( admin_url( 'edit.php?post_type=product&page=product_exporter' ) ),
-						),
-					);
-					/**
-					 * If we dont localize this script then from the WooCommerce check it will not run the javascript further and tooltip wont show any data.
-					 * Also, we need above all parameters for the WooCoomerce js file. So we have taken it from the WooCommerce.
-					 * @since: 5.1.2
-					 */
-					wp_localize_script( 'woocommerce_admin', 'woocommerce_admin', $params );
 				?>
 				<script type="text/javascript" >
 					function wcal_activate_email_template( template_id, active_state ) {
@@ -1891,33 +1859,57 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				<?php
 				$js_src = includes_url('js/tinymce/') . 'tinymce.min.js';
 				wp_enqueue_script( 'tinyMce_ac',$js_src );
-				wp_enqueue_script( 'ac_email_variables', plugins_url() . '/woocommerce-abandoned-cart/assets/js/abandoncart_plugin_button.js' );
-				wp_enqueue_script( 'wcal_activate_template', plugins_url() . '/woocommerce-abandoned-cart/assets/js/wcal_template_activate.js' );
+				wp_enqueue_script(
+					'ac_email_variables',
+					plugins_url( '/assets/js/abandoncart_plugin_button.js', __FILE__ ),
+					'',
+					'',
+					false
+				);
+				wp_enqueue_script(
+					'wcal_activate_template',
+					plugins_url( '/assets/js/wcal_template_activate.js', __FILE__ ),
+					'',
+					'',
+					false
+				);
 
 				// needed only on the dashboard page
 				if( 'woocommerce_ac_page' === $page && ( '' === $action || 'dashboard' === $action ) ) {
-					wp_register_script( 'jquery-ui-datepicker',  plugins_url() . '/woocommerce/assets/js/admin/ui-datepicker.js' );
+					wp_register_script( 'jquery-ui-datepicker',  WC()->plugin_url() . '/assets/js/admin/ui-datepicker.js' );
 					wp_enqueue_script( 'jquery-ui-datepicker' );
 
 					wp_enqueue_script ( 
 						'bootstrap_js', 
-						plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/bootstrap.min.js', 
+						plugins_url( '/assets/js/admin/bootstrap.min.js', __FILE__ ), 
 						'', 
 						'', 
 						false );
 
 					wp_enqueue_script (
 						'reports_js',
-						plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/wcal_adv_dashboard.min.js',
+						plugins_url( '/assets/js/admin/wcal_adv_dashboard.min.js', __FILE__ ),
 						'',
 						'',
 						false
 					);
 				}
 				// needed only on the abandoned orders page
-				wp_enqueue_script( 'wcal_abandoned_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/wcal_abandoned_cart_detail_modal.min.js' );
+				wp_enqueue_script(
+					'wcal_abandoned_cart_details',
+					plugins_url( '/assets/js/admin/wcal_abandoned_cart_detail_modal.min.js', __FILE__ ),
+					'',
+					'',
+					false
+				);
 
-				wp_enqueue_script( 'wcal_admin_notices', plugins_url() . '/woocommerce-abandoned-cart/assets/js/admin/wcal_ts_dismiss_notice.js' );
+				wp_enqueue_script(
+					'wcal_admin_notices',
+					plugins_url( '/assets/js/admin/wcal_ts_dismiss_notice.js', __FILE__ ),
+					'',
+					'',
+					false
+				);
 				wp_localize_script( 'wcal_admin_notices', 'wcal_dismiss_params', array(
 					'ajax_url' => admin_url( 'admin-ajax.php' )
 					)
@@ -1972,29 +1964,29 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( $page != 'woocommerce_ac_page' ) {
 				return;
 			} else if ( $page === 'woocommerce_ac_page' && ( isset( $_GET['action'] ) && 'dashboard' === $_GET[ 'action' ] ) || ! isset( $_GET[ 'action' ] ) ) {
-				wp_enqueue_style( 'wcal-dashboard-adv',           plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/wcal_reports_adv.css' );
+				wp_enqueue_style( 'wcal-dashboard-adv', plugins_url( '/assets/css/admin/wcal_reports_adv.css', __FILE__ ) );
 
-				wp_register_style( 'bootstrap_css', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/bootstrap.min.css', '', '', 'all' );
+				wp_register_style( 'bootstrap_css', plugins_url( '/assets/css/admin/bootstrap.min.css', __FILE__ ), '', '', 'all' );
 				wp_enqueue_style( 'bootstrap_css' );
 
-				wp_enqueue_style( 'wcal-font-awesome', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/font-awesome.css' );
+				wp_enqueue_style( 'wcal-font-awesome', plugins_url( '/assets/css/admin/font-awesome.css', __FILE__ ) );
 		
-				wp_enqueue_style( 'wcal-font-awesome-min', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/font-awesome.min.css' );
+				wp_enqueue_style( 'wcal-font-awesome-min', plugins_url( '/assets/css/admin/font-awesome.min.css', __FILE__ ) );
 
-				wp_enqueue_style( 'jquery-ui',                plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/jquery-ui.css', '', '', false );
-				wp_enqueue_style( 'woocommerce_admin_styles', plugins_url() . '/woocommerce/assets/css/admin.css' );
-				wp_enqueue_style( 'jquery-ui-style',          plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/jquery-ui-smoothness.css' );
-				wp_enqueue_style( 'wcal-reports', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/wcal_reports.min.css' );
-				
+				wp_enqueue_style( 'jquery-ui',                plugins_url( '/assets/css/admin/jquery-ui.css', __FILE__ ), '', '', false );
+				wp_enqueue_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css' );
+				wp_enqueue_style( 'jquery-ui-style',          plugins_url( '/assets/css/admin/jquery-ui-smoothness.css', __FILE__ ) );
+				wp_enqueue_style( 'wcal-reports', plugins_url( '/assets/css/admin/wcal_reports.min.css', __FILE__ ) );
+
 			} elseif ( $page === 'woocommerce_ac_page' ) {
 
-				wp_enqueue_style( 'jquery-ui',                plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/jquery-ui.css', '', '', false );
-				wp_enqueue_style( 'woocommerce_admin_styles', plugins_url() . '/woocommerce/assets/css/admin.css' );
+				wp_enqueue_style( 'jquery-ui',                plugins_url( '/assets/css/admin/jquery-ui.css', __FILE__ ), '', '', false );
+				wp_enqueue_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css' );
 
-				wp_enqueue_style( 'jquery-ui-style',          plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/jquery-ui-smoothness.css' );
-				wp_enqueue_style( 'abandoned-orders-list', plugins_url() . '/woocommerce-abandoned-cart/assets/css/view.abandoned.orders.style.css' );
-				wp_enqueue_style( 'wcal_email_template', plugins_url() . '/woocommerce-abandoned-cart/assets/css/wcal_template_activate.css' );
-				wp_enqueue_style( 'wcal_cart_details', plugins_url() . '/woocommerce-abandoned-cart/assets/css/admin/wcal_abandoned_cart_detail_modal.min.css' );
+				wp_enqueue_style( 'jquery-ui-style',          plugins_url( '/assets/css/admin/jquery-ui-smoothness.css', __FILE__ ) );
+				wp_enqueue_style( 'abandoned-orders-list', plugins_url( '/assets/css/view.abandoned.orders.style.css', __FILE__ ) );
+				wp_enqueue_style( 'wcal_email_template', plugins_url( '/assets/css/wcal_template_activate.css', __FILE__ ) );
+				wp_enqueue_style( 'wcal_cart_details', plugins_url( '/assets/css/admin/wcal_abandoned_cart_detail_modal.min.css', __FILE__ ) );
 			}
 		}
 
@@ -2946,7 +2938,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 												$template_name = $results[0]->template_name;
 											}
 											print'<input type="text" name="woocommerce_ac_template_name" id="woocommerce_ac_template_name" class="regular-text" value="'.$template_name.'">';?>
-											<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter a template name for reference', 'woocommerce-abandoned-cart') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
+											<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter a template name for reference', 'woocommerce-abandoned-cart') ?>' src="<?php echo WC()->plugin_url(); ?>/assets/images/help.png" />
 										</td>
 									</tr>
 
@@ -2961,7 +2953,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 												$subject_edit= stripslashes ( $results[0]->subject );
 											}
 											print'<input type="text" name="woocommerce_ac_email_subject" id="woocommerce_ac_email_subject" class="regular-text" value="'.$subject_edit.'">';?>
-											<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the subject that should appear in the email sent', 'woocommerce-abandoned-cart') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
+																						<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the subject that should appear in the email sent', 'woocommerce-abandoned-cart') ?>' src="<?php echo WC()->plugin_url(); ?>/assets/images/help.png" />
 										</td>
 									</tr>
 
@@ -2999,7 +2991,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 												<img width="16" height="16" src="<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/assets/images/information.png" onClick="wcal_show_help_tips()"/>
 											</span>
 											<span id="help_message" style="display:none">
-												1. You can add customer & cart information in the template using this icon <img width="20" height="20" src="<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/assets/images/ac_editor_icon.png" /> in top left of the editor.<br>
+												1. You can add customer & cart information in the template using this icon <img width="20" height="20" src="<?php echo plugins_url( '/assets/images/ac_editor_icon.png', __FILE__ ); ?>" /> in top left of the editor.<br>
 												2. The product information/cart contents table will be added in emails using the {{products.cart}} merge field.<br>
 												3. Insert/Remove any of the new shortcodes that have been included for the default template.<br>
 												4. Change the look and feel of the table by modifying the table style properties using CSS in "Text" mode. <br>
@@ -3036,7 +3028,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 												}
 											}
 											print'<input type="checkbox" name="is_wc_template" id="is_wc_template" ' . $is_wc_template . '>  </input>'; ?>
-											<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Use WooCommerce default style template for abandoned cart reminder emails.', 'woocommerce' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" /> <a target = '_blank' href= <?php  echo wp_nonce_url( admin_url( "?wcal_preview_woocommerce_mail=true&id=$edit_id" ), 'woocommerce-abandoned-cart' ) ; ?> >
+											<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Use WooCommerce default style template for abandoned cart reminder emails.', 'woocommerce' ) ?>' src="<?php echo WC()->plugin_url(); ?>/assets/images/help.png" /> <a target = '_blank' href= <?php  echo wp_nonce_url( admin_url( "?wcal_preview_woocommerce_mail=true&id=$edit_id" ), 'woocommerce-abandoned-cart' ) ; ?> >
 											Click here to preview </a>how the email template will look with WooCommerce Template Style enabled. Alternatively, if this is unchecked, the template will appear as <a target = '_blank' href=<?php  echo wp_nonce_url( admin_url( "?wcal_preview_mail=true&id=$edit_id" ), 'woocommerce-abandoned-cart' ) ; ?>>shown here</a>. <br> <strong>Note: </strong>When this setting is enabled, then "Send From This Name:" & "Send From This Email Address:" will be overwritten with WooCommerce -> Settings -> Email -> Email Sender Options.
 										</td>
 									 </tr>
@@ -3057,7 +3049,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 											$wcal_wc_email_header = "Abandoned cart reminder";
 										}
 										print'<input type="text" name="wcal_wc_email_header" id="wcal_wc_email_header" class="regular-text" value="' . $wcal_wc_email_header . '">'; ?>
-										<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Enter the header which will appear in the abandoned WooCommerce email sent. This is only applicable when only used when "Use WooCommerce Template Style:" is checked.', 'woocommerce-abandoned-cart' ) ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
+										<img class="help_tip" width="16" height="16" data-tip='<?php _e( 'Enter the header which will appear in the abandoned WooCommerce email sent. This is only applicable when only used when "Use WooCommerce Template Style:" is checked.', 'woocommerce-abandoned-cart' ) ?>' src="<?php echo WC()->plugin_url(); ?>/assets/images/help.png" />
 										</td>
 									</tr>
 
@@ -3116,9 +3108,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 										<td>
 											<input type="text" id="send_test_email" name="send_test_email" class="regular-text" >
 											<input type="button" value="Send a test email" id="preview_email" onclick="javascript:void(0);">
-											<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the email id to which the test email needs to be sent.', 'woocommerce-abandoned-cart') ?>' src="<?php echo plugins_url(); ?>/woocommerce/assets/images/help.png" />
+											<img class="help_tip" width="16" height="16" data-tip='<?php _e('Enter the email id to which the test email needs to be sent.', 'woocommerce-abandoned-cart') ?>' src="<?php echo WC()->plugin_url(); ?>/assets/images/help.png" />
 											<br>
-											<img class="ajax_img" src="<?php echo plugins_url() . '/woocommerce-abandoned-cart/assets/images/ajax-loader.gif';?>" style="display:none;" />
+											<img class="ajax_img" src="<?php echo plugins_url( '/assets/images/ajax-loader.gif', __FILE__ );?>" style="display:none;" />
 											<div id="preview_email_sent_msg" style="display:none;"></div>
 										</td>
 									</tr>
@@ -3224,7 +3216,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$( "#preview_email_sent_msg" ).fadeIn();
 									setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 4000 );
 							 } else {
-								$( "#preview_email_sent_msg" ).html( "<img src='<?php echo plugins_url(); ?>/woocommerce-abandoned-cart/assets/images/check.jpg'>&nbsp;Email has been sent successfully." );
+								$( "#preview_email_sent_msg" ).html( "<img src='<?php echo plugins_url( '/assets/images/check.jpg', __FILE__ ); ?>'>&nbsp;Email has been sent successfully." );
 									$( "#preview_email_sent_msg" ).fadeIn();
 									setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 3000 );
 							 }
@@ -3355,14 +3347,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 											   <th>'.__( 'Line Subtotal', 'woocommerce-abandoned-cart' ).'</th>
 											</tr>
 											<tr align="center">
-											   <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/shoes.jpg"/></td>
+											<td><img class="demo_img" width="42" height="42" src="' . plugins_url( '/assets/images/shoes.jpg', __FILE__ ) . '"/></td>
 											   <td>'.__( "Men's Formal Shoes", 'woocommerce-abandoned-cart' ).'</td>
 											   <td>1</td>
 											   <td>' . $wcal_price . '</td>
 											   <td>' . $wcal_price . '</td>
 											</tr>
 											<tr align="center">
-											   <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/handbag.jpg"/></td>
+											<td><img class="demo_img" width="42" height="42" src="' . plugins_url( '/assets/images/handbag.jpg', __FILE__ ) . '"/></td>
 											   <td>'.__( "Woman's Hand Bags", 'woocommerce-abandoned-cart' ).'</td>
 											   <td>1</td>
 											   <td>' . $wcal_price . '</td>
@@ -3390,14 +3382,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 											   <th>'.__( "Line Subtotal", 'woocommerce-abandoned-cart' ).'</th>
 											</tr>
 											<tr align="center">
-											   <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/shoes.jpg"/></td>
+											<td><img class="demo_img" width="42" height="42" src="' . plugins_url( '/assets/images/shoes.jpg', __FILE__ ) . '"/></td>
 											   <td>'.__( "Men's Formal Shoes", 'woocommerce-abandoned-cart' ).'</td>
 											   <td>1</td>
 											   <td>' . $wcal_price . '</td>
 											   <td>' . $wcal_price . '</td>
 											</tr>
 											<tr align="center">
-											   <td><img class="demo_img" width="42" height="42" src="'.plugins_url().'/woocommerce-abandoned-cart/assets/images/handbag.jpg"/></td>
+											<td><img class="demo_img" width="42" height="42" src="' . plugins_url( '/assets/images/handbag.jpg', __FILE__ ) . '"/></td>
 											   <td>'.__( "Woman's Hand Bags", 'woocommerce-abandoned-cart' ).'</td>
 											   <td>1</td>
 											   <td>' . $wcal_price . '</td>
