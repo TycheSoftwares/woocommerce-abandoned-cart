@@ -54,10 +54,6 @@
         <p><?php _e( 'The Abandoned Cart Pro plugin gives you features where you are able to recover more sales compared to the Lite plugin. Here are some notable features the Pro version provides.' ); ?></p>
 
         <div class="feature-section clearfix introduction">
-            <div class="video feature-section-item" style="float:left;padding-right:10px;">
-                <img src="https://www.tychesoftwares.com/wp-content/uploads/2017/08/atc_frontend.png"
-                        alt="<?php esc_attr_e( 'WooCommerce Abandoned Cart Lite', 'woocommerce-abandoned-cart' ); ?>" style="width:500px;">
-            </div>
 
             <div class="content feature-section-item last-feature">
                 <h3><?php esc_html_e( 'Capture Visitor Emails on click of Add to Cart button', 'woocommerce-abandoned-cart' ); ?></h3>

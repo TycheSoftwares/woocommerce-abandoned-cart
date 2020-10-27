@@ -194,7 +194,7 @@ class Wcal_TS_Welcome {
 		$ts_file_path    = plugin_dir_url( __FILE__ ) ; 
 		// Badge for welcome page
 		$badge_url = $ts_file_path . '/assets/images/icon-256x256.png';		
-		
+	/*	
 		ob_start();
         wc_get_template( 'welcome/welcome-page.php', array(
         	'plugin_name'        => self::$plugin_name,
@@ -206,7 +206,7 @@ class Wcal_TS_Welcome {
             'get_welcome_header' => $this->get_welcome_header()
         ),  self::$plugin_folder, self::$template_base );
         echo ob_get_clean();
-
+	*/
 		add_option( self::$plugin_prefix . '_pro_welcome_page_shown', 'yes' );
 		add_option( self::$plugin_prefix . '_pro_welcome_page_shown_time', current_time( 'timestamp' ) );
 	}
