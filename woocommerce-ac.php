@@ -1835,13 +1835,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				return;
 			} else {
 				wp_enqueue_script( 'jquery' );
-				wp_enqueue_script(
-					'jquery-ui-min',
-					 plugins_url( '/assets/js/jquery-ui.min.js', __FILE__ ),
-					'',
-					'',
-					false
-				);
+				wp_enqueue_script( 'jquery-ui-core' );
+
 				wp_enqueue_script( 'jquery-ui-datepicker' );
 				wp_enqueue_script(
 								   'jquery-tip',
