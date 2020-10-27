@@ -31,16 +31,15 @@ class Wcal_Admin_Notice {
 
 		if ( isset( $_GET['page'] ) && 'woocommerce_ac_page' === $_GET['page'] ) {
 
-			if ( ! get_option( 'wcal_scheduler_update_dismiss', FALSE ) ) {
+			if ( ! get_option( 'wcal_scheduler_update_dismiss', false ) ) {
 				$post_link = '<a href="https://www.tychesoftwares.com/moving-to-the-action-scheduler-library/?utm_source=AcLiteNotice&utm_medium=link&utm_campaign=AbandonCartLite" target="_blank">here</a>';
 				?>
 					<div id='wcal_cron_notice' class='is-dismissible notice notice-info wcal-cron-notice'>
 						<p><?php _e( "The <b>Abandoned Cart Lite for WooCommerce</b> now uses the Action Scheduler library to send reminders. For further details, please visit $post_link.", 'woocommerce-abandoned-cart' ); ?></p>
 					</div>
-				<?php	
+				<?php
 			}
 		}
-		
 
 		if ( isset( $_GET['ac_update'] ) && 'email_templates' === $_GET['ac_update'] ) {
 			return;

@@ -932,8 +932,8 @@ class wcal_common {
 	/**
 	 * Returns formatted price.
 	 *
-	 * @param float   $price - Price to be formatted
-	 * @param string  $currency - Currency.
+	 * @param float  $price - Price to be formatted
+	 * @param string $currency - Currency.
 	 * @return string $price - Formatted price with currency symbol.
 	 * @since 5.6
 	 */
@@ -941,7 +941,7 @@ class wcal_common {
 
 		if ( function_exists( 'icl_object_id' ) && isset( $currency ) && $currency !== '' ) {
 			return wc_price( $price, array( 'currency' => $currency ) );
-		}else{
+		} else {
 			return wc_price( $price );
 		}
 	}
@@ -949,30 +949,30 @@ class wcal_common {
 	/**
 	 * Returns the user role for registered users.
 	 *
-	 * @param int    $uid - user ID.
+	 * @param int $uid - user ID.
 	 * @return array $roles - List of roles.
 	 * @since 5.6
 	 */
-	public  static function wcal_get_user_role( $uid ) {
+	public static function wcal_get_user_role( $uid ) {
 		global $wpdb;
-		$role = $wpdb->get_var("SELECT meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'wp_capabilities' AND user_id = {$uid}");
-		
-		if( !$role ){
-		  return '';  
-		} 
-		$rarr  = unserialize($role);
-		
-		$roles = is_array($rarr) ? array_keys( $rarr ) : array('non-user');
+		$role = $wpdb->get_var( "SELECT meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'wp_capabilities' AND user_id = {$uid}" );
+
+		if ( ! $role ) {
+			return '';
+		}
+		$rarr = unserialize( $role );
+
+		$roles = is_array( $rarr ) ? array_keys( $rarr ) : array( 'non-user' );
 
 		/**
-		 * When store have the wpml it have so many user roles to fix the user role for admin we have applied this fix. 
-		 */ 
-		if ( in_array( 'administrator' , $roles) ){
-			
+		 * When store have the wpml it have so many user roles to fix the user role for admin we have applied this fix.
+		 */
+		if ( in_array( 'administrator', $roles ) ) {
+
 			$roles[0] = 'administrator';
 		}
 
-		return ucfirst ( $roles[0] );
+		return ucfirst( $roles[0] );
 	}
 
 	/**
@@ -1006,7 +1006,7 @@ class wcal_common {
 		$template_id = key( $list_frequencies );
 
 		return array(
-			$template_id => array_shift( $list_frequencies )
+			$template_id => array_shift( $list_frequencies ),
 		);
 	}
 }

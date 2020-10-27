@@ -50,9 +50,9 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 	 */
 	function user_side_js() {
 
-		if( ! is_user_logged_in() ) {
+		if ( ! is_user_logged_in() ) {
 			wp_nonce_field( 'save_data', 'wcal_guest_capture_nonce' );
-			
+
 			wp_enqueue_script(
 				'wcal_guest_capture',
 				plugins_url( '../assets/js/wcal_guest_capture.min.js', __FILE__ ),
@@ -98,10 +98,10 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 	function save_data() {
 		if ( ! is_user_logged_in() ) {
 
-			if( ! isset( $_POST[ 'wcal_guest_capture_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'wcal_guest_capture_nonce'], 'save_data' ) ) {
+			if ( ! isset( $_POST['wcal_guest_capture_nonce'] ) || ! wp_verify_nonce( $_POST['wcal_guest_capture_nonce'], 'save_data' ) ) {
 				die();
 			}
-			
+
 			global $wpdb, $woocommerce;
 			if ( isset( $_POST['billing_first_name'] ) && '' !== $_POST['billing_first_name'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_first_name', sanitize_text_field( wp_unslash( $_POST['billing_first_name'] ) ) );
