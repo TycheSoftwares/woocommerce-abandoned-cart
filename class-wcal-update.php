@@ -21,17 +21,6 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 	class Wcal_Update {
 
 		/**
-		 * Add a scheduled event for updating the DB for each version update.
-		 *
-		 * @since 5.8.2
-		 */
-		public static function wcal_schedule_update_action() {
-			// In this condition, the version should be updated in each release to ensure update code is not run for first time installs.
-			if ( get_option( 'wcal_previous_version', '5.8.2' ) != WCAL_PLUGIN_VERSION && function_exists( 'as_enqueue_async_action' ) && false === as_next_scheduled_action( 'wcal_update_db' ) ) {
-				as_enqueue_async_action( 'wcal_update_db' );
-			}
-		}
-		/**
 		 * It will be executed when the plugin is upgraded.
 		 *
 		 * @hook admin_init
@@ -42,7 +31,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 			$wcal_previous_version = get_option( 'wcal_previous_version' );
 
-			if( wcal_common::wcal_get_version() !== $wcal_previous_version ) {
+			if ( wcal_common::wcal_get_version() !== $wcal_previous_version ) {
 				// check whether its a multi site install or a single site install.
 				if ( is_multisite() ) {
 
@@ -65,7 +54,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 					self::wcal_process_db_update();
 				}
 			}
-			
+
 		}
 
 		/**
@@ -90,7 +79,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				$wcal_previous_version = get_option( 'wcal_previous_version' );
 
 				if ( wcal_common::wcal_get_version() !== $wcal_previous_version ) {
-					update_option( 'wcal_previous_version', '5.8.2' );
+					update_option( 'wcal_previous_version', '5.7.1' );
 				}
 			} else { // multi site - child sites.
 				$wcal_guest_user_id_altered = get_blog_option( $blog_id, 'wcal_guest_user_id_altered' );
@@ -103,7 +92,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				$wcal_previous_version = get_blog_option( $blog_id, 'wcal_previous_version' );
 
 				if ( wcal_common::wcal_get_version() !== $wcal_previous_version ) {
-					update_blog_option( $blog_id, 'wcal_previous_version', '5.8.2' );
+					update_blog_option( $blog_id, 'wcal_previous_version', '5.7.1' );
 				}
 			}
 
@@ -113,7 +102,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 			 */
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '{$db_prefix}ac_guest_abandoned_cart_history_lite';" ) && 'yes' !== $wcal_guest_user_id_altered ) { //phpcs:ignore
 				$last_id = $wpdb->get_var( "SELECT max(id) FROM `{$db_prefix}ac_guest_abandoned_cart_history_lite`;" ); //phpcs:ignore
-				if ( null != $last_id && $last_id <= 63000000 ) {
+				if ( null !== $last_id && $last_id <= 63000000 ) {
 					$wpdb->query( "ALTER TABLE {$db_prefix}ac_guest_abandoned_cart_history_lite AUTO_INCREMENT = 63000000;" ); //phpcs:ignore
 
 					if ( 0 === $blog_id ) {
@@ -126,6 +115,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 			self::wcal_alter_tables( $db_prefix, $blog_id );
 			self::wcal_individual_settings( $blog_id );
+			self::wcal_cleanup( $db_prefix, $blog_id );
 
 		}
 
@@ -248,10 +238,11 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				add_option( 'wcal_add_email_status_col', 'yes' );
 				self::wcal_update_email_status( $db_prefix );
 			}
+
 		}
 
 		/**
-		 * Update the abandoned cart history lite table.
+		 * Add a new column email_reminder_status in the cart history lite table.
 		 *
 		 * @param string $db_prefix - DB prefix.
 		 * @since 5.8.2
@@ -268,16 +259,18 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 			// Mark the old carts for whom email sequences have completed as 'complete'.
 			$get_last_template        = wcal_common::wcal_get_last_email_template();
-			$template_freq            = is_array( $get_last_template ) ? array_pop( $get_last_template ) : 0;
+			$template_freq            = is_array( $get_last_template ) ? intval( array_pop( $get_last_template ) ) : 0;
 			$cron_duration            = 15 * 60;
 			$leave_carts_abandoned_in = current_time( 'timestamp' ) - ( $template_freq + $cron_duration ); // phpcs:ignore
 
 			$wpdb->query( // phpcs:ignore
-				"UPDATE " . $db_prefix . "ac_abandoned_cart_history_lite SET email_reminder_status = 'complete' WHERE abandoned_cart_time < $leave_carts_abandoned_in AND email_reminder_status = ''"  // phpcs:ignore
+				$wpdb->prepare(
+					'UPDATE ' . $db_prefix . "ac_abandoned_cart_history_lite SET email_reminder_status = 'complete' WHERE abandoned_cart_time < %s AND email_reminder_status = ''", // phpcs:ignore
+					$leave_carts_abandoned_in
+				)
 			);
-		
+
 		}
-		
 		/**
 		 * Move settings from serialized to individual.
 		 *
@@ -325,5 +318,28 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 		}
 
+		/**
+		 * Cleanup the redundant data.
+		 *
+		 * @param string $db_prefix - DB prefix to be used.
+		 * @param int    $blog_id - Blog ID (needed for multisites).
+		 */
+		public static function wcal_cleanup( $db_prefix, $blog_id ) {
+
+			global $wpdb;
+
+			if ( 0 === $blog_id ) {
+				if ( 'yes' !== get_option( 'ac_lite_delete_redundant_queries', '' ) ) {
+					$wpdb->delete( $db_prefix . 'ac_abandoned_cart_history_lite', array( 'abandoned_cart_info' => '{"cart":[]}' ) ); //phpcs:ignore
+					update_option( 'ac_lite_delete_redundant_queries', 'yes' );
+				}
+			} else {
+
+				if ( 'yes' !== get_blog_option( $blog_id, 'ac_lite_delete_redundant_queries', '' ) ) {
+					$wpdb->delete( $db_prefix . 'ac_abandoned_cart_history_lite', array( 'abandoned_cart_info' => '{"cart":[]}' ) ); //phpcs:ignore
+					update_blog_option( $blog_id, 'ac_lite_delete_redundant_queries', 'yes' );
+				}
+			}
+		}
 	}
 }
