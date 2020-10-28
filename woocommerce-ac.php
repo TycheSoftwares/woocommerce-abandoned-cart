@@ -1255,7 +1255,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					if ( 0 === count( $results ) ) {
 						$cart_info_meta         = array();
 						$cart_info_meta['cart'] = WC()->session->cart;
-						$cart_info_meta         = json_encode( $cart_info_meta );
+						$cart_info_meta         = wp_json_encode( $cart_info_meta );
 
 						if ( '' !== $cart_info_meta && '{"cart":[]}' != $cart_info_meta && '""' !== $cart_info_meta ) {
 							$cart_info    = $cart_info_meta;
@@ -1276,7 +1276,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					} elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {
 						$updated_cart_info         = array();
 						$updated_cart_info['cart'] = WC()->session->cart;
-						$updated_cart_info         = json_encode( $updated_cart_info );
+						$updated_cart_info         = wp_json_encode( $updated_cart_info );
 
 						if ( ! $this->wcal_compare_carts( $user_id, $results[0]->abandoned_cart_info ) ) {
 							$updated_cart_ignored = 1;
@@ -1308,7 +1308,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					} else {
 						$updated_cart_info         = array();
 						$updated_cart_info['cart'] = WC()->session->cart;
-						$updated_cart_info         = json_encode( $updated_cart_info );
+						$updated_cart_info         = wp_json_encode( $updated_cart_info );
 
 						$wpdb->query( //phpcs:ignore
 							$wpdb->prepare(
@@ -1351,7 +1351,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = %d AND recovered_cart = %d',
 							$user_id,
 							0,
-							0,
+							0
 						)
 					);
 					$cart    = array();
@@ -1364,7 +1364,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$cart['cart'] = $woocommerce->session->cart;
 					}
 
-					$updated_cart_info = json_encode( $cart );
+					$updated_cart_info = wp_json_encode( $cart );
 
 					if ( count( $results ) > 0 && '{"cart":[]}' != $updated_cart_info ) {
 						if ( $compare_time > $results[0]->abandoned_cart_time ) {
@@ -3305,7 +3305,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 											print '<input type="checkbox" name="is_wc_template" id="is_wc_template" ' . esc_attr( $is_wc_template ) . '>  </input>';
 											?>
 											<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'Use WooCommerce default style template for abandoned cart reminder emails.', 'woocommerce' ); ?>' src="<?php echo esc_url( WC()->plugin_url() ); ?>/assets/images/help.png" /><a target = '_blank' href= <?php echo esc_url( wp_nonce_url( admin_url( "?wcal_preview_woocommerce_mail=true&id=$edit_id" ), 'woocommerce-abandoned-cart' ) ); ?> >
-											Click here to preview </a>how the email template will look with WooCommerce Template Style enabled. Alternatively, if this is unchecked, the template will appear as <a target = '_blank' href=<?php echo wp_nonce_url( admin_url( "?wcal_preview_mail=true&id=$edit_id" ), 'woocommerce-abandoned-cart' ); ?>>shown here</a>. <br> <strong>Note: </strong>When this setting is enabled, then "Send From This Name:" & "Send From This Email Address:" will be overwritten with WooCommerce -> Settings -> Email -> Email Sender Options.
+											Click here to preview </a>how the email template will look with WooCommerce Template Style enabled. Alternatively, if this is unchecked, the template will appear as <a target = '_blank' href=<?php echo esc_url( wp_nonce_url( admin_url( "?wcal_preview_mail=true&id=$edit_id" ), 'woocommerce-abandoned-cart' ) ); ?>>shown here</a>. <br> <strong>Note: </strong>When this setting is enabled, then "Send From This Name:" & "Send From This Email Address:" will be overwritten with WooCommerce -> Settings -> Email -> Email Sender Options.
 										</td>
 									</tr>
 
