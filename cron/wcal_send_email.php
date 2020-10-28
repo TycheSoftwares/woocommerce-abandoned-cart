@@ -177,7 +177,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 
 										$wcap_check_cart_staus_need_to_update = false;
 
-										$wc_order_status = $results_wcal_check_if_cart_is_present_in_post_meta[0]->post_status;
+										$wc_order_status = isset( $results_wcal_check_if_cart_is_present_in_post_meta[0]->post_status ) ? $results_wcal_check_if_cart_is_present_in_post_meta[0]->post_status : '';
 										if ( empty( $results_wcal_check_if_cart_is_present_in_post_meta ) ||
 										( isset( $results_wcal_check_if_cart_is_present_in_post_meta[0] ) &&
 										'wc-failed' !== $wc_order_status && 'wc-pending' !== $wc_order_status ) ) {
