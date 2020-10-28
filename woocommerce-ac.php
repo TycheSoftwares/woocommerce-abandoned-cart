@@ -1621,7 +1621,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					session_start();
 				}
 				global $wpdb;
-				$validate_server_string  = isset( $_GET ['validate'] ) ? rawurldecode( esc_url_raw( wp_unslash( $_GET ['validate'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$validate_server_string  = isset( $_GET ['validate'] ) ? rawurldecode( wp_unslash( $_GET ['validate'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				$validate_server_string  = str_replace( ' ', '+', $validate_server_string );
 				$validate_encoded_string = $validate_server_string;
 				$crypt_key                = get_option( 'wcal_security_key' );
@@ -1675,7 +1675,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							$user_id
 						)
 					);
-					if ( '0' == $results_guest && $results[0]->recovered_cart ) {
+					if ( $results_guest && '0' == $results[0]->recovered_cart ) { // phpcs:ignore
 						wcal_common::wcal_set_cart_session( 'guest_first_name', $results_guest[0]->billing_first_name );
 						wcal_common::wcal_set_cart_session( 'guest_last_name', $results_guest[0]->billing_last_name );
 						wcal_common::wcal_set_cart_session( 'guest_email', $results_guest[0]->email_id );
@@ -2821,11 +2821,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								<?php
 								printf(
 									// translators: All counts of items & amounts.
-									esc_html__( 'During the selected range <strong>%1$d</strong> carts totaling <strong>%2$s</strong> were abandoned. We were able to recover <strong>%3$d</strong> of them, which led to an extra <strong>%4$s</strong>', 'woocommerce-abandoned-cart' ),
+									wp_kses_post(
+										__( 'During the selected range <strong>%1$d</strong> carts totaling <strong>%2$s</strong> were abandoned. We were able to recover <strong>%3$d</strong> of them, which led to an extra <strong>%4$s</strong>', 'woocommerce-abandoned-cart' )
+									),
 									esc_attr( $count ),
-									esc_attr( $total_of_all_order ),
+									wp_kses_post( $total_of_all_order ),
 									esc_attr( $recovered_item ),
-									esc_attr( $recovered_total )
+									wp_kses_post( $recovered_total )
 								);
 								?>
 							</p>
