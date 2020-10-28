@@ -50,9 +50,9 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 	 */
 	function user_side_js() {
 
-		if( ! is_user_logged_in() ) {
+		if ( ! is_user_logged_in() ) {
 			wp_nonce_field( 'save_data', 'wcal_guest_capture_nonce' );
-			
+
 			wp_enqueue_script(
 				'wcal_guest_capture',
 				plugins_url( '../assets/js/wcal_guest_capture.min.js', __FILE__ ),
@@ -98,10 +98,10 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 	function save_data() {
 		if ( ! is_user_logged_in() ) {
 
-			if( ! isset( $_POST[ 'wcal_guest_capture_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'wcal_guest_capture_nonce'], 'save_data' ) ) {
+			if ( ! isset( $_POST['wcal_guest_capture_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wcal_guest_capture_nonce'] ) ), 'save_data' ) ) {
 				die();
 			}
-			
+
 			global $wpdb, $woocommerce;
 			if ( isset( $_POST['billing_first_name'] ) && '' !== $_POST['billing_first_name'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_first_name', sanitize_text_field( wp_unslash( $_POST['billing_first_name'] ) ) );
@@ -113,61 +113,61 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 				wcal_common::wcal_set_cart_session( 'billing_company', sanitize_text_field( wp_unslash( $_POST['billing_company'] ) ) );
 			}
 			if ( isset( $_POST['billing_address_1'] ) && $_POST['billing_address_1'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'billing_address_1', sanitize_text_field( $_POST['billing_address_1'] ) );
+				wcal_common::wcal_set_cart_session( 'billing_address_1', sanitize_text_field( wp_unslash( $_POST['billing_address_1'] ) ) );
 			}
 			if ( isset( $_POST['billing_address_2'] ) && $_POST['billing_address_2'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'billing_address_2', sanitize_text_field( $_POST['billing_address_2'] ) );
+				wcal_common::wcal_set_cart_session( 'billing_address_2', sanitize_text_field( wp_unslash( $_POST['billing_address_2'] ) ) );
 			}
 			if ( isset( $_POST['billing_city'] ) && $_POST['billing_city'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'billing_city', sanitize_text_field( $_POST['billing_city'] ) );
+				wcal_common::wcal_set_cart_session( 'billing_city', sanitize_text_field( wp_unslash( $_POST['billing_city'] ) ) );
 			}
 			if ( isset( $_POST['billing_state'] ) && $_POST['billing_state'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'billing_state', sanitize_text_field( $_POST['billing_state'] ) );
+				wcal_common::wcal_set_cart_session( 'billing_state', sanitize_text_field( wp_unslash( $_POST['billing_state'] ) ) );
 			}
 			if ( isset( $_POST['billing_postcode'] ) && $_POST['billing_postcode'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'billing_postcode', sanitize_text_field( $_POST['billing_postcode'] ) );
+				wcal_common::wcal_set_cart_session( 'billing_postcode', sanitize_text_field( wp_unslash( $_POST['billing_postcode'] ) ) );
 			}
 			if ( isset( $_POST['billing_country'] ) && $_POST['billing_country'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'billing_country', sanitize_text_field( $_POST['billing_country'] ) );
+				wcal_common::wcal_set_cart_session( 'billing_country', sanitize_text_field( wp_unslash( $_POST['billing_country'] ) ) );
 			}
 			if ( isset( $_POST['billing_email'] ) && $_POST['billing_email'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'billing_email', sanitize_text_field( $_POST['billing_email'] ) );
+				wcal_common::wcal_set_cart_session( 'billing_email', sanitize_text_field( wp_unslash( $_POST['billing_email'] ) ) );
 			}
 			if ( isset( $_POST['billing_phone'] ) && $_POST['billing_phone'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'billing_phone', sanitize_text_field( $_POST['billing_phone'] ) );
+				wcal_common::wcal_set_cart_session( 'billing_phone', sanitize_text_field( wp_unslash( $_POST['billing_phone'] ) ) );
 			}
 			if ( isset( $_POST['order_notes'] ) && $_POST['order_notes'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'order_notes', sanitize_text_field( $_POST['order_notes'] ) );
+				wcal_common::wcal_set_cart_session( 'order_notes', sanitize_text_field( wp_unslash( $_POST['order_notes'] ) ) );
 			}
 			if ( isset( $_POST['ship_to_billing'] ) && $_POST['ship_to_billing'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'ship_to_billing', sanitize_text_field( $_POST['ship_to_billing'] ) );
+				wcal_common::wcal_set_cart_session( 'ship_to_billing', sanitize_text_field( wp_unslash( $_POST['ship_to_billing'] ) ) );
 			}
 			if ( isset( $_POST['shipping_first_name'] ) && $_POST['shipping_first_name'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'shipping_first_name', sanitize_text_field( $_POST['shipping_first_name'] ) );
+				wcal_common::wcal_set_cart_session( 'shipping_first_name', sanitize_text_field( wp_unslash( $_POST['shipping_first_name'] ) ) );
 			}
 			if ( isset( $_POST['shipping_last_name'] ) && $_POST['shipping_last_name'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'shipping_last_name', sanitize_text_field( $_POST['shipping_last_name'] ) );
+				wcal_common::wcal_set_cart_session( 'shipping_last_name', sanitize_text_field( wp_unslash( $_POST['shipping_last_name'] ) ) );
 			}
 			if ( isset( $_POST['shipping_company'] ) && $_POST['shipping_company'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'shipping_company', sanitize_text_field( $_POST['shipping_company'] ) );
+				wcal_common::wcal_set_cart_session( 'shipping_company', sanitize_text_field( wp_unslash( $_POST['shipping_company'] ) ) );
 			}
 			if ( isset( $_POST['shipping_address_1'] ) && $_POST['shipping_address_1'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'shipping_address_1', sanitize_text_field( $_POST['shipping_address_1'] ) );
+				wcal_common::wcal_set_cart_session( 'shipping_address_1', sanitize_text_field( wp_unslash( $_POST['shipping_address_1'] ) ) );
 			}
 			if ( isset( $_POST['shipping_address_2'] ) && $_POST['shipping_address_2'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'shipping_address_2', sanitize_text_field( $_POST['shipping_address_2'] ) );
+				wcal_common::wcal_set_cart_session( 'shipping_address_2', sanitize_text_field( wp_unslash( $_POST['shipping_address_2'] ) ) );
 			}
 			if ( isset( $_POST['shipping_city'] ) && $_POST['shipping_city'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'shipping_city', sanitize_text_field( $_POST['shipping_city'] ) );
+				wcal_common::wcal_set_cart_session( 'shipping_city', sanitize_text_field( wp_unslash( $_POST['shipping_city'] ) ) );
 			}
 			if ( isset( $_POST['shipping_state'] ) && $_POST['shipping_state'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'shipping_state', sanitize_text_field( $_POST['shipping_state'] ) );
+				wcal_common::wcal_set_cart_session( 'shipping_state', sanitize_text_field( wp_unslash( $_POST['shipping_state'] ) ) );
 			}
 			if ( isset( $_POST['shipping_postcode'] ) && $_POST['shipping_postcode'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'shipping_postcode', sanitize_text_field( $_POST['shipping_postcode'] ) );
+				wcal_common::wcal_set_cart_session( 'shipping_postcode', sanitize_text_field( wp_unslash( $_POST['shipping_postcode'] ) ) );
 			}
 			if ( isset( $_POST['shipping_country'] ) && $_POST['shipping_country'] != '' ) {
-				wcal_common::wcal_set_cart_session( 'shipping_country', sanitize_text_field( $_POST['shipping_country'] ) );
+				wcal_common::wcal_set_cart_session( 'shipping_country', sanitize_text_field( wp_unslash( $_POST['shipping_country'] ) ) );
 			}
 			// If a record is present in the guest cart history table for the same email id, then delete the previous records
 			$query_guest   = 'SELECT id FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite` 
