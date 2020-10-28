@@ -541,8 +541,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 					$wcal_add_template_condition
 					ORDER BY `id` ASC ",
 					$cart_ignored,
-					$cart_time,
-					$unsubscribe
+					$unsubscribe,
+					$cart_time
 				)
 			);
 			return $results;
