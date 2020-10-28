@@ -3622,7 +3622,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$subject_email_preview = isset( $_POST['subject_email_preview'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_POST['subject_email_preview'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				$subject_email_preview = convert_smilies( $subject_email_preview );
 				$subject_email_preview = str_ireplace( '{{customer.firstname}}', 'John', $subject_email_preview );
-				$body_email_preview    = isset( $_POST['body_email_preview'] ) ? convert_smilies( sanitize_text_field( wp_unslash( $_POST['body_email_preview'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$body_email_preview    = isset( $_POST['body_email_preview'] ) ? convert_smilies( wp_unslash( $_POST['body_email_preview'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				$is_wc_template        = isset( $_POST['is_wc_template'] ) ? sanitize_text_field( wp_unslash( $_POST['is_wc_template'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				$wc_template_header    = isset( $_POST['wc_template_header'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_POST['wc_template_header'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
