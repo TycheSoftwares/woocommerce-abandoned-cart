@@ -2821,11 +2821,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								<?php
 								printf(
 									// translators: All counts of items & amounts.
-									esc_html__( 'During the selected range <strong>%1$d</strong> carts totaling <strong>%2$s</strong> were abandoned. We were able to recover <strong>%3$d</strong> of them, which led to an extra <strong>%4$s</strong>', 'woocommerce-abandoned-cart' ),
+									wp_kses_post(
+										__( 'During the selected range <strong>%1$d</strong> carts totaling <strong>%2$s</strong> were abandoned. We were able to recover <strong>%3$d</strong> of them, which led to an extra <strong>%4$s</strong>', 'woocommerce-abandoned-cart' )
+									),
 									esc_attr( $count ),
-									esc_attr( $total_of_all_order ),
+									wp_kses_post( $total_of_all_order ),
 									esc_attr( $recovered_item ),
-									esc_attr( $recovered_total )
+									wp_kses_post( $recovered_total )
 								);
 								?>
 							</p>
