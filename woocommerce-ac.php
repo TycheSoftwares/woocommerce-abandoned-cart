@@ -2523,7 +2523,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$insert_template_successfuly = '';
 					$update_template_successfuly = '';
 					$woocommerce_ac_email_subject = isset( $_POST['woocommerce_ac_email_subject'] ) ? trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_email_subject'] ) ) ), ENT_QUOTES ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-					$woocommerce_ac_email_body    = isset( $_POST['woocommerce_ac_email_body'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_email_body'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+					$woocommerce_ac_email_body    = isset( $_POST['woocommerce_ac_email_body'] ) ? trim( wp_unslash( $_POST['woocommerce_ac_email_body'] ) ) : ''; // phpcs:ignore
 					$woocommerce_ac_template_name = isset( $_POST['woocommerce_ac_template_name'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_template_name'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					$woocommerce_ac_email_header  = isset( $_POST['wcal_wc_email_header'] ) ? stripslashes( trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['wcal_wc_email_header'] ) ) ), ENT_QUOTES ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
