@@ -2763,7 +2763,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 											$sel = ' selected ';
 										}
 										printf(
-											wp_kses_post( '<option value="%s" %s> %s </option>' ),
+											'<option value="%s" %s> %s </option>',
 											esc_attr( $key ),
 											esc_attr( $sel ),
 											esc_attr( $value )
