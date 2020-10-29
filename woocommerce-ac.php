@@ -1246,7 +1246,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 					$results = $wpdb->get_results( // phpcs:ignore
 						$wpdb->prepare(
-							'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = %s AND recovered_cart = %d',
+							'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = %s AND recovered_cart = %s',
 							$user_id,
 							$cart_ignored,
 							$recovered_cart
@@ -1322,7 +1322,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 						$get_abandoned_record = $wpdb->get_results( //phpcs:ignore
 							$wpdb->prepare(
-								'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = %d',
+								'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = %s',
 								$user_id,
 								0
 							)
@@ -1348,7 +1348,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				if ( $gdpr_consent && $user_id > 0 ) {
 					$results = $wpdb->get_results( //phpcs:ignore
 						$wpdb->prepare(
-							'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = %d AND recovered_cart = %d',
+							'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = %s AND recovered_cart = %s',
 							$user_id,
 							0,
 							0
@@ -1372,7 +1372,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 								$wpdb->query( //phpcs:ignore
 									$wpdb->prepare(
-										'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET cart_ignored = %d WHERE user_id = %s',
+										'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET cart_ignored = %s WHERE user_id = %s',
 										1,
 										$user_id
 									)
@@ -1395,7 +1395,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						} else {
 							$wpdb->query( //phpcs:ignore
 								$wpdb->prepare(
-									'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET abandoned_cart_info = %s, abandoned_cart_time = %s WHERE user_id = %d AND cart_ignored = %d',
+									'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET abandoned_cart_info = %s, abandoned_cart_time = %s WHERE user_id = %d AND cart_ignored = %s',
 									$updated_cart_info,
 									$current_time,
 									$user_id,
@@ -1408,7 +1408,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						if ( 'on' === $track_guest_user_cart_from_cart && isset( $get_cookie ) && '' !== $get_cookie ) {
 							$results = $wpdb->get_results( //phpcs:ignore
 								$wpdb->prepare(
-									'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE session_id LIKE %s AND cart_ignored = %d AND recovered_cart = %d',
+									'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE session_id LIKE %s AND cart_ignored = %s AND recovered_cart = %s',
 									$get_cookie,
 									0,
 									0
@@ -1437,7 +1437,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 									if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {
 										$wpdb->query( // phpcs:ignore
 											$wpdb->prepare(
-												'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET cart_ignored = %d WHERE session_id = %s',
+												'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET cart_ignored = %s WHERE session_id = %s',
 												1,
 												$get_cookie
 											)
@@ -1580,7 +1580,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 					$wpdb->query( //phpcs:ignore
 						$wpdb->prepare(
-							'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET unsubscribe_link = %s WHERE user_id= %d AND cart_ignored = %d',
+							'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET unsubscribe_link = %s WHERE user_id= %d AND cart_ignored = %s',
 							1,
 							$user_id,
 							0
@@ -2523,7 +2523,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$insert_template_successfuly = '';
 					$update_template_successfuly = '';
 					$woocommerce_ac_email_subject = isset( $_POST['woocommerce_ac_email_subject'] ) ? trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_email_subject'] ) ) ), ENT_QUOTES ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-					$woocommerce_ac_email_body    = isset( $_POST['woocommerce_ac_email_body'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_email_body'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+					$woocommerce_ac_email_body    = isset( $_POST['woocommerce_ac_email_body'] ) ? trim( wp_unslash( $_POST['woocommerce_ac_email_body'] ) ) : ''; // phpcs:ignore
 					$woocommerce_ac_template_name = isset( $_POST['woocommerce_ac_template_name'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_template_name'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					$woocommerce_ac_email_header  = isset( $_POST['wcal_wc_email_header'] ) ? stripslashes( trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['wcal_wc_email_header'] ) ) ), ENT_QUOTES ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
@@ -2763,7 +2763,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 											$sel = ' selected ';
 										}
 										printf(
-											wp_kses_post( '<option value="%s" %s> %s </option>' ),
+											'<option value="%s" %s> %s </option>',
 											esc_attr( $key ),
 											esc_attr( $sel ),
 											esc_attr( $value )
