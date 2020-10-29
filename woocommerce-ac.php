@@ -1345,11 +1345,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$gdpr_consent = false;
 				}
 
-				if ( $gdpr_consent && $user_id > 0 ) {
+				if ( $gdpr_consent ) {
 					$results = $wpdb->get_results( //phpcs:ignore
 						$wpdb->prepare(
-							'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = %s AND recovered_cart = %s',
+							'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = %s AND recovered_cart = %s AND user_id != %s',
 							$user_id,
+							0,
 							0,
 							0
 						)
