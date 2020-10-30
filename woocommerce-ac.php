@@ -2315,7 +2315,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 				// Detect when a bulk action is being triggered on templates page.
 				if ( 'wcal_delete_template' === $action || 'wcal_delete_template' === $action_two ) {
-					$ids = isset( $_GET['template_id'] ) ? sanitize_text_field( wp_unslash( $_GET['template_id'] ) ) : false;  // phpcs:ignore WordPress.Security.NonceVerification
+					$ids = isset( $_GET['template_id'] ) && is_array( $_GET['template_id'] ) ? array_map( 'intval', wp_unslash( $_GET['template_id'] ) ) : sanitize_text_field( wp_unslash( $_GET['template_id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
 					if ( ! is_array( $ids ) ) {
 						$ids = array( $ids );
 					}
