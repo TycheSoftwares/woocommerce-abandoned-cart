@@ -2077,7 +2077,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					WCAL_PLUGIN_VERSION,
 					false
 				);
-				wp_register_script( 'woocommerce_admin', WC()->plugin_url() . '/woocommerce/assets/js/admin/woocommerce_admin.min.js', array( 'jquery', 'jquery-tiptip' ), WCAL_PLUGIN_VERSION, false );
+				wp_register_script( 'woocommerce_admin', WC()->plugin_url() . '/assets/js/admin/woocommerce_admin.min.js', array( 'jquery', 'jquery-tiptip' ), WCAL_PLUGIN_VERSION, false );
 				wp_enqueue_script( 'woocommerce_admin');
 				$locale  = localeconv();
 				$decimal = isset( $locale['decimal_point'] ) ? $locale['decimal_point'] : '.';
