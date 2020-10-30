@@ -164,7 +164,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 
 										$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_results( // phpcs:ignore
 											$wpdb->prepare(
-												"SELECT wpm.post_id, wpost.post_date, wpost.post_status  FROM `' . $wpdb->prefix . 'postmeta` AS wpm
+												"SELECT wpm.post_id, wpost.post_date, wpost.post_status  FROM `" . $wpdb->prefix . "postmeta` AS wpm
 												LEFT JOIN `" . $wpdb->prefix . "posts` AS wpost
 												ON wpm.post_id = wpost.ID
 												WHERE wpm.meta_key = 'wcal_recover_order_placed' AND
