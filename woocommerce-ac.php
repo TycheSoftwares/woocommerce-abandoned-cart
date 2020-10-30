@@ -2077,6 +2077,32 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					WCAL_PLUGIN_VERSION,
 					false
 				);
+				wp_register_script( 'woocommerce_admin', WC()->plugin_url() . '/woocommerce/assets/js/admin/woocommerce_admin.min.js', array( 'jquery', 'jquery-tiptip' ), WCAL_PLUGIN_VERSION, false );
+				wp_enqueue_script( 'woocommerce_admin');
+				$locale  = localeconv();
+				$decimal = isset( $locale['decimal_point'] ) ? $locale['decimal_point'] : '.';
+				$params  = array(
+					// translators: %s: decimal.
+					'i18n_decimal_error'                => sprintf( __( 'Please enter in decimal (%s) format without thousand separators.', 'woocommerce' ), $decimal ),
+					// translators: %s: price decimal separator.
+					'i18n_mon_decimal_error'            => sprintf( __( 'Please enter in monetary decimal (%s) format without thousand separators and currency symbols.', 'woocommerce' ), wc_get_price_decimal_separator() ),
+					'i18n_country_iso_error'            => __( 'Please enter in country code with two capital letters.', 'woocommerce' ),
+					'i18_sale_less_than_regular_error'  => __( 'Please enter in a value less than the regular price.', 'woocommerce' ),
+					'decimal_point'                     => $decimal,
+					'mon_decimal_point'                 => wc_get_price_decimal_separator(),
+					'strings' => array(
+						'import_products' => __( 'Import', 'woocommerce' ),
+						'export_products' => __( 'Export', 'woocommerce' ),
+					),
+					'urls' => array(
+						'import_products' => esc_url_raw( admin_url( 'edit.php?post_type=product&page=product_importer' ) ),
+						'export_products' => esc_url_raw( admin_url( 'edit.php?post_type=product&page=product_exporter' ) ),
+					),
+				);
+				
+				// If we dont localize this script then from the WooCommerce check it will not run the javascript further and tooltip wont show any data.
+				// Also, we need above all parameters for the WooCoomerce js file. So we have taken it from the WooCommerce. @since: 5.1.2
+				wp_localize_script( 'woocommerce_admin', 'woocommerce_admin', $params );
 				?>
 				<script type="text/javascript" >
 					function wcal_activate_email_template( template_id, active_state ) {
@@ -2315,7 +2341,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 				// Detect when a bulk action is being triggered on templates page.
 				if ( 'wcal_delete_template' === $action || 'wcal_delete_template' === $action_two ) {
-					$ids = isset( $_GET['template_id'] ) ? sanitize_text_field( wp_unslash( $_GET['template_id'] ) ) : false;  // phpcs:ignore WordPress.Security.NonceVerification
+					$ids = isset( $_GET['template_id'] ) && is_array( $_GET['template_id'] ) ? array_map( 'intval', wp_unslash( $_GET['template_id'] ) ) : sanitize_text_field( wp_unslash( $_GET['template_id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
 					if ( ! is_array( $ids ) ) {
 						$ids = array( $ids );
 					}
