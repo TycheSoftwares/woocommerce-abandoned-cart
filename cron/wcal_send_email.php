@@ -308,7 +308,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 
 														if ( class_exists( 'WP_Better_Emails' ) ) {
 															$var = '<table width = 100% style="margin-right: auto; margin-left:auto;">
-                                                                <tr> <td colspan="5"> <h3>' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
+                                                                <tr> <td colspan="5"> <h3 style="text-align:center">' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
                                                                 <tr>
                                                                 <th>' . __( 'Item', 'woocommerce-abandoned-cart' ) . '</th>
                                                                 <th>' . __( 'Name', 'woocommerce-abandoned-cart' ) . '</th>
@@ -318,7 +318,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
                                                                 </tr>';
 														} else {
 															$var = '<table border="0" cellpadding="10" cellspacing="0" class="templateDataTable" style="margin-right: auto; margin-left:auto;">
-                                                            <tr> <td colspan="5"> <h3>' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
+                                                            <tr> <td colspan="5"> <h3 style="text-align:center">' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
                                                                 <tr>
                                                                 <th>' . __( 'Item', 'woocommerce-abandoned-cart' ) . '</th>
                                                                 <th>' . __( 'Name', 'woocommerce-abandoned-cart' ) . '</th>
