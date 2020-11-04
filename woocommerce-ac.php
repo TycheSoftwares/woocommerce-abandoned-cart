@@ -16,22 +16,22 @@
  */
 
 require_once 'class-wcal-update.php';
-require_once 'includes/wcal_class-guest.php';
+require_once 'includes/class-wcal-guest-ac.php';
 require_once 'includes/class-wcal-default-template-settings.php';
 require_once 'includes/class-wcal-delete-handler.php';
 require_once 'includes/classes/class-wcal-aes.php';
 require_once 'includes/classes/class-wcal-aes-counter.php';
-require_once 'includes/wcal-common.php';
+require_once 'includes/class-wcal-common.php';
 
 require_once 'includes/class-wcal-admin-notice.php';
-require_once 'includes/wcal_data_tracking_message.php';
+require_once 'includes/class-wcal-tracking-msg.php';
 require_once 'includes/admin/class-wcal-personal-data-eraser.php';
-require_once 'includes/admin/class-wcal-privacy-export.php';
+require_once 'includes/admin/class-wcal-personal-data-export.php';
 require_once 'includes/admin/class-wcal-abandoned-cart-details.php';
 
-require_once 'includes/admin/wcap_pro_settings.php';
-require_once 'includes/admin/wcap_pro_settings_callbacks.php';
-require_once 'includes/admin/wcap_add_cart_popup_modal.php';
+require_once 'includes/admin/class-wcap-pro-settings.php';
+require_once 'includes/admin/class-wcap-pro-settings-callbacks.php';
+require_once 'includes/admin/class-wcap-add-cart-popup-modal.php';
 
 load_plugin_textdomain( 'woocommerce-abandoned-cart', false, basename( dirname( __FILE__ ) ) . '/i18n/languages' );
 
@@ -174,8 +174,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			// Action Scheduler for Cron.
 			require_once 'includes/libraries/action-scheduler/action-scheduler.php';
 			add_action( 'init', array( &$this, 'wcal_add_scheduled_action' ) );
-			require_once 'cron/wcal_send_email.php';
-			require_once 'includes/wcal_process_base.php';
+			require_once 'cron/class-wcal-cron.php';
+			require_once 'includes/class-wcal-process-base.php';
 
 			// WordPress Administration Menu.
 			add_action( 'admin_menu', array( &$this, 'wcal_admin_menu' ) );
@@ -240,7 +240,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			add_action( 'admin_notices', array( 'Wcal_Admin_Notice', 'wcal_show_db_update_notice' ) );
 
-			include_once 'includes/frontend/wcal_frontend.php';
+			include_once 'includes/frontend/class-wcal-frontend.php';
 		}
 
 		/**
@@ -274,7 +274,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public static function wcal_add_component_file() {
 			if ( is_admin() ) {
-				require_once 'includes/wcal_all_component.php';
+				require_once 'includes/class-wcal-all-component.php';
 
 			}
 		}
@@ -653,7 +653,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 			} else {
 				if ( ! get_blog_option( $blog_id, 'wcal_new_default_templates' ) ) {
-					if ( 0 == $check_table_empty ) {
+					if ( 0 === $check_table_empty ) {
 						$default_template = new Wcal_Default_Template_Settings();
 						$default_template->wcal_create_default_templates( $db_prefix, $blog_id );
 					}
@@ -936,7 +936,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public function ac_lite_cart_time_validation( $input ) {
 			$output = '';
-			if ( '' != $input && ( is_numeric( $input ) && $input > 0 ) ) {
+			if ( '' != $input && ( is_numeric( $input ) && $input > 0 ) ) { // phpcs:ignore
 				$output = stripslashes( $input );
 			} else {
 				add_settings_error( 'ac_lite_cart_abandoned_time', 'error found', __( 'Abandoned cart cut off time should be numeric and has to be greater than 0.', 'woocommerce-abandoned-cart' ) );
@@ -953,7 +953,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public static function wcal_delete_days_validation( $input ) {
 			$output = '';
-			if ( '' == $input || ( is_numeric( $input ) && $input > 0 ) ) {
+			if ( '' == $input || ( is_numeric( $input ) && $input > 0 ) ) { // phpcS:ignore
 				$output = stripslashes( $input );
 			} else {
 				add_settings_error( 'ac_lite_delete_abandoned_order_days', 'error found', __( 'Automatically Delete Abandoned Orders after X days has to be greater than 0.', 'woocommerce-abandoned-cart' ) );
@@ -989,10 +989,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public function ac_lite_email_admin_on_recovery( $args ) {
 			// First, we read the option.
-			$email_admin_on_recovery = get_option( 'ac_lite_email_admin_on_recovery' );
+			$email_admin_on_recovery = get_option( 'ac_lite_email_admin_on_recovery', '' );
 
 			// This condition added to avoid the notie displyed while Check box is unchecked.
-			if ( isset( $email_admin_on_recovery ) && '' == $email_admin_on_recovery ) {
+			if ( isset( $email_admin_on_recovery ) && '' === $email_admin_on_recovery ) {
 				$email_admin_on_recovery = 'off';
 			}
 			// Next, we update the name attribute to access this element's ID in the context of the display options array.
@@ -1212,7 +1212,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			global $wpdb,$woocommerce;
-			$current_time                    = current_time( 'timestamp' );
+			$current_time                    = current_time( 'timestamp' ); // phpcs:ignore
 			$cut_off_time                    = get_option( 'ac_lite_cart_abandoned_time' );
 			$track_guest_cart_from_cart_page = get_option( 'ac_lite_track_guest_cart_from_cart_page' );
 			$cart_ignored                    = 0;
@@ -1257,9 +1257,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$cart_info_meta['cart'] = WC()->session->cart;
 						$cart_info_meta         = wp_json_encode( $cart_info_meta );
 
-						if ( '' !== $cart_info_meta && '{"cart":[]}' != $cart_info_meta && '""' !== $cart_info_meta ) {
-							$cart_info    = $cart_info_meta;
-							$user_type    = 'REGISTERED';
+						if ( '' !== $cart_info_meta && '{"cart":[]}' !== $cart_info_meta && '""' !== $cart_info_meta ) {
+							$cart_info = $cart_info_meta;
+							$user_type = 'REGISTERED';
 							$wpdb->query( //phpcs:ignore
 								$wpdb->prepare(
 									'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` ( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type ) VALUES ( %d, %s, %d, %s, %s )',
@@ -1367,7 +1367,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 					$updated_cart_info = wp_json_encode( $cart );
 
-					if ( count( $results ) > 0 && '{"cart":[]}' != $updated_cart_info ) {
+					if ( count( $results ) > 0 && '{"cart":[]}' !== $updated_cart_info ) {
 						if ( $compare_time > $results[0]->abandoned_cart_time ) {
 							if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {
 
@@ -1415,10 +1415,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 									0
 								)
 							);
-							if ( 0 == count( $results ) ) {
+							if ( 0 === count( $results ) ) {
 								$cart_info       = $updated_cart_info;
 								$blank_cart_info = '[]';
-								if ( $blank_cart_info != $cart_info && '{"cart":[]}' != $cart_info ) {
+								if ( $blank_cart_info !== $cart_info && '{"cart":[]}' !== $cart_info ) {
 									$wpdb->query( //phpcs:ignore
 										$wpdb->prepare(
 											'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` ( abandoned_cart_info , abandoned_cart_time , cart_ignored , recovered_cart, user_type, session_id  ) VALUES ( %s, %s, %s, %s, %s, %s )',
@@ -1434,7 +1434,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								}
 							} elseif ( $compare_time > $results[0]->abandoned_cart_time ) {
 								$blank_cart_info = '[]';
-								if ( $blank_cart_info != $updated_cart_info && '{"cart":[]}' != $updated_cart_info ) {
+								if ( $blank_cart_info !== $updated_cart_info && '{"cart":[]}' !== $updated_cart_info ) {
 									if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {
 										$wpdb->query( // phpcs:ignore
 											$wpdb->prepare(
@@ -1459,7 +1459,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								}
 							} else {
 								$blank_cart_info = '[]';
-								if ( $blank_cart_info != $updated_cart_info && '{"cart":[]}' != $updated_cart_info ) {
+								if ( $blank_cart_info !== $updated_cart_info && '{"cart":[]}' !== $updated_cart_info ) {
 									if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {
 										$wpdb->query( //phpcs:ignore
 											$wpdb->prepare(
@@ -1591,9 +1591,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					sleep( 2 );
 					$url = get_option( 'siteurl' );
 					?>
-				   <script>
+					<script>
 						location.href = "<?php echo esc_url( $url ); ?>";
-				   </script>
+					</script>
 					<?php
 				}
 			} else {
@@ -1622,10 +1622,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					session_start();
 				}
 				global $wpdb;
-				$validate_server_string  = isset( $_GET ['validate'] ) ? rawurldecode( wp_unslash( $_GET ['validate'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$validate_server_string  = isset( $_GET ['validate'] ) ? rawurldecode( wp_unslash( $_GET ['validate'] ) ) : ''; // phpcs:ignore
 				$validate_server_string  = str_replace( ' ', '+', $validate_server_string );
 				$validate_encoded_string = $validate_server_string;
-				$crypt_key                = get_option( 'wcal_security_key' );
+				$crypt_key               = get_option( 'wcal_security_key' );
 				$link_decode             = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $crypt_key, 256 );
 				$sent_email_id_pos       = strpos( $link_decode, '&' );
 				$email_sent_id           = substr( $link_decode, 0, $sent_email_id_pos );
@@ -1633,7 +1633,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				wcal_common::wcal_set_cart_session( 'email_sent_id', $email_sent_id );
 				set_transient( 'wcal_email_sent_id', $email_sent_id, 5 );
 
-				$url_pos           = strpos( $link_decode, '=' );
+				$url_pos = strpos( $link_decode, '=' );
 				++$url_pos;
 				$url               = substr( $link_decode, $url_pos );
 				$get_ac_id_results = $wpdb->get_results( //phpcs:ignore
@@ -1722,10 +1722,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * @since 1.0
 		 */
 		public function wcal_load_guest_persistent_cart() {
-			if ( wcal_common::wcal_get_cart_session( 'user_id' ) != '' ) {
+			if ( wcal_common::wcal_get_cart_session( 'user_id' ) != '' ) { // phpcs:ignore
 				global $woocommerce;
-				$saved_cart          = json_decode( get_user_meta( wcal_common::wcal_get_cart_session( 'user_id' ), '_woocommerce_persistent_cart', true ), true );
-				$c                   = array();
+				$saved_cart = json_decode( get_user_meta( wcal_common::wcal_get_cart_session( 'user_id' ), '_woocommerce_persistent_cart', true ), true );
+				$c          = array();
 
 				$cart_contents_total  = 0;
 				$cart_contents_weight = 0;
@@ -1761,7 +1761,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 
 				if ( $saved_cart ) {
-					if ( empty( $woocommerce->session->cart ) || ! is_array( $woocommerce->session->cart ) || count( $woocommerce->session->cart ) == 0 ) {
+					if ( empty( $woocommerce->session->cart ) || ! is_array( $woocommerce->session->cart ) || 0 === count( $woocommerce->session->cart ) ) {
 						$woocommerce->session->cart                 = $saved_cart['cart'];
 						$woocommerce->session->cart_contents_total  = $cart_contents_total;
 						$woocommerce->session->cart_contents_weight = $cart_contents_weight;
@@ -1832,9 +1832,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							} else {
 								$abandoned_cart_quantity = '';
 							}
-							if ( ( $current_cart_product_id != $abandoned_cart_product_id ) ||
-								( $current_cart_variation_id != $abandoned_cart_variation_id ) ||
-								( $current_cart_quantity != $abandoned_cart_quantity ) ) {
+							if ( ( $current_cart_product_id != $abandoned_cart_product_id ) || ( $current_cart_variation_id != $abandoned_cart_variation_id ) || ( $current_cart_quantity != $abandoned_cart_quantity ) ) { // phpcs:ignore
 									return false;
 							}
 						}
@@ -1882,18 +1880,16 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$abandoned_cart_product_id = '';
 							}
 							if ( isset( $abandoned_cart_arr[ $key ][ $item_key ]['variation_id'] ) ) {
-								 $abandoned_cart_variation_id = $abandoned_cart_arr[ $key ][ $item_key ]['variation_id'];
+								$abandoned_cart_variation_id = $abandoned_cart_arr[ $key ][ $item_key ]['variation_id'];
 							} else {
 								$abandoned_cart_variation_id = '';
 							}
 							if ( isset( $abandoned_cart_arr[ $key ][ $item_key ]['quantity'] ) ) {
-								 $abandoned_cart_quantity = $abandoned_cart_arr[ $key ][ $item_key ]['quantity'];
+								$abandoned_cart_quantity = $abandoned_cart_arr[ $key ][ $item_key ]['quantity'];
 							} else {
-								 $abandoned_cart_quantity = '';
+								$abandoned_cart_quantity = '';
 							}
-							if ( ( $current_cart_product_id != $abandoned_cart_product_id ) ||
-								 ( $current_cart_variation_id != $abandoned_cart_variation_id ) ||
-								 ( $current_cart_quantity != $abandoned_cart_quantity ) ) {
+							if ( ( $current_cart_product_id != $abandoned_cart_product_id ) || ( $current_cart_variation_id != $abandoned_cart_variation_id ) || ( $current_cart_quantity != $abandoned_cart_quantity ) ) { // phpcs:ignore
 								return false;
 							}
 						}
@@ -1919,7 +1915,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'edit_pages' ) ) {
 				return;
 			}
-			if ( 'true' == get_user_option( 'rich_editing' ) ) {
+			if ( 'true' === get_user_option( 'rich_editing' ) ) {
 				remove_filter( 'the_excerpt', 'wpautop' );
 				add_filter( 'tiny_mce_before_init', array( &$this, 'wcal_format_tiny_mce' ) );
 				add_filter( 'mce_buttons', array( &$this, 'wcal_filter_mce_button' ) );
@@ -2077,14 +2073,35 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					WCAL_PLUGIN_VERSION,
 					false
 				);
+<<<<<<< HEAD
+				$mode = isset( $_GET['mode'] ) ? sanitize_text_field( wp_unslash( $_GET['mode'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				if ( 'emailtemplates' === $action && ( 'addnewtemplate' === $mode || 'edittemplate' === $mode ) ) {
+					wp_register_script( 'woocommerce_admin', WC()->plugin_url() . '/assets/js/admin/woocommerce_admin.min.js', array( 'jquery', 'jquery-tiptip' ), WCAL_PLUGIN_VERSION, false );
+					wp_enqueue_script( 'woocommerce_admin' );
+=======
 				$mode   = isset( $_GET['mode'] ) ? sanitize_text_field( wp_unslash( $_GET['mode'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				if ( 'emailtemplates' === $action && ( 'addnewtemplate' === $mode || 'edittemplate' === $mode ) ) {
 					wp_register_script( 'woocommerce_admin', WC()->plugin_url() . '/assets/js/admin/woocommerce_admin.min.js', array( 'jquery', 'jquery-tiptip' ), WCAL_PLUGIN_VERSION, false );
 					wp_enqueue_script( 'woocommerce_admin');
+>>>>>>> master
 					$locale  = localeconv();
 					$decimal = isset( $locale['decimal_point'] ) ? $locale['decimal_point'] : '.';
 					$params  = array(
 						// translators: %s: decimal.
+<<<<<<< HEAD
+						'i18n_decimal_error'               => sprintf( __( 'Please enter in decimal (%s) format without thousand separators.', 'woocommerce' ), $decimal ),
+						// translators: %s: price decimal separator.
+						'i18n_mon_decimal_error'           => sprintf( __( 'Please enter in monetary decimal (%s) format without thousand separators and currency symbols.', 'woocommerce' ), wc_get_price_decimal_separator() ),
+						'i18n_country_iso_error'           => __( 'Please enter in country code with two capital letters.', 'woocommerce' ),
+						'i18_sale_less_than_regular_error' => __( 'Please enter in a value less than the regular price.', 'woocommerce' ),
+						'decimal_point'                    => $decimal,
+						'mon_decimal_point'                => wc_get_price_decimal_separator(),
+						'strings'                          => array(
+							'import_products' => __( 'Import', 'woocommerce' ),
+							'export_products' => __( 'Export', 'woocommerce' ),
+						),
+						'urls'                             => array(
+=======
 						'i18n_decimal_error'                => sprintf( __( 'Please enter in decimal (%s) format without thousand separators.', 'woocommerce' ), $decimal ),
 						// translators: %s: price decimal separator.
 						'i18n_mon_decimal_error'            => sprintf( __( 'Please enter in monetary decimal (%s) format without thousand separators and currency symbols.', 'woocommerce' ), wc_get_price_decimal_separator() ),
@@ -2097,13 +2114,20 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							'export_products' => __( 'Export', 'woocommerce' ),
 						),
 						'urls' => array(
+>>>>>>> master
 							'import_products' => esc_url_raw( admin_url( 'edit.php?post_type=product&page=product_importer' ) ),
 							'export_products' => esc_url_raw( admin_url( 'edit.php?post_type=product&page=product_exporter' ) ),
 						),
 					);
+<<<<<<< HEAD
+
+					// If we dont localize this script then from the WooCommerce check it will not run the javascript further and tooltip wont show any data.
+					// Also, we need above all parameters for the WooCoomerce js file. So we have taken it from the WooCommerce. @since: 5.1.2.
+=======
 					
 					// If we dont localize this script then from the WooCommerce check it will not run the javascript further and tooltip wont show any data.
 					// Also, we need above all parameters for the WooCoomerce js file. So we have taken it from the WooCommerce. @since: 5.1.2
+>>>>>>> master
 					wp_localize_script( 'woocommerce_admin', 'woocommerce_admin', $params );
 				}
 				?>
@@ -2296,7 +2320,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					}
 				}
 
-				if ( isset( $_GET['action'] ) ) {
+				if ( isset( $_GET['action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 					$action = sanitize_text_field( wp_unslash( $_GET['action'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
 				} else {
 					$action = '';
@@ -2397,7 +2421,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							$wcal_general_settings_class = 'current';
 							break;
 						case 'wcal_email_settings':
-							 $wcal_email_setting = 'current';
+							$wcal_email_setting = 'current';
 							break;
 						case 'wcap_sms_settings':
 							$wcap_sms_settings = 'current';
@@ -2431,7 +2455,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							</li>
 						</ul>
 						<br class="clear">
-					   <?php
+						<?php
 						if ( 'wcal_general_settings' === $section || '' === $section ) {
 							?>
 							<form method="post" action="options.php">
@@ -2461,9 +2485,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					</div>
 					<?php
 				} elseif ( 'dashboard' === $action || '' === $action || '-1' === $action || '1' === $action_two ) {
-					  include_once 'includes/classes/class-wcal-dashboard-report.php';
-					  Wcal_Dashboard_Report::wcal_dashboard_display();
-
+					include_once 'includes/classes/class-wcal-dashboard-report.php';
+					Wcal_Dashboard_Report::wcal_dashboard_display();
 				} elseif ( 'listcart' === $action ) {
 
 					?>
@@ -2550,8 +2573,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					<p> <?php esc_html_e( 'Add email templates at different intervals to maximize the possibility of recovering your abandoned carts.', 'woocommerce-abandoned-cart' ); ?> </p>
 					<?php
 					// Save the field values.
-					$insert_template_successfuly = '';
-					$update_template_successfuly = '';
+					$insert_template_successfuly  = '';
+					$update_template_successfuly  = '';
 					$woocommerce_ac_email_subject = isset( $_POST['woocommerce_ac_email_subject'] ) ? trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_email_subject'] ) ) ), ENT_QUOTES ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					$woocommerce_ac_email_body    = isset( $_POST['woocommerce_ac_email_body'] ) ? trim( wp_unslash( $_POST['woocommerce_ac_email_body'] ) ) : ''; // phpcs:ignore
 					$woocommerce_ac_template_name = isset( $_POST['woocommerce_ac_template_name'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_template_name'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
@@ -2562,7 +2585,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$is_wc_template  = empty( $_POST['is_wc_template'] ) ? '0' : '1'; // phpcs:ignore WordPress.Security.NonceVerification
 
 					if ( isset( $_POST['ac_settings_frm'] ) && 'save' === sanitize_text_field( wp_unslash( $_POST['ac_settings_frm'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-						$default_value   = 0;
+						$default_value = 0;
 
 						$insert_template_successfuly = $wpdb->query( //phpcs:ignore
 							$wpdb->prepare(
@@ -2631,7 +2654,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						if ( '1' === $current_template_status ) {
 							$active = '0';
 						} else {
-							$active = '1';
+							$active                       = '1';
 							$get_selected_template_result = $wpdb->get_results( // phpcs:ignore
 								$wpdb->prepare(
 									'SELECT * FROM `' . $wpdb->prefix . 'ac_email_templates_lite` WHERE id = %d',
@@ -2816,7 +2839,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								</script>
 								<?php
 								include_once 'includes/classes/class-wcal-recover-orders-table.php';
-								$wcal_recover_orders_list = new WCAL_Recover_Orders_Table();
+								$wcal_recover_orders_list = new Wcal_Recover_Orders_Table();
 								$wcal_recover_orders_list->wcal_recovered_orders_prepare_items();
 
 								$start_date_range = isset( $_POST['start_date'] ) ? sanitize_text_field( wp_unslash( $_POST['start_date'] ) ) : '';// phpcs:ignore WordPress.Security.NonceVerification
@@ -2852,6 +2875,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								printf(
 									// translators: All counts of items & amounts.
 									wp_kses_post(
+<<<<<<< HEAD
+										// translators: Abandoned & recovered numbers and order totals.
+=======
+>>>>>>> master
 										__( 'During the selected range <strong>%1$d</strong> carts totaling <strong>%2$s</strong> were abandoned. We were able to recover <strong>%3$d</strong> of them, which led to an extra <strong>%4$s</strong>', 'woocommerce-abandoned-cart' )
 									),
 									esc_attr( $count ),
@@ -3652,7 +3679,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$subject_email_preview = isset( $_POST['subject_email_preview'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_POST['subject_email_preview'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				$subject_email_preview = convert_smilies( $subject_email_preview );
 				$subject_email_preview = str_ireplace( '{{customer.firstname}}', 'John', $subject_email_preview );
+<<<<<<< HEAD
+				$body_email_preview    = isset( $_POST['body_email_preview'] ) ? convert_smilies( wp_unslash( $_POST['body_email_preview'] ) ) : ''; // phpcs:ignore
+=======
 				$body_email_preview    = isset( $_POST['body_email_preview'] ) ? convert_smilies( wp_unslash( $_POST['body_email_preview'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+>>>>>>> master
 				$is_wc_template        = isset( $_POST['is_wc_template'] ) ? sanitize_text_field( wp_unslash( $_POST['is_wc_template'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				$wc_template_header    = isset( $_POST['wc_template_header'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_POST['wc_template_header'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 

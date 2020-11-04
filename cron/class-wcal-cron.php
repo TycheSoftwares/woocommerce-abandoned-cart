@@ -1,13 +1,15 @@
 <?php
 /**
+ * Abandon Cart Lite AUtomated Reminder emails.
+ *
  * It will send the automatic reminder emails to the customers.
  *
  * @author  Tyche Softwares
  * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
  */
 
-
-static $wp_load; // Since this will be called twice, hold onto it.
+ // Since this will be called twice, hold onto it.
+static $wp_load;
 if ( ! isset( $wp_load ) ) {
 	$wp_load = false;
 	$dir     = __FILE__;
@@ -17,7 +19,7 @@ if ( ! isset( $wp_load ) ) {
 			break;
 		}
 	}
-	// In case wp-content folder is seperated from WP core folders (like Bedrock setup from Roots.io) the above while loop will not find wp-load correctly, so we must use ABSPATH
+	// In case wp-content folder is seperated from WP core folders (like Bedrock setup from Roots.io) the above while loop will not find wp-load correctly, so we must use ABSPATH.
 	if ( ! file_exists( $wp_load ) ) {
 		$wp_load = trailingslashit( ABSPATH ) . 'wp-load.php';
 	}
@@ -28,14 +30,14 @@ require_once $wcal_root . '/includes/classes/class-wcal-aes.php';
 require_once $wcal_root . '/includes/classes/class-wcal-aes-counter.php';
 
 
-if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
+if ( ! class_exists( 'Wcal_Cron' ) ) {
 
 	/**
 	 * It will send the automatic reminder emails to the customers
 	 *
 	 * @since 1.3
 	 */
-	class woocommerce_abandon_cart_cron {
+	class Wcal_Cron {
 
 		/**
 		 * It will send the reminder emails to the cutomers.
@@ -79,6 +81,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 					} elseif ( 'Hours' === $value->day_or_hour ) {
 						$time_to_send_template_after = intval( $value->frequency ) * $hour_seconds;
 					}
+
 					$carts = $this->wcal_get_carts( $time_to_send_template_after, $cart_abandon_cut_off_time, $value->id );
 
 					$email_frequency        = $value->frequency;
@@ -164,14 +167,16 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 
 										$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_results( // phpcs:ignore
 											$wpdb->prepare(
-												"SELECT wpm.post_id, wpost.post_date, wpost.post_status  FROM `" . $wpdb->prefix . "postmeta` AS wpm
-												LEFT JOIN `" . $wpdb->prefix . "posts` AS wpost
+												'SELECT wpm.post_id, wpost.post_date, wpost.post_status FROM `' . $wpdb->prefix . 'postmeta` AS wpm
+												LEFT JOIN `' . $wpdb->prefix . 'posts` AS wpost
 												ON wpm.post_id = wpost.ID
-												WHERE wpm.meta_key = 'wcal_recover_order_placed' AND
+												WHERE wpm.meta_key = %s AND
 												wpm.meta_value = %s AND wpm.post_id = wpost.ID AND
-												wpost.post_type = 'shop_order'
-												ORDER BY wpm.post_id   DESC LIMIT 1",
-												$value->id
+												wpost.post_type = %s
+												ORDER BY wpm.post_id DESC LIMIT 1',
+												'wcal_recover_order_placed',
+												$value->id,
+												'shop_order'
 											)
 										);
 
@@ -592,11 +597,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 		public static function wcal_update_status_of_guest( $cart_id, $abandoned_cart_time, $time_to_send_template_after, $wcal_user_email_address ) {
 			global $wpdb;
 
-			$results_query_email = $wpdb->get_results(
+			$results_query_email = $wpdb->get_results( // phpcs:ignore
 				$wpdb->prepare(
-					"SELECT wpm.post_id, wpost.post_date, wpost.post_status  FROM `" . $wpdb->prefix . "postmeta` AS wpm LEFT JOIN `" . $wpdb->prefix . "posts` AS wpost ON wpm.post_id = wpost.ID
-                    WHERE wpm.meta_key = '_billing_email' AND wpm.meta_value = %s AND wpm.post_id = wpost.ID AND wpost.post_type = 'shop_order' Order BY wpm.post_id   DESC LIMIT 1",
-					$wcal_user_email_address
+					'SELECT wpm.post_id, wpost.post_date, wpost.post_status  FROM `' . $wpdb->prefix . 'postmeta` AS wpm LEFT JOIN `' . $wpdb->prefix . 'posts` AS wpost ON wpm.post_id = wpost.ID
+					WHERE wpm.meta_key = %s AND wpm.meta_value = %s AND wpm.post_id = wpost.ID AND wpost.post_type = %s Order BY wpm.post_id DESC LIMIT 1',
+					'_billing_email',
+					$wcal_user_email_address,
+					'shop_order'
 				)
 			);
 
@@ -838,5 +845,5 @@ if ( ! class_exists( 'woocommerce_abandon_cart_cron' ) ) {
 		}
 	}
 }
-$woocommerce_abandon_cart_cron = new woocommerce_abandon_cart_cron();
+$wcal_cron = new Wcal_Cron();
 

@@ -3,9 +3,10 @@
  * Frontend loader for Abandoned Cart Lite
  *
  * @since 5.3.0
+ * @package Abandoned-Cart-Lite-for-WooCommerce/Frontend
  */
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -17,14 +18,18 @@ if ( ! class_exists( 'Wcal_Frontend' ) ) {
 	 */
 	class Wcal_Frontend {
 
-		function __construct() {
-
+		/**
+		 * Constructor.
+		 */
+		public function __construct() {
 			$this->include_files();
 		}
 
-		function include_files() {
-
-			include_once 'wcal_checkout_process.php';
+		/**
+		 * Include the file.
+		 */
+		public function include_files() {
+			include_once 'class-wcal-checkout-process.php';
 		}
 	}
 }

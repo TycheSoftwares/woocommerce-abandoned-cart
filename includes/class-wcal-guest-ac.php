@@ -8,7 +8,7 @@
  * @package abandoned-cart-lite
  */
 
-if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
+if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 
 	/**
 	 * It will add the js, ajax for capturing the guest cart.
@@ -16,7 +16,7 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 	 *
 	 * @since 2.2
 	 */
-	class woocommerce_guest_ac {
+	class Wcal_Guest_Ac {
 
 		/**
 		 * Default Constructor function for guest tracking.
@@ -112,64 +112,68 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 			if ( isset( $_POST['billing_company'] ) && '' !== $_POST['billing_company'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_company', sanitize_text_field( wp_unslash( $_POST['billing_company'] ) ) );
 			}
-			if ( isset( $_POST['billing_address_1'] ) && $_POST['billing_address_1'] != '' ) {
+			if ( isset( $_POST['billing_address_1'] ) && '' !== $_POST['billing_address_1'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_address_1', sanitize_text_field( wp_unslash( $_POST['billing_address_1'] ) ) );
 			}
-			if ( isset( $_POST['billing_address_2'] ) && $_POST['billing_address_2'] != '' ) {
+			if ( isset( $_POST['billing_address_2'] ) && '' !== $_POST['billing_address_2'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_address_2', sanitize_text_field( wp_unslash( $_POST['billing_address_2'] ) ) );
 			}
-			if ( isset( $_POST['billing_city'] ) && $_POST['billing_city'] != '' ) {
+			if ( isset( $_POST['billing_city'] ) && '' !== $_POST['billing_city'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_city', sanitize_text_field( wp_unslash( $_POST['billing_city'] ) ) );
 			}
-			if ( isset( $_POST['billing_state'] ) && $_POST['billing_state'] != '' ) {
+			if ( isset( $_POST['billing_state'] ) && '' !== $_POST['billing_state'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_state', sanitize_text_field( wp_unslash( $_POST['billing_state'] ) ) );
 			}
-			if ( isset( $_POST['billing_postcode'] ) && $_POST['billing_postcode'] != '' ) {
+			if ( isset( $_POST['billing_postcode'] ) && '' !== $_POST['billing_postcode'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_postcode', sanitize_text_field( wp_unslash( $_POST['billing_postcode'] ) ) );
 			}
-			if ( isset( $_POST['billing_country'] ) && $_POST['billing_country'] != '' ) {
+			if ( isset( $_POST['billing_country'] ) && '' !== $_POST['billing_country'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_country', sanitize_text_field( wp_unslash( $_POST['billing_country'] ) ) );
 			}
-			if ( isset( $_POST['billing_email'] ) && $_POST['billing_email'] != '' ) {
+			if ( isset( $_POST['billing_email'] ) && '' !== $_POST['billing_email'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_email', sanitize_text_field( wp_unslash( $_POST['billing_email'] ) ) );
 			}
-			if ( isset( $_POST['billing_phone'] ) && $_POST['billing_phone'] != '' ) {
+			if ( isset( $_POST['billing_phone'] ) && '' !== $_POST['billing_phone'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_phone', sanitize_text_field( wp_unslash( $_POST['billing_phone'] ) ) );
 			}
-			if ( isset( $_POST['order_notes'] ) && $_POST['order_notes'] != '' ) {
+			if ( isset( $_POST['order_notes'] ) && '' !== $_POST['order_notes'] ) {
 				wcal_common::wcal_set_cart_session( 'order_notes', sanitize_text_field( wp_unslash( $_POST['order_notes'] ) ) );
 			}
-			if ( isset( $_POST['ship_to_billing'] ) && $_POST['ship_to_billing'] != '' ) {
+			if ( isset( $_POST['ship_to_billing'] ) && '' !== $_POST['ship_to_billing'] ) {
 				wcal_common::wcal_set_cart_session( 'ship_to_billing', sanitize_text_field( wp_unslash( $_POST['ship_to_billing'] ) ) );
 			}
-			if ( isset( $_POST['shipping_first_name'] ) && $_POST['shipping_first_name'] != '' ) {
+			if ( isset( $_POST['shipping_first_name'] ) && '' !== $_POST['shipping_first_name'] ) {
 				wcal_common::wcal_set_cart_session( 'shipping_first_name', sanitize_text_field( wp_unslash( $_POST['shipping_first_name'] ) ) );
 			}
-			if ( isset( $_POST['shipping_last_name'] ) && $_POST['shipping_last_name'] != '' ) {
+			if ( isset( $_POST['shipping_last_name'] ) && '' !== $_POST['shipping_last_name'] ) {
 				wcal_common::wcal_set_cart_session( 'shipping_last_name', sanitize_text_field( wp_unslash( $_POST['shipping_last_name'] ) ) );
 			}
-			if ( isset( $_POST['shipping_company'] ) && $_POST['shipping_company'] != '' ) {
+			if ( isset( $_POST['shipping_company'] ) && '' !== $_POST['shipping_company'] ) {
 				wcal_common::wcal_set_cart_session( 'shipping_company', sanitize_text_field( wp_unslash( $_POST['shipping_company'] ) ) );
 			}
-			if ( isset( $_POST['shipping_address_1'] ) && $_POST['shipping_address_1'] != '' ) {
+			if ( isset( $_POST['shipping_address_1'] ) && '' !== $_POST['shipping_address_1'] ) {
 				wcal_common::wcal_set_cart_session( 'shipping_address_1', sanitize_text_field( wp_unslash( $_POST['shipping_address_1'] ) ) );
 			}
-			if ( isset( $_POST['shipping_address_2'] ) && $_POST['shipping_address_2'] != '' ) {
+			if ( isset( $_POST['shipping_address_2'] ) && '' !== $_POST['shipping_address_2'] ) {
 				wcal_common::wcal_set_cart_session( 'shipping_address_2', sanitize_text_field( wp_unslash( $_POST['shipping_address_2'] ) ) );
 			}
-			if ( isset( $_POST['shipping_city'] ) && $_POST['shipping_city'] != '' ) {
+			if ( isset( $_POST['shipping_city'] ) && '' !== $_POST['shipping_city'] ) {
 				wcal_common::wcal_set_cart_session( 'shipping_city', sanitize_text_field( wp_unslash( $_POST['shipping_city'] ) ) );
 			}
-			if ( isset( $_POST['shipping_state'] ) && $_POST['shipping_state'] != '' ) {
+			if ( isset( $_POST['shipping_state'] ) && '' !== $_POST['shipping_state'] ) {
 				wcal_common::wcal_set_cart_session( 'shipping_state', sanitize_text_field( wp_unslash( $_POST['shipping_state'] ) ) );
 			}
-			if ( isset( $_POST['shipping_postcode'] ) && $_POST['shipping_postcode'] != '' ) {
+			if ( isset( $_POST['shipping_postcode'] ) && '' !== $_POST['shipping_postcode'] ) {
 				wcal_common::wcal_set_cart_session( 'shipping_postcode', sanitize_text_field( wp_unslash( $_POST['shipping_postcode'] ) ) );
 			}
-			if ( isset( $_POST['shipping_country'] ) && $_POST['shipping_country'] != '' ) {
+			if ( isset( $_POST['shipping_country'] ) && '' !== $_POST['shipping_country'] ) {
 				wcal_common::wcal_set_cart_session( 'shipping_country', sanitize_text_field( wp_unslash( $_POST['shipping_country'] ) ) );
 			}
+<<<<<<< HEAD:includes/class-wcal-guest-ac.php
+			// If a record is present in the guest cart history table for the same email id, then delete the previous records.
+=======
 			// If a record is present in the guest cart history table for the same email id, then delete the previous records
+>>>>>>> master:includes/wcal_class-guest.php
 			$results_guest = $wpdb->get_results( // phpcs:ignore
 				$wpdb->prepare(
 					'SELECT id FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite` WHERE email_id = %s',
@@ -179,6 +183,7 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 
 			if ( $results_guest ) {
 				foreach ( $results_guest as $key => $value ) {
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 					$result = $wpdb->get_results(
 						$wpdb->prepare(
 							'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE  user_id = %d AND recovered_cart = %s',
@@ -199,17 +204,19 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 					}
 				}
 			}
-			// Insert record in guest table
+			// Insert record in guest table.
 			$billing_first_name = wcal_common::wcal_get_cart_session( 'billing_first_name' );
 
 			$billing_last_name = wcal_common::wcal_get_cart_session( 'billing_last_name' );
 
-			$shipping_zipcode = $billing_zipcode = '';
+			$shipping_zipcode = '';
+			$billing_zipcode  = '';
 
-			if ( wcal_common::wcal_get_cart_session( 'shipping_postcode' ) != '' ) {
+			if ( '' !== wcal_common::wcal_get_cart_session( 'shipping_postcode' ) ) {
 				$shipping_zipcode = wcal_common::wcal_get_cart_session( 'shipping_postcode' );
-			} elseif ( wcal_common::wcal_get_cart_session( 'billing_postcode' ) != '' ) {
-				$shipping_zipcode = $billing_zipcode = wcal_common::wcal_get_cart_session( 'billing_postcode' );
+			} elseif ( '' !== wcal_common::wcal_get_cart_session( 'billing_postcode' ) ) {
+				$billing_zipcode  = wcal_common::wcal_get_cart_session( 'billing_postcode' );
+				$shipping_zipcode = $billing_zipcode;
 			}
 			$shipping_charges = $woocommerce->cart->shipping_total;
 			$wpdb->query( // phpcs:ignore
@@ -224,10 +231,10 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 				)
 			);
 
-			// Insert record in abandoned cart table for the guest user
+			// Insert record in abandoned cart table for the guest user.
 			$user_id = $wpdb->insert_id;
 			wcal_common::wcal_set_cart_session( 'user_id', $user_id );
-			$current_time      = current_time( 'timestamp' );
+			$current_time      = current_time( 'timestamp' ); // phpcs:ignore
 			$cut_off_time      = get_option( 'ac_cart_abandoned_time' );
 			$cart_cut_off_time = $cut_off_time * 60;
 			$compare_time      = $current_time - $cart_cut_off_time;
@@ -250,11 +257,17 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 				$cart['cart'] = $woocommerce->session->cart;
 			}
 
-			if ( 0 == count( $results ) ) {
+			if ( 0 === count( $results ) ) {
 				$get_cookie = WC()->session->get_session_cookie();
+<<<<<<< HEAD:includes/class-wcal-guest-ac.php
+
+				$cart_info = wp_json_encode( $cart );
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+=======
 				//$cart_info  = addslashes( json_encode( $cart ) );
 				$cart_info  = json_encode( $cart );
 
+>>>>>>> master:includes/wcal_class-guest.php
 				$results = $wpdb->get_results(
 					$wpdb->prepare(
 						'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE session_id LIKE %s AND cart_ignored = %s AND recovered_cart = %s',
@@ -263,8 +276,14 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 						0
 					)
 				);
+<<<<<<< HEAD:includes/class-wcal-guest-ac.php
+				if ( 0 === count( $results ) ) {
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+					$wpdb->query(
+=======
 				if ( 0 == count( $results ) ) {
 					$wpdb->query( // phpcs:ignore
+>>>>>>> master:includes/wcal_class-guest.php
 						$wpdb->prepare(
 							'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type, session_id ) VALUES ( %s, %s, %s, %s, %s, %s, %s )',
 							$user_id,
@@ -280,15 +299,21 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 					$abandoned_cart_id = $wpdb->insert_id;
 					wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
 
-					// $insert_persistent_cart = "INSERT INTO `".$wpdb->prefix."usermeta`( user_id, meta_key, meta_value )
-					// VALUES ( '".$user_id."', '_woocommerce_persistent_cart', '".$cart_info."' )";
-					// $wpdb->query( $insert_persistent_cart );
 					if ( is_multisite() ) {
+<<<<<<< HEAD:includes/class-wcal-guest-ac.php
+						// get main site's table prefix.
+						$main_prefix = $wpdb->get_blog_prefix( 1 );
+						// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+						$wpdb->query(
+							$wpdb->prepare(
+								'INSERT INTO `' . $main_prefix . 'usermeta`( user_id, meta_key, meta_value ) VALUES ( %s, %s, %s )', // phpcs:ignore
+=======
 						// get main site's table prefix
 						$main_prefix            = $wpdb->get_blog_prefix( 1 );
 						$wpdb->query( // phpcS:ignore
 							$wpdb->prepare(
 								'INSERT INTO `' . $main_prefix . 'usermeta`( user_id, meta_key, meta_value ) VALUES ( %s, %s, %s )',
+>>>>>>> master:includes/wcal_class-guest.php
 								$user_id,
 								'_woocommerce_persistent_cart',
 								$cart_info
@@ -339,11 +364,12 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 						)
 					);
 					if ( is_multisite() ) {
-						// get main site's table prefix
-						$main_prefix            = $wpdb->get_blog_prefix( 1 );
-						$wpdb->query( // phpcs:ignore
+						// get main site's table prefix.
+						$main_prefix = $wpdb->get_blog_prefix( 1 );
+						// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+						$wpdb->query(
 							$wpdb->prepare(
-								'INSERT INTO `' . $main_prefix . 'usermeta`( user_id, meta_key, meta_value ) VALUES ( %s, %s, %s )',
+								'INSERT INTO `' . $main_prefix . 'usermeta`( user_id, meta_key, meta_value ) VALUES ( %s, %s, %s )', // phpcs:ignore
 								$user_id,
 								'_woocommerce_persistent_cart',
 								$cart_info
@@ -369,24 +395,24 @@ if ( ! class_exists( 'woocommerce_guest_ac' ) ) {
 	 * It will populate the data on the chekout field if user comes from the abandoned cart reminder emails.
 	 *
 	 * @hook woocommerce_checkout_fields
-	 * @param array $fields All fields of checkout page
+	 * @param array $fields All fields of checkout page.
 	 * @return array $fields
 	 * @since 2.2
 	 */
 	function guest_checkout_fields( $fields ) {
-		if ( wcal_common::wcal_get_cart_session( 'guest_first_name' ) != '' ) {
+		if ( '' !== wcal_common::wcal_get_cart_session( 'guest_first_name' ) ) {
 			$_POST['billing_first_name'] = wcal_common::wcal_get_cart_session( 'guest_first_name' );
 		}
-		if ( wcal_common::wcal_get_cart_session( 'guest_last_name' ) != '' ) {
+		if ( '' !== wcal_common::wcal_get_cart_session( 'guest_last_name' ) ) {
 			$_POST['billing_last_name'] = wcal_common::wcal_get_cart_session( 'guest_last_name' );
 		}
-		if ( wcal_common::wcal_get_cart_session( 'guest_email' ) != '' ) {
+		if ( '' !== wcal_common::wcal_get_cart_session( 'guest_email' ) ) {
 			$_POST['billing_email'] = wcal_common::wcal_get_cart_session( 'guest_email' );
 		}
-		if ( wcal_common::wcal_get_cart_session( 'guest_phone' ) != '' ) {
+		if ( '' !== wcal_common::wcal_get_cart_session( 'guest_phone' ) ) {
 			$_POST['billing_phone'] = wcal_common::wcal_get_cart_session( 'guest_phone' );
 		}
 		return $fields;
 	}
 }
-$woocommerce_guest_ac = new woocommerce_guest_ac();
+$woocommerce_guest_ac = new Wcal_Guest_Ac();

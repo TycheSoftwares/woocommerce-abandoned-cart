@@ -5,6 +5,7 @@
  * @author  Tyche Softwares
  * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/Component
  */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -29,7 +30,6 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 				require_once 'component/tracking-data/ts-tracking.php';
 				require_once 'component/deactivate-survey-popup/class-ts-deactivation.php';
 
-				require_once 'component/welcome-page/ts-welcome.php';
 				require_once 'component/faq-support/ts-faq-support.php';
 				require_once 'component/pro-notices-in-lite/ts-pro-notices.php';
 
@@ -64,14 +64,8 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 				$wcal_deativate = new Wcal_TS_deactivate();
 				$wcal_deativate->init( $wcal_file_name, $wcal_plugin_name );
 
-				/*new Wcal_TS_Welcome ( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_dir_name, $wcal_get_previous_version );*/
-
 				$ts_pro_faq = self::wcal_get_faq();
 				new Wcal_TS_Faq_Support( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_plugins_page, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_slug, $ts_pro_faq );
-
-				/*
-				$ts_pro_notices = self::wcal_get_notice_text ();
-				new Wcal_ts_pro_notices( $wcal_plugin_name, $wcal_lite_plugin_prefix, $wcal_plugin_prefix, $ts_pro_notices, $wcal_file_name, $wcal_pro_file_name );*/
 
 			}
 		}
@@ -105,6 +99,7 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 			/* translators: %s Link to Abandoned Cart Pro */
 			$message_five = wp_kses_post(
 				sprintf(
+					// translators: Pro version link.
 					__(
 						'Increase your store sales by recovering your abandoned carts for just $119. No profit sharing, no monthly fees. Our Abandoned Cart Pro plugin comes with a 30 day money back guarantee as well. :) Use coupon code ACPRO20 & save $24!<br>
             <strong><a target="_blank" href= "%s">Grab your copy now!</a></strong>',
@@ -122,6 +117,7 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 			/* translators: %s Link to Order Delivery Date Pro */
 			$message_seven = wp_kses_post(
 				sprintf(
+					// translators: Order Delivery Date Pro link.
 					__(
 						'Allow your customers to select the Delivery Date on Single Product Page using our Product Delivery Date pro for WooCommerce Plugin. <br>
             <strong><a target="_blank" href= "%s">Shop now</a></strong> & be one of the 20 customers to get 20% discount on the plugin price. Use the code "PRDPRO20". Hurry!!',
@@ -139,6 +135,7 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 			/* translators: %s Link to Deposits for WooCommerce */
 			$message_nine = wp_kses_post(
 				sprintf(
+					// translators: Deposits for WC pro plugin link.
 					__(
 						' Allow your customers to pay deposits on products using our Deposits for WooCommerce plugin. <br>
             <strong><a target="_blank" href= "%s">Purchase now</a></strong> & Grab 20% discount with the code "DFWP20". The discount code is valid only for the first 20 customers.',
@@ -207,7 +204,7 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
                         <br/><br/>
                         For example, if you are using cPanel, it has a section Named as "Cron Jobs" which allows you to create the cron job.
                         <br/><br/>
-                        /usr/bin/wget -q -c {your_site_path}/wp-content/plugins/woocommerce-abandoned-cart/cron/wcal_send_email.php
+                        /usr/bin/wget -q -c {your_site_path}/wp-content/plugins/woocommerce-abandoned-cart/cron/class-wcal-cron.php
                         <br/><br/>
                         You can refer to this document for creating a <a href="https://documentation.cpanel.net/display/68Docs/Cron+Jobs">cron job</a> in cPanel.',
 				),
@@ -233,5 +230,5 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 			return $ts_faq;
 		}
 	}
-	$Wcal_All_Component = new Wcal_All_Component();
+	$wcal_all_component = new Wcal_All_Component();
 }

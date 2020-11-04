@@ -1,9 +1,4 @@
 <?php
-
-// Load WP_List_Table if not loaded
-if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
 /**
  * Abandoned Cart Lite for WooCommerce
  *
@@ -14,6 +9,14 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * @since 2.5.2
  */
 
+// Load WP_List_Table if not loaded.
+if ( ! class_exists( 'WP_List_Table' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+}
+
+/**
+ * Email Templates List.
+ */
 class WCAL_Templates_Table extends WP_List_Table {
 
 	/**
@@ -48,11 +51,11 @@ class WCAL_Templates_Table extends WP_List_Table {
 	 */
 	public function __construct() {
 		global $status, $page;
-		// Set parent defaults
+		// Set parent defaults.
 		parent::__construct(
 			array(
-				'singular' => __( 'template_id', 'woocommerce-abandoned-cart' ), // singular name of the listed records
-				'plural'   => __( 'template_ids', 'woocommerce-abandoned-cart' ), // plural name of the listed records
+				'singular' => __( 'template_id', 'woocommerce-abandoned-cart' ), // singular name of the listed records.
+				'plural'   => __( 'template_ids', 'woocommerce-abandoned-cart' ), // plural name of the listed records.
 				'ajax'     => false,                         // Does this table support ajax?
 			)
 		);
@@ -67,7 +70,7 @@ class WCAL_Templates_Table extends WP_List_Table {
 	 */
 	public function wcal_templates_prepare_items() {
 		$columns  = $this->get_columns();
-		$hidden   = array(); // No hidden columns
+		$hidden   = array(); // No hidden columns.
 		$sortable = $this->templates_get_sortable_columns();
 		$data     = $this->wcal_templates_data();
 
@@ -77,9 +80,9 @@ class WCAL_Templates_Table extends WP_List_Table {
 
 		$this->set_pagination_args(
 			array(
-				'total_items' => $total_items,                      // WE have to calculate the total number of items
-				'per_page'    => $this->per_page,                       // WE have to determine how many items to show on a page
-				'total_pages' => ceil( $total_items / $this->per_page ),   // WE have to calculate the total number of pages
+				'total_items' => $total_items,                      // WE have to calculate the total number of items.
+				'per_page'    => $this->per_page,                       // WE have to determine how many items to show on a page.
+				'total_pages' => ceil( $total_items / $this->per_page ),   // WE have to calculate the total number of pages.
 			)
 		);
 	}
@@ -100,16 +103,17 @@ class WCAL_Templates_Table extends WP_List_Table {
 		);
 		return apply_filters( 'wcal_templates_columns', $columns );
 	}
+
 	/**
 	 * It is used to add the check box for the items.
 	 *
-	 * @param string $item
-	 * @return string
+	 * @param string $item - Row data.
+	 * @return string HTML for display.
 	 * @since 2.5.2
 	 */
-	function column_cb( $item ) {
+	public function column_cb( $item ) {
 		$template_id = '';
-		if ( isset( $item->id ) && '' != $item->id ) {
+		if ( isset( $item->id ) && '' !== $item->id ) {
 			$template_id = $item->id;
 		}
 		return sprintf(
@@ -138,8 +142,8 @@ class WCAL_Templates_Table extends WP_List_Table {
 	 * This function used for individual delete, edit of row.
 	 *
 	 * @since 2.5.2
-	 * @param array $template_row_info Contains all the data of the template row
-	 * @return string $value All hover links, here we have edit and delete
+	 * @param array $template_row_info Contains all the data of the template row.
+	 * @return string $value All hover links, here we have edit and delete.
 	 */
 	public function column_template_name( $template_row_info ) {
 		$row_actions = array();
@@ -188,8 +192,9 @@ class WCAL_Templates_Table extends WP_List_Table {
 		$return_templates_data = array();
 		$per_page              = $this->per_page;
 		$results               = array();
-		$query                 = 'SELECT wpet . * FROM `' . $wpdb->prefix . 'ac_email_templates_lite` AS wpet ORDER BY day_or_hour desc , frequency asc';
-		$results               = $wpdb->get_results( $query );
+		$results               = $wpdb->get_results( // phpcs:ignore
+			'SELECT wpet . * FROM `' . $wpdb->prefix . 'ac_email_templates_lite` AS wpet ORDER BY day_or_hour desc , frequency asc'
+		);
 		$i                     = 0;
 
 		foreach ( $results as $key => $value ) {
@@ -200,42 +205,37 @@ class WCAL_Templates_Table extends WP_List_Table {
 			$body                        = $value->body;
 			$is_active                   = $value->is_active;
 
-			if ( $is_active == '1' ) {
-				$active = 'Deactivate';
-			} else {
-				$active = 'Activate';
-			}
+			$active = '1' === $is_active ? 'Deactivate' : 'Activate';
+
 			$frequency                                  = $value->frequency;
 			$day_or_hour                                = $value->day_or_hour;
 			$return_templates_data[ $i ]->sr            = $i + 1;
 			$return_templates_data[ $i ]->id            = $id;
 			$return_templates_data[ $i ]->template_name = $value->template_name;
-			$return_templates_data[ $i ]->sent_time     = __( $frequency . ' ' . $day_or_hour . 'After Abandonment', 'woocommerce-abandoned-cart' );
+			$return_templates_data[ $i ]->sent_time     = "$frequency $day_or_hour" . __( 'After Abandonment', 'woocommerce-abandoned-cart' );
 			$return_templates_data[ $i ]->activate      = $active;
 			$return_templates_data[ $i ]->is_active     = $is_active;
 			$i++;
 		}
 		$templates_count   = count( $return_templates_data );
 		$this->total_count = $templates_count;
-		// sort for order date
-		if ( isset( $_GET['orderby'] ) && $_GET['orderby'] == 'template_name' ) {
-			if ( isset( $_GET['order'] ) && $_GET['order'] == 'asc' ) {
+		// sort for order date.
+		if ( isset( $_GET['orderby'] ) && 'template_name' === $_GET['orderby'] ) { // phpcs:ignore WordPress.Security.NonceVerification
+			if ( isset( $_GET['order'] ) && 'asc' === $_GET['order'] ) { // phpcs:ignore WordPress.Security.NonceVerification
 				usort( $return_templates_data, array( __CLASS__, 'wcal_class_template_name_asc' ) );
 			} else {
 				usort( $return_templates_data, array( __CLASS__, 'wcal_class_template_name_dsc' ) );
 			}
-		}
-		// sort for customer name
-		elseif ( isset( $_GET['orderby'] ) && $_GET['orderby'] == 'sent_time' ) {
-			if ( isset( $_GET['order'] ) && $_GET['order'] == 'asc' ) {
+		} elseif ( isset( $_GET['orderby'] ) && 'sent_time' === $_GET['orderby'] ) { // phpcs:ignore WordPress.Security.NonceVerification, sort for customer name.
+			if ( isset( $_GET['order'] ) && 'asc' === $_GET['order'] ) { // phpcs:ignore WordPress.Security.NonceVerification
 					usort( $return_templates_data, array( __CLASS__, 'wcal_class_sent_time_asc' ) );
 			} else {
 				usort( $return_templates_data, array( __CLASS__, 'wcal_class_sent_time_dsc' ) );
 			}
 		}
-		// Pagination per page
-		if ( isset( $_GET['paged'] ) && $_GET['paged'] > 1 ) {
-			$page_number = $_GET['paged'] - 1;
+		// Pagination per page.
+		if ( isset( $_GET['paged'] ) && $_GET['paged'] > 1 ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$page_number = (int) sanitize_text_field( wp_unslash( $_GET['paged'] ) ) - 1; // phpcs:ignore WordPress.Security.NonceVerification
 			$k           = $per_page * $page_number;
 		} else {
 			$k = 0;
@@ -255,57 +255,57 @@ class WCAL_Templates_Table extends WP_List_Table {
 	/**
 	 * It will sort the data alphabetally ascending on the template name.
 	 *
-	 * @param array | object $value1 All data of the list
-	 * @param array | object $value2 All data of the list
+	 * @param array | object $value1 All data of the list.
+	 * @param array | object $value2 All data of the list.
 	 * @return sorted array
 	 * @since 2.5.2
 	 */
-	function wcal_class_template_name_asc( $value1, $value2 ) {
+	public function wcal_class_template_name_asc( $value1, $value2 ) {
 		return strcasecmp( $value1->template_name, $value2->template_name );
 	}
 
 	/**
 	 * It will sort the data alphabetally descending on the template name.
 	 *
-	 * @param array | object $value1 All data of the list
-	 * @param array | object $value2 All data of the list
+	 * @param array | object $value1 All data of the list.
+	 * @param array | object $value2 All data of the list.
 	 * @return sorted array
 	 * @since 2.5.2
 	 */
-	function wcal_class_template_name_dsc( $value1, $value2 ) {
+	public function wcal_class_template_name_dsc( $value1, $value2 ) {
 		return strcasecmp( $value2->template_name, $value1->template_name );
 	}
 
 	/**
 	 * It will sort the data alphanumeric ascending on the template time.
 	 *
-	 * @param array | object $value1 All data of the list
-	 * @param array | object $value2 All data of the list
+	 * @param array | object $value1 All data of the list.
+	 * @param array | object $value2 All data of the list.
 	 * @return sorted array
 	 * @since 2.5.2
 	 */
-	function wcal_class_sent_time_asc( $value1, $value2 ) {
+	public function wcal_class_sent_time_asc( $value1, $value2 ) {
 		return strnatcasecmp( $value1->sent_time, $value2->sent_time );
 	}
 
 	/**
 	 * It will sort the data alphanumeric descending on the template time.
 	 *
-	 * @param array | object $value1 All data of the list
-	 * @param array | object $value2 All data of the list
+	 * @param array | object $value1 All data of the list.
+	 * @param array | object $value2 All data of the list.
 	 * @return sorted array
 	 * @since 2.5.2
 	 */
-	function wcal_class_sent_time_dsc( $value1, $value2 ) {
+	public function wcal_class_sent_time_dsc( $value1, $value2 ) {
 		return strnatcasecmp( $value2->sent_time, $value1->sent_time );
 	}
 
 	/**
 	 * It will display the data for the templates list
 	 *
-	 * @param array | object $wcal_abandoned_orders All data of the list
-	 * @param stirng         $column_name Name of the column
-	 * @return string $value Data of the column
+	 * @param array | object $wcal_abandoned_orders All data of the list.
+	 * @param stirng         $column_name Name of the column.
+	 * @return string $value Data of the column.
 	 * @since 2.5.2
 	 */
 	public function column_default( $wcal_abandoned_orders, $column_name ) {
@@ -333,14 +333,14 @@ class WCAL_Templates_Table extends WP_List_Table {
 					$is_active   = $wcal_abandoned_orders->is_active;
 					$active      = '';
 					$active_text = '';
-					if ( $is_active == '1' ) {
+					if ( '1' === $is_active ) {
 						$active      = 'on';
 						$active_text = __( 'on', 'woocommerce-abandoned-cart' );
 					} else {
 						$active      = 'off';
 						$active_text = __( 'off', 'woocommerce-abandoned-cart' );
 					}
-					// $value   = '<a href="#" onclick="wcal_activate_email_template('. $id.', '.$is_active.' )"> '.$active_text.'</a>';
+
 					$value = '<button type="button" class="wcal-switch wcal-toggle-template-status" '
 					. 'wcal-template-id="' . $id . '" '
 					. 'wcal-template-switch="' . ( $active ) . '">'
@@ -366,4 +366,3 @@ class WCAL_Templates_Table extends WP_List_Table {
 		);
 	}
 }
-
