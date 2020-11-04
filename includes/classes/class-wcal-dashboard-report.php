@@ -324,7 +324,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 
 			$duration_select = isset( $_GET['duration_select'] ) ? sanitize_text_field( wp_unslash( $_GET['duration_select'] ) ) : 'this_month'; //phpcs:ignore
 
-			$current_time  = current_time( 'timestamp' );
+			$current_time  = current_time( 'timestamp' ); // phpcs:ignore
 			$current_month = date( 'n' ); //phpcs:ignore
 			$current_year  = date( 'Y' ); //phpcs:ignore
 

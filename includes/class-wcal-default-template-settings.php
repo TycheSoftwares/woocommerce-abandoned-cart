@@ -45,17 +45,7 @@ class Wcal_Default_Template_Settings {
 			$wpdb->prepare(
 				'INSERT INTO `' . $db_prefix . 'ac_email_templates_lite`
 		   		( subject, body, is_active, frequency, day_or_hour, template_name, is_wc_template, default_template, wc_email_header )
-		   		VALUES ( 
-					%s,
-					%s,
-					%s,
-					%s,
-					%s,
-					%s,
-					%s,
-					%s,
-					%s 
-				)',
+		   		VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s )',
 				$template_subject_array,
 				$body_content_array,
 				$active_post_array,

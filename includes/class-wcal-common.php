@@ -11,7 +11,7 @@
  *
  * @since 2.5.2
  */
-class wcal_common {
+class wcal_common { // phpcs:ignore
 
 	/**
 	 * Get abandoned orders counts.
@@ -26,7 +26,7 @@ class wcal_common {
 
 		$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time   = $ac_cutoff_time * 60;
-		$current_time   = current_time( 'timestamp' );
+		$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time   = $current_time - $cut_off_time;
 
 		$blank_cart_info       = '{"cart":[]}';
@@ -60,7 +60,7 @@ class wcal_common {
 
 		$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time   = $ac_cutoff_time * 60;
-		$current_time   = current_time( 'timestamp' );
+		$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time   = $current_time - $cut_off_time;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -87,7 +87,7 @@ class wcal_common {
 
 		$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time   = $ac_cutoff_time * 60;
-		$current_time   = current_time( 'timestamp' );
+		$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time   = $current_time - $cut_off_time;
 
 		$blank_cart_info       = '{"cart":[]}';
@@ -154,7 +154,7 @@ class wcal_common {
 
 		$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time   = $ac_cutoff_time * 60;
-		$current_time   = current_time( 'timestamp' );
+		$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time   = $current_time - $cut_off_time;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -260,7 +260,7 @@ class wcal_common {
 
 		$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time   = $ac_cutoff_time * 60;
-		$current_time   = current_time( 'timestamp' );
+		$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time   = $current_time - $cut_off_time;
 
 		$blank_cart_info       = '{"cart":[]}';
@@ -292,7 +292,7 @@ class wcal_common {
 
 		$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time   = $ac_cutoff_time * 60;
-		$current_time   = current_time( 'timestamp' );
+		$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time   = $current_time - $cut_off_time;
 
 		$blank_cart_info       = '{"cart":[]}';
@@ -325,7 +325,7 @@ class wcal_common {
 
 		$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time   = $ac_cutoff_time * 60;
-		$current_time   = current_time( 'timestamp' );
+		$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time   = $current_time - $cut_off_time;
 
 		$blank_cart_info       = '{"cart":[]}';
@@ -360,7 +360,7 @@ class wcal_common {
 
 		$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time   = $ac_cutoff_time * 60;
-		$current_time   = current_time( 'timestamp' );
+		$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time   = $current_time - $cut_off_time;
 
 		$blank_cart_info       = '{"cart":[]}';
@@ -395,7 +395,7 @@ class wcal_common {
 
 		$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time   = $ac_cutoff_time * 60;
-		$current_time   = current_time( 'timestamp' );
+		$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time   = $current_time - $cut_off_time;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -425,7 +425,7 @@ class wcal_common {
 
 		$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time   = $ac_cutoff_time * 60;
-		$current_time   = current_time( 'timestamp' );
+		$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time   = $current_time - $cut_off_time;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -552,7 +552,7 @@ class wcal_common {
 		$blank_cart             = '""';
 		$ac_cutoff_time         = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time           = intval( $ac_cutoff_time ) * 60;
-		$current_time           = current_time( 'timestamp' );
+		$current_time           = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time           = $current_time - $cut_off_time;
 
 		switch ( $get_section_result ) {
@@ -932,14 +932,14 @@ class wcal_common {
 	/**
 	 * Returns formatted price.
 	 *
-	 * @param float  $price - Price to be formatted
+	 * @param float  $price - Price to be formatted.
 	 * @param string $currency - Currency.
 	 * @return string $price - Formatted price with currency symbol.
 	 * @since 5.6
 	 */
 	public static function wcal_get_price( $price, $currency ) {
 
-		if ( function_exists( 'icl_object_id' ) && isset( $currency ) && $currency !== '' ) {
+		if ( function_exists( 'icl_object_id' ) && isset( $currency ) && '' !== $currency ) {
 			return wc_price( $price, array( 'currency' => $currency ) );
 		} else {
 			return wc_price( $price );
@@ -955,19 +955,22 @@ class wcal_common {
 	 */
 	public static function wcal_get_user_role( $uid ) {
 		global $wpdb;
-		$role = $wpdb->get_var( "SELECT meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'wp_capabilities' AND user_id = {$uid}" );
+		$role = $wpdb->get_var( // phpcs:ignore
+			"SELECT meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'wp_capabilities' AND user_id = %d",
+			$uid
+		);
 
 		if ( ! $role ) {
 			return '';
 		}
-		$rarr = unserialize( $role );
+		$rarr = unserialize( $role ); // phpcs:ignore
 
 		$roles = is_array( $rarr ) ? array_keys( $rarr ) : array( 'non-user' );
 
 		/**
 		 * When store have the wpml it have so many user roles to fix the user role for admin we have applied this fix.
 		 */
-		if ( in_array( 'administrator', $roles ) ) {
+		if ( in_array( 'administrator', $roles, true ) ) {
 
 			$roles[0] = 'administrator';
 		}
@@ -1010,4 +1013,3 @@ class wcal_common {
 		);
 	}
 }
-?>

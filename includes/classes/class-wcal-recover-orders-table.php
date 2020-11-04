@@ -1,9 +1,4 @@
 <?php
-
-// Load WP_List_Table if not loaded
-if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
 /**
  * Abandoned Cart Lite for WooCommerce
  *
@@ -14,7 +9,15 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * @since 2.5.2
  */
 
-class wcal_Recover_Orders_Table extends WP_List_Table {
+// Load WP_List_Table if not loaded.
+if ( ! class_exists( 'WP_List_Table' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+}
+
+/**
+ * Recovered Orders table list.
+ */
+class Wcal_Recover_Orders_Table extends WP_List_Table {
 
 	/**
 	 * Number of results to show per page
@@ -81,11 +84,11 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	 */
 	public function __construct() {
 		global $status, $page;
-		// Set parent defaults
+		// Set parent defaults.
 		parent::__construct(
 			array(
-				'singular' => __( 'rec_abandoned_id', 'woocommerce-abandoned-cart' ), // singular name of the listed records
-				'plural'   => __( 'rec_abandoned_ids', 'woocommerce-abandoned-cart' ), // plural name of the listed records
+				'singular' => __( 'rec_abandoned_id', 'woocommerce-abandoned-cart' ), // singular name of the listed records.
+				'plural'   => __( 'rec_abandoned_ids', 'woocommerce-abandoned-cart' ), // plural name of the listed records.
 				'ajax'     => false,                         // Does this table support ajax?
 			)
 		);
@@ -99,7 +102,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	 */
 	public function wcal_recovered_orders_prepare_items() {
 		$columns                    = $this->get_columns();
-		$hidden                     = array(); // No hidden columns
+		$hidden                     = array(); // No hidden columns.
 		$sortable                   = $this->recovered_orders_get_sortable_columns();
 		$data                       = $this->wcal_recovered_orders_data();
 		$total_items                = $this->total_count;
@@ -111,9 +114,9 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		$this->_column_headers      = array( $columns, $hidden, $sortable );
 		$this->set_pagination_args(
 			array(
-				'total_items' => $total_items,                      // WE have to calculate the total number of items
-				'per_page'    => $this->per_page,                       // WE have to determine how many items to show on a page
-				'total_pages' => ceil( $total_items / $this->per_page ),   // WE have to calculate the total number of pages
+				'total_items' => $total_items,                      // WE have to calculate the total number of items.
+				'per_page'    => $this->per_page,                       // WE have to determine how many items to show on a page.
+				'total_pages' => ceil( $total_items / $this->per_page ),   // WE have to calculate the total number of pages.
 			)
 		);
 	}
@@ -154,8 +157,8 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	 * We will add the view detials hover link.
 	 *
 	 * @since 2.5.2
-	 * @param array $recovered_orders_row_info Contains all the data of the recovered order row
-	 * @return string $value shown in the User name
+	 * @param array $recovered_orders_row_info Contains all the data of the recovered order row.
+	 * @return string $value shown in the User name.
 	 */
 	public function column_user_name( $recovered_orders_row_info ) {
 		$row_actions  = array();
@@ -184,41 +187,21 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		$wcal_class     = new woocommerce_abandon_cart_lite();
 		$number_decimal = wc_get_price_decimals();
 
-		if ( isset( $_POST['duration_select'] ) ) {
-			$duration_range = $_POST['duration_select'];
-		} else {
-			$duration_range = '';
+		$duration_range = isset( $_POST['duration_select'] ) ? sanitize_text_field( wp_unslash( $_POST['duration_select'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+
+		if ( '' === $duration_range ) {
+			$duration_range = isset( $_GET['duration_select'] ) ? sanitize_text_field( wp_unslash( $_GET['duration_select'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 		}
 
-		if ( $duration_range == '' ) {
-			if ( isset( $_GET['duration_select'] ) ) {
-				$duration_range = $_GET['duration_select'];
-			}
-		}
+		$duration_range   = '' === $duration_range ? 'last_seven' : '';
+		$start_date_range = isset( $_POST['start_date'] ) ? sanitize_text_field( wp_unslash( $_POST['start_date'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$end_date_range   = isset( $_POST['end_date'] ) ? sanitize_text_field( wp_unslash( $_POST['end_date'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
-		if ( $duration_range == '' ) {
-			$duration_range = 'last_seven';
-		} else {
-			$duration_range = '';
-		}
-
-		if ( isset( $_POST['start_date'] ) ) {
-			$start_date_range = $_POST['start_date'];
-		} else {
-			$start_date_range = '';
-		}
-
-		if ( $start_date_range == '' ) {
+		if ( '' === $start_date_range ) {
 			$start_date_range = $wcal_class->start_end_dates[ $duration_range ]['start_date'];
 		}
 
-		if ( isset( $_POST['end_date'] ) ) {
-			$end_date_range = $_POST['end_date'];
-		} else {
-			$end_date_range = '';
-		}
-
-		if ( $end_date_range == '' ) {
+		if ( '' === $end_date_range ) {
 			$end_date_range = $wcal_class->start_end_dates[ $duration_range ]['end_date'];
 		}
 
@@ -226,26 +209,47 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		$end_date              = strtotime( $end_date_range . ' 23:59:59' );
 		$ac_cutoff_time        = get_option( 'ac_lite_cart_abandoned_time' );
 		$cut_off_time          = $ac_cutoff_time * 60;
-		$current_time          = current_time( 'timestamp' );
+		$current_time          = current_time( 'timestamp' ); // phpcs:ignore
 		$compare_time          = $current_time - $cut_off_time;
 		$blank_cart_info       = '{"cart":[]}';
 		$blank_cart_info_guest = '[]';
 		$blank_cart            = '""';
 
-		$query_ac   = 'SELECT * FROM ' . $wpdb->prefix . "ac_abandoned_cart_history_lite 
-		                      WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d AND recovered_cart > 0 AND abandoned_cart_time <= '$compare_time' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '$blank_cart' ORDER BY recovered_cart desc";
-		$ac_results = $wpdb->get_results( $wpdb->prepare( $query_ac, $start_date, $end_date ) );
+		$ac_results = $wpdb->get_results( // phpcs:ignore
+			$wpdb->prepare(
+				'SELECT * FROM ' . $wpdb->prefix . 'ac_abandoned_cart_history_lite WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d AND recovered_cart > 0 AND abandoned_cart_time <= %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s ORDER BY recovered_cart desc', // phpcS:ignore
+				$start_date,
+				$end_date,
+				$compare_time,
+				"%$blank_cart_info%",
+				$blank_cart_info_guest,
+				$blank_cart
+			)
+		);
 
-		$query_ac_carts   = 'SELECT * FROM ' . $wpdb->prefix . "ac_abandoned_cart_history_lite 
-		                     WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d AND abandoned_cart_time <= '$compare_time' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '$blank_cart' AND cart_ignored <> '1'";
-		$ac_carts_results = $wpdb->get_results( $wpdb->prepare( $query_ac_carts, $start_date, $end_date ) );
+		$ac_carts_results = $wpdb->get_results( // phpcs:ignore
+			$wpdb->prepare(
+				'SELECT * FROM ' . $wpdb->prefix . 'ac_abandoned_cart_history_lite WHERE abandoned_cart_time >= %d AND abandoned_cart_time <= %d AND abandoned_cart_time <= %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s AND cart_ignored <> %s', // phpcs:ignore
+				$start_date,
+				$end_date,
+				$compare_time,
+				"%$blank_cart_info%",
+				$blank_cart_info_guest,
+				$blank_cart,
+				'1'
+			)
+		);
 
-		$recovered_item          = $recovered_total = $count_carts = $total_value = $order_total = 0;
+		$recovered_item          = 0;
+		$recovered_total         = 0;
+		$count_carts             = 0;
+		$total_value             = 0;
+		$order_total             = 0;
 		$return_recovered_orders = array();
 		$per_page                = $this->per_page;
 		$i                       = 0;
 		foreach ( $ac_carts_results as $key => $value ) {
-			$count_carts    += 1;
+			$count_carts++;
 			$cart_detail     = json_decode( $value->abandoned_cart_info );
 			$product_details = new stdClass();
 			if ( isset( $cart_detail->cart ) ) {
@@ -253,9 +257,9 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 			}
 			$line_total = 0;
 
-			if ( false != $product_details && is_object( $product_details ) && count( get_object_vars( $product_details ) ) > 0 ) {
+			if ( false !== $product_details && is_object( $product_details ) && count( get_object_vars( $product_details ) ) > 0 ) {
 				foreach ( $product_details as $k => $v ) {
-					if ( $v->line_subtotal_tax != 0 && $v->line_subtotal_tax > 0 ) {
+					if ( $v->line_subtotal_tax > 0 ) {
 						$line_total = $line_total + $v->line_total + $v->line_subtotal_tax;
 					} else {
 						$line_total = $line_total + $v->line_total;
@@ -264,7 +268,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 			}
 			$total_value += $line_total;
 		}
-		// $total_value                      = wc_price( $total_value );
+
 		$this->total_order_amount         = $total_value;
 		$this->total_abandoned_cart_count = $count_carts;
 		$recovered_order_total            = 0;
@@ -273,7 +277,7 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		$table_data                       = '';
 
 		foreach ( $ac_results as $key => $value ) {
-			if ( $value->recovered_cart != 0 ) {
+			if ( 0 != $value->recovered_cart ) { // phpcs:ignore
 				$return_recovered_orders[ $i ] = new stdClass();
 				$recovered_id                  = $value->recovered_cart;
 				$rec_order                     = get_post_meta( $recovered_id );
@@ -292,16 +296,18 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 						$recovered_time_format = date_i18n( get_option( 'time_format' ), $recovered_date );
 						$recovered_date_new    = $recovered_date_format . ' ' . $recovered_time_format;
 					}
-					$recovered_item += 1;
+					$recovered_item++;
 
-					if ( isset( $rec_order ) && $rec_order != false ) {
+					if ( isset( $rec_order ) && false !== $rec_order ) {
 						$recovered_total += $rec_order['_order_total'][0];
 					}
 					$date_format           = date_i18n( get_option( 'date_format' ), $value->abandoned_cart_time );
 					$time_format           = date_i18n( get_option( 'time_format' ), $value->abandoned_cart_time );
 					$abandoned_date        = $date_format . ' ' . $time_format;
 					$abandoned_order_id    = $value->id;
-					$billing_first_name    = $billing_last_name = $billing_email = '';
+					$billing_first_name    = '';
+					$billing_last_name     = '';
+					$billing_email         = '';
 					$recovered_order_total = 0;
 
 					if ( isset( $rec_order['_billing_first_name'][0] ) ) {
@@ -332,8 +338,8 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 					$this->recovered_item       = $recovered_item;
 					$this->total_recover_amount = round( ( $recovered_order_total + $this->total_recover_amount ), $number_decimal );
 					$i++;
-				} catch ( Exception $e ) {
-
+				} catch ( Exception $e ) { // phpcs:ignore
+					// nothing needs to be done here, simply ignore the record.
 				}
 			}
 		}
@@ -341,25 +347,23 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		$this->total_abandoned_cart_count = $this->total_abandoned_cart_count + $this->recovered_item;
 		$templates_count                  = count( $return_recovered_orders );
 		$this->total_count                = $templates_count;
-		// sort for order date
-		if ( isset( $_GET['orderby'] ) && $_GET['orderby'] == 'created_on' ) {
-			if ( isset( $_GET['order'] ) && $_GET['order'] == 'asc' ) {
+		// sort for order date.
+		if ( isset( $_GET['orderby'] ) && 'created_on' === $_GET['orderby'] ) { // phpcs:ignore WordPress.Security.NonceVerification
+			if ( isset( $_GET['order'] ) && 'asc' === $_GET['order'] ) { // phpcs:ignore WordPress.Security.NonceVerification
 				usort( $return_recovered_orders, array( __CLASS__, 'wcal_class_recovered_created_on_asc' ) );
 			} else {
 				usort( $return_recovered_orders, array( __CLASS__, 'wcal_class_recovered_created_on_dsc' ) );
 			}
-		}
-		// sort for customer name
-		elseif ( isset( $_GET['orderby'] ) && $_GET['orderby'] == 'recovered_date' ) {
-			if ( isset( $_GET['order'] ) && $_GET['order'] == 'asc' ) {
+		} elseif ( isset( $_GET['orderby'] ) && 'recovered_date' === $_GET['orderby'] ) { // phpcs:ignore WordPress.Security.NonceVerification, sort for customer name.
+			if ( isset( $_GET['order'] ) && 'asc' === $_GET['order'] ) { // phpcs:ignore WordPress.Security.NonceVerification
 				usort( $return_recovered_orders, array( __CLASS__, 'wcal_class_recovered_date_asc' ) );
 			} else {
 				usort( $return_recovered_orders, array( __CLASS__, 'wcal_class_recovered_date_dsc' ) );
 			}
 		}
-		// Pagination per page
-		if ( isset( $_GET['paged'] ) && $_GET['paged'] > 1 ) {
-			$page_number = $_GET['paged'] - 1;
+		// Pagination per page.
+		if ( isset( $_GET['paged'] ) && $_GET['paged'] > 1 ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$page_number = (int) sanitize_text_field( wp_unslash( $_GET['paged'] ) ) - 1; // phpcs:ignore WordPress.Security.NonceVerification
 			$k           = $per_page * $page_number;
 		} else {
 			$k = 0;
@@ -378,37 +382,37 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	/**
 	 * It will sort the ascending data based on the abandoned cart date.
 	 *
-	 * @param array | object $value1 All data of the list
-	 * @param array | object $value2 All data of the list
+	 * @param array | object $value1 All data of the list.
+	 * @param array | object $value2 All data of the list.
 	 * @return timestamp
 	 * @since 2.5.2
 	 */
-	function wcal_class_recovered_created_on_asc( $value1, $value2 ) {
+	public function wcal_class_recovered_created_on_asc( $value1, $value2 ) {
 		return $value1->abandoned_date - $value2->abandoned_date;
 	}
 
 	/**
 	 * It will sort the descending data based on the abandoned cart date.
 	 *
-	 * @param array | object $value1 All data of the list
-	 * @param array | object $value2 All data of the list
+	 * @param array | object $value1 All data of the list.
+	 * @param array | object $value2 All data of the list.
 	 * @return timestamp
 	 * @since 2.5.2
 	 */
-	function wcal_class_recovered_created_on_dsc( $value1, $value2 ) {
+	public function wcal_class_recovered_created_on_dsc( $value1, $value2 ) {
 		return $value2->abandoned_date - $value1->abandoned_date;
 	}
 
 	/**
 	 * It will sort the ascending data based on the recovered cart date.
 	 *
-	 * @param array | object $value1 All data of the list
-	 * @param array | object $value2 All data of the list
+	 * @param array | object $value1 All data of the list.
+	 * @param array | object $value2 All data of the list.
 	 * @globals mixed $woocommerce
 	 * @return timestamp
 	 * @since 2.5.2
 	 */
-	function wcal_class_recovered_date_asc( $value1, $value2 ) {
+	public function wcal_class_recovered_date_asc( $value1, $value2 ) {
 
 		global $woocommerce;
 		if ( version_compare( $woocommerce->version, '3.0.0', '>=' ) ) {
@@ -424,14 +428,13 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	/**
 	 * It will sort the descending data based on the recovered cart date.
 	 *
-	 * @param array | object $value1 All data of the list
-	 * @param array | object $value2 All data of the list
+	 * @param array | object $value1 All data of the list.
+	 * @param array | object $value2 All data of the list.
 	 * @globals mixed $woocommerce
 	 * @return timestamp
 	 * @since 2.5.2
 	 */
-
-	function wcal_class_recovered_date_dsc( $value1, $value2 ) {
+	public function wcal_class_recovered_date_dsc( $value1, $value2 ) {
 		global $woocommerce;
 		if ( version_compare( $woocommerce->version, '3.0.0', '>=' ) ) {
 			$value1 = $value1->recover_order_date;
@@ -446,8 +449,8 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 	/**
 	 * It will display the data for the recovered column.
 	 *
-	 * @param array | object $wcal_abandoned_orders All data of the list
-	 * @param stirng         $column_name Name of the column
+	 * @param array | object $wcal_abandoned_orders All data of the list.
+	 * @param stirng         $column_name Name of the column.
 	 * @return string $value Data of the column
 	 * @since 2.5.2
 	 */
@@ -483,4 +486,3 @@ class wcal_Recover_Orders_Table extends WP_List_Table {
 		return apply_filters( 'wcal_recovered_orders_column_default', $value, $wcal_abandoned_orders, $column_name );
 	}
 }
-

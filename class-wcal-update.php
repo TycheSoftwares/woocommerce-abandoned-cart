@@ -27,7 +27,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 		 */
 		public static function wcal_schedule_update_action() {
 			// IMP: The default value for get option should be updated in each release to match the current version to ensure update code is not run for first time installs.
-			if ( get_option( 'wcal_previous_version', '5.8.2' ) != WCAL_PLUGIN_VERSION && function_exists( 'as_enqueue_async_action' ) && false === as_next_scheduled_action( 'wcal_update_db' ) ) {
+			if ( get_option( 'wcal_previous_version', '5.8.2' ) !== WCAL_PLUGIN_VERSION && function_exists( 'as_enqueue_async_action' ) && false === as_next_scheduled_action( 'wcal_update_db' ) ) {
 				as_enqueue_async_action( 'wcal_update_db' );
 			}
 		}
