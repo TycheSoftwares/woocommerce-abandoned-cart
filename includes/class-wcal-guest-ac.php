@@ -169,11 +169,7 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 			if ( isset( $_POST['shipping_country'] ) && '' !== $_POST['shipping_country'] ) {
 				wcal_common::wcal_set_cart_session( 'shipping_country', sanitize_text_field( wp_unslash( $_POST['shipping_country'] ) ) );
 			}
-<<<<<<< HEAD:includes/class-wcal-guest-ac.php
 			// If a record is present in the guest cart history table for the same email id, then delete the previous records.
-=======
-			// If a record is present in the guest cart history table for the same email id, then delete the previous records
->>>>>>> master:includes/wcal_class-guest.php
 			$results_guest = $wpdb->get_results( // phpcs:ignore
 				$wpdb->prepare(
 					'SELECT id FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite` WHERE email_id = %s',
@@ -259,15 +255,9 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 
 			if ( 0 === count( $results ) ) {
 				$get_cookie = WC()->session->get_session_cookie();
-<<<<<<< HEAD:includes/class-wcal-guest-ac.php
 
 				$cart_info = wp_json_encode( $cart );
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-=======
-				//$cart_info  = addslashes( json_encode( $cart ) );
-				$cart_info  = json_encode( $cart );
-
->>>>>>> master:includes/wcal_class-guest.php
 				$results = $wpdb->get_results(
 					$wpdb->prepare(
 						'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE session_id LIKE %s AND cart_ignored = %s AND recovered_cart = %s',
@@ -276,14 +266,9 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 						0
 					)
 				);
-<<<<<<< HEAD:includes/class-wcal-guest-ac.php
 				if ( 0 === count( $results ) ) {
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 					$wpdb->query(
-=======
-				if ( 0 == count( $results ) ) {
-					$wpdb->query( // phpcs:ignore
->>>>>>> master:includes/wcal_class-guest.php
 						$wpdb->prepare(
 							'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type, session_id ) VALUES ( %s, %s, %s, %s, %s, %s, %s )',
 							$user_id,
@@ -300,20 +285,12 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 					wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
 
 					if ( is_multisite() ) {
-<<<<<<< HEAD:includes/class-wcal-guest-ac.php
 						// get main site's table prefix.
 						$main_prefix = $wpdb->get_blog_prefix( 1 );
 						// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 						$wpdb->query(
 							$wpdb->prepare(
 								'INSERT INTO `' . $main_prefix . 'usermeta`( user_id, meta_key, meta_value ) VALUES ( %s, %s, %s )', // phpcs:ignore
-=======
-						// get main site's table prefix
-						$main_prefix            = $wpdb->get_blog_prefix( 1 );
-						$wpdb->query( // phpcS:ignore
-							$wpdb->prepare(
-								'INSERT INTO `' . $main_prefix . 'usermeta`( user_id, meta_key, meta_value ) VALUES ( %s, %s, %s )',
->>>>>>> master:includes/wcal_class-guest.php
 								$user_id,
 								'_woocommerce_persistent_cart',
 								$cart_info
