@@ -2073,22 +2073,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					WCAL_PLUGIN_VERSION,
 					false
 				);
-<<<<<<< HEAD
 				$mode = isset( $_GET['mode'] ) ? sanitize_text_field( wp_unslash( $_GET['mode'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				if ( 'emailtemplates' === $action && ( 'addnewtemplate' === $mode || 'edittemplate' === $mode ) ) {
 					wp_register_script( 'woocommerce_admin', WC()->plugin_url() . '/assets/js/admin/woocommerce_admin.min.js', array( 'jquery', 'jquery-tiptip' ), WCAL_PLUGIN_VERSION, false );
 					wp_enqueue_script( 'woocommerce_admin' );
-=======
-				$mode   = isset( $_GET['mode'] ) ? sanitize_text_field( wp_unslash( $_GET['mode'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				if ( 'emailtemplates' === $action && ( 'addnewtemplate' === $mode || 'edittemplate' === $mode ) ) {
-					wp_register_script( 'woocommerce_admin', WC()->plugin_url() . '/assets/js/admin/woocommerce_admin.min.js', array( 'jquery', 'jquery-tiptip' ), WCAL_PLUGIN_VERSION, false );
-					wp_enqueue_script( 'woocommerce_admin');
->>>>>>> master
 					$locale  = localeconv();
 					$decimal = isset( $locale['decimal_point'] ) ? $locale['decimal_point'] : '.';
 					$params  = array(
 						// translators: %s: decimal.
-<<<<<<< HEAD
 						'i18n_decimal_error'               => sprintf( __( 'Please enter in decimal (%s) format without thousand separators.', 'woocommerce' ), $decimal ),
 						// translators: %s: price decimal separator.
 						'i18n_mon_decimal_error'           => sprintf( __( 'Please enter in monetary decimal (%s) format without thousand separators and currency symbols.', 'woocommerce' ), wc_get_price_decimal_separator() ),
@@ -2101,33 +2093,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							'export_products' => __( 'Export', 'woocommerce' ),
 						),
 						'urls'                             => array(
-=======
-						'i18n_decimal_error'                => sprintf( __( 'Please enter in decimal (%s) format without thousand separators.', 'woocommerce' ), $decimal ),
-						// translators: %s: price decimal separator.
-						'i18n_mon_decimal_error'            => sprintf( __( 'Please enter in monetary decimal (%s) format without thousand separators and currency symbols.', 'woocommerce' ), wc_get_price_decimal_separator() ),
-						'i18n_country_iso_error'            => __( 'Please enter in country code with two capital letters.', 'woocommerce' ),
-						'i18_sale_less_than_regular_error'  => __( 'Please enter in a value less than the regular price.', 'woocommerce' ),
-						'decimal_point'                     => $decimal,
-						'mon_decimal_point'                 => wc_get_price_decimal_separator(),
-						'strings' => array(
-							'import_products' => __( 'Import', 'woocommerce' ),
-							'export_products' => __( 'Export', 'woocommerce' ),
-						),
-						'urls' => array(
->>>>>>> master
 							'import_products' => esc_url_raw( admin_url( 'edit.php?post_type=product&page=product_importer' ) ),
 							'export_products' => esc_url_raw( admin_url( 'edit.php?post_type=product&page=product_exporter' ) ),
 						),
 					);
-<<<<<<< HEAD
 
 					// If we dont localize this script then from the WooCommerce check it will not run the javascript further and tooltip wont show any data.
 					// Also, we need above all parameters for the WooCoomerce js file. So we have taken it from the WooCommerce. @since: 5.1.2.
-=======
-					
-					// If we dont localize this script then from the WooCommerce check it will not run the javascript further and tooltip wont show any data.
-					// Also, we need above all parameters for the WooCoomerce js file. So we have taken it from the WooCommerce. @since: 5.1.2
->>>>>>> master
 					wp_localize_script( 'woocommerce_admin', 'woocommerce_admin', $params );
 				}
 				?>
@@ -2875,10 +2847,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								printf(
 									// translators: All counts of items & amounts.
 									wp_kses_post(
-<<<<<<< HEAD
 										// translators: Abandoned & recovered numbers and order totals.
-=======
->>>>>>> master
 										__( 'During the selected range <strong>%1$d</strong> carts totaling <strong>%2$s</strong> were abandoned. We were able to recover <strong>%3$d</strong> of them, which led to an extra <strong>%4$s</strong>', 'woocommerce-abandoned-cart' )
 									),
 									esc_attr( $count ),
@@ -3679,11 +3648,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$subject_email_preview = isset( $_POST['subject_email_preview'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_POST['subject_email_preview'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				$subject_email_preview = convert_smilies( $subject_email_preview );
 				$subject_email_preview = str_ireplace( '{{customer.firstname}}', 'John', $subject_email_preview );
-<<<<<<< HEAD
 				$body_email_preview    = isset( $_POST['body_email_preview'] ) ? convert_smilies( wp_unslash( $_POST['body_email_preview'] ) ) : ''; // phpcs:ignore
-=======
-				$body_email_preview    = isset( $_POST['body_email_preview'] ) ? convert_smilies( wp_unslash( $_POST['body_email_preview'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
->>>>>>> master
 				$is_wc_template        = isset( $_POST['is_wc_template'] ) ? sanitize_text_field( wp_unslash( $_POST['is_wc_template'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				$wc_template_header    = isset( $_POST['wc_template_header'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_POST['wc_template_header'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
