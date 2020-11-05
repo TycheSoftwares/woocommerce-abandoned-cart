@@ -377,16 +377,16 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 	 * @since 2.2
 	 */
 	function guest_checkout_fields( $fields ) {
-		if ( '' !== wcal_common::wcal_get_cart_session( 'guest_first_name' ) ) {
+		if ( '' != wcal_common::wcal_get_cart_session( 'guest_first_name' ) ) { // phpcs:ignore
 			$_POST['billing_first_name'] = wcal_common::wcal_get_cart_session( 'guest_first_name' );
 		}
-		if ( '' !== wcal_common::wcal_get_cart_session( 'guest_last_name' ) ) {
+		if ( '' != wcal_common::wcal_get_cart_session( 'guest_last_name' ) ) { // phpcs:ignore
 			$_POST['billing_last_name'] = wcal_common::wcal_get_cart_session( 'guest_last_name' );
 		}
-		if ( '' !== wcal_common::wcal_get_cart_session( 'guest_email' ) ) {
+		if ( '' != wcal_common::wcal_get_cart_session( 'guest_email' ) ) { // phpcs:ignore
 			$_POST['billing_email'] = wcal_common::wcal_get_cart_session( 'guest_email' );
 		}
-		if ( '' !== wcal_common::wcal_get_cart_session( 'guest_phone' ) ) {
+		if ( '' != wcal_common::wcal_get_cart_session( 'guest_phone' ) ) { // phpcs:ignore
 			$_POST['billing_phone'] = wcal_common::wcal_get_cart_session( 'guest_phone' );
 		}
 		return $fields;
