@@ -1,24 +1,26 @@
 <?php
-
-if ( session_id() === '' ) {
-	// session has not started
-	session_start();
-}
-// Load WP_List_Table if not loaded
-if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
-
 /**
  * Abandoned Cart Lite for WooCommerce
  *
- * It will handle the common action for the plugin.
+ * It will handle the Product Report Table.
  *
  * @author  Tyche Softwares
  * @package Abandoned-Cart-Lite-for-WooCommerce/Admin/List-Class
  * @since 2.5.3
  */
 
+if ( session_id() === '' ) {
+	// session has not started.
+	session_start();
+}
+// Load WP_List_Table if not loaded.
+if ( ! class_exists( 'WP_List_Table' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+}
+
+/**
+ * Product Report Table Class.
+ */
 class WCAL_Product_Report_Table extends WP_List_Table {
 
 	/**
@@ -53,11 +55,11 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 	 */
 	public function __construct() {
 		global $status, $page;
-		// Set parent defaults
+		// Set parent defaults.
 		parent::__construct(
 			array(
-				'singular' => __( 'product_id', 'woocommerce-abandoned-cart' ), // singular name of the listed records
-				'plural'   => __( 'product_ids', 'woocommerce-abandoned-cart' ), // plural name of the listed records
+				'singular' => __( 'product_id', 'woocommerce-abandoned-cart' ), // singular name of the listed records.
+				'plural'   => __( 'product_ids', 'woocommerce-abandoned-cart' ), // plural name of the listed records.
 				'ajax'     => false,                        // Does this table support ajax?
 			)
 		);
@@ -71,16 +73,16 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 	 */
 	public function wcal_product_report_prepare_items() {
 		$columns               = $this->get_columns();
-		$hidden                = array(); // No hidden columns
+		$hidden                = array(); // No hidden columns.
 		$data                  = $this->wcal_product_report_data();
 		$total_items           = $this->total_count;
 		$this->items           = $data;
 		$this->_column_headers = array( $columns, $hidden );
 		$this->set_pagination_args(
 			array(
-				'total_items' => $total_items,                     // WE have to calculate the total number of items
-				'per_page'    => $this->per_page,                      // WE have to determine how many items to show on a page
-				'total_pages' => ceil( $total_items / $this->per_page ),   // WE have to calculate the total number of pages
+				'total_items' => $total_items,                     // WE have to calculate the total number of items.
+				'per_page'    => $this->per_page,                      // WE have to determine how many items to show on a page.
+				'total_pages' => ceil( $total_items / $this->per_page ),   // WE have to calculate the total number of pages.
 			)
 		);
 	}
@@ -116,8 +118,15 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		$blank_cart_info       = '{"cart":[]}';
 		$blank_cart_info_guest = '[]';
 		$blank_cart            = '""';
-		$query                 = 'SELECT abandoned_cart_time, abandoned_cart_info, recovered_cart FROM `' . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '$blank_cart' ORDER BY recovered_cart DESC";
-		$recover_query         = $wpdb->get_results( $query );
+
+		$recover_query = $wpdb->get_results( // phpcs:ignore
+			$wpdb->prepare(
+				'SELECT abandoned_cart_time, abandoned_cart_info, recovered_cart FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s ORDER BY recovered_cart DESC', // phpcs:ignore
+				"%$blank_cart_info%",
+				"%$blank_cart_info_guest%",
+				"%$blank_cart%"
+			)
+		);
 		$rec_carts_array       = array();
 		$recover_product_array = array();
 		$return_product_report = array();
@@ -139,7 +148,7 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 
 			$ac_cutoff_time = get_option( 'ac_lite_cart_abandoned_time' );
 			$cut_off_time   = $ac_cutoff_time * 60;
-			$current_time   = current_time( 'timestamp' );
+			$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 			$compare_time   = $current_time - $cart_update_time;
 			if ( is_array( $recovered_cart_info ) || is_object( $recovered_cart_info ) ) {
 				foreach ( $recovered_cart_info as $rec_cart_key => $rec_cart_value ) {
@@ -148,7 +157,7 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 						if ( $compare_time > $cut_off_time ) {
 							$rec_carts_array [] = $product_id;
 						}
-						if ( $recovered_cart_dat != 0 ) {
+						if ( 0 != $recovered_cart_dat ) { // phpcs:ignore
 							$recover_product_array[] = $product_id;
 						}
 					}
@@ -168,13 +177,13 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 			foreach ( $chunck_array_value as $k => $v ) {
 				$return_product_report[ $i ] = new stdClass();
 				$prod_name                   = get_post( $k );
-				if ( null != $prod_name || '' != $prod_name ) {
+				if ( null !== $prod_name || '' !== $prod_name ) {
 					$product_name    = $prod_name->post_title;
 					$abandoned_count = $v;
 					$recover         = array_count_values( $recover_product_array );
 					foreach ( $recover as $ke => $ve ) {
 						if ( array_key_exists( $ke, $count ) ) {
-							if ( $ke == $k ) {
+							if ( $ke == $k ) { // phpcs:ignore
 								$recover_cart = $ve;
 							}
 						}
@@ -193,9 +202,9 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		}
 		$this->total_count = count( $return_product_report ) > 0 ? count( $return_product_report ) : 0;
 
-		// Pagination per page
-		if ( isset( $_GET['paged'] ) && $_GET['paged'] > 1 ) {
-			$page_number = $_GET['paged'] - 1;
+		// Pagination per page.
+		if ( isset( $_GET['paged'] ) && sanitize_text_field( wp_unslash( $_GET['paged'] ) ) > 1 ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$page_number = sanitize_text_field( wp_unslash( $_GET['paged'] ) ) - 1; // phpcs:ignore WordPress.Security.NonceVerification
 			$k           = $per_page * $page_number;
 		} else {
 			$k = 0;
@@ -214,9 +223,9 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 	/**
 	 * It will display the data for product column
 	 *
-	 * @param array | object $wcal_sent_emails All data of the list
-	 * @param stirng         $column_name Name of the column
-	 * @return string $value Data of the column
+	 * @param array | object $wcal_sent_emails All data of the list.
+	 * @param stirng         $column_name Name of the column.
+	 * @return string $value Data of the column.
 	 * @since 2.5.3
 	 */
 	public function column_default( $wcal_sent_emails, $column_name ) {
@@ -248,4 +257,3 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 		return apply_filters( 'wcal_product_report_column_default', $value, $wcal_sent_emails, $column_name );
 	}
 }
-

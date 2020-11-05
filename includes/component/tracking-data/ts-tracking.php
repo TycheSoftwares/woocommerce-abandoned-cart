@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-include_once( 'class-ts-tracker.php' );
+require_once 'class-ts-tracker.php';
 
 /** Adds the Tracking non-senstive data notice
  *
@@ -13,12 +13,12 @@ class Wcal_TS_tracking {
 
 	/**
 	 * @var string Plugin prefix
-	 * @access public 
+	 * @access public
 	 */
 
 	public static $plugin_prefix = '';
 
-	/** 
+	/**
 	 * @var string Plugin Name
 	 * @access public
 	 */
@@ -49,7 +49,7 @@ class Wcal_TS_tracking {
 	 * @var string File path
 	 * @access public
 	 */
-	public static $ts_file_path = '' ;
+	public static $ts_file_path = '';
 	/**
 	 * @var string plugin locale
 	 * @access public
@@ -77,33 +77,32 @@ class Wcal_TS_tracking {
 	 * @access public
 	 */
 	public static $ts_register_setting = '';
-	/** 
-	 * Default Constructor 
-	 *
+	/**
+	 * Default Constructor
 	 */
 	public function __construct( $ts_plugin_prefix = '', $ts_plugin_name = '', $ts_blog_post_link = '', $ts_plugin_context = '', $ts_plugin_url = '', $setting_page = '', $add_setting = '', $setting_section = '', $setting_register = '' ) {
 
-		self::$plugin_prefix  = $ts_plugin_prefix;
-		self::$plugin_name    = $ts_plugin_name;
-		self::$blog_post_link = $ts_blog_post_link;
-		self::$plugin_url     = $ts_plugin_url;
-		self::$ts_plugin_locale = $ts_plugin_context;
-		self::$ts_settings_page  = $setting_page;
-		self::$ts_add_setting_on_page = $add_setting;
+		self::$plugin_prefix             = $ts_plugin_prefix;
+		self::$plugin_name               = $ts_plugin_name;
+		self::$blog_post_link            = $ts_blog_post_link;
+		self::$plugin_url                = $ts_plugin_url;
+		self::$ts_plugin_locale          = $ts_plugin_context;
+		self::$ts_settings_page          = $setting_page;
+		self::$ts_add_setting_on_page    = $add_setting;
 		self::$ts_add_setting_on_section = $setting_section;
-		self::$ts_register_setting = $setting_register;
+		self::$ts_register_setting       = $setting_register;
 
-		self::$ts_file_path   = untrailingslashit( plugins_url( '/', __FILE__) ) ;
-		//Tracking Data
+		self::$ts_file_path = untrailingslashit( plugins_url( '/', __FILE__ ) );
+		// Tracking Data
 		add_action( 'admin_notices', array( 'Wcal_TS_tracking', 'ts_track_usage_data' ) );
-		add_action( 'admin_footer',  array( 'Wcal_TS_tracking', 'ts_admin_notices_scripts' ) );
-		add_action( 'wp_ajax_'.self::$plugin_prefix.'_admin_notices', array( 'Wcal_TS_tracking', 'ts_admin_notices' ) );
+		add_action( 'admin_footer', array( 'Wcal_TS_tracking', 'ts_admin_notices_scripts' ) );
+		add_action( 'wp_ajax_' . self::$plugin_prefix . '_admin_notices', array( 'Wcal_TS_tracking', 'ts_admin_notices' ) );
 
 		add_filter( 'cron_schedules', array( 'Wcal_TS_tracking', 'ts_add_cron_schedule' ) );
 
 		add_action( self::$plugin_prefix . '_add_new_settings', array( 'Wcal_TS_tracking', 'ts_add_reset_tracking_setting' ) );
 
-		add_action ( 'admin_init', array( 'Wcal_TS_tracking', 'ts_reset_tracking_setting' ) ) ;
+		add_action( 'admin_init', array( 'Wcal_TS_tracking', 'ts_reset_tracking_setting' ) );
 
 		self::ts_schedule_cron_job();
 	}
@@ -111,9 +110,9 @@ class Wcal_TS_tracking {
 	/**
 	 * It will delete the tracking option from the database.
 	 */
-	public static function ts_reset_tracking_setting () {
+	public static function ts_reset_tracking_setting() {
 
-		if ( isset ( $_GET [ 'ts_action' ] ) && 'wcal_reset_tracking' == $_GET [ 'ts_action' ] ) {
+		if ( isset( $_GET ['ts_action'] ) && 'wcal_reset_tracking' == $_GET ['ts_action'] ) {
 			delete_option( self::$plugin_prefix . '_allow_tracking' );
 			delete_option( 'ts_tracker_last_send' );
 			$ts_url = remove_query_arg( 'ts_action' );
@@ -123,14 +122,14 @@ class Wcal_TS_tracking {
 
 	/**
 	 * It will add the settinig, which will allow store owner to reset the tracking data. Which will result into stop trakcing the data.
+	 *
 	 * @hook self::$plugin_prefix . '_add_new_settings'
-	 * 
 	 */
-	public static function ts_add_reset_tracking_setting () {
-		
+	public static function ts_add_reset_tracking_setting() {
+
 		add_settings_field(
 			'ts_reset_tracking',
-			__( 'Reset usage tracking', self::$ts_plugin_locale  ),
+			__( 'Reset usage tracking', self::$ts_plugin_locale ),
 			array( 'Wcal_TS_tracking', 'ts_rereset_tracking_callback' ),
 			self::$ts_add_setting_on_page,
 			self::$ts_add_setting_on_section,
@@ -143,47 +142,49 @@ class Wcal_TS_tracking {
 		);
 	}
 
-	public static function ts_reset_tracking_setting_section_callback ( ) {
+	public static function ts_reset_tracking_setting_section_callback() {
 
 	}
 
 	/**
 	 * It will add the Reset button on the settings page.
+	 *
 	 * @param array $args
 	 */
-	public static function ts_rereset_tracking_callback ( $args ) {
+	public static function ts_rereset_tracking_callback( $args ) {
 		$wcap_restrict_domain_address = get_option( 'wcap_restrict_domain_address' );
 		$domain_value                 = isset( $wcap_restrict_domain_address ) ? esc_attr( $wcap_restrict_domain_address ) : '';
 		// Next, we update the name attribute to access this element's ID in the context of the display options array
 		// We also access the show_header element of the options collection in the call to the checked() helper function
-		$ts_action = self::$ts_settings_page . "&amp;ts_action=" . self::$plugin_prefix . "_reset_tracking"; 
-		printf( '<a href="'.$ts_action.'" class="button button-large reset_tracking">Reset</a>' );
-		
+		$ts_action = self::$ts_settings_page . '&amp;ts_action=' . self::$plugin_prefix . '_reset_tracking';
+		printf( '<a href="' . $ts_action . '" class="button button-large reset_tracking">Reset</a>' );
+
 		// Here, we'll take the first argument of the array and add it to a label next to the checkbox
-		$html = '<label for="wcap_restrict_domain_address_label"> '  . $args[0] . '</label>';
+		$html = '<label for="wcap_restrict_domain_address_label"> ' . $args[0] . '</label>';
 		echo $html;
 	}
 
 	/**
 	 * It will add a cron job for sending the tarcking data.
 	 * By default it will set once in a week interval.
-	 * @hook cron_schedules	
+	 *
+	 * @hook cron_schedules
 	 * @param array $schedules
 	 * @return array $schedules
 	 */
 	public static function ts_add_cron_schedule( $schedules ) {
-		$schedules[ 'once_in_week' ] = array(
+		$schedules['once_in_week'] = array(
 			'interval' => 604800,  // one week in seconds
-			'display'  => __( 'Once in a Week', self::$ts_plugin_locale )
+			'display'  => __( 'Once in a Week', self::$ts_plugin_locale ),
 		);
-		
+
 		return $schedules;
 	}
 
 	/**
 	 * To capture the data from the client site.
 	 */
-	public static function ts_schedule_cron_job () {
+	public static function ts_schedule_cron_job() {
 		if ( ! wp_next_scheduled( self::$plugin_prefix . '_ts_tracker_send_event' ) ) {
 			wp_schedule_event( time() + 604800, 'once_in_week', self::$plugin_prefix . '_ts_tracker_send_event' );
 		}
@@ -196,65 +197,68 @@ class Wcal_TS_tracking {
 	 * @access public
 	 */
 	public static function ts_admin_notices_scripts() {
-		
-        wp_enqueue_script(
+
+		wp_enqueue_script(
 			self::$plugin_prefix . 'ts_dismiss_notice',
 			self::$ts_file_path . '/assets/js/dismiss-notice.js',
-            '',
-            '',
-            false
+			'',
+			'',
+			false
 		);
 
-		wp_localize_script( 'ts_dismiss_notice', 'ts_dismiss_notice', array (
-			'ts_prefix_of_plugin' =>  self::$plugin_prefix,
-			'ts_admin_url'        => admin_url( 'admin-ajax.php' )
-		) );
+		wp_localize_script(
+			'ts_dismiss_notice',
+			'ts_dismiss_notice',
+			array(
+				'ts_prefix_of_plugin' => self::$plugin_prefix,
+				'ts_admin_url'        => admin_url( 'admin-ajax.php' ),
+			)
+		);
 	}
 
-    /**
-	 * Called when the dismiss icon is clicked on the notice. 
+	/**
+	 * Called when the dismiss icon is clicked on the notice.
 	 *
 	 * @since 6.8
 	 * @access public
 	 */
 
-    public static function ts_admin_notices() {
-        update_option( self::$plugin_prefix . '_allow_tracking', 'dismissed' );
-        Wcal_TS_Tracker::ts_send_tracking_data( false );
-        die();
-    }
+	public static function ts_admin_notices() {
+		update_option( self::$plugin_prefix . '_allow_tracking', 'dismissed' );
+		Wcal_TS_Tracker::ts_send_tracking_data( false );
+		die();
+	}
 
 	/**
 	 * Send the data tracking data to the server.
-	 * 
+	 *
 	 * @access public
-	 * 
 	 */
 
 	private static function ts_tracking_actions() {
 		if ( isset( $_GET[ self::$plugin_prefix . '_tracker_optin' ] ) && isset( $_GET[ self::$plugin_prefix . '_tracker_nonce' ] ) && wp_verify_nonce( $_GET[ self::$plugin_prefix . '_tracker_nonce' ], self::$plugin_prefix . '_tracker_optin' ) ) {
 			update_option( self::$plugin_prefix . '_allow_tracking', 'yes' );
 			Wcal_TS_Tracker::ts_send_tracking_data( true );
-			header( 'Location: ' . $_SERVER[ 'HTTP_REFERER' ] );
+			header( 'Location: ' . $_SERVER['HTTP_REFERER'] );
 		} elseif ( isset( $_GET[ self::$plugin_prefix . '_tracker_optout' ] ) && isset( $_GET[ self::$plugin_prefix . '_tracker_nonce' ] ) && wp_verify_nonce( $_GET[ self::$plugin_prefix . '_tracker_nonce' ], self::$plugin_prefix . '_tracker_optout' ) ) {
 			update_option( self::$plugin_prefix . '_allow_tracking', 'no' );
 			Wcal_TS_Tracker::ts_send_tracking_data( false );
-			header( 'Location: ' . $_SERVER[ 'HTTP_REFERER' ] );
+			header( 'Location: ' . $_SERVER['HTTP_REFERER'] );
 		}
 	}
 
 	/**
 	 * Adds a data usage tracking notice in the admin
-	 * 
+	 *
 	 * @access public
 	 * @since 6.8
 	 */
-	
+
 	public static function ts_track_usage_data() {
 		global $current_screen;
 		$current_screen = get_current_screen();
-		if ( ( method_exists($current_screen, 'is_block_editor') && $current_screen->is_block_editor() )
-			|| ( function_exists('is_gutenberg_page') && is_gutenberg_page() ) ) {
+		if ( ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() )
+			|| ( function_exists( 'is_gutenberg_page' ) && is_gutenberg_page() ) ) {
 			return;
 		}
 
@@ -271,6 +275,7 @@ class Wcal_TS_tracking {
 					<a class="button-secondary button button-large skip"  href="<?php echo esc_url( wp_nonce_url( add_query_arg( self::$plugin_prefix . '_tracker_optout', 'true' ), self::$plugin_prefix . '_tracker_optout', self::$plugin_prefix . '_tracker_nonce' ) ); ?>"><?php esc_html_e( 'No thanks', self::$plugin_context ); ?></a>
 				</p>
 			</div>
-		<?php endif;
+			<?php
+		endif;
 	}
 }

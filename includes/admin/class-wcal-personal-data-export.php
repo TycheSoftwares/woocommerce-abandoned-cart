@@ -4,8 +4,10 @@
  * Dashboard->Tools->Export Personal Data
  *
  * @since 4.9
+ * @package Abandoned-Cart-Lite-for-WooCommerce\Data-Export
  */
-// Exit if accessed directly
+
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -24,22 +26,21 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 		 * @since 7.8
 		 */
 		public function __construct() {
-			// Hook into the WP export process
+			// Hook into the WP export process.
 			add_filter( 'wp_privacy_personal_data_exporters', array( &$this, 'wcal_exporter_array' ), 6 );
 		}
 
 		/**
-		 * Add our export and it's callback function
+		 * Add our export and it's callback function.
 		 *
-		 * @param array $exporters - Any exportes that need to be added by 3rd party plugins
-		 * @param array $exporters - Exportes list containing our plugin details
+		 * @param array $exporters - Exportes list containing our plugin details.
 		 *
 		 * @since 4.9
 		 */
 		public static function wcal_exporter_array( $exporters = array() ) {
 
 			$exporter_list = array();
-			// Add our export and it's callback function
+			// Add our export and it's callback function.
 			$exporter_list['wcal_carts'] = array(
 				'exporter_friendly_name' => __( 'Abandoned & Recovered Carts', 'woocommerce-abandoned-cart' ),
 				'callback'               => array( 'Wcal_Personal_Data_Export', 'wcal_data_exporter' ),
@@ -53,17 +54,17 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 
 		/**
 		 * Returns data to be displayed for exporting the
-		 * cart details
+		 * cart details.
 		 *
-		 * @param string  $email_address - EMail Address for which personal data is being exported
-		 * @param integer $page - The Export page number
-		 * @return array $data_to_export - Data to be exported
+		 * @param string  $email_address - EMail Address for which personal data is being exported.
+		 * @param integer $page - The Export page number.
+		 * @return array $data_to_export - Data to be exported.
 		 *
 		 * @hook wp_privacy_personal_data_exporters
 		 * @global $wpdb
 		 * @since  4.9
 		 */
-		static function wcal_data_exporter( $email_address, $page ) {
+		public static function wcal_data_exporter( $email_address, $page ) {
 
 			global $wpdb;
 
@@ -77,20 +78,27 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 
 			$user_id = $user ? (int) $user->ID : 0;
 
-			if ( $user_id > 0 ) { // registered user
+			if ( $user_id > 0 ) { // registered user.
 
-				$cart_query = 'SELECT id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite' . "`
-                               WHERE user_id = %d AND
-                               user_type = 'REGISTERED' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' AND abandoned_cart_info NOT LIKE '$blank_cart'";
+				$cart_ids = $wpdb->get_results( // phpcs:ignore
+					$wpdb->prepare(
+						'SELECT id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND user_type = %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s', // phpcs:ignore
+						$user_id,
+						'REGISTERED',
+						"%$blank_cart_info%",
+						"%$blank_cart%"
+					)
+				);
+			} else { // guest carts.
 
-				$cart_ids = $wpdb->get_results( $wpdb->prepare( $cart_query, $user_id ) );
-			} else { // guest carts
-				$guest_query = 'SELECT id FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite' . '`
-                                WHERE email_id = %s';
+				$guest_user_ids = $wpdb->get_results( // phpcs:ignore
+					$wpdb->prepare(
+						'SELECT id FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite' . '` WHERE email_id = %s', // phpcs:ignore
+						$email_address
+					)
+				);
 
-				$guest_user_ids = $wpdb->get_results( $wpdb->prepare( $guest_query, $email_address ) );
-
-				if ( 0 == count( $guest_user_ids ) ) {
+				if ( 0 === count( $guest_user_ids ) ) {
 					return array(
 						'data' => array(),
 						'done' => true,
@@ -100,12 +108,14 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 				$cart_ids = array();
 
 				foreach ( $guest_user_ids as $ids ) {
-					// get the cart data
-					$cart_query = 'SELECT id, abandoned_cart_info AS cart_info FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite' . "`
-                                   WHERE user_id = %d AND
-                                   user_type = 'GUEST'";
-
-					$cart_data = $wpdb->get_results( $wpdb->prepare( $cart_query, $ids->id ) );
+					// Get the cart data.
+					$cart_data = $wpdb->get_results( // phpcs:ignore
+						$wpdb->prepare(
+							'SELECT id, abandoned_cart_info AS cart_info FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND user_type = %s', // phpcs:ignore
+							$ids->id,
+							'GUEST'
+						)
+					);
 
 					$cart_ids = array_merge( $cart_ids, $cart_data );
 				}
@@ -146,26 +156,29 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 		}
 
 		/**
-		 * Returns the personal data for each abandoned cart
+		 * Returns the personal data for each abandoned cart.
 		 *
-		 * @param integer $abandoned_id - Abandoned Cart ID
-		 * @return array $personal_data - Personal data to be displayed
+		 * @param integer $abandoned_id - Abandoned Cart ID.
+		 * @return array $personal_data - Personal data to be displayed.
 		 * @global $wpdb
 		 * @since  4.9
 		 */
-		static function get_cart_data( $abandoned_id ) {
+		public static function get_cart_data( $abandoned_id ) {
 			$personal_data = array();
 
 			global $wpdb;
 
-			$cart_query   = 'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite' . '`
-                             WHERE id = %d';
-			$cart_details = $wpdb->get_results( $wpdb->prepare( $cart_query, $abandoned_id ) );
+			$cart_details = $wpdb->get_results( // phpcs:ignore
+				$wpdb->prepare(
+					'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite' . '` WHERE id = %d', // phpcs:ignore
+					$abandoned_id
+				)
+			);
 			$cart_details = $cart_details[0];
 			$user_id      = $cart_details->user_id;
 			$user_type    = $cart_details->user_type;
 
-			if ( $user_type == 'GUEST' ) {
+			if ( 'GUEST' === $user_type ) {
 
 				$cart_details_to_export = apply_filters(
 					'wcal_personal_export_cart_details_prop',
@@ -206,7 +219,7 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 				$cart_details_formatted = self::wcal_get_cart_details_export( $cart_info );
 			}
 
-			if ( 'GUEST' == $user_type ) {
+			if ( 'GUEST' === $user_type ) {
 				$guest_details = self::wcal_get_guest_personal_info( $user_id );
 			}
 			foreach ( $cart_details_to_export as $prop => $name ) {
@@ -216,7 +229,7 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 						$value = $cart_details->id;
 						break;
 					case 'date_created':
-						$value = date( 'Y-m-d H:i:s', $cart_details->abandoned_cart_time );
+						$value = date( 'Y-m-d H:i:s', $cart_details->abandoned_cart_time ); // phpcs:ignore
 						break;
 					case 'cart_status':
 						$cart_ignored = $cart_details->cart_ignored;
@@ -253,35 +266,35 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 								$product_name = $cart_details_formatted[ $k ]['product_name'];
 								$qty          = $cart_details_formatted[ $k ]['qty'];
 
-								$value .= ( $value == '' ) ? "$product_name x $qty" : ", $product_name x $qty";
+								$value .= ( '' === $value ) ? "$product_name x $qty" : ", $product_name x $qty";
 							}
 						}
 						break;
 					case 'formatted_billing_address':
-						if ( $user_type == 'REGISTERED' ) { // registered user
+						if ( 'REGISTERED' === $user_type ) { // registered user.
 
 							$billing = wcal_common::wcal_get_billing_details( $user_id );
-							$value   = get_user_meta( $user_id, 'billing_first_name', true ); // First Name
-							$value  .= ' ' . get_user_meta( $user_id, 'billing_last_name', true ); // Last Name
+							$value   = get_user_meta( $user_id, 'billing_first_name', true ); // First Name.
+							$value  .= ' ' . get_user_meta( $user_id, 'billing_last_name', true ); // Last Name.
 							if ( count( $billing ) > 0 ) {
 								foreach ( $billing as $details ) {
-									if ( '' != $details ) {
+									if ( '' !== $details ) {
 										$value .= ",$details ";
 									}
 								}
 							}
-						} elseif ( 'GUEST' == $user_type ) {
+						} elseif ( 'GUEST' === $user_type ) {
 							if ( count( $guest_details ) > 0 ) {
-								$value  = $guest_details->billing_first_name; // First Name
-								$value .= ' ' . $guest_details->billing_last_name; // Last Name
+								$value  = $guest_details->billing_first_name; // First Name.
+								$value .= ' ' . $guest_details->billing_last_name; // Last Name.
 							}
 						}
 						break;
 
 					case 'billing_email':
-						if ( 'REGISTERED' == $user_type ) { // registered user
+						if ( 'REGISTERED' === $user_type ) { // registered user.
 							$value = get_user_meta( $user_id, $prop, true );
-						} elseif ( 'GUEST' == $user_type ) {
+						} elseif ( 'GUEST' === $user_type ) {
 							if ( count( $guest_details ) > 0 ) {
 								$value = $guest_details->$prop;
 							}
@@ -307,21 +320,23 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 
 		/**
 		 * Returns the personal data from the plugin guest cart table
-		 * for guest abandoned carts
+		 * for guest abandoned carts.
 		 *
-		 * @param integer $user_id - User ID
-		 * @return array $guest_details - Guest personal details
+		 * @param integer $user_id - User ID.
+		 * @return array $guest_details - Guest personal details.
 		 * @global $wpdb
 		 * @since  4.9
 		 */
-		static function wcal_get_guest_personal_info( $user_id ) {
+		public static function wcal_get_guest_personal_info( $user_id ) {
 			global $wpdb;
 			$guest_details = array();
 
-			$guest_query = 'SELECT billing_first_name, billing_last_name, email_id AS billing_email, phone AS billing_phone FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite' . '`
-                              WHERE id = %d';
-
-			$guest_details = $wpdb->get_results( $wpdb->prepare( $guest_query, $user_id ) );
+			$guest_details = $wpdb->get_results( // phpcs:ignore
+				$wpdb->prepare(
+					'SELECT billing_first_name, billing_last_name, email_id AS billing_email, phone AS billing_phone FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite' . '` WHERE id = %d', // phpcs:ignore
+					$user_id
+				)
+			);
 
 			if ( is_array( $guest_details ) && count( $guest_details ) > 0 ) {
 				$guest_details = $guest_details[0];
@@ -334,11 +349,11 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 		 * Returns the Cart Details such as quantity, product name
 		 * etc.
 		 *
-		 * @param object $cart_info - Abandoned Cart Information
-		 * @return array $cart_details - Array containing product, qty & total for each item
+		 * @param object $cart_info - Abandoned Cart Information.
+		 * @return array $cart_details - Array containing product, qty & total for each item.
 		 * @since 4.9
 		 */
-		static function wcal_get_cart_details_export( $cart_info ) {
+		public static function wcal_get_cart_details_export( $cart_info ) {
 
 			$cart_details = array();
 
@@ -347,15 +362,15 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 				$cart_total = 0;
 				foreach ( $cart_info as $k => $item_detail ) {
 
-					// Qty
+					// Qty.
 					$qty = $item_detail->quantity;
 
-					// Product Name
+					// Product Name.
 					$product_id   = $item_detail->product_id;
 					$prod_obj     = wc_get_product( $product_id );
 					$product_name = $prod_obj->get_name();
 
-					// Variation Name
+					// Variation Name.
 					if ( isset( $item_detail->variation_id ) && $item_detail->variation_id > 0 ) {
 						$variation_id   = $item_detail->variation_id;
 						$variation      = wc_get_product( $variation_id );
@@ -364,13 +379,13 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 						$product_name = $variation_name;
 					}
 
-					// Total
+					// Total.
 					$item_total = $item_detail->line_total;
 					if ( $item_detail->line_subtotal_tax > 0 ) {
 						$item_total += $item_detail->line_subtotal_tax;
 					}
 
-					// Populate the array
+					// Populate the array.
 					$cart_details[ $k ]['qty']          = $qty;
 					$cart_details[ $k ]['product_name'] = $product_name;
 					$cart_details[ $k ]['item_total']   = $item_total;
@@ -384,6 +399,5 @@ if ( ! class_exists( 'Wcal_Personal_Data_Export' ) ) {
 			return $cart_details;
 		}
 	} // end of class
-	$Wcal_Personal_Data_Export = new Wcal_Personal_Data_Export();
+	$wcal_personal_data_export = new Wcal_Personal_Data_Export();
 } // end if
-
