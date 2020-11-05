@@ -956,8 +956,11 @@ class wcal_common { // phpcs:ignore
 	public static function wcal_get_user_role( $uid ) {
 		global $wpdb;
 		$role = $wpdb->get_var( // phpcs:ignore
-			"SELECT meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'wp_capabilities' AND user_id = %d",
-			$uid
+			$wpdb->prepare(
+				'SELECT meta_value FROM ' . $wpdb->usermeta . ' WHERE meta_key = %s AND user_id = %d',
+				'wp_capabilities',
+				(int) $uid
+			)
 		);
 
 		if ( ! $role ) {
