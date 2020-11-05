@@ -8,7 +8,7 @@
  * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
  */
 
- // Since this will be called twice, hold onto it.
+// Since this will be called twice, hold onto it.
 static $wp_load;
 if ( ! isset( $wp_load ) ) {
 	$wp_load = false;
@@ -312,8 +312,9 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 														$line_subtotal_header = __( 'Line Subtotal', 'woocommerce-abandoned-cart' );
 
 														if ( class_exists( 'WP_Better_Emails' ) ) {
+
 															$var = '<table width = 100% style="margin-right: auto; margin-left:auto;">
-                                                                <tr> <td colspan="5"> <h3>' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
+                                                                <tr> <td colspan="5"> <h3 style="text-align:center">' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
                                                                 <tr>
                                                                 <th>' . __( 'Item', 'woocommerce-abandoned-cart' ) . '</th>
                                                                 <th>' . __( 'Name', 'woocommerce-abandoned-cart' ) . '</th>
@@ -322,8 +323,9 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
                                                                 <th>' . apply_filters( 'wcal_reminder_email_line_subtotal_header', $line_subtotal_header ) . '</th>
                                                                 </tr>';
 														} else {
+
 															$var = '<table border="0" cellpadding="10" cellspacing="0" class="templateDataTable" style="margin-right: auto; margin-left:auto;">
-                                                            <tr> <td colspan="5"> <h3>' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
+                                                            <tr> <td colspan="5"> <h3 style="text-align:center">' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
                                                                 <tr>
                                                                 <th>' . __( 'Item', 'woocommerce-abandoned-cart' ) . '</th>
                                                                 <th>' . __( 'Name', 'woocommerce-abandoned-cart' ) . '</th>

@@ -3671,7 +3671,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$headers .= 'Content-Type: text/plain' . "\r\n";
 					$headers .= 'Reply-To:  ' . $reply_name_preview . ' ' . "\r\n";
 					$var      = '<table width = 100%>
-											<tr> <td colspan="5"> <h3>' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
+											<tr> <td colspan="5"> <h3 style="text-align:center">' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
 											<tr align="center">
 											   <th>' . __( 'Item', 'woocommerce-abandoned-cart' ) . '</th>
 											   <th>' . __( 'Name', 'woocommerce-abandoned-cart' ) . '</th>
@@ -3705,7 +3705,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$headers  = 'From: ' . $from_email_name . ' <' . $from_email_preview . '>' . "\r\n";
 					$headers .= 'Content-Type: text/html' . "\r\n";
 					$headers .= 'Reply-To:  ' . $reply_name_preview . ' ' . "\r\n";
-					$var      = '<h3>' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3>
+					$var      = '<h3 style="text-align:center">' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3>
 										<table border="0" cellpadding="10" cellspacing="0" class="templateDataTable">
 											<tr align="center">
 											   <th>' . __( 'Item', 'woocommerce-abandoned-cart' ) . '</th>
