@@ -1341,7 +1341,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				// GDPR consent.
 				$gdpr_consent  = true;
 				$show_gdpr_msg = wcal_common::wcal_get_cart_session( 'wcal_cart_tracking_refused' );
-				if ( isset( $show_gdpr_msg ) && 'yes' === $show_gdpr_msg ) {
+				if ( isset( $show_gdpr_msg ) && 'yes' == $show_gdpr_msg ) { // phpcs:ignore
 					$gdpr_consent = false;
 				}
 
