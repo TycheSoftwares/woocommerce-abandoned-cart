@@ -123,8 +123,8 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 			$wpdb->prepare(
 				'SELECT abandoned_cart_time, abandoned_cart_info, recovered_cart FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s ORDER BY recovered_cart DESC', // phpcs:ignore
 				"%$blank_cart_info%",
-				"%$blank_cart_info_guest%",
-				"%$blank_cart%"
+				$blank_cart_info_guest,
+				$blank_cart
 			)
 		);
 		$rec_carts_array       = array();
