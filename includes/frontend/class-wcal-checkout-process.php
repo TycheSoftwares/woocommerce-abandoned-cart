@@ -249,7 +249,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 				if ( $order_id > 0 ) {
 					$get_abandoned_id_of_order = get_post_meta( $order_id, 'wcal_recover_order_placed', true );
 
-					if ( $get_abandoned_id_of_order > 0 || '' !== wcal_common::wcal_get_cart_session( 'email_sent_id' ) ) { // phpcs:ignore
+					if ( $get_abandoned_id_of_order > 0 || '' != wcal_common::wcal_get_cart_session( 'email_sent_id' ) ) { // phpcs:ignore
 						// recovered order.
 					} else {
 
