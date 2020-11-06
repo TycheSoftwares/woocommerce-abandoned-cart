@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, d
 Tags: cart abandonment, abandon cart, cart recovery, recover woocommerce cart, increase woocommerce conversion rate, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.5.1
+Tested up to: 5.5.3
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -222,6 +222,11 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+
+= 5.8.3 (06.11.2020) =
+* Fix - Added more changes related to sanitization of data & SQL queries to make the plugin WPCS compliant.
+* Tweak - The plugin will no longer support running a cron job manually via cPanel. This has been done to ensure the security standards for WordPress are met.
+* The plugin uses the Action Scheduler library from WooCommerce to send automated reminder emails since version 5.7.
 
 = 5.8.2 (30.10.2020) =
 * Fix - Improved the code run in the action scheduler to include performance fixes.
