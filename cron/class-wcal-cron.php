@@ -8,28 +8,6 @@
  * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
  */
 
- // Since this will be called twice, hold onto it.
-static $wp_load;
-if ( ! isset( $wp_load ) ) {
-	$wp_load = false;
-	$dir     = __FILE__;
-	while ( '/' != ( $dir = dirname( $dir ) ) ) {
-		// Comment this "If" condition for generating the developer documentations.
-		if ( file_exists( $wp_load = "{$dir}/wp-load.php" ) ) {
-			break;
-		}
-	}
-	// In case wp-content folder is seperated from WP core folders (like Bedrock setup from Roots.io) the above while loop will not find wp-load correctly, so we must use ABSPATH.
-	if ( ! file_exists( $wp_load ) ) {
-		$wp_load = trailingslashit( ABSPATH ) . 'wp-load.php';
-	}
-}
-$wcal_root = dirname( dirname( __FILE__ ) ); // go two level up for directory from this file.
-require_once $wp_load;
-require_once $wcal_root . '/includes/classes/class-wcal-aes.php';
-require_once $wcal_root . '/includes/classes/class-wcal-aes-counter.php';
-
-
 if ( ! class_exists( 'Wcal_Cron' ) ) {
 
 	/**
@@ -846,4 +824,3 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 	}
 }
 $wcal_cron = new Wcal_Cron();
-
