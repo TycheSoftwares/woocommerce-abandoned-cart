@@ -62,7 +62,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 				$this->wcal_delete_abanadoned_data_on_order_status( $order_id, $get_abandoned_id_of_order, $wcal_get_order_status );
 			}
 
-			if ( '' !== wcal_common::wcal_get_cart_session( 'email_sent_id' ) ) {
+			if ( '' != wcal_common::wcal_get_cart_session( 'email_sent_id' ) ) { // phpcs:ignore
 				wcal_common::wcal_unset_cart_session( 'email_sent_id' );
 			}
 		}
@@ -156,7 +156,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 
 				$current_user_id = get_current_user_id();
 
-				if ( wcal_common::wcal_get_cart_session( 'user_id' ) !== $current_user_id && 0 !== $current_user_id ) {
+				if ( wcal_common::wcal_get_cart_session( 'user_id' ) != $current_user_id && 0 != $current_user_id ) { // phpcs:ignore
 					$update_details['user_id'] = $current_user_id;
 				}
 
@@ -487,7 +487,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 
 				$current_user_id = get_current_user_id();
 
-				if ( wcal_common::wcal_get_cart_session( 'user_id' ) !== $current_user_id && 0 !== $current_user_id ) {
+				if ( wcal_common::wcal_get_cart_session( 'user_id' ) != $current_user_id && 0 != $current_user_id ) { // phpcs:ignore
 					$update_details['user_id'] = $current_user_id;
 				}
 
@@ -594,14 +594,14 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 					( isset( $_POST['createaccount'] ) && '' !== $_POST['createaccount'] ) || // phpcs:ignore WordPress.Security.NonceVerification
 					( ! isset( $_POST['createaccount'] ) && 'no' === get_option( 'woocommerce_enable_guest_checkout', '' ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 
-					if ( '' !== $abandoned_order_id && '' !== $wcal_user_id_of_guest ) {
+					if ( '' != $abandoned_order_id && '' != $wcal_user_id_of_guest ) { // phpcs:ignore
 						$abandoned_cart_id_new_user = $abandoned_order_id;
 
 						// delete the guest record. As it become the logged in user.
 						$get_ac_id_guest_results = $wpdb->get_results( // phpcs:ignore
 							$wpdb->prepare(
 								'SELECT id, abandoned_cart_time FROM `' . $wcal_history_table_name . '` WHERE user_id = %d ORDER BY id DESC', // phpcs:ignore
-								$wcal_user_id_of_guest
+								(int) $wcal_user_id_of_guest
 							)
 						);
 

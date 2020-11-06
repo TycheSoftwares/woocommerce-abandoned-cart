@@ -64,7 +64,7 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 			$guest_msg = get_option( 'wcal_guest_cart_capture_msg' );
 
 			$session_gdpr = wcal_common::wcal_get_cart_session( 'wcal_cart_tracking_refused' );
-			$show_gdpr    = isset( $session_gdpr ) && 'yes' === $session_gdpr ? false : true;
+			$show_gdpr    = isset( $session_gdpr ) && 'yes' == $session_gdpr ? false : true; // phpcs:ignore
 
 			$vars = array();
 			if ( isset( $guest_msg ) && '' !== $guest_msg ) {
@@ -208,9 +208,9 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 			$shipping_zipcode = '';
 			$billing_zipcode  = '';
 
-			if ( '' !== wcal_common::wcal_get_cart_session( 'shipping_postcode' ) ) {
+			if ( '' != wcal_common::wcal_get_cart_session( 'shipping_postcode' ) ) { // phpcs:ignore
 				$shipping_zipcode = wcal_common::wcal_get_cart_session( 'shipping_postcode' );
-			} elseif ( '' !== wcal_common::wcal_get_cart_session( 'billing_postcode' ) ) {
+			} elseif ( '' != wcal_common::wcal_get_cart_session( 'billing_postcode' ) ) { // phpcs:ignore
 				$billing_zipcode  = wcal_common::wcal_get_cart_session( 'billing_postcode' );
 				$shipping_zipcode = $billing_zipcode;
 			}
