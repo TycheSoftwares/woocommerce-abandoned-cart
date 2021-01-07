@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, d
 Tags: cart abandonment, abandon cart, cart recovery, recover woocommerce cart, increase woocommerce conversion rate, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.5.3
+Tested up to: 5.6
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -222,6 +222,10 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+
+= 5.8.4 (07.01.2021) =
+* Fix - Default template is not being created for a fresh installation.
+* Fix - Stats on the plugin dashboard do not match the Abandoned Orders tab.
 
 = 5.8.3 (06.11.2020) =
 * Fix - Added more changes related to sanitization of data & SQL queries to make the plugin WPCS compliant.
