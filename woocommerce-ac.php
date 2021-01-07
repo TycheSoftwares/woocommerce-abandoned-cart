@@ -629,7 +629,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			 */
 			if ( 0 === $blog_id ) {
 				if ( ! get_option( 'wcal_new_default_templates' ) ) {
-					if ( 0 === $check_table_empty ) {
+					if ( 0 === (int) $check_table_empty ) {
 						$default_template = new Wcal_Default_Template_Settings();
 						$default_template->wcal_create_default_templates( $db_prefix, $blog_id );
 					}
@@ -2425,6 +2425,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							<li>
 								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_sms_settings" class="<?php echo esc_attr( $wcap_sms_settings ); ?>"><?php esc_html_e( 'SMS', 'woocommerce-ac' ); ?> </a>
 							</li>
+							<?php do_action( 'wcal_add_custom_settings_tab', $section ); ?>
 						</ul>
 						<br class="clear">
 						<?php
@@ -2453,6 +2454,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						} elseif ( 'wcap_sms_settings' === $section ) {
 							WCAP_Pro_Settings::wcap_sms_settings();
 						}
+						do_action( 'wcal_add_custom_settings_tab_content', $section );
 						?>
 					</div>
 					<?php
