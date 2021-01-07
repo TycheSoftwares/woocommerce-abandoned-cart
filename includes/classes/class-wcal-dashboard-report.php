@@ -410,7 +410,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 			$start_time = self::$start_timestamp;
 			$end_time   = self::$end_timestamp;
 
-			$count_abandoned = $wpdb->get_var( $wpdb->prepare( 'SELECT count(id) FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE abandoned_cart_time >= %s AND abandoned_cart_time <= %s', $start_time, $end_time ) ); //phpcs:ignore
+			$count_abandoned = $wpdb->get_var( $wpdb->prepare( 'SELECT count(id) FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE abandoned_cart_time >= %s AND abandoned_cart_time <= %s AND cart_ignored <> %s', $start_time, $end_time, '1' ) ); //phpcs:ignore
 			return $count_abandoned;
 		}
 
@@ -495,7 +495,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 			$blank_cart_info       = '{"cart":[]}';
 			$blank_cart_info_guest = '[]';
 
-			$get_carts = $wpdb->get_results( $wpdb->prepare( "SELECT abandoned_cart_info, recovered_cart FROM `$wpdb->prefix" . "ac_abandoned_cart_history_lite` WHERE abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_time >= %s AND abandoned_cart_time <= %s", $blank_cart_info, $blank_cart_info_guest, $start_time, $end_time ) ); //phpcs:ignore
+			$get_carts = $wpdb->get_results( $wpdb->prepare( "SELECT abandoned_cart_info, recovered_cart FROM `$wpdb->prefix" . "ac_abandoned_cart_history_lite` WHERE abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_time >= %s AND abandoned_cart_time <= %s AND cart_ignored <> %s", $blank_cart_info, $blank_cart_info_guest, $start_time, $end_time, '1' ) ); //phpcs:ignore
 
 			$abandoned_amount = 0;
 			$abandoned_count  = 0;
