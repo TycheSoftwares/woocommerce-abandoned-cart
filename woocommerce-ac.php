@@ -2425,6 +2425,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							<li>
 								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_sms_settings" class="<?php echo esc_attr( $wcap_sms_settings ); ?>"><?php esc_html_e( 'SMS', 'woocommerce-ac' ); ?> </a>
 							</li>
+							<?php do_action( 'wcal_add_custom_settings_tab', $section ); ?>
 						</ul>
 						<br class="clear">
 						<?php
@@ -2453,6 +2454,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						} elseif ( 'wcap_sms_settings' === $section ) {
 							WCAP_Pro_Settings::wcap_sms_settings();
 						}
+						do_action( 'wcal_add_custom_settings_tab_content', $section );
 						?>
 					</div>
 					<?php
