@@ -223,6 +223,9 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 
 == Changelog ==
 
+= 5.8.5 (27.01.2021) =
+* Tweak - Added a hook to modify the email to which recovery emails are sent. Comma separated email addresses can be added.
+
 = 5.8.4 (07.01.2021) =
 * Fix - Default template is not being created for a fresh installation.
 * Fix - Stats on the plugin dashboard do not match the Abandoned Orders tab.
