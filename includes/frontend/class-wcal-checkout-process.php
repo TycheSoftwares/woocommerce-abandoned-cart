@@ -330,6 +330,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 						$user_email    = get_option( 'admin_email' );
 						$headers[]     = 'From: Admin <' . $user_email . '>';
 						$headers[]     = 'Content-Type: text/html';
+						$user_email    = apply_filters( 'wcal_send_recovery_email_to', $user_email );
 						// Buffer.
 						ob_start();
 						// Get mail template.
