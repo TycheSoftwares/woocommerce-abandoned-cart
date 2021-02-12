@@ -393,56 +393,58 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 
 			global $wpdb;
 
-			$order = wc_get_order( $order_id );
+			if ( $order_id > 0 ) {
+				$order = wc_get_order( $order_id );
 
-			$get_abandoned_id_of_order  = get_post_meta( $order_id, 'wcal_recover_order_placed', true );
-			$get_sent_email_id_of_order = get_post_meta( $order_id, 'wcal_recover_order_placed_sent_id', true );
+				$get_abandoned_id_of_order  = get_post_meta( $order_id, 'wcal_recover_order_placed', true );
+				$get_sent_email_id_of_order = get_post_meta( $order_id, 'wcal_recover_order_placed_sent_id', true );
 
-			// Order Status passed in the function is either 'processing' or 'complete' and may or may not reflect the actual order status.
-			// Hence, always use the status fetched from the order object.
-			$order_status = ( $order ) ? $order->get_status() : '';
+				// Order Status passed in the function is either 'processing' or 'complete' and may or may not reflect the actual order status.
+				// Hence, always use the status fetched from the order object.
+				$order_status = ( $order ) ? $order->get_status() : '';
 
-			$wcal_ac_table_name                 = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
-			$wcal_email_sent_history_table_name = $wpdb->prefix . 'ac_sent_history_lite';
-			$wcal_guest_ac_table_name           = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
+				$wcal_ac_table_name                 = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
+				$wcal_email_sent_history_table_name = $wpdb->prefix . 'ac_sent_history_lite';
+				$wcal_guest_ac_table_name           = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
 
-			if ( 'pending' !== $order_status && 'failed' !== $order_status && 'cancelled' !== $order_status && 'trash' !== $order_status ) {
-				global $wpdb;
+				if ( 'pending' !== $order_status && 'failed' !== $order_status && 'cancelled' !== $order_status && 'trash' !== $order_status ) {
+					global $wpdb;
 
-				if ( isset( $get_abandoned_id_of_order ) && '' !== $get_abandoned_id_of_order ) {
+					if ( isset( $get_abandoned_id_of_order ) && '' !== $get_abandoned_id_of_order ) {
 
-					$ac_user_id_result = $wpdb->get_results( // phpcs:ignore
-						$wpdb->prepare(
-							'SELECT user_id, abandoned_cart_time FROM `' . $wcal_ac_table_name . '` WHERE id = %d', // phpcs:ignore
-							$get_abandoned_id_of_order
-						)
-					);
+						$ac_user_id_result = $wpdb->get_results( // phpcs:ignore
+							$wpdb->prepare(
+								'SELECT user_id, abandoned_cart_time FROM `' . $wcal_ac_table_name . '` WHERE id = %d', // phpcs:ignore
+								$get_abandoned_id_of_order
+							)
+						);
 
-					if ( count( $ac_user_id_result ) > 0 ) {
-						$wcal_user_id = $ac_user_id_result[0]->user_id;
+						if ( count( $ac_user_id_result ) > 0 ) {
+							$wcal_user_id = $ac_user_id_result[0]->user_id;
 
-						if ( $wcal_user_id >= 63000000 ) {
-							add_post_meta( $order_id, 'wcal_abandoned_timestamp', $ac_user_id_result[0]->abandoned_cart_time );
+							if ( $wcal_user_id >= 63000000 ) {
+								add_post_meta( $order_id, 'wcal_abandoned_timestamp', $ac_user_id_result[0]->abandoned_cart_time );
+
+								$wpdb->delete( // phpcs:ignore
+									$wcal_guest_ac_table_name,
+									array( 'id' => $wcal_user_id )
+								);
+							}
 
 							$wpdb->delete( // phpcs:ignore
-								$wcal_guest_ac_table_name,
-								array( 'id' => $wcal_user_id )
+								$wcal_ac_table_name,
+								array( 'id' => $get_abandoned_id_of_order )
 							);
+							delete_post_meta( $order_id, 'wcal_recover_order_placed', $get_abandoned_id_of_order );
 						}
-
-						$wpdb->delete( // phpcs:ignore
-							$wcal_ac_table_name,
-							array( 'id' => $get_abandoned_id_of_order )
-						);
-						delete_post_meta( $order_id, 'wcal_recover_order_placed', $get_abandoned_id_of_order );
 					}
 				}
-			}
 
-			if ( 'pending' !== $woo_order_status && 'failed' !== $woo_order_status && 'cancelled' !== $woo_order_status && 'trash' !== $woo_order_status ) {
+				if ( 'pending' !== $woo_order_status && 'failed' !== $woo_order_status && 'cancelled' !== $woo_order_status && 'trash' !== $woo_order_status ) {
 
-				if ( isset( $get_sent_email_id_of_order ) && '' !== $get_sent_email_id_of_order ) {
-					$this->wcal_updated_recovered_cart( $get_abandoned_id_of_order, $order_id, $get_sent_email_id_of_order, $order );
+					if ( isset( $get_sent_email_id_of_order ) && '' !== $get_sent_email_id_of_order ) {
+						$this->wcal_updated_recovered_cart( $get_abandoned_id_of_order, $order_id, $get_sent_email_id_of_order, $order );
+					}
 				}
 			}
 
