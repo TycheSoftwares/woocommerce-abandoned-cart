@@ -27,7 +27,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 		 */
 		public static function wcal_schedule_update_action() {
 			// IMP: The default value for get option should be updated in each release to match the current version to ensure update code is not run for first time installs.
-			if ( get_option( 'wcal_previous_version', '5.8.5' ) !== WCAL_PLUGIN_VERSION && function_exists( 'as_enqueue_async_action' ) && false === as_next_scheduled_action( 'wcal_update_db' ) ) {
+			if ( get_option( 'wcal_previous_version', WCAL_PLUGIN_VERSION ) !== WCAL_PLUGIN_VERSION && function_exists( 'as_enqueue_async_action' ) && false === as_next_scheduled_action( 'wcal_update_db' ) ) {
 				as_enqueue_async_action( 'wcal_update_db' );
 			}
 		}
@@ -90,7 +90,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				$wcal_previous_version = get_option( 'wcal_previous_version' );
 
 				if ( wcal_common::wcal_get_version() !== $wcal_previous_version ) {
-					update_option( 'wcal_previous_version', '5.8.5' );
+					update_option( 'wcal_previous_version', WCAL_PLUGIN_VERSION );
 				}
 			} else { // multi site - child sites.
 				$wcal_guest_user_id_altered = get_blog_option( $blog_id, 'wcal_guest_user_id_altered' );
@@ -103,7 +103,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				$wcal_previous_version = get_blog_option( $blog_id, 'wcal_previous_version' );
 
 				if ( wcal_common::wcal_get_version() !== $wcal_previous_version ) {
-					update_blog_option( $blog_id, 'wcal_previous_version', '5.8.5' );
+					update_blog_option( $blog_id, 'wcal_previous_version', WCAL_PLUGIN_VERSION );
 				}
 			}
 

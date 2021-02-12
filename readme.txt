@@ -222,6 +222,8 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.8.6 (12.02.2021) =
+* Fix - WP Nonce verification being done incorrectly. Fixed the same.
 
 = 5.8.5 (27.01.2021) =
 * Tweak - Added a hook to modify the email to which recovery emails are sent. Comma separated email addresses can be added.
