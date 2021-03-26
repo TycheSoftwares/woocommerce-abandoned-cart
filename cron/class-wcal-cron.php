@@ -340,8 +340,8 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 																$item_total_display = wc_price( $item_total );
 																$item_subtotal      = wc_price( $item_subtotal );
 
-																$prod_image = $product->get_image();
-																$image_url  = wp_get_attachment_url( get_post_thumbnail_id( $product_id ) );
+																$image_id   = isset( $v->variation_id ) && $v->variation_id > 0 ? $v->variation_id : $v->product_id;
+																$image_url  = wp_get_attachment_url( get_post_thumbnail_id( $image_id ) );
 																if ( strpos( $image_url, '/' ) === 0 ) {
 																	$image_url = get_option( 'siteurl' ) . $image_url;
 																}
@@ -379,6 +379,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 																	}
 																	$product_name = $product_name_with_variable;
 																}
+
 																$product_name  = apply_filters( 'wcal_reminder_email_after_product_name', $product_name, $v );
 																$var          .= '<tr align="center">
                                                                     <td> <a href="' . $cart_link_track . '"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
