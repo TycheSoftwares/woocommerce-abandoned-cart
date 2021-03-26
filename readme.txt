@@ -222,6 +222,9 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.8.7 (26.03.2021) =
+* Fix - Variation Image is not displayed in reminder emails.
+
 = 5.8.6 (12.02.2021) =
 * Fix - WP Nonce verification being done incorrectly. Fixed the same.
 
