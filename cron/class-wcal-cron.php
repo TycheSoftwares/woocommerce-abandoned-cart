@@ -342,6 +342,9 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 
 																$image_id   = isset( $v->variation_id ) && $v->variation_id > 0 ? $v->variation_id : $v->product_id;
 																$image_url  = wp_get_attachment_url( get_post_thumbnail_id( $image_id ) );
+																if ( !$image_url && isset( $v->variation_id ) && (int) $image_id === (int) $v->variation_id ) {
+																	$image_url = wp_get_attachment_url( get_post_thumbnail_id( $v->product_id ) );
+																}
 																if ( strpos( $image_url, '/' ) === 0 ) {
 																	$image_url = get_option( 'siteurl' ) . $image_url;
 																}
