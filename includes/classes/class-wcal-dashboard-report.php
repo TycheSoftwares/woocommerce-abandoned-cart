@@ -81,6 +81,16 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 						$percent_of_sales  = 0;
 					}
 
+					$graph_data = self::get_abandoned_data();
+
+					wp_localize_script(
+						'reports_js',
+						'wcal_graph_data',
+						array(
+							'data' => $graph_data,
+						)
+					);
+					wp_enqueue_script( 'reports_js' );
 					?>
 
 				</form>
@@ -252,9 +262,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 					</div>
 				</div>
 
-				<div class="chartgraph">
-					<img src="<?php echo esc_attr( plugins_url() ) . '/woocommerce-abandoned-cart/assets/images/Coming_Soon.png'; ?>" />
-				</div>
+				<div class="chartgraph"></div>
 
 			</div>
 			<?php
@@ -556,6 +564,201 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 
 			$count_month = null === $order_totals->total_sales ? 0 : $order_totals->total_sales;
 			return $count_month;
+		}
+
+		/**
+		 * Returned Abandoned & Recovered cart stats.
+		 *
+		 * @param string $selected_data_range - Range selected.
+		 * @param string $start_date - Range Start Date.
+		 * @param string $end_date - Range End Date.
+		 * @return array - Stats Data.
+		 *
+		 * @since 5.8.8
+		 */
+		public static function get_adv_stats( $selected_data_range, $start_date, $end_date ) {
+			global $wpdb;
+
+			if ( '' === $start_date && '' === $end_date ) {
+				return array();
+			} else {
+				$begin_of_month = strtotime( $start_date );
+				$end_of_month   = strtotime( $end_date );
+			}
+			$count_month           = 0;
+			$blank_cart_info       = '{"cart":[]}';
+			$blank_cart_info_guest = '[]';
+
+			$ac_cutoff_time = is_numeric( get_option( 'ac_lite_cart_abandoned_time', 10 ) ) ? get_option( 'ac_lite_cart_abandoned_time', 10 ) : 10;
+			$cut_off_time   = $ac_cutoff_time * 60;
+			$current_time   = current_time( 'timestamp' ); // phpcs:ignore
+			$compare_time   = $current_time - $cut_off_time;
+
+			$count_month = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT abandoned_cart_info, recovered_cart FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` 
+					WHERE abandoned_cart_time >=  %s
+					AND abandoned_cart_time <= %s
+					AND abandoned_cart_time <= %s
+					AND ( cart_ignored <> '1' OR recovered_cart <> '0' )
+					AND ( ( user_type = 'REGISTERED' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' ) OR ( user_type = 'GUEST' AND abandoned_cart_info NOT LIKE '$blank_cart_info_guest' AND abandoned_cart_info NOT LIKE '%$blank_cart_info%' ) )",
+					$begin_of_month,
+					$end_of_month,
+					$compare_time
+				)
+			);
+
+			$abandoned_count  = 0;
+			$recovered_count  = 0;
+			$abandoned_amount = 0;
+			$recovered_amount = 0;
+
+			foreach ( $count_month as $cart_value ) {
+
+				$abandoned_count++;
+
+				if ( (int) $cart_value->recovered_cart > 0 ) {
+					$recovered_count++;
+				}
+
+				$cart_info = json_decode( stripslashes( $cart_value->abandoned_cart_info ) );
+				if ( isset( $cart_info->cart ) ) {
+					foreach ( $cart_info->cart as $cart ) {
+						$abandoned_amount += isset( $cart->line_total ) ? $cart->line_total : 0;
+						$recovered_id      = $cart_value->recovered_cart;
+						if ( (int) $recovered_id > 0 ) {
+							$rec_order_total   = get_post_meta( $recovered_id, '_order_total', true );
+							$recovered_amount += isset( $rec_order_total ) && $rec_order_total > 0 ? $rec_order_total : 0;
+						}
+					}
+				}
+			}
+
+			return array(
+				'abandoned_count'  => $abandoned_count,
+				'recovered_count'  => $recovered_count,
+				'abandoned_amount' => $abandoned_amount,
+				'recovered_amount' => $recovered_amount,
+			);
+		}
+		/**
+		 * Get Graph Data
+		 *
+		 * @since 5.8.8
+		 */
+		public static function get_abandoned_data() {
+
+			$start_timestamp = self::$start_timestamp;
+			$end_timestamp   = self::$end_timestamp;
+
+			$current_date  = date( 'd' ); // phpcs:ignore
+			$current_month = date( 'm' ); // phpcs:ignore
+			$current_year  = date( 'Y' ); // phpcs:ignore
+
+			$selected_data_range = isset( $_GET['duration_select'] ) ? sanitize_text_field( wp_unslash( $_GET['duration_select'] ) ) : 'this_month'; //phpcs:ignore
+			switch ( $selected_data_range ) {
+				case 'this_month':
+					$display_freq  = $current_date > 15 ? 'weekly' : 'daily';
+					$end_timestamp = current_time( 'timestamp' ); // phpcs:ignore
+					break;
+				case 'last_month':
+				case 'this_quarter':
+				case 'last_quarter':
+					$display_freq = 'weekly';
+					break;
+				case 'this_year':
+					$display_freq  = $current_month > 3 ? 'monthly' : 'weekly';
+					$end_timestamp = current_time( 'timestamp' ); // phpcs:ignore
+					break;
+				case 'last_year':
+					$display_freq = 'monthly';
+					break;
+				case 'other':
+					$display_freq   = 'weekly';
+					$number_of_days = round( ( $end_timestamp - $start_timestamp ) / ( 60 * 60 * 24 ) );
+					if ( is_numeric( $number_of_days ) && $number_of_days > 0 ) {
+						if ( $number_of_days <= 15 ) {
+							$display_freq = 'daily';
+						} elseif ( $number_of_days <= 90 ) {
+							$display_freq = 'weekly';
+						} else {
+							$display_freq = 'monthly';
+						}
+					}
+					break;
+			}
+
+			$data = self::wcap_get_graph_data( $selected_data_range, $start_timestamp, $end_timestamp, $display_freq );
+			return $data;
+
+		}
+
+		/**
+		 * Collect Graph data to be displayed & return.
+		 *
+		 * @param string    $selected_data_range - Selected Date Range.
+		 * @param timestamp $start_timestamp - Start Timestamp.
+		 * @param timestamp $end_timestamp - End Timestamp.
+		 * @param string    $display_freq - Display Frequency.
+		 * @return array $data - Data to be returned.
+		 *
+		 * @since 5.8.8
+		 */
+		public static function wcap_get_graph_data( $selected_data_range, $start_timestamp, $end_timestamp, $display_freq ) {
+
+			$start_date = date( 'Y-m-d H:i:s', $start_timestamp ); // phpcs:ignore
+			switch ( $display_freq ) {
+				case 'daily':
+					$range_end = date( 'Y-m-d H:i:s', strtotime( '+1 day', $start_timestamp ) ); // phpcs:ignore
+					do {
+						$get_stats                   = self::get_adv_stats( $selected_data_range, $start_date, $range_end );
+						$start_date_display          = date( 'd M', strtotime( $start_date ) ); // phpcs:ignore
+						$data[ $start_date_display ] = array(
+							'abandoned_amount' => $get_stats['abandoned_amount'],
+							'recovered_amount' => $get_stats['recovered_amount'],
+						);
+						$start_date                  = date( 'Y-m-d H:i:s', strtotime( $range_end ) ); // phpcs:ignore
+						$range_end                   = date( 'Y-m-d', strtotime( "$start_date +1 day" ) ); // phpcs:ignore
+					} while ( strtotime( $start_date ) < $end_timestamp );
+					break;
+				case 'weekly':
+					$range_end       = date( 'Y-m-d H:i:s', strtotime( '+7 days', $start_timestamp ) ); // phpcs:ignore
+					$range_end_stamp = strtotime( $range_end );
+
+					do {
+						if ( $range_end_stamp > $end_timestamp ) {
+							$range_end       = date( 'Y-m-d', $end_timestamp ); // phpcs:ignore
+							$range_end_stamp = $end_timestamp;
+						}
+
+						$get_stats                   = self::get_adv_stats( $selected_data_range, $start_date, $range_end );
+						$start_date_display          = date( 'd M', strtotime( $start_date ) ); // phpcs:ignore
+						$data[ $start_date_display ] = array(
+							'abandoned_amount' => $get_stats['abandoned_amount'],
+							'recovered_amount' => $get_stats['recovered_amount'],
+						);
+						$start_date                  = date( 'Y-m-d H:i:s', $range_end_stamp ); // phpcs:ignore
+						$range_end                   = date( 'Y-m-d', strtotime( "$start_date +7 days" ) ); // phpcs:ignore
+						$range_end_stamp             = strtotime( $range_end );
+
+					} while ( strtotime( $start_date ) < $end_timestamp );
+					break;
+				case 'monthly':
+					$range_end = date( 'Y-m-d H:i:s', strtotime( '+1 month', $start_timestamp ) ); // phpcs:ignore
+					do {
+						$get_stats                   = self::get_adv_stats( $selected_data_range, $start_date, $range_end );
+						$start_date_display          = date( 'M y', strtotime( $start_date ) ); // phpcs:ignore
+						$data[ $start_date_display ] = array(
+							'abandoned_amount' => $get_stats['abandoned_amount'],
+							'recovered_amount' => $get_stats['recovered_amount'],
+						);
+						$start_date                  = date( 'Y-m-d H:i:s', strtotime( $range_end ) ); // phpcs:ignore
+						$range_end                   = date( 'Y-m-d', strtotime( "$start_date +1 month" ) ); // phpcs:ignore
+					} while ( strtotime( $start_date ) < $end_timestamp );
+
+					break;
+			}
+			return $data;
 		}
 	}
 
