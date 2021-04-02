@@ -120,6 +120,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( ! defined( 'WCAL_PLUGIN_VERSION' ) ) {
 				define( 'WCAL_PLUGIN_VERSION', '5.8.7' );
 			}
+
+			if ( ! defined( 'WCAL_PLUGIN_PATH' ) ) {
+				define( 'WCAL_PLUGIN_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
+			}
 			$this->one_hour              = 60 * 60;
 			$this->three_hours           = 3 * $this->one_hour;
 			$this->six_hours             = 6 * $this->one_hour;
@@ -2142,6 +2146,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					);
 
 					wp_enqueue_script(
+						'd3_js',
+						WCAL_PLUGIN_URL . '/assets/js/admin/d3.v3.min.js',
+						'',
+						WCAL_PLUGIN_VERSION,
+						false
+					);
+
+					wp_register_script(
 						'reports_js',
 						plugins_url( '/assets/js/admin/wcal_adv_dashboard.min.js', __FILE__ ),
 						'',
@@ -2231,7 +2243,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				wp_enqueue_style( 'bootstrap_css' );
 
 				wp_enqueue_style( 'wcal-font-awesome', plugins_url( '/assets/css/admin/font-awesome.css', __FILE__ ), '', WCAL_PLUGIN_VERSION );
-
 				wp_enqueue_style( 'wcal-font-awesome-min', plugins_url( '/assets/css/admin/font-awesome.min.css', __FILE__ ), '', WCAL_PLUGIN_VERSION );
 
 				wp_enqueue_style( 'jquery-ui', plugins_url( '/assets/css/admin/jquery-ui.css', __FILE__ ), '', WCAL_PLUGIN_VERSION, false );
@@ -3231,6 +3242,17 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							<div> <!-- <div class="postbox" > -->
 								<h3 class="hndle"><?php esc_html_e( $display_message, 'woocommerce-abandoned-cart' ); // phpcs:ignore?></h3>
 								<div>
+									<?php
+									wc_get_template(
+										'html-rules-engine.php',
+										array(
+											'rules' => array(),
+											'match' => 'all',
+										),
+										'woocommerce-abandoned-cart/',
+										WCAL_PLUGIN_PATH . '/includes/templates/rules/'
+									);
+									?>
 									<table class="form-table" id="addedit_template">
 									<tr>
 										<th>
