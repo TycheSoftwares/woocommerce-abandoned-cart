@@ -3239,6 +3239,17 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							<div> <!-- <div class="postbox" > -->
 								<h3 class="hndle"><?php esc_html_e( $display_message, 'woocommerce-abandoned-cart' ); // phpcs:ignore?></h3>
 								<div>
+									<?php
+									wc_get_template(
+										'html-rules-engine.php',
+										array(
+											'rules' => array(),
+											'match' => 'all',
+										),
+										'woocommerce-abandoned-cart/',
+										WCAL_PLUGIN_PATH . '/includes/templates/rules/'
+									);
+									?>
 									<table class="form-table" id="addedit_template">
 									<tr>
 										<th>
