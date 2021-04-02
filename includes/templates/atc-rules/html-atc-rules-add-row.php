@@ -15,19 +15,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 $rule_type_options = apply_filters(
 	'wcap_atc_rules_engine_rule_type_values',
 	array(
-		'select_disabled'  => __( 'Select Rule Type', 'woocommerce-ac' ),
-		'custom_pages'     => __( 'Pages', 'woocommerce-ac' ),
-		'product_cat'      => __( 'Product Categories', 'woocommerce-ac' ),
-		'products'         => __( 'Products', 'woocommerce-ac' ),
+		'select_disabled' => __( 'Select Rule Type', 'woocommerce-ac' ),
+		'custom_pages'    => __( 'Pages', 'woocommerce-ac' ),
+		'product_cat'     => __( 'Product Categories', 'woocommerce-ac' ),
+		'products'        => __( 'Products', 'woocommerce-ac' ),
 	)
 );
 
 $rule_condition_options = apply_filters(
 	'wcap_atc_rules_engine_rule_condition_values',
 	array(
-		'select_disabled'       => __( 'Select Condition', 'woocommerce-ac' ),
-		'includes'              => __( 'Includes any of', 'woocommerce-ac' ),
-		'excludes'              => __( 'Excludes any of', 'woocommerce-ac' ),
+		'select_disabled' => __( 'Select Condition', 'woocommerce-ac' ),
+		'includes'        => __( 'Includes any of', 'woocommerce-ac' ),
+		'excludes'        => __( 'Excludes any of', 'woocommerce-ac' ),
 	)
 );
 ?>
@@ -36,18 +36,18 @@ $rule_condition_options = apply_filters(
 	<?php
 	foreach ( $rule_type_options as $type_key => $type_value ) {
 		$disabled = '';
-		$selected = 'select_disabled' === $type_key ? 'selected' : '';	
+		$selected = 'select_disabled' === $type_key ? 'selected' : '';
 		if ( strpos( $type_key, 'disabled' ) !== false ) {
 			$type_key = '';
 			$disabled = 'disabled';
 		}
 
-	/*	if ( in_array( $type_key, array( 'cart_status', 'payment_gateways', 'product_cat', 'product_tag', 'cart_items', 'cart_items_count', 'cart_total' ) ) ) {
+		if ( in_array( $type_key, array( 'cart_status', 'payment_gateways', 'product_cat', 'product_tag', 'cart_items', 'cart_items_count', 'cart_total' ) ) ) { // phpcs:ignore
 			$type_value = '→ ' . $type_value;
-			$class = 'wcap_rule_subcategory';
+			$class      = 'wcap_rule_subcategory';
 		} else {
 			$class = 'wcap_rule_parent_category';
-		}*/
+		}
 		echo sprintf(
 			"<option value='%s' %s %s class=''>%s</option>",
 			esc_attr( $type_key ),

@@ -42,14 +42,14 @@ switch ( $selected_rule_type ) {
 			'equal_to'              => __( 'Equal to', 'woocommerce-ac' ),
 			'less_than_equal_to'    => __( 'Less than or equal to', 'woocommerce-ac' ),
 		);
-		$style = '';
+		$style                  = '';
 		break;
 	default:
 		$rule_condition_options = array(
-			'includes'              => __( 'Includes any of', 'woocommerce-ac' ),
-			'excludes'              => __( 'Excludes any of', 'woocommerce-ac' ),
+			'includes' => __( 'Includes any of', 'woocommerce-ac' ),
+			'excludes' => __( 'Excludes any of', 'woocommerce-ac' ),
 		);
-		$style = 'width:80%;';
+		$style                  = 'width:80%;';
 		break;
 }
 $rule_condition_options = apply_filters( 'wcap_rules_engine_rule_condition_values', $rule_condition_options );
@@ -105,7 +105,7 @@ foreach ( $rule_type_options as $type_key => $type_value ) {
 		$disabled = 'disabled';
 	}
 
-	if ( in_array( $type_key, array( 'cart_status', 'payment_gateways', 'product_cat', 'product_tag', 'cart_items', 'cart_items_count', 'cart_total' ) ) ) {
+	if ( in_array( $type_key, array( 'cart_status', 'payment_gateways', 'product_cat', 'product_tag', 'cart_items', 'cart_items_count', 'cart_total' ) ) ) { // phpcs:ignore
 		$type_value = '→ ' . $type_value;
 		$class      = 'wcap_rule_subcategory';
 	} else {
@@ -163,7 +163,7 @@ switch ( $selected_rule_type ) {
 		</select>
 		<?php
 		// Send to email addresses.
-		if ( in_array( 'email_addresses', $selected_rule_value ) ) {
+		if ( in_array( 'email_addresses', $selected_rule_value, true ) ) {
 			?>
 			<textarea name='wcap_rules_email_addresses' id='wcap_rules_email_addresses' rows='3' cols='35' placeholder='<?php esc_html_e( 'Please enter email addresses separated by a comma', 'woocommerce-ac' ); ?>'><?php echo esc_attr( $rule_emails ); ?></textarea>
 			<?php
