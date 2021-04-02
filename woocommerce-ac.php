@@ -2142,6 +2142,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					);
 
 					wp_enqueue_script(
+						'd3_js',
+						WCAL_PLUGIN_URL . '/assets/js/admin/d3.v3.min.js',
+						'',
+						WCAL_PLUGIN_VERSION,
+						false
+					);
+
+					wp_resgister_script(
 						'reports_js',
 						plugins_url( '/assets/js/admin/wcal_adv_dashboard.min.js', __FILE__ ),
 						'',
