@@ -103,7 +103,8 @@ if ( ! class_exists( 'WCAP_Pro_Settings_Callbacks' ) ) {
 		 * FB Section.
 		 */
 		public static function wcap_fb_description() {
-			echo esc_html_e( 'Configure the plugin to send notifications to Facebook Messenger using the settings below. Please refer the <a href="https://www.tychesoftwares.com/docs/docs/abandoned-cart-pro-for-woocommerce/send-abandoned-cart-reminder-notifications-using-facebook-messenger" target="_blank">following documentation</a> to complete the setup.', 'woocommerce-abandoned-cart' );
+			$doc_link = 'https://www.tychesoftwares.com/docs/docs/abandoned-cart-pro-for-woocommerce/send-abandoned-cart-reminder-notifications-using-facebook-messenger';
+			echo wp_kses_post( __( "Configure the plugin to send notifications to Facebook Messenger using the settings below. Please refer the <a href='$doc_link' target='_blank'>following documentation</a> to complete the setup.", 'woocommerce-abandoned-cart' ) ); // phpcs:ignore
 		}
 
 		/**
