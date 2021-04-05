@@ -120,6 +120,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( ! defined( 'WCAL_PLUGIN_VERSION' ) ) {
 				define( 'WCAL_PLUGIN_VERSION', '5.8.7' );
 			}
+
+			if ( ! defined( 'WCAL_PLUGIN_PATH' ) ) {
+				define( 'WCAL_PLUGIN_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
+			}
 			$this->one_hour              = 60 * 60;
 			$this->three_hours           = 3 * $this->one_hour;
 			$this->six_hours             = 6 * $this->one_hour;
@@ -2159,7 +2163,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						false
 					);
 
-					wp_resgister_script(
+					wp_register_script(
 						'reports_js',
 						plugins_url( '/assets/js/admin/wcal_adv_dashboard.min.js', __FILE__ ),
 						'',
