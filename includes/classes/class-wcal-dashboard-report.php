@@ -676,7 +676,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 				case 'last_year':
 					$display_freq = 'monthly';
 					break;
-				case 'other':
+				case 'custom':
 					$display_freq   = 'weekly';
 					$number_of_days = round( ( $end_timestamp - $start_timestamp ) / ( 60 * 60 * 24 ) );
 					if ( is_numeric( $number_of_days ) && $number_of_days > 0 ) {

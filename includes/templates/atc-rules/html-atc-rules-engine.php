@@ -23,8 +23,8 @@ ob_start();
 wc_get_template(
 	'html-atc-rules-add-row.php',
 	'',
-	'woocommerce-abandon-cart-pro/',
-	WCAP_PLUGIN_PATH . '/includes/template/atc-rules/'
+	'woocommerce-abandoned-cart/',
+	WCAL_PLUGIN_PATH . '/includes/templates/atc-rules/'
 );
 $row = ob_get_clean();
 $row = apply_filters( 'wcap_atc_rules_engine_add_row_content', $row );
@@ -39,7 +39,7 @@ $row = apply_filters( 'wcap_atc_rules_engine_add_row_content', $row );
 				<option value='all' <?php echo esc_attr( $selected_all ); ?>><?php esc_html_e( 'Match all rules', 'woocommerce-ac' ); ?></option>
 				<option value='any' <?php echo esc_attr( $selected_any ); ?>><?php esc_html_e( 'Match any rule(s)', 'woocommerce-ac' ); ?></option>
 			</select>
-			<img id = <?php echo esc_html( $help_tip_text ); ?> class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'Email template will be sent depending on whether all the rule matches are met or any rule matches.', 'woocommerce-ac' ); ?>' src="<?php echo esc_url( plugins_url() ); ?>/woocommerce/assets/images/help.png" /></p>
+			<img id = <?php echo esc_html( $help_tip_text ); ?> class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'ATC template will be displayed depending on whether all the rule matches are met or any rule matches.', 'woocommerce-ac' ); ?>' src="<?php echo esc_url( plugins_url() ); ?>/woocommerce/assets/images/help.png" /></p>
 		</td>
 	</tr>
 	<th class='wcap_button_section_table_heading'>
@@ -86,8 +86,8 @@ $row = apply_filters( 'wcap_atc_rules_engine_add_row_content', $row );
 							wc_get_template(
 								'html-atc-rules-edit-row.php',
 								$edit_row,
-								'woocommerce-abandon-cart-pro/',
-								WCAP_PLUGIN_PATH . '/includes/template/atc-rules/'
+								'woocommerce-abandoned-cart/',
+								WCAL_PLUGIN_PATH . '/includes/templates/atc-rules/'
 							);
 							?>
 						</tr>
