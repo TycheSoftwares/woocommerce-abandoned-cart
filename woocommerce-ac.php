@@ -2090,7 +2090,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					false
 				);
 				$mode = isset( $_GET['mode'] ) ? sanitize_text_field( wp_unslash( $_GET['mode'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				if ( 'emailtemplates' === $action && ( 'addnewtemplate' === $mode || 'edittemplate' === $mode ) ) {
+				$wcal_section = isset( $_GET['wcal_section'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_section'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				if ( ( 'emailtemplates' === $action && ( 'addnewtemplate' === $mode || 'edittemplate' === $mode ) ) || ( 'emailsettings' === $action && 'wcap_atc_settings' === $wcal_section ) ) {
 					wp_register_script( 'woocommerce_admin', WC()->plugin_url() . '/assets/js/admin/woocommerce_admin.min.js', array( 'jquery', 'jquery-tiptip' ), WCAL_PLUGIN_VERSION, false );
 					wp_enqueue_script( 'woocommerce_admin' );
 					$locale  = localeconv();
