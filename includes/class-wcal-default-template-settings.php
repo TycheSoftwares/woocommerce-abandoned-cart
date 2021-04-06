@@ -29,11 +29,8 @@ class Wcal_Default_Template_Settings {
 		$active_post_array      = 0;
 		$email_frequency_array  = 1;
 		$day_or_hour_array      = 'Hours';
-		if ( ! defined( 'WCAL_PLUGIN_PATH' ) ) {
-			define( 'WCAL_PLUGIN_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
-		}
 		ob_start();
-		include WCAL_PLUGIN_PATH . '/templates/template_1.php';
+		include WCAL_PLUGIN_PATH . '/includes/templates/template_1.php';
 		$content            = ob_get_clean();
 		$body_content_array = addslashes( $content );
 		$is_wc_template     = 1;
