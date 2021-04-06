@@ -25,7 +25,7 @@ wc_get_template(
 	'html-rules-add-row.php',
 	'',
 	'woocommerce-abandoned-cart/',
-	WCAL_PLUGIN_PATH . '/includes/template/rules/'
+	WCAL_PLUGIN_PATH . '/includes/templates/rules/'
 );
 $row = ob_get_clean();
 $row = apply_filters( 'wcap_rules_engine_add_row_content', $row );

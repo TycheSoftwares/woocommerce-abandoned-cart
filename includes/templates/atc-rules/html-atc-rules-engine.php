@@ -23,8 +23,8 @@ ob_start();
 wc_get_template(
 	'html-atc-rules-add-row.php',
 	'',
-	'woocommerce-abandon-cart-pro/',
-	WCAP_PLUGIN_PATH . '/includes/template/atc-rules/'
+	'woocommerce-abandoned-cart/',
+	WCAL_PLUGIN_PATH . '/includes/templates/atc-rules/'
 );
 $row = ob_get_clean();
 $row = apply_filters( 'wcap_atc_rules_engine_add_row_content', $row );
@@ -86,8 +86,8 @@ $row = apply_filters( 'wcap_atc_rules_engine_add_row_content', $row );
 							wc_get_template(
 								'html-atc-rules-edit-row.php',
 								$edit_row,
-								'woocommerce-abandon-cart-pro/',
-								WCAP_PLUGIN_PATH . '/includes/template/atc-rules/'
+								'woocommerce-abandoned-cart/',
+								WCAL_PLUGIN_PATH . '/includes/templates/atc-rules/'
 							);
 							?>
 						</tr>
