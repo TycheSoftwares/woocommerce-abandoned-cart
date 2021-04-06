@@ -222,6 +222,12 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.8.8 (06.04.2021) = 
+* Enhancement - Introduced Abandoned & Recovered Cart data graph in the plugin dashboard.
+* Tweak - Updated the Pro settings to reflect the new settings included in the Pro Version.
+* Fix - The link to FB Settings documentation was not working.
+* Fix - The merge tags {{cart.abandoned_date}}, {{cart.link}}, {{cart.unsubscribe}} were not being replaced with test data when previewing a reminder email template.
+
 = 5.8.7 (26.03.2021) =
 * Fix - Variation Image is not displayed in reminder emails.
 
