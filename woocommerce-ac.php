@@ -829,6 +829,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				array( 'When a contact receives your email and clicks reply, which email address should that reply be sent to?', 'woocommerce-abandoned-cart' )
 			);
 
+			add_settings_field(
+				'wcal_add_utm_to_links',
+				__( 'UTM parameters to be added to all the links in reminder emails', 'woocommerce-ac' ),
+				array( &$this, 'wcal_add_utm_to_links_callback' ),
+				'woocommerce_ac_email_page',
+				'ac_email_settings_section',
+				array( __( 'UTM parameters that should be added to all the links in reminder emails.', 'woocommerce-ac' ) )
+			);
+
 			// Finally, we register the fields with WordPress.
 			register_setting(
 				'woocommerce_ac_settings',
@@ -888,6 +897,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			register_setting(
 				'woocommerce_ac_email_settings',
 				'wcal_reply_email'
+			);
+
+			register_setting(
+				'woocommerce_ac_email_settings',
+				'wcal_add_utm_to_links'
 			);
 
 			do_action( 'wcal_add_new_settings' );
@@ -1187,6 +1201,23 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			);
 			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
 			$html = '<label for="wcal_reply_email_label"> ' . $args[0] . '</label>';
+			echo wp_kses_post( $html );
+		}
+
+		/**
+		 * Callback for UTM parameters.
+		 *
+		 * @param array $args - Arguments for the setting.
+		 * @since 5.9.0
+		 */
+		public static function wcal_add_utm_to_links_callback( $args ) {
+
+			$wcal_add_utm_to_links = get_option( 'wcal_add_utm_to_links', '' );
+
+			?>
+			<textarea id='wcal_add_utm_to_links' rows='4' cols='50' name='wcal_add_utm_to_links' ><?php echo esc_html( $wcal_add_utm_to_links ); ?></textarea>
+			<?php
+			$html = '<label for="wcal_add_utm_to_links">' . $args[0] . '</label>';
 			echo wp_kses_post( $html );
 		}
 

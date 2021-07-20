@@ -53,6 +53,11 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 					$last_template_id = 0;
 				}
 
+				$utm = get_option( 'wcal_add_utm_to_links', '' );
+				if ( '' !== $utm && strlen( $utm ) > 0 && '?' !== substr( $utm, 0, 1 ) ) {
+					$utm = "?$utm";
+				}
+
 				foreach ( $results as $key => $value ) {
 					if ( 'Days' === $value->day_or_hour ) {
 						$time_to_send_template_after = intval( $value->frequency ) * $day_seconds;
@@ -270,7 +275,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 														$cart_page_link = $cart_page_id ? get_permalink( $cart_page_id ) : '';
 													}
 
-													$encoding_cart   = $email_sent_id . '&url=' . $cart_page_link;
+													$encoding_cart   = $email_sent_id . '&url=' . $cart_page_link . $utm;
 													$validate_cart   = $this->wcal_encrypt_validate( $encoding_cart );
 													$cart_link_track = get_option( 'siteurl' ) . '/?wcal_action=track_links&validate=' . $validate_cart;
 													$email_body      = str_ireplace( '{{cart.link}}', $cart_link_track, $email_body );

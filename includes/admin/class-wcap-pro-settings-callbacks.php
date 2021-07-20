@@ -606,22 +606,6 @@ if ( ! class_exists( 'WCAP_Pro_Settings_Callbacks' ) ) {
 		}
 
 		/**
-		 * Callback for UTM parameters.
-		 *
-		 * @param array $args - Arguments for the setting.
-		 */
-		public static function wcap_add_utm_to_links_callback( $args ) {
-
-			$wcap_add_utm_to_links = get_option( 'wcap_add_utm_to_links', '' );
-
-			?>
-			<textarea id='wcap_add_utm_to_links' rows='4' cols='50' name='wcap_add_utm_to_links' readonly disabled ><?php echo esc_html( $wcap_add_utm_to_links ); ?></textarea>
-			<?php
-			$html = '<label for="wcap_add_utm_to_links">' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
 		 * Unsubscribe settings section.
 		 */
 		public static function wcap_unsubscribe_options_callback() {
