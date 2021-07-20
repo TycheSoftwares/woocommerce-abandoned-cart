@@ -609,7 +609,10 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 				$order_date_with_time = $results_query_email[0]->post_date;
 				$order_date           = substr( $order_date_with_time, 0, 10 );
 
-				if ( $order_date == $todays_date ) { // phpcs:ignore
+				if ( 'wc-pending' === $results_query_email[0]->post_status || 'wc-failed' === $results_query_email[0]->post_status && strtotime( $order_date_with_time ) > $abandoned_cart_time ) {
+					// If the post status are pending or failed  the send them for abandoned cart reminder emails.
+					return 0;
+				} elseif ( strtotime( $order_date_with_time ) > $abandoned_cart_time ) {
 
 					// In some cases the cart is recovered but it is not marked as the recovered. So here we check if any record is found for that cart id if yes then update the record respectively.
 					$wcal_check_email_sent_to_cart = self::wcal_get_cart_sent_data( $cart_id );
@@ -651,17 +654,6 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 						);
 					}
 					return 1;
-				} elseif ( strtotime( $order_date_with_time ) > $abandoned_cart_time ) {
-					$wpdb->query( // phpcs:ignore
-						$wpdb->prepare(
-							"UPDATE `" . $wpdb->prefix . "ac_abandoned_cart_history_lite` SET cart_ignored = '1' WHERE id = %s ", // phpcs:ignore
-							$cart_id
-						)
-					);
-					return 1;
-				} elseif ( 'wc-pending' === $results_query_email[0]->post_status || 'wc-failed' === $results_query_email[0]->post_status ) {
-					// If the post status are pending or failed  the send them for abandoned cart reminder emails.
-					return 0;
 				}
 			}
 			return 0;
