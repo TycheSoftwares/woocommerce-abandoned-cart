@@ -3481,10 +3481,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 										</th>
 										<td>
 											<?php
-											$user = wp_get_current_user();
+											$user        = wp_get_current_user();
 											$admin_email = $user->user_email;
 											?>
-											<input type="text" id="send_test_email" name="send_test_email" class="regular-text" value="<?php echo $admin_email; ?>" >
+											<input type="text" id="send_test_email" name="send_test_email" class="regular-text" value="<?php echo esc_attr( $admin_email ); ?>" >
 											<input type="button" value="Send a test email" id="preview_email" onclick="javascript:void(0);">
 											<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'Enter the email id to which the test email needs to be sent.', 'woocommerce-abandoned-cart' ); ?>' src="<?php echo esc_url( WC()->plugin_url() ); ?>/assets/images/help.png" />
 											<br>
