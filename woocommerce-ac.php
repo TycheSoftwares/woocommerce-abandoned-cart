@@ -176,7 +176,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			register_deactivation_hook( __FILE__, array( &$this, 'wcal_deactivate' ) );
 
 			// Action Scheduler for Cron.
-			require_once 'includes/libraries/action-scheduler/action-scheduler.php';
+			if ( file_exists( WP_PLUGIN_DIR . '/woocommerce/packages/action-scheduler/action-scheduler.php' ) ) {
+				require_once WP_PLUGIN_DIR . '/woocommerce/packages/action-scheduler/action-scheduler.php';
+			} else {
+				add_action( 'admin_notices', array( &$this, 'wcal_as_failed_notice' ) );
+			}
 			add_action( 'init', array( &$this, 'wcal_add_scheduled_action' ) );
 			require_once 'cron/class-wcal-cron.php';
 			require_once 'includes/class-wcal-process-base.php';
@@ -248,12 +252,32 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
+		 * Action Scheduler library load failed. So add an admin notice.
+		 *
+		 * @since 5.9.0
+		 */
+		public static function wcal_as_failed_notice() {
+			$as_link = "<a href='https://www.tychesoftwares.com/moving-to-the-action-scheduler-library/' target='_blank'>Action Scheduler library</a>";
+			?>
+			<div class="notice notice-error">
+				<p>
+					<?php
+					echo wp_kses_post( __( "Abandoned Cart Lite for WooCommerce was unable to load the $as_link. Please ensure you are running WooCommerce 4.0.0 or higher to send automated reminder emails. Currrently no automated reminder emails are being sent for abandoned carts.", 'woocommerce-abandoned-cart' ) ); // phpcs:ignore
+					?>
+				</p>
+			</div>
+			<?php
+		}
+
+		/**
 		 * Add Recurring Scheduled Action.
 		 */
 		public static function wcal_add_scheduled_action() {
-			if ( false === as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) ) {
-				wp_clear_scheduled_hook( 'woocommerce_ac_send_email_action' ); // Remove the cron job is present.
-				as_schedule_recurring_action( time() + 60, 900, 'woocommerce_ac_send_email_action' ); // Schedule recurring action.
+			if ( function_exists( 'as_next_scheduled_action' ) ) {
+				if ( false === as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) ) {
+					wp_clear_scheduled_hook( 'woocommerce_ac_send_email_action' ); // Remove the cron job is present.
+					as_schedule_recurring_action( time() + 60, 900, 'woocommerce_ac_send_email_action' ); // Schedule recurring action.
+				}
 			}
 		}
 
