@@ -279,15 +279,6 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( __( 'Select the page where product name in reminder emails should redirect to.', 'woocommerce-ac' ) . $upgrade_pro_msg )
 			);
 
-			add_settings_field(
-				'wcap_add_utm_to_links',
-				__( 'UTM parameters to be added to all the links in reminder emails', 'woocommerce-ac' ),
-				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_add_utm_to_links_callback' ),
-				'woocommerce_ac_email_page',
-				'ac_email_settings_section',
-				array( __( 'UTM parameters that should be added to all the links in reminder emails.', 'woocommerce-ac' ) . $upgrade_pro_msg )
-			);
-
 			register_setting(
 				'ac_email_settings_section',
 				'wcap_product_image_size'
@@ -296,11 +287,6 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 			register_setting(
 				'woocommerce_ac_settings',
 				'wcap_product_name_redirect'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'wcap_add_utm_to_links'
 			);
 
 			add_settings_section(

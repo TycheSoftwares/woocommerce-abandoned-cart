@@ -120,7 +120,7 @@ jQuery(function($) {
         },
 
         open: function( classes ) {
-
+            $wcal_cart_status = '';
             $(document.body).addClass('wcal-modal-open').append('<div class="wcal-modal-overlay"></div>');
             var modal_body = '<div class="wcal-modal ' + classes + '"><div class="wcal-modal__contents"> <div class="wcal-modal__header"><h1>Cart #'+wcal_clicked_cart_id+'</h1>'+$wcal_cart_status+'</div>'+ email_body +' <div class = "wcal-modal-cart-content-hide" id ="wcal_remove_class">  </div> </div>  <div class="wcal-icon-close wcal-js-close-modal"></div>    </div>';
 

@@ -176,7 +176,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			register_deactivation_hook( __FILE__, array( &$this, 'wcal_deactivate' ) );
 
 			// Action Scheduler for Cron.
-			require_once 'includes/libraries/action-scheduler/action-scheduler.php';
+			if ( file_exists( WP_PLUGIN_DIR . '/woocommerce/packages/action-scheduler/action-scheduler.php' ) ) {
+				require_once WP_PLUGIN_DIR . '/woocommerce/packages/action-scheduler/action-scheduler.php';
+			} else {
+				add_action( 'admin_notices', array( &$this, 'wcal_as_failed_notice' ) );
+			}
 			add_action( 'init', array( &$this, 'wcal_add_scheduled_action' ) );
 			require_once 'cron/class-wcal-cron.php';
 			require_once 'includes/class-wcal-process-base.php';
@@ -248,12 +252,32 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
+		 * Action Scheduler library load failed. So add an admin notice.
+		 *
+		 * @since 5.9.0
+		 */
+		public static function wcal_as_failed_notice() {
+			$as_link = "<a href='https://www.tychesoftwares.com/moving-to-the-action-scheduler-library/' target='_blank'>Action Scheduler library</a>";
+			?>
+			<div class="notice notice-error">
+				<p>
+					<?php
+					echo wp_kses_post( __( "Abandoned Cart Lite for WooCommerce was unable to load the $as_link. Please ensure you are running WooCommerce 4.0.0 or higher to send automated reminder emails. Currrently no automated reminder emails are being sent for abandoned carts.", 'woocommerce-abandoned-cart' ) ); // phpcs:ignore
+					?>
+				</p>
+			</div>
+			<?php
+		}
+
+		/**
 		 * Add Recurring Scheduled Action.
 		 */
 		public static function wcal_add_scheduled_action() {
-			if ( false === as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) ) {
-				wp_clear_scheduled_hook( 'woocommerce_ac_send_email_action' ); // Remove the cron job is present.
-				as_schedule_recurring_action( time() + 60, 900, 'woocommerce_ac_send_email_action' ); // Schedule recurring action.
+			if ( function_exists( 'as_next_scheduled_action' ) ) {
+				if ( false === as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) ) {
+					wp_clear_scheduled_hook( 'woocommerce_ac_send_email_action' ); // Remove the cron job is present.
+					as_schedule_recurring_action( time() + 60, 900, 'woocommerce_ac_send_email_action' ); // Schedule recurring action.
+				}
 			}
 		}
 
@@ -829,6 +853,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				array( 'When a contact receives your email and clicks reply, which email address should that reply be sent to?', 'woocommerce-abandoned-cart' )
 			);
 
+			add_settings_field(
+				'wcal_add_utm_to_links',
+				__( 'UTM parameters to be added to all the links in reminder emails', 'woocommerce-ac' ),
+				array( &$this, 'wcal_add_utm_to_links_callback' ),
+				'woocommerce_ac_email_page',
+				'ac_email_settings_section',
+				array( __( 'UTM parameters that should be added to all the links in reminder emails.', 'woocommerce-ac' ) )
+			);
+
 			// Finally, we register the fields with WordPress.
 			register_setting(
 				'woocommerce_ac_settings',
@@ -888,6 +921,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			register_setting(
 				'woocommerce_ac_email_settings',
 				'wcal_reply_email'
+			);
+
+			register_setting(
+				'woocommerce_ac_email_settings',
+				'wcal_add_utm_to_links'
 			);
 
 			do_action( 'wcal_add_new_settings' );
@@ -1187,6 +1225,23 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			);
 			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
 			$html = '<label for="wcal_reply_email_label"> ' . $args[0] . '</label>';
+			echo wp_kses_post( $html );
+		}
+
+		/**
+		 * Callback for UTM parameters.
+		 *
+		 * @param array $args - Arguments for the setting.
+		 * @since 5.9.0
+		 */
+		public static function wcal_add_utm_to_links_callback( $args ) {
+
+			$wcal_add_utm_to_links = get_option( 'wcal_add_utm_to_links', '' );
+
+			?>
+			<textarea id='wcal_add_utm_to_links' rows='4' cols='50' name='wcal_add_utm_to_links' ><?php echo esc_html( $wcal_add_utm_to_links ); ?></textarea>
+			<?php
+			$html = '<label for="wcal_add_utm_to_links">' . $args[0] . '</label>';
 			echo wp_kses_post( $html );
 		}
 
@@ -3449,7 +3504,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 											<label for="woocommerce_ac_email_preview"><b><?php esc_html_e( 'Send a test email to:', 'woocommerce-abandoned-cart' ); ?></b></label>
 										</th>
 										<td>
-											<input type="text" id="send_test_email" name="send_test_email" class="regular-text" >
+											<?php
+											$user        = wp_get_current_user();
+											$admin_email = isset( $user->user_email ) ? $user->user_email : '';
+											?>
+											<input type="text" id="send_test_email" name="send_test_email" class="regular-text" value="<?php echo esc_attr( $admin_email ); ?>" >
 											<input type="button" value="Send a test email" id="preview_email" onclick="javascript:void(0);">
 											<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'Enter the email id to which the test email needs to be sent.', 'woocommerce-abandoned-cart' ); ?>' src="<?php echo esc_url( WC()->plugin_url() ); ?>/assets/images/help.png" />
 											<br>
