@@ -609,7 +609,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 				$order_date_with_time = $results_query_email[0]->post_date;
 				$order_date           = substr( $order_date_with_time, 0, 10 );
 
-				if ( 'wc-pending' === $results_query_email[0]->post_status || 'wc-failed' === $results_query_email[0]->post_status && strtotime( $order_date_with_time ) > $abandoned_cart_time ) {
+				if ( ( 'wc-pending' === $results_query_email[0]->post_status || 'wc-failed' === $results_query_email[0]->post_status ) && strtotime( $order_date_with_time ) > $abandoned_cart_time ) {
 					// If the post status are pending or failed  the send them for abandoned cart reminder emails.
 					return 0;
 				} elseif ( strtotime( $order_date_with_time ) > $abandoned_cart_time ) {
