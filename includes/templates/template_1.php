@@ -117,15 +117,6 @@ $admin_phone = get_user_meta( $uid, 'billing_phone', true );
 			}
 		}
 	</style></p><p><style type="text/css">
-		@media only screen and (max-width:480px) {
-			@-ms-viewport {
-				width: 320px;
-			}
-			@viewport {
-				width: 320px;
-			}
-		}
-	</style></p><p><style type="text/css">
 		@import url(https://fonts.googleapis.com/css?family=Lato);
 		@import url(https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700);
 		@import url(https://fonts.googleapis.com/css?family=Cabin);
