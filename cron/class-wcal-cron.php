@@ -333,9 +333,11 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 																if ( '' === $sub_line_prod_name ) {
 																	$sub_line_prod_name = $product_name;
 																}
-																$wcap_sku      = '<br>' . __( 'SKU: ', 'woocommerce-abandoned-cart' ) . $product->get_sku() . '<br>';
-																$wcap_sku      = apply_filters( 'wcal_email_sku', $wcap_sku, $product_id );
-																$product_name .= $wcap_sku;
+																if ( '' !== $product->get_sku() ) {
+																	$wcap_sku      = '<br>' . __( 'SKU: ', 'woocommerce-abandoned-cart' ) . $product->get_sku() . '<br>';
+																	$wcap_sku      = apply_filters( 'wcal_email_sku', $wcap_sku, $product_id );
+																	$product_name .= $wcap_sku;
+																}
 																// Item subtotal is calculated as product total including taxes.
 																if ( $v->line_tax > 0 ) {
 																	$item_subtotal = $item_subtotal + $v->line_total + $v->line_tax;
@@ -363,7 +365,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 																	$explode_all  = '' !== $name ? explode( '&ndash;', $name ) : array();
 																	if ( version_compare( $woocommerce->version, '3.0.0', '>=' ) ) {
 																		$wcap_sku = '';
-																		if ( false !== $variation ) {
+																		if ( false !== $variation && '' !== $variation->get_sku() ) {
 																			$wcap_sku = '<br>' . __( 'SKU: ', 'woocommerce-abandoned-cart' ) . $variation->get_sku() . '<br>';
 																			$wcap_sku = apply_filters( 'wcal_email_sku', $wcap_sku, $variation_id );
 																		}
