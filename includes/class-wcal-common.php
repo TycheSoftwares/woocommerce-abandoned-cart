@@ -127,7 +127,7 @@ class wcal_common { // phpcs:ignore
 				$cart_details = $cart_info->cart;
 			}
 
-			if ( count( $cart_details ) > 0 ) {
+			if ( count( get_object_vars( $cart_details ) ) > 0 ) {
 				foreach ( $cart_details as $k => $v ) {
 					if ( 0 !== $v->line_subtotal_tax && $v->line_subtotal_tax > 0 ) {
 						$wcal_abandoned_orders_amount = $wcal_abandoned_orders_amount + $v->line_total + $v->line_subtotal_tax;
