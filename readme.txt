@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, d
 Tags: cart abandonment, abandon cart, cart recovery, recover woocommerce cart, increase woocommerce conversion rate, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.7
+Tested up to: 5.8
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -222,6 +222,15 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.9.0 (26.07.2021) =
+* Enhancement - Introduced UTM tags to be added to reminder email links to help with Google Analytics.
+* Tweak - Added a filter to hide SKU in reminder emails.
+* Tweak - Removed the Action Scheduler library from the plugin. The plugin will now use the library from WooCommerce.
+* Tweak - The test email field will now be pre-populated with the email address of the logged-in user.
+* Fix - Made the plugin compatible with PHP 8.0
+* Fix - No reminder emails were being sent to WC orders with the status Pending Payment and Failed.
+* Fix - Undefined was displayed for cart status when clicking on View Details in the Abandoned Orders page. This was later replaced by valid cart status.
+
 = 5.8.8 (06.04.2021) = 
 * Enhancement - Introduced Abandoned & Recovered Cart data graph in the plugin dashboard.
 * Tweak - Updated the Pro settings to reflect the new settings included in the Pro Version.
