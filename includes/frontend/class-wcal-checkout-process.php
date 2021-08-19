@@ -447,7 +447,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 					}
 				}
 
-				if( 'pending' !== $woo_order_status && 'failed' !== $woo_order_status && 'cancelled' !== $woo_order_status && 'trash' !== $woo_order_status ) {
+				if ( 'pending' !== $woo_order_status && 'failed' !== $woo_order_status && 'cancelled' !== $woo_order_status && 'trash' !== $woo_order_status ) {
 
 					if ( isset( $get_sent_email_id_of_order ) && '' !== $get_sent_email_id_of_order ) {
 						$this->wcal_updated_recovered_cart( $get_abandoned_id_of_order, $order_id, $get_sent_email_id_of_order, $order );
