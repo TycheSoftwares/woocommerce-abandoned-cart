@@ -3598,7 +3598,17 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				jQuery( document ).ready( function( $ )
 				{
 					$( "table#addedit_template input#preview_email" ).click( function()
-					{
+					{	
+						emailVal = jQuery( '#send_test_email' ).val();
+						const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;	
+						if ( !re.test( emailVal ) ) {	
+							jQuery( '#preview_email_sent_msg' ).html( '<?php echo __( 'Please enter a valid email.', 'woocommerce-abandoned-cart' ); ?>' );
+							jQuery( '#preview_email_sent_msg' ).show();
+							return false;		
+						}
+					
+						jQuery( '#preview_email_sent_msg' ).hide();
+
 						$( '.ajax_img' ).show();
 						var email_body = '';
 						if ( jQuery("#wp-woocommerce_ac_email_body-wrap").hasClass( "tmce-active" ) ) {
