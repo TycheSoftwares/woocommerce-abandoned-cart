@@ -245,10 +245,10 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 				// 5.10.0 adding Minutes to the Mail frequency
 
-				$results = $wpdb->get_results( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'day_or_hour'" );
+				$results = $wpdb->get_results( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'day_or_hour'" );   //phpcs:ignore
 
 				if ( isset( $results, $results[0]->Type ) && ( $results[0]->Type !== "ENUM('Days','Hours','Minutes')" ) ) {
-					$wpdb->query( 'ALTER TABLE ' . $db_prefix . "ac_email_templates_lite CHANGE `day_or_hour` `day_or_hour` ENUM('Days','Hours','Minutes') CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL" );
+					$wpdb->query( 'ALTER TABLE ' . $db_prefix . "ac_email_templates_lite CHANGE `day_or_hour` `day_or_hour` ENUM('Days','Hours','Minutes') CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL" );   //phpcs:ignore
 				}
 			}
 

@@ -3481,8 +3481,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 												}
 												$days_or_hours = array(
 													'Minutes' => 'Minute(s)',
-													'Days' 	  => 'Day(s)',
-													'Hours'   => 'Hour(s)',
+													'Days' => 'Day(s)',
+													'Hours' => 'Hour(s)',
 												);
 												foreach ( $days_or_hours as $k => $v ) {
 													printf(

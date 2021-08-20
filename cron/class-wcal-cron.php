@@ -61,8 +61,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 				foreach ( $results as $key => $value ) {
 					if ( 'Minutes' === $value->day_or_hour ) {
 						$time_to_send_template_after = intval( $value->frequency ) * 60;
-					}
-					elseif ( 'Days' === $value->day_or_hour ) {
+					} elseif ( 'Days' === $value->day_or_hour ) {
 						$time_to_send_template_after = intval( $value->frequency ) * $day_seconds;
 					} elseif ( 'Hours' === $value->day_or_hour ) {
 						$time_to_send_template_after = intval( $value->frequency ) * $hour_seconds;
