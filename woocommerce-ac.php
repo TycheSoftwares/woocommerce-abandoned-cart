@@ -3462,7 +3462,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 											if ( 'edittemplate' === $mode && count( $results ) > 0 && isset( $results[0]->frequency ) ) {
 												$frequency_edit = $results[0]->frequency;
 											}
-											for ( $i = 1; $i < 4; $i++ ) {
+											for ( $i = 1; $i < 60; $i++ ) {
 												printf(
 													"<option %s value='%s'>%s</option>\n",
 													selected( $i, $frequency_edit, false ),
@@ -3480,6 +3480,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 													$days_or_hours_edit = $results[0]->day_or_hour;
 												}
 												$days_or_hours = array(
+													'Minutes' => 'Minute(s)',
 													'Days' => 'Day(s)',
 													'Hours' => 'Hour(s)',
 												);
