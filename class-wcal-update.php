@@ -243,19 +243,23 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 					update_blog_option( $blog_id, 'ac_lite_alter_table_queries', 'yes' );
 				}
 
-				// 5.10.0 adding Minutes to the Mail frequency
-
-				$results = $wpdb->get_results( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'day_or_hour'" );   //phpcs:ignore
-
-				if ( isset( $results, $results[0]->Type ) && ( $results[0]->Type !== "ENUM('Days','Hours','Minutes')" ) ) {
-					$wpdb->query( 'ALTER TABLE ' . $db_prefix . "ac_email_templates_lite CHANGE `day_or_hour` `day_or_hour` ENUM('Days','Hours','Minutes') CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL" );   //phpcs:ignore
-				}
+				
 			}
+
+			
 
 			// 5.8.2 - Rename manual_email to email_reminder_status.
 			if ( 'yes' !== get_option( 'wcal_add_email_status_col', '' ) ) {
 				add_option( 'wcal_add_email_status_col', 'yes' );
 				self::wcal_update_email_status( $db_prefix );
+			}
+
+			// 5.10.0 adding Minutes to the Mail frequency
+
+			$results = $wpdb->get_results( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'day_or_hour'" );   //phpcs:ignore
+
+			if ( isset( $results, $results[0]->Type ) && ( $results[0]->Type !== "ENUM('Days','Hours','Minutes')" ) ) {
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . "ac_email_templates_lite CHANGE `day_or_hour` `day_or_hour` ENUM('Days','Hours','Minutes') CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL" );   //phpcs:ignore
 			}
 
 		}
