@@ -584,7 +584,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`body` mediumtext NOT NULL,
 				`is_active` enum('0','1') NOT NULL,
 				`frequency` int(11) NOT NULL,
-				`day_or_hour` enum('Days','Hours') NOT NULL,
+				`day_or_hour` enum('Days','Hours','Minutes') NOT NULL,
 				`template_name` text NOT NULL,
 				`is_wc_template` enum('0','1') NOT NULL,
 				`default_template` int(11) NOT NULL,
