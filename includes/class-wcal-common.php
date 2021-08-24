@@ -997,6 +997,8 @@ class wcal_common { // phpcs:ignore
 		$list_frequencies = array();
 		foreach ( $get_active as $active ) {
 			switch ( $active->day_or_hour ) {
+				case 'Minutes':
+					$template_freq = $active->frequency * 60;
 				case 'Days':
 					$template_freq = $active->frequency * $day_seconds;
 					break;
