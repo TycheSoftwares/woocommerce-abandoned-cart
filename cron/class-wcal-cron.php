@@ -67,6 +67,10 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 						$time_to_send_template_after = intval( $value->frequency ) * $hour_seconds;
 					}
 
+					if ( ! isset( $time_to_send_template_after ) ) {
+						continue;
+					}
+
 					$carts = $this->wcal_get_carts( $time_to_send_template_after, $cart_abandon_cut_off_time, $value->id );
 
 					$email_frequency        = $value->frequency;
