@@ -222,6 +222,12 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.10.0 ( 25.08.2021) =
+* Enhancement - Added the ability to setup reminder email frequency in minutes.
+* Tweak - Added a filter to allow reminder emails to be sent for carts with the total as 0.
+* Fix - The plugin tried to send a test email when the field was left blanks.
+* Fix - Recovered order note was added for cancelled orders in WP Dashboard.
+
 = 5.9.0 (26.07.2021) =
 * Enhancement - Introduced UTM tags to be added to reminder email links to help with Google Analytics.
 * Tweak - Added a filter to hide SKU in reminder emails.
