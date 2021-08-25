@@ -1006,6 +1006,11 @@ class wcal_common { // phpcs:ignore
 					$template_freq = $active->frequency * $hour_seconds;
 					break;
 			}
+
+			if ( ! isset( $template_freq ) ) {
+				continue;
+			}
+			
 			$list_frequencies[ $active->id ] = (int) $template_freq;
 		}
 
