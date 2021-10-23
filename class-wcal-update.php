@@ -257,9 +257,28 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 			if ( isset( $results, $results[0]->Type ) && ( $results[0]->Type !== "ENUM('Days','Hours','Minutes')" ) ) { //phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . $db_prefix . "ac_email_templates_lite CHANGE `day_or_hour` `day_or_hour` ENUM('Days','Hours','Minutes') CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL" );   //phpcs:ignore
 			}
-
+			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'coupon_code'" ) ) { //phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_email_templates_lite  ADD COLUMN `coupon_code` varchar(50) NOT NULL AFTER `wc_email_header`' ); //phpcs:ignore
+			}
+			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'generate_unique_coupon_code'" ) ) { //phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_email_templates_lite ADD COLUMN `generate_unique_coupon_code` ENUM("0","1") CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL AFTER `coupon_code`' ); //phpcs:ignore
+			}
+			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'discount'" ) ) { //phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_email_templates_lite  ADD COLUMN `discount` varchar(50) NOT NULL AFTER `generate_unique_coupon_code`' ); //phpcs:ignore
+			}
+			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'discount_type'" ) ) { //phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_email_templates_lite ADD COLUMN `discount_type` varchar(50) NOT NULL AFTER `discount`' ); //phpcs:ignore
+			}
+			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'discount_shipping'" ) ) { //phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_email_templates_lite ADD COLUMN `discount_shipping` varchar(50) NOT NULL AFTER `discount_type`' ); //phpcs:ignore
+			}
+			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'discount_expiry'" ) ) { //phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_email_templates_lite ADD COLUMN `discount_expiry` varchar(50) NOT NULL AFTER `discount_shipping`' ); //phpcs:ignore
+			}
+			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'individual_use'" ) ) { //phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_email_templates_lite ADD COLUMN `individual_use` ENUM("0","1") CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL AFTER `discount_expiry`' ); //phpcs:ignore
+			}
 		}
-
 		/**
 		 * Add a new column email_reminder_status in the cart history lite table.
 		 *

@@ -533,45 +533,6 @@ if ( ! class_exists( 'WCAP_Pro_Settings_Callbacks' ) ) {
 			$html = '<label for="wcap_restrict_domain_address_label"> ' . $args[0] . '</label>';
 			echo wp_kses_post( $html );
 		}
-
-		/**
-		 * Callback for Abandoned cart Coupon settings.
-		 */
-		public static function wcap_coupon_callback() {
-		}
-
-		/**
-		 * Option for deleting the plugin data upon uninstall.
-		 *
-		 * @param array $args Argument for adding field details.
-		 * @since 8.3
-		 */
-		public static function wcap_deleting_coupon_data( $args ) {
-			$wcap_delete_coupon_data = get_option( 'wcap_delete_coupon_data', '' );
-			if ( isset( $wcap_delete_coupon_data ) && '' === $wcap_delete_coupon_data ) {
-				$wcap_delete_coupon_data = 'off';
-			}
-
-			?>
-			<input type="checkbox" id="wcap_delete_coupon_data" name="wcap_delete_coupon_data" value="on" <?php echo checked( 'on', $wcap_delete_coupon_data, false ); ?> readonly disabled />
-			<?php
-			$html = '<label for="wcap_delete_coupon_data">' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Coupon deletion manual button.
-		 *
-		 * @param array $args - Arguments for the setting.
-		 */
-		public static function wcap_deleting_coupon_data_manually( $args ) {
-			?>
-			<input type="button" class="button-secondary" id="wcap_delete_coupons" value="<?php esc_html_e( 'Delete', 'woocommerce-ac' ); ?>" readonly disabled >
-			<?php
-			$html = '<label>' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
 		/**
 		 * Callback for product name link redirect.
 		 *
