@@ -41,8 +41,8 @@ if ( 'copytemplate' === $mode ) {
 		$is_unique_coupon = 'checked';
 	}
 }
-	print '<input type="checkbox" name="unique_coupon" id="unique_coupon" ' . esc_attr( $is_unique_coupon ) . '>  </input>'; 
-	?>
+	print '<input type="checkbox" name="unique_coupon" id="unique_coupon" ' . esc_attr( $is_unique_coupon ) . '>  </input>';
+?>
 	<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'Replace this coupon with unique coupon codes for each customer', 'woocommerce' ); ?>' src="<?php echo esc_attr( plugins_url() ); ?>/woocommerce/assets/images/help.png" /></p>
 </td>
 </tr>
@@ -123,7 +123,7 @@ if ( 'yes' === $discount_shipping ) {
 }
 print '<input type="checkbox" name="wcap_allow_free_shipping" id="wcap_allow_free_shipping" ' . esc_attr( $discount_shipping_check ) . '>  </input>';
 ?>
-	<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'Check this box if the coupon grants free shipping. A free shipping method must be enabled in your shipping zone and be set to require "a valid free shipping coupon" (see the "Free Shipping Requires" setting).', 'woocommerce-ac' ); ?>' src="<?php esc_attr( echo plugins_url() ); ?>/woocommerce/assets/images/help.png" />
+	<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'Check this box if the coupon grants free shipping. A free shipping method must be enabled in your shipping zone and be set to require "a valid free shipping coupon" (see the "Free Shipping Requires" setting).', 'woocommerce-ac' ); ?>' src="<?php echo esc_attr( plugins_url() ); ?>/woocommerce/assets/images/help.png" />
 
 </td>
 </tr>
@@ -192,8 +192,8 @@ if ( 'copytemplate' === $mode ) {
 		$is_individual_use = '';
 	}
 }
-	print '<input type="checkbox" name="individual_use" id="individual_use" ' . esc_attr( $is_individual_use ) . '>  </input>'; 
-	?>
+	print '<input type="checkbox" name="individual_use" id="individual_use" ' . esc_attr( $is_individual_use ) . '>  </input>';
+?>
 	<img class="help_tip" width="16" height="16" data-tip='<?php esc_attr_e( 'Check this box if the coupon cannot be used in conjunction with other coupons.', 'woocommerce' ); ?>' src="<?php echo esc_attr( plugins_url() ); ?>/woocommerce/assets/images/help.png" /></p>
 </td>
 </tr>

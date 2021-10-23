@@ -253,7 +253,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			add_filter( 'cron_schedules', array( __CLASS__, 'wcap_add_cron_schedule' ) ); //phpcs:ignore
 			add_action( 'woocommerce_ac_delete_coupon_action', array( __CLASS__, 'wcap_delete_expired_used_coupon_code' ) );
-			add_action( 'wp_ajax_wcap_delete_expired_used_coupon_code', array( __CLASS__, 'wcap_delete_expired_used_coupon_code' ) ); 
+			add_action( 'wp_ajax_wcap_delete_expired_used_coupon_code', array( __CLASS__, 'wcap_delete_expired_used_coupon_code' ) );
 		}
 
 		/**
@@ -953,7 +953,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			register_setting(
 				'woocommerce_ac_settings',
-				'wcap_delete_coupon_data',
+				'wcap_delete_coupon_data'
 			);
 
 			do_action( 'wcal_add_new_settings' );
@@ -2279,7 +2279,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					)
 				);
 
-				wp_register_script( 'enhanced', plugins_url() . '/woocommerce/assets/js/admin/wc-enhanced-select.js', array( 'jquery', 'select2' ), '', WCAL_PLUGIN_VERSION, false );
+				wp_register_script( 'enhanced', plugins_url() . '/woocommerce/assets/js/admin/wc-enhanced-select.js', array( 'jquery', 'select2' ), WCAL_PLUGIN_VERSION, false );
 
 				wp_localize_script(
 					'enhanced',
@@ -2305,10 +2305,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 				wp_enqueue_script( 'enhanced' );
 
-				wp_register_script( 'selectWoo', plugins_url() . '/woocommerce/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '', WCAL_PLUGIN_VERSION, false );
+				wp_register_script( 'selectWoo', plugins_url() . '/woocommerce/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), WCAL_PLUGIN_VERSION, false );
 				wp_enqueue_script( 'selectWoo' );
 
-				wp_register_script( 'select2', plugins_url() . '/woocommerce/assets/js/select2/select2.js', array( 'jquery', 'jquery-ui-widget', 'jquery-ui-core' ), '', WCAL_PLUGIN_VERSION, false );
+				wp_register_script( 'select2', plugins_url() . '/woocommerce/assets/js/select2/select2.js', array( 'jquery', 'jquery-ui-widget', 'jquery-ui-core' ), WCAL_PLUGIN_VERSION, false );
 				wp_enqueue_script( 'select2' );
 				wp_dequeue_script( 'wc-enhanced-select' );
 			}
@@ -3581,7 +3581,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 											</span>
 										</td>
 									</tr>
-									<?php include_once 'views/wcal-email-coupon.php' ; ?>
+									<?php include_once 'views/wcal-email-coupon.php'; ?>
 									<tr>
 										<th>
 											<label for="woocommerce_ac_email_preview"><b><?php esc_html_e( 'Send a test email to:', 'woocommerce-abandoned-cart' ); ?></b></label>
