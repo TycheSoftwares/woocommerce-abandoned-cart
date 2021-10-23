@@ -176,31 +176,6 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( __( 'Enter DeBounce JS API Key.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
 			);
 
-			add_settings_section(
-				'ac_coupon_settings_section',           // ID used to identify this section and with which to register options.
-				__( 'Coupon Settings', 'woocommerce-abandoned-cart' ),      // Title to be displayed on the administration page.
-				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_coupon_callback' ), // Callback used to render the description of the section.
-				'woocommerce_ac_page'     // Page on which to add this section of options.
-			);
-
-			add_settings_field(
-				'wcap_delete_coupon_data',
-				__( 'Delete Coupons Automatically', 'woocommerce-abandoned-cart' ),
-				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_deleting_coupon_data' ),
-				'woocommerce_ac_page',
-				'ac_coupon_settings_section',
-				array( __( 'Enable this setting if you want to completely remove the expired and used coupon code automatically every 15 days.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
-			);
-
-			add_settings_field(
-				'wcap_delete_coupon_data_manually',
-				__( 'Delete Coupons Manually', 'woocommerce-abandoned-cart' ),
-				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_deleting_coupon_data_manually' ),
-				'woocommerce_ac_page',
-				'ac_coupon_settings_section',
-				array( __( 'If you want to completely remove the expired and used coupon code now then click on "Delete" button.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
-			);
-
 			register_setting(
 				'woocommerce_ac_settings',
 				'ac_enable_cart_emails'
