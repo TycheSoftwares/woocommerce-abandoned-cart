@@ -1028,7 +1028,7 @@ class wcal_common { // phpcs:ignore
 	 * @param string $email_body_template  - the content to be replaced.
 	 * @param object $results_template_value - the template that's being sent.
 	 */
-	public static function check_and_replace_email_tag( $email_body_template, $results_template_value ){
+	public static function check_and_replace_email_tag( $email_body_template, $results_template_value ) {
 		if ( stripos( $email_body_template, '{{coupon.code}}' ) ) {
 			$discount_details['discount_expiry']      = $results_template_value->discount_expiry;
 			$discount_details['discount_type']        = $results_template_value->discount_type;
@@ -1105,9 +1105,9 @@ class wcal_common { // phpcs:ignore
 		$final_string              = $first_two_digit . $ten_random_string;
 		$datetime                  = $get_expiry_date;
 		$coupon_code               = $final_string;
-		$coupon_product_categories = isset( $coupon_post_meta['product_categories'][0] ) && '' !== $coupon_post_meta['product_categories'][0] ? unserialize( $coupon_post_meta['product_categories'] [0] ) : array();
+		$coupon_product_categories = isset( $coupon_post_meta['product_categories'][0] ) && '' !== $coupon_post_meta['product_categories'][0] ? unserialize( $coupon_post_meta['product_categories'] [0] ) : array(); //phpcs:ignore
 
-		$coupon_exculde_product_categories = isset( $coupon_post_meta['exclude_product_categories'][0] ) && '' !== $coupon_post_meta['exclude_product_categories'][0] ? unserialize( $coupon_post_meta['exclude_product_categories'][0] ) : array();
+		$coupon_exculde_product_categories = isset( $coupon_post_meta['exclude_product_categories'][0] ) && '' !== $coupon_post_meta['exclude_product_categories'][0] ? unserialize( $coupon_post_meta['exclude_product_categories'][0] ) : array(); //phpcs:ignore
 
 		$coupon_product_ids = isset( $coupon_post_meta['product_ids'][0] ) && '' !== $coupon_post_meta['product_ids'][0] ? $coupon_post_meta['product_ids'][0] : '';
 
