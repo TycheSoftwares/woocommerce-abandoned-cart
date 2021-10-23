@@ -954,7 +954,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			register_setting(
 				'woocommerce_ac_settings',
 				'wcap_delete_coupon_data',
-			)
+			);
 
 			do_action( 'wcal_add_new_settings' );
 		}
