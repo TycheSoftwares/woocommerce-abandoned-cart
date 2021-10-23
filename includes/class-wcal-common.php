@@ -1132,7 +1132,7 @@ class wcal_common { // phpcs:ignore
 			$free_gift_shipping = isset( $coupon_post_meta['free_gift_shipping'][0] ) && '' !== $coupon_post_meta['free_gift_shipping'][0] ? $coupon_post_meta['free_gift_shipping'][0] : 'no';
 		}
 		if ( is_plugin_active( 'yith-woocommerce-brands-add-on/init.php' ) ) {
-			$coupon_brand = isset( $coupon_post_meta['brand'][0] ) && '' !== $coupon_post_meta['brand'][0] ? unserialize( $coupon_post_meta['brand'][0] ) : array();
+			$coupon_brand = isset( $coupon_post_meta['brand'][0] ) && '' !== $coupon_post_meta['brand'][0] ? unserialize( $coupon_post_meta['brand'][0] ) : array(); //phpcs:ignore
 		}
 		$amount        = $discount_amt;
 		$discount_type = $get_discount_type;
