@@ -17,28 +17,28 @@ jQuery(document).ready( function() {
 
 	});
 	
-	jQuery('#wcap_delete_coupons').click( function( event ) {
+	jQuery('#wcal_delete_coupons').click( function( event ) {
 		var msg 	= "Are you sure you want delete the expired and used coupons created by Abandonment Cart Pro for WooCommerce Plugin?";
 		var status 	= confirm( msg );
 		if ( status == true ) {
 			// disable delete button and show loader
-			jQuery("#wcap_delete_coupons").attr( "disabled", true );
-			jQuery( ".wcap-spinner" ).removeAttr( "style" );
+			jQuery("#wcal_delete_coupons").attr( "disabled", true );
+			jQuery( ".wcal-spinner" ).removeAttr( "style" );
 
 			jQuery.post( ajaxurl, {
-				action: 'wcap_delete_expired_used_coupon_code',
+				action: 'wcal_delete_expired_used_coupon_code',
 			}, function() {
 
 			}).done(function( data ) {
-				jQuery( "#wcap_delete_coupons" ).attr( "disabled", false );
-				jQuery( ".wcap-spinner" ).hide();
-				jQuery( ".wcap-coupon-response-msg" ).html( data.data );
-				jQuery( ".wcap-coupon-response-msg" ).fadeOut(3000);
+				jQuery( "#wcal_delete_coupons" ).attr( "disabled", false );
+				jQuery( ".wcal-spinner" ).hide();
+				jQuery( ".wcal-coupon-response-msg" ).html( data.data );
+				jQuery( ".wcal-coupon-response-msg" ).fadeOut(3000);
 			}).fail(function( data ) {
-				jQuery( "#wcap_delete_coupons" ).attr( "disabled", false );
-				jQuery( ".wcap-spinner" ).hide();
-				jQuery( ".wcap-coupon-response-msg" ).html( "Something went wrong. Please try deleting again." );
-				jQuery( ".wcap-coupon-response-msg" ).fadeOut(3000);
+				jQuery( "#wcal_delete_coupons" ).attr( "disabled", false );
+				jQuery( ".wcal-spinner" ).hide();
+				jQuery( ".wcal-coupon-response-msg" ).html( "Something went wrong. Please try deleting again." );
+				jQuery( ".wcal-coupon-response-msg" ).fadeOut(3000);
 			});
 		}
 	});

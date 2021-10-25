@@ -69,6 +69,11 @@ if ( is_multisite() ) { // Multisite.
 			delete_blog_option( $blog_id_number, 'wcal_enable_cart_emails' );
 			delete_blog_option( $blog_id_number, 'wcal_scheduler_update_dismiss' );
 			delete_blog_option( $blog_id_number, 'wcal_add_email_status_col' );
+
+			delete_blog_option( $blog_id_number, 'wcal_delete_coupon_data' );
+			delete_blog_option( $blog_id_number, 'wcal_delete_coupon_data_manually' );
+
+
 		} else {
 
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -142,3 +147,6 @@ delete_option( 'ac_lite_delete_redundant_queries' );
 delete_option( 'wcal_enable_cart_emails' );
 delete_option( 'wcal_scheduler_update_dismiss' );
 delete_option( 'wcal_add_email_status_col' );
+
+delete_option( 'wcal_delete_coupon_data' );
+delete_option( 'wcal_delete_coupon_data_manually' );
