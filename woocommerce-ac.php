@@ -235,6 +235,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				add_filter( 'ts_tracker_data', array( 'wcal_common', 'ts_add_plugin_tracking_data' ), 10, 1 );
 				add_filter( 'ts_tracker_opt_out_data', array( 'wcal_common', 'ts_get_data_for_opt_out' ), 10, 1 );
 				add_filter( 'ts_deativate_plugin_questions', array( &$this, 'wcal_deactivate_add_questions' ), 10, 1 );
+				
 				add_action( 'wp_ajax_wcal_json_find_coupons', array( &$this, 'wcal_json_find_coupons' ) );
 			}
 
@@ -250,10 +251,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_action( 'admin_notices', array( 'Wcal_Admin_Notice', 'wcal_show_db_update_notice' ) );
 
 			include_once 'includes/frontend/class-wcal-frontend.php';
-
-			add_filter( 'cron_schedules', array( __CLASS__, 'wcal_add_cron_schedule' ) ); //phpcs:ignore
-			add_action( 'woocommerce_ac_delete_coupon_action', array( __CLASS__, 'wcal_delete_expired_used_coupon_code' ) );
-			add_action( 'wp_ajax_wcal_delete_expired_used_coupon_code', array( __CLASS__, 'wcal_delete_expired_used_coupon_code' ) );
+			
+			add_filter( 'cron_schedules', array( __CLASS__, 'wcal_add_cron_schedule' ) );
+			add_action( 'woocommerce_ac_delete_coupon_action', array(  __CLASS__, 'wcal_delete_expired_used_coupon_code' ) );
+			add_action( 'wp_ajax_wcal_delete_expired_used_coupon_code',array(  __CLASS__, 'wcal_delete_expired_used_coupon_code' ) ); 
 		}
 
 		/**
@@ -577,9 +578,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			$db_prefix = ( 0 === $blog_id ) ? $wpdb->prefix : $wpdb->prefix . $blog_id . '_';
 
-			$wcal_collate = '';
+			$wcap_collate = '';
 			if ( $wpdb->has_cap( 'collation' ) ) {
-				$wcal_collate = $wpdb->get_charset_collate();
+				$wcap_collate = $wpdb->get_charset_collate();
 			}
 			$table_name = $db_prefix . 'ac_email_templates_lite';
 			$wpdb->query( // phpcs:ignore
@@ -595,7 +596,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`default_template` int(11) NOT NULL,
 				`wc_email_header` varchar(50) NOT NULL,
 				PRIMARY KEY (`id`)
-				) $wcal_collate AUTO_INCREMENT=1"
+				) $wcap_collate AUTO_INCREMENT=1"
 			);
 
 			$sent_table_name = $db_prefix . 'ac_sent_history_lite';
@@ -607,7 +608,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`sent_time` datetime NOT NULL,
 				`sent_email_id` text COLLATE utf8_unicode_ci NOT NULL,
 				PRIMARY KEY  (`id`)
-				) $wcal_collate AUTO_INCREMENT=1 "
+				) $wcap_collate AUTO_INCREMENT=1 "
 			);
 
 			$ac_history_table_name = $db_prefix . 'ac_abandoned_cart_history_lite';
@@ -624,7 +625,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				`email_reminder_status` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				PRIMARY KEY (`id`)
-				) $wcal_collate"
+				) $wcap_collate"
 			);
 
 			$guest_table        = $db_prefix . 'ac_guest_abandoned_cart_history_lite';
@@ -659,7 +660,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					`shipping_zipcode` double,
 					`shipping_charges` double,
 					PRIMARY KEY (`id`)
-					) $wcal_collate AUTO_INCREMENT=63000000"
+					) $wcap_collate AUTO_INCREMENT=63000000"
 				);
 			}
 
@@ -819,21 +820,28 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				array( __( '<br>Message to be displayed when the user chooses to opt out of cart tracking.</i>', 'woocommerce-abandoned-cart' ) )
 			);
 
+			add_settings_section(
+				'ac_coupon_settings_section',           // ID used to identify this section and with which to register options.
+				__( 'Coupon Settings', 'woocommerce-abandoned-cart' ),      // Title to be displayed on the administration page.
+				array( $this, 'wcal_coupon_callback' ), // Callback used to render the description of the section.
+				'woocommerce_ac_page'     // Page on which to add this section of options.
+			);
+			
 			add_settings_field(
 				'wcal_delete_coupon_data',
 				__( 'Delete Coupons Automatically', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_deleting_coupon_data' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_coupon_settings_section',
 				array( __( 'Enable this setting if you want to completely remove the expired and used coupon code automatically every 15 days.', 'woocommerce-abandoned-cart' ) )
 			);
-
+			
 			add_settings_field(
 				'wcal_delete_coupon_data_manually',
 				__( 'Delete Coupons Manually', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_deleting_coupon_data_manually' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_coupon_settings_section',
 				array( __( 'If you want to completely remove the expired and used coupon code now then click on "Delete" button.', 'woocommerce-abandoned-cart' ) )
 			);
 
@@ -878,11 +886,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			add_settings_field(
 				'wcal_add_utm_to_links',
-				__( 'UTM parameters to be added to all the links in reminder emails', 'woocommerce-abandoned-cart' ),
+				__( 'UTM parameters to be added to all the links in reminder emails', 'woocommerce-ac' ),
 				array( &$this, 'wcal_add_utm_to_links_callback' ),
 				'woocommerce_ac_email_page',
 				'ac_email_settings_section',
-				array( __( 'UTM parameters that should be added to all the links in reminder emails.', 'woocommerce-abandoned-cart' ) )
+				array( __( 'UTM parameters that should be added to all the links in reminder emails.', 'woocommerce-ac' ) )
 			);
 
 			// Finally, we register the fields with WordPress.
@@ -952,9 +960,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			);
 
 			register_setting(
-				'woocommerce_ac_settings',
-				'wcal_delete_coupon_data'
-			);
+	        	'woocommerce_ac_settings',
+	        	'wcal_delete_coupon_data'
+	      	);
 
 			do_action( 'wcal_add_new_settings' );
 		}
@@ -2174,7 +2182,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				);
 				$mode         = isset( $_GET['mode'] ) ? sanitize_text_field( wp_unslash( $_GET['mode'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				$wcal_section = isset( $_GET['wcal_section'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_section'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				if ( ( 'emailtemplates' === $action && ( 'addnewtemplate' === $mode || 'edittemplate' === $mode ) ) || ( 'emailsettings' === $action && 'wcal_atc_settings' === $wcal_section ) ) {
+				if ( ( 'emailtemplates' === $action && ( 'addnewtemplate' === $mode || 'edittemplate' === $mode ) ) || ( 'emailsettings' === $action && 'wcap_atc_settings' === $wcal_section ) ) {
 					wp_register_script( 'woocommerce_admin', WC()->plugin_url() . '/assets/js/admin/woocommerce_admin.min.js', array( 'jquery', 'jquery-tiptip' ), WCAL_PLUGIN_VERSION, false );
 					wp_enqueue_script( 'woocommerce_admin' );
 					$locale  = localeconv();
@@ -2279,7 +2287,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					)
 				);
 
-				wp_register_script( 'enhanced', plugins_url() . '/woocommerce/assets/js/admin/wc-enhanced-select.js', array( 'jquery', 'select2' ), WCAL_PLUGIN_VERSION, false );
+				wp_register_script( 'enhanced', plugins_url() . '/woocommerce/assets/js/admin/wc-enhanced-select.js', array( 'jquery', 'select2' ) );
 
 				wp_localize_script(
 					'enhanced',
@@ -2305,11 +2313,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 				wp_enqueue_script( 'enhanced' );
 
-				wp_register_script( 'selectWoo', plugins_url() . '/woocommerce/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), WCAL_PLUGIN_VERSION, false );
+				wp_register_script( 'selectWoo', plugins_url() . '/woocommerce/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ) );
 				wp_enqueue_script( 'selectWoo' );
 
-				wp_register_script( 'select2', plugins_url() . '/woocommerce/assets/js/select2/select2.js', array( 'jquery', 'jquery-ui-widget', 'jquery-ui-core' ), WCAL_PLUGIN_VERSION, false );
+				wp_register_script( 'select2', plugins_url() . '/woocommerce/assets/js/select2/select2.js', array( 'jquery', 'jquery-ui-widget', 'jquery-ui-core' ) );
 				wp_enqueue_script( 'select2' );
+
+
 				wp_dequeue_script( 'wc-enhanced-select' );
 			}
 		}
@@ -2523,9 +2533,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					<?php
 					$wcal_general_settings_class = '';
 					$wcal_email_setting          = '';
-					$wcal_sms_settings           = '';
-					$wcal_atc_settings           = '';
-					$wcal_fb_settings            = '';
+					$wcap_sms_settings           = '';
+					$wcap_atc_settings           = '';
+					$wcap_fb_settings            = '';
 
 					$section = isset( $_GET['wcal_section'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_section'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					switch ( $section ) {
@@ -2536,14 +2546,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						case 'wcal_email_settings':
 							$wcal_email_setting = 'current';
 							break;
-						case 'wcal_sms_settings':
-							$wcal_sms_settings = 'current';
+						case 'wcap_sms_settings':
+							$wcap_sms_settings = 'current';
 							break;
-						case 'wcal_atc_settings':
-							$wcal_atc_settings = 'current';
+						case 'wcap_atc_settings':
+							$wcap_atc_settings = 'current';
 							break;
-						case 'wcal_fb_settings':
-							$wcal_fb_settings = 'current';
+						case 'wcap_fb_settings':
+							$wcap_fb_settings = 'current';
 							break;
 						default:
 							$wcal_general_settings_class = 'current';
@@ -2558,13 +2568,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_email_settings" class="<?php echo esc_attr( $wcal_email_setting ); ?>"><?php esc_html_e( 'Email Sending Settings', 'woocommerce-abandoned-cart' ); ?> </a> |
 							</li>
 							<li>
-								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_atc_settings" class="<?php echo esc_attr( $wcal_atc_settings ); ?>"><?php esc_html_e( 'Add To Cart Popup Editor', 'woocommerce-abandoned-cart' ); ?> </a> |
+								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_atc_settings" class="<?php echo esc_attr( $wcap_atc_settings ); ?>"><?php esc_html_e( 'Add To Cart Popup Editor', 'woocommerce-ac' ); ?> </a> |
 							</li>
 							<li>
-								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_fb_settings" class="<?php echo esc_attr( $wcal_fb_settings ); ?>"><?php esc_html_e( 'Facebook Messenger', 'woocommerce-abandoned-cart' ); ?> </a> |
+								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_fb_settings" class="<?php echo esc_attr( $wcap_fb_settings ); ?>"><?php esc_html_e( 'Facebook Messenger', 'woocommerce-ac' ); ?> </a> |
 							</li>
 							<li>
-								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcal_sms_settings" class="<?php echo esc_attr( $wcal_sms_settings ); ?>"><?php esc_html_e( 'SMS', 'woocommerce-abandoned-cart' ); ?> </a>
+								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_sms_settings" class="<?php echo esc_attr( $wcap_sms_settings ); ?>"><?php esc_html_e( 'SMS', 'woocommerce-ac' ); ?> </a>
 							</li>
 							<?php do_action( 'wcal_add_custom_settings_tab', $section ); ?>
 						</ul>
@@ -2588,12 +2598,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								<?php submit_button(); ?>
 							</form>
 							<?php
-						} elseif ( 'wcal_atc_settings' === $section ) {
-							wcal_Pro_Settings::wcal_atc_settings();
-						} elseif ( 'wcal_fb_settings' === $section ) {
-							wcal_Pro_Settings::wcal_fb_settings();
-						} elseif ( 'wcal_sms_settings' === $section ) {
-							wcal_Pro_Settings::wcal_sms_settings();
+						} elseif ( 'wcap_atc_settings' === $section ) {
+							WCAP_Pro_Settings::wcap_atc_settings();
+						} elseif ( 'wcap_fb_settings' === $section ) {
+							WCAP_Pro_Settings::wcap_fb_settings();
+						} elseif ( 'wcap_sms_settings' === $section ) {
+							WCAP_Pro_Settings::wcap_sms_settings();
 						}
 						do_action( 'wcal_add_custom_settings_tab_content', $section );
 						?>
@@ -2690,18 +2700,18 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					// Save the field values.
 					$insert_template_successfuly  = '';
 					$update_template_successfuly  = '';
-					$woocommerce_ac_email_subject = isset( $_POST['woocommerce_ac_email_subject'] ) ? trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_email_subject'] ) ) ), ENT_QUOTES ) : ''; // phpcs:ignore 
+					$woocommerce_ac_email_subject = isset( $_POST['woocommerce_ac_email_subject'] ) ? trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_email_subject'] ) ) ), ENT_QUOTES ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					$woocommerce_ac_email_body    = isset( $_POST['woocommerce_ac_email_body'] ) ? trim( wp_unslash( $_POST['woocommerce_ac_email_body'] ) ) : ''; // phpcs:ignore
-					$woocommerce_ac_template_name = isset( $_POST['woocommerce_ac_template_name'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_template_name'] ) ) ) : ''; // phpcs:ignore 
-					$woocommerce_ac_email_header  = isset( $_POST['wcal_wc_email_header'] ) ? stripslashes( trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['wcal_wc_email_header'] ) ) ), ENT_QUOTES ) ) : ''; // phpcs:ignore 
+					$woocommerce_ac_template_name = isset( $_POST['woocommerce_ac_template_name'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_template_name'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+					$woocommerce_ac_email_header  = isset( $_POST['wcal_wc_email_header'] ) ? stripslashes( trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['wcal_wc_email_header'] ) ) ), ENT_QUOTES ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
-					$email_frequency = isset( $_POST['email_frequency'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['email_frequency'] ) ) ) : ''; // phpcs:ignore 
-					$day_or_hour     = isset( $_POST['day_or_hour'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['day_or_hour'] ) ) ) : ''; // phpcs:ignore 
+					$email_frequency = isset( $_POST['email_frequency'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['email_frequency'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+					$day_or_hour     = isset( $_POST['day_or_hour'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['day_or_hour'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					$is_wc_template  = empty( $_POST['is_wc_template'] ) ? '0' : '1'; // phpcs:ignore WordPress.Security.NonceVerification
 
-					if ( isset( $_POST['ac_settings_frm'] ) && 'save' === sanitize_text_field( wp_unslash( $_POST['ac_settings_frm'] ) ) ) { // phpcs:ignore 
-						$default_value       = 0;
-						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore 
+					if ( isset( $_POST['ac_settings_frm'] ) && 'save' === sanitize_text_field( wp_unslash( $_POST['ac_settings_frm'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+						$default_value = 0;
+						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 						$unique_coupon       = ( empty( $_POST['unique_coupon'] ) ) ? '0' : '1'; // phpcs:ignore WordPress.Security.NonceVerification
 						$coupon_code_options = self::wcal_coupon_options();
 
@@ -2745,11 +2755,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$default_value = '1';
 							}
 						}
-
-						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore 
+						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 						$unique_coupon       = ( empty( $_POST['unique_coupon'] ) ) ? '0' : '1'; // phpcs:ignore WordPress.Security.NonceVerification
 						$coupon_code_options = self::wcal_coupon_options();
-
 						$update_template_successfuly = $wpdb->query( //phpcs:ignore
 							$wpdb->prepare(
 								'UPDATE `' . $wpdb->prefix . 'ac_email_templates_lite` SET subject = %s, body = %s, frequency = %d, day_or_hour = %s, template_name = %s, is_wc_template = %s, default_template = %d, wc_email_header = %s,coupon_code = %s, individual_use =%s, generate_unique_coupon_code = %s, discount = %s, discount_type = %s, discount_shipping =%s, discount_expiry = %s  WHERE id = %d',
@@ -2800,7 +2808,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 							$email_frequncy    = $get_selected_template_result[0]->frequency;
 							$email_day_or_hour = $get_selected_template_result[0]->day_or_hour;
-							$wcal_updated      = $wpdb->query( // phpcs:ignore
+							$wcap_updated      = $wpdb->query( // phpcs:ignore
 								$wpdb->prepare(
 									'UPDATE `' . $wpdb->prefix . 'ac_email_templates_lite` SET is_active = %s WHERE frequency = %s AND day_or_hour = %s',
 									0,
@@ -3581,7 +3589,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 											</span>
 										</td>
 									</tr>
-									<?php include_once 'views/wcal-email-coupon.php'; ?>
+									<?php include_once( 'views/wcal-email-coupon.php' ); ?>
 									<tr>
 										<th>
 											<label for="woocommerce_ac_email_preview"><b><?php esc_html_e( 'Send a test email to:', 'woocommerce-abandoned-cart' ); ?></b></label>
@@ -4033,9 +4041,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							'key'     => '_sku',
 							'value'   => $term,
 							'compare' => 'LIKE',
-						),
+						)
 					),
-					'fields'         => 'ids',
+					'fields'          => 'ids',
 				);
 				$posts = array_unique( array_merge( get_posts( $args ), get_posts( $args2 ), get_posts( $args3 ) ) );
 			} else {
@@ -4057,7 +4065,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							'compare' => 'LIKE',
 						),
 					),
-					'fields'         => 'ids',
+					'fields'          => 'ids',
 				);
 				$posts = array_unique( array_merge( get_posts( $args ), get_posts( $args2 ) ) );
 			}
@@ -4135,7 +4143,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public static function wcal_deleting_coupon_data_manually( $args ) {
 			?>
-			<input type="button" class="button-secondary" id="wcal_delete_coupons" value="<?php esc_html_e( 'Delete', 'woocommerce-abandoned-cart' ); ?>" >
+			<!-- <a href="#" class="button button-large wcal_delete_coupon"><?php //echo __( "Delete", "woocommerce-ac" ); ?></a> -->
+			<input type="button" class="button-secondary" id="wcal_delete_coupons" value="<?php esc_html_e( 'Delete', 'woocommerce-ac' ); ?>" >
 			<label> <?php echo esc_attr( $args[0] ); ?></label>
 			<br>
 			<span class="wcal-spinner" style="display:none;">
@@ -4177,7 +4186,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				),
 			);
 
-			$args    = array(
+			$args       = array(
 				'posts_per_page' => -1,
 				'post_type'      => 'shop_coupon',
 				'post_status'    => 'publish',
@@ -4221,7 +4230,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_fetch_used_coupons() {
 
 			$coupon_ids = array();
-			$args       = array(
+			$args = array(
 				'posts_per_page' => -1,
 				'post_type'      => 'shop_coupon',
 				'post_status'    => 'publish',

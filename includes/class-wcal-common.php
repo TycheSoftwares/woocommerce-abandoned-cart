@@ -626,10 +626,10 @@ class wcal_common { // phpcs:ignore
 	 */
 	public static function wcal_get_version() {
 		$plugin_version   = '';
-		$wcal_plugin_dir  = dirname( dirname( __FILE__ ) );
-		$wcal_plugin_dir .= '/woocommerce-ac.php';
+		$wcap_plugin_dir  = dirname( dirname( __FILE__ ) );
+		$wcap_plugin_dir .= '/woocommerce-ac.php';
 
-		$plugin_data = get_file_data( $wcal_plugin_dir, array( 'Version' => 'Version' ) );
+		$plugin_data = get_file_data( $wcap_plugin_dir, array( 'Version' => 'Version' ) );
 		if ( ! empty( $plugin_data['Version'] ) ) {
 			$plugin_version = $plugin_data['Version'];
 		}
@@ -801,13 +801,13 @@ class wcal_common { // phpcs:ignore
 					$name        = $variation->get_formatted_name();
 					$explode_all = explode( '&ndash;', $name );
 					if ( version_compare( $woocommerce->version, '3.0.0', '>=' ) ) {
-						$wcal_sku = '';
+						$wcap_sku = '';
 						if ( $variation->get_sku() ) {
-							$wcal_sku = 'SKU: ' . $variation->get_sku() . '<br>';
+							$wcap_sku = 'SKU: ' . $variation->get_sku() . '<br>';
 						}
-						$wcal_get_formatted_variation = wc_get_formatted_variation( $variation, true );
+						$wcap_get_formatted_variation = wc_get_formatted_variation( $variation, true );
 
-						$add_product_name = $product_name . ' - ' . $wcal_sku . $wcal_get_formatted_variation;
+						$add_product_name = $product_name . ' - ' . $wcap_sku . $wcap_get_formatted_variation;
 
 						$pro_name_variation = (array) $add_product_name;
 					} else {
@@ -1105,9 +1105,9 @@ class wcal_common { // phpcs:ignore
 		$final_string              = $first_two_digit . $ten_random_string;
 		$datetime                  = $get_expiry_date;
 		$coupon_code               = $final_string;
-		$coupon_product_categories = isset( $coupon_post_meta['product_categories'][0] ) && '' !== $coupon_post_meta['product_categories'][0] ? unserialize( $coupon_post_meta['product_categories'] [0] ) : array(); //phpcs:ignore
+		$coupon_product_categories = isset( $coupon_post_meta['product_categories'][0] ) && '' !== $coupon_post_meta['product_categories'][0] ? unserialize( $coupon_post_meta['product_categories'] [0] ) : array();
 
-		$coupon_exculde_product_categories = isset( $coupon_post_meta['exclude_product_categories'][0] ) && '' !== $coupon_post_meta['exclude_product_categories'][0] ? unserialize( $coupon_post_meta['exclude_product_categories'][0] ) : array(); //phpcs:ignore
+		$coupon_exculde_product_categories = isset( $coupon_post_meta['exclude_product_categories'][0] ) && '' !== $coupon_post_meta['exclude_product_categories'][0] ? unserialize( $coupon_post_meta['exclude_product_categories'][0] ) : array();
 
 		$coupon_product_ids = isset( $coupon_post_meta['product_ids'][0] ) && '' !== $coupon_post_meta['product_ids'][0] ? $coupon_post_meta['product_ids'][0] : '';
 
@@ -1132,7 +1132,7 @@ class wcal_common { // phpcs:ignore
 			$free_gift_shipping = isset( $coupon_post_meta['free_gift_shipping'][0] ) && '' !== $coupon_post_meta['free_gift_shipping'][0] ? $coupon_post_meta['free_gift_shipping'][0] : 'no';
 		}
 		if ( is_plugin_active( 'yith-woocommerce-brands-add-on/init.php' ) ) {
-			$coupon_brand = isset( $coupon_post_meta['brand'][0] ) && '' !== $coupon_post_meta['brand'][0] ? unserialize( $coupon_post_meta['brand'][0] ) : array(); //phpcs:ignore
+			$coupon_brand = isset( $coupon_post_meta['brand'][0] ) && '' !== $coupon_post_meta['brand'][0] ? unserialize( $coupon_post_meta['brand'][0] ) : array();
 		}
 		$amount        = $discount_amt;
 		$discount_type = $get_discount_type;
@@ -1169,7 +1169,7 @@ class wcal_common { // phpcs:ignore
 		}
 
 		$coupon        = apply_filters(
-			'wcal_cron_before_shop_coupon_create',
+			'wcap_cron_before_shop_coupon_create',
 			array(
 				'post_title'       => $coupon_code,
 				'post_content'     => 'This coupon provides 5% discount on cart price.',
