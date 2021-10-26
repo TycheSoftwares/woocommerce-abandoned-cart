@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <tr>
 <th>
 	<label for="unique_coupon">                                                        
-		<?php esc_html_e( 'Generate unique coupon codes:', 'woocommerce-ac' ); ?>
+		<?php esc_html_e( 'Generate unique coupon codes:', 'woocommerce-abandoned-cart' ); ?>
 	</label>
 </th>
 <td>
@@ -55,10 +55,10 @@ if ( '' !== $is_unique_coupon ) {
 	$show_row = '';
 }
 ?>
-<tr class="wcap_discount_options_rows" style="<?php echo esc_attr( $show_row ); ?>">
+<tr class="wcal_discount_options_rows" style="<?php echo esc_attr( $show_row ); ?>">
 	<th>
-		<label class="wcap_discount_options" for="wcap_discount_type">
-			<?php esc_html_e( 'Discount Type:', 'woocommerce-ac' ); ?>
+		<label class="wcal_discount_options" for="wcal_discount_type">
+			<?php esc_html_e( 'Discount Type:', 'woocommerce-abandoned-cart' ); ?>
 		</label>
 	</th>
 	<td>
@@ -73,16 +73,16 @@ if ( '' !== $is_unique_coupon ) {
 		$precent = 'percent' === $discount_type ? 'selected' : '';
 		$fixed   = 'fixed' === $discount_type ? 'selected' : '';
 		?>
-		<select id="wcap_discount_type" name="wcap_discount_type">
-			<option value="percent" <?php esc_html( $precent ); ?> ><?php esc_html_e( 'Percentage discount', 'woocommerce-ac' ); ?></option>
-			<option value="fixed" <?php esc_html( $fixed ); ?> ><?php esc_html_e( 'Fixed cart discount', 'woocommerce-ac' ); ?></option>
+		<select id="wcal_discount_type" name="wcal_discount_type">
+			<option value="percent" <?php esc_html( $precent ); ?> ><?php esc_html_e( 'Percentage discount', 'woocommerce-abandoned-cart' ); ?></option>
+			<option value="fixed" <?php esc_html( $fixed ); ?> ><?php esc_html_e( 'Fixed cart discount', 'woocommerce-abandoned-cart' ); ?></option>
 		</select>                                                    
 	</td>
 </tr>
-<tr class="wcap_discount_options_rows" style="<?php echo esc_attr( $show_row ); ?>">
+<tr class="wcal_discount_options_rows" style="<?php echo esc_attr( $show_row ); ?>">
 <th>
-	<label class="wcap_discount_options" for="wcap_coupon_amount">
-		<?php esc_html_e( 'Coupon amount:', 'woocommerce-ac' ); ?>
+	<label class="wcal_discount_options" for="wcal_coupon_amount">
+		<?php esc_html_e( 'Coupon amount:', 'woocommerce-abandoned-cart' ); ?>
 	</label>
 </th>
 <td>
@@ -96,16 +96,16 @@ if ( 'copytemplate' === $mode ) {
 	$discount = $results_copy[0]->discount;
 }
 
-	print '<input type="text" style="width:8%;" name="wcap_coupon_amount" id="wcap_coupon_amount" class="short" value="' . esc_attr( $discount ) . '">';
+	print '<input type="text" style="width:8%;" name="wcal_coupon_amount" id="wcal_coupon_amount" class="short" value="' . esc_attr( $discount ) . '">';
 ?>
 	<img class="help_tip" width="16" height="16" data-tip='<?php esc_attr_e( 'Value of the coupon.', 'woocommerce' ); ?>' src="<?php echo esc_attr( plugins_url() ); ?>/woocommerce/assets/images/help.png" />
 </td>
 </tr>
 
-<tr class="wcap_discount_options_rows" style="<?php echo esc_attr( $show_row ); ?>">
+<tr class="wcal_discount_options_rows" style="<?php echo esc_attr( $show_row ); ?>">
 <th>
-	<label class="wcap_discount_options" for="wcap_allow_free_shipping">
-		<?php esc_html_e( 'Allow free shipping:', 'woocommerce-ac' ); ?>
+	<label class="wcal_discount_options" for="wcal_allow_free_shipping">
+		<?php esc_html_e( 'Allow free shipping:', 'woocommerce-abandoned-cart' ); ?>
 	</label>
 </th>
 <td>
@@ -121,38 +121,38 @@ if ( 'copytemplate' === $mode ) {
 if ( 'yes' === $discount_shipping ) {
 	$discount_shipping_check = 'checked';
 }
-print '<input type="checkbox" name="wcap_allow_free_shipping" id="wcap_allow_free_shipping" ' . esc_attr( $discount_shipping_check ) . '>  </input>';
+print '<input type="checkbox" name="wcal_allow_free_shipping" id="wcal_allow_free_shipping" ' . esc_attr( $discount_shipping_check ) . '>  </input>';
 ?>
-	<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'Check this box if the coupon grants free shipping. A free shipping method must be enabled in your shipping zone and be set to require "a valid free shipping coupon" (see the "Free Shipping Requires" setting).', 'woocommerce-ac' ); ?>' src="<?php echo esc_attr( plugins_url() ); ?>/woocommerce/assets/images/help.png" />
+	<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'Check this box if the coupon grants free shipping. A free shipping method must be enabled in your shipping zone and be set to require "a valid free shipping coupon" (see the "Free Shipping Requires" setting).', 'woocommerce-abandoned-cart' ); ?>' src="<?php echo esc_attr( plugins_url() ); ?>/woocommerce/assets/images/help.png" />
 
 </td>
 </tr>
 
-<tr class="wcap_discount_options_rows" style="<?php echo esc_attr( $show_row ); ?>">
+<tr class="wcal_discount_options_rows" style="<?php echo esc_attr( $show_row ); ?>">
 <th>
-	<label class="wcap_discount_options" for="wcac_coupon_expiry">
-		<?php esc_html_e( 'Coupon validity:', 'woocommerce-ac' ); ?>
+	<label class="wcal_discount_options" for="wcal_coupon_expiry">
+		<?php esc_html_e( 'Coupon validity:', 'woocommerce-abandoned-cart' ); ?>
 	</label>
 </th>
 <td>
 	<?php
-	$wcac_coupon_expiry   = '7-days';
+	$wcal_coupon_expiry   = '7-days';
 	$expiry_days_or_hours = array(
 		'hours' => 'Hour(s)',
 		'days'  => 'Day(s)',
 	);
 	if ( 'edittemplate' === $mode ) {
-		$wcac_coupon_expiry = $results[0]->discount_expiry;
+		$wcal_coupon_expiry = $results[0]->discount_expiry;
 	}
 	if ( 'copytemplate' === $mode ) {
-		$wcac_coupon_expiry = $results_copy[0]->discount_expiry;
+		$wcal_coupon_expiry = $results_copy[0]->discount_expiry;
 	}
 
-	$wcac_coupon_expiry_explode = explode( '-', $wcac_coupon_expiry );
-	$expiry_number              = isset( $wcac_coupon_expiry_explode[0] ) ? $wcac_coupon_expiry_explode[0] : 0;
-	$expiry_freq                = isset( $wcac_coupon_expiry_explode[1] ) ? $wcac_coupon_expiry_explode[1] : 'hours';
+	$wcal_coupon_expiry_explode = explode( '-', $wcal_coupon_expiry );
+	$expiry_number              = isset( $wcal_coupon_expiry_explode[0] ) ? $wcal_coupon_expiry_explode[0] : 0;
+	$expiry_freq                = isset( $wcal_coupon_expiry_explode[1] ) ? $wcal_coupon_expiry_explode[1] : 'hours';
 
-	print '<input type="text" style="width:8%;" name="wcac_coupon_expiry" id="wcac_coupon_expiry" value="' . esc_attr( $expiry_number ) . '">  </input>';
+	print '<input type="text" style="width:8%;" name="wcal_coupon_expiry" id="wcal_coupon_expiry" value="' . esc_attr( $expiry_number ) . '">  </input>';
 	?>
 	<select name="expiry_day_or_hour" id="expiry_day_or_hour">
 	<?php
@@ -167,14 +167,14 @@ print '<input type="checkbox" name="wcap_allow_free_shipping" id="wcap_allow_fre
 	?>
 	</select>
 
-	<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'The coupon code which will be sent in the reminder emails will be expired based the validity set here. E.g if the coupon code sent in the reminder email should be expired after 7 days then set 7 Day(s) for this option.', 'woocommerce-ac' ); ?>' src="<?php echo esc_attr( plugins_url() ); ?>/woocommerce/assets/images/help.png" />
+	<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'The coupon code which will be sent in the reminder emails will be expired based the validity set here. E.g if the coupon code sent in the reminder email should be expired after 7 days then set 7 Day(s) for this option.', 'woocommerce-abandoned-cart' ); ?>' src="<?php echo esc_attr( plugins_url() ); ?>/woocommerce/assets/images/help.png" />
 </td>
 </tr>
 
-<tr class='wcap_discount_options_rows' style='<?php echo esc_attr( $show_row ); ?>'>
+<tr class='wcal_discount_options_rows' style='<?php echo esc_attr( $show_row ); ?>'>
 <th>
-	<label class='wcap_discount_options' for='individual_use'>                                                        
-		<?php esc_html_e( 'Individual use only:', 'woocommerce-ac' ); ?>
+	<label class='wcal_discount_options' for='individual_use'>                                                        
+		<?php esc_html_e( 'Individual use only:', 'woocommerce-abandoned-cart' ); ?>
 	</label>
 </th>
 <td>
@@ -198,11 +198,11 @@ if ( 'copytemplate' === $mode ) {
 </td>
 </tr>
 
-<tr><th></th><td><b><?php esc_html_e( 'OR', 'woocommerce-ac' ); ?></b></td></tr>
+<tr><th></th><td><b><?php esc_html_e( 'OR', 'woocommerce-abandoned-cart' ); ?></b></td></tr>
 <tr>
 	<th>
 		<label for="woocommerce_ac_coupon_auto_complete">
-			<?php esc_html_e( 'Enter a coupon code to add into email:', 'woocommerce-ac' ); ?>
+			<?php esc_html_e( 'Enter a coupon code to add into email:', 'woocommerce-abandoned-cart' ); ?>
 		</label>
 	</th>
 	<td>
@@ -239,7 +239,7 @@ if ( 'copytemplate' === $mode ) {
 
 				if ( version_compare( $woocommerce->version, '3.0.0', '>=' ) ) {
 					?>
-					<select id="coupon_ids" name="coupon_ids[]" class="wc-product-search" multiple="multiple" style="width: 50%;" data-placeholder="<?php esc_attr_e( 'Search for a Coupon&hellip;', 'woocommerce' ); ?>" data-action="wcap_json_find_coupons">
+					<select id="coupon_ids" name="coupon_ids[]" class="wc-product-search" multiple="multiple" style="width: 50%;" data-placeholder="<?php esc_attr_e( 'Search for a Coupon&hellip;', 'woocommerce' ); ?>" data-action="wcal_json_find_coupons">
 					<?php
 					foreach ( $coupon_ids as $product_id ) {
 						if ( $product_id > 0 ) {
@@ -252,13 +252,13 @@ if ( 'copytemplate' === $mode ) {
 					<?php
 				} else {
 					?>
-					<input type="hidden" id="coupon_ids" name="coupon_ids[]" class="wc-product-search" style="width: 30%;" data-placeholder="<?php esc_attr_e( 'Search for a Coupon&hellip;', 'woocommerce' ); ?>" data-multiple="true" data-action="wcap_json_find_coupons"
+					<input type="hidden" id="coupon_ids" name="coupon_ids[]" class="wc-product-search" style="width: 30%;" data-placeholder="<?php esc_attr_e( 'Search for a Coupon&hellip;', 'woocommerce' ); ?>" data-multiple="true" data-action="wcal_json_find_coupons"
 						data-selected=" <?php echo esc_attr( wp_json_encode( $json_ids ) ); ?> " value="<?php echo esc_attr( implode( ',', array_keys( $json_ids ) ) ); ?>"
 					/>
 					<?php
 				}
 				?>
-					<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'Search & select one coupon code that customers should use to get a discount.  Generated coupon code which will be sent in email reminder will have the settings of coupon selected in this option.', 'woocommerce-ac' ); ?>' src="<?php echo esc_attr( plugins_url() ); ?>/woocommerce/assets/images/help.png" />
+					<img class="help_tip" width="16" height="16" data-tip='<?php esc_html_e( 'Search & select one coupon code that customers should use to get a discount.  Generated coupon code which will be sent in email reminder will have the settings of coupon selected in this option.', 'woocommerce-abandoned-cart' ); ?>' src="<?php echo esc_attr( plugins_url() ); ?>/woocommerce/assets/images/help.png" />
 				</p>
 			</div>
 		</div>
@@ -272,9 +272,9 @@ jQuery( document ).ready(function (){
 	/* Showing hiding discount options */
 	jQuery('#unique_coupon').click(function(){
 		if ( jQuery( "#unique_coupon" ).prop( "checked" ) == false ){
-			jQuery('.wcap_discount_options_rows').hide();
+			jQuery('.wcal_discount_options_rows').hide();
 		} else {
-			jQuery('.wcap_discount_options_rows').removeAttr( "style" );
+			jQuery('.wcal_discount_options_rows').removeAttr( "style" );
 		}
 	});
 	jQuery( document.body ).trigger( 'wc-enhanced-select-init' );
