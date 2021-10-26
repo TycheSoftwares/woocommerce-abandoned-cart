@@ -1022,4 +1022,192 @@ class wcal_common { // phpcs:ignore
 			$template_id => array_shift( $list_frequencies ),
 		);
 	}
+	/**
+	 * Check if the template has coupon code tag and merge
+	 *
+	 * @param string $email_body_template  - the content to be replaced.
+	 * @param object $results_template_value - the template that's being sent.
+	 */
+	public static function wcal_check_and_replace_email_tag( $email_body_template, $results_template_value ) {
+		if ( stripos( $email_body_template, '{{coupon.code}}' ) ) {
+			$discount_details['discount_expiry']      = $results_template_value->discount_expiry;
+			$discount_details['discount_type']        = $results_template_value->discount_type;
+			$discount_details['discount_shipping']    = $results_template_value->discount_shipping;
+			$discount_details['individual_use']       = $results_template_value->individual_use;
+			$discount_details['discount_amount']      = $results_template_value->discount;
+			$discount_details['generate_unique_code'] = $results_template_value->generate_unique_coupon_code;
+
+			$coupon_id   = isset( $results_template_value->coupon_code ) ? $results_template_value->coupon_code : '';
+			$coupon_code = '';
+			if ( '' !== $coupon_id ) {
+				$coupon_to_apply = get_post( $coupon_id, ARRAY_A );
+				$coupon_code     = $coupon_to_apply['post_title'];
+			}
+
+			$coupon_code_to_apply = self::wcal_get_coupon_email( $discount_details, $coupon_code, $default_template );
+			$email_body_template  = str_ireplace( '{{coupon.code}}', $coupon_code_to_apply, $email_body_template );
+		}
+		return $email_body_template;
+	}
+	/**
+	 * Get the coupon which will be added in the email template.
+	 *
+	 * @param array  $discount_details - Contains coupon details such as discount amount, type etc.
+	 * @param string $coupon_code - Parent coupon code.
+	 * @param int    $default_template - Email template is default - 1|0.
+	 * @return string $coupon_code_to_apply
+	 * @since 8.9.0
+	 */
+	public static function wcal_get_coupon_email( $discount_details, $coupon_code, $default_template ) {
+
+		$discount_expiry         = $discount_details['discount_expiry'];
+		$discount_expiry_explode = explode( '-', $discount_expiry );
+		$expiry_date_extend      = '';
+		if ( '' !== $discount_expiry_explode[0] && '0' !== $discount_expiry_explode[0] ) {
+			$discount_expiry    = str_replace( '-', ' ', $discount_expiry );
+			$discount_expiry    = ' +' . $discount_expiry;
+			$expiry_date_extend = strtotime( $discount_expiry );
+		}
+
+		$coupon_post_meta     = '';
+		$discount_type        = $discount_details['discount_type'];
+		$expiry_date          = apply_filters( 'wcal_coupon_expiry_date', $expiry_date_extend );
+		$coupon_code_to_apply = '';
+		$discount_shipping    = $discount_details['discount_shipping'];
+		$individual_use       = '1' === $discount_details['individual_use'] ? 'yes' : 'no';
+		$discount_amount      = $discount_details['discount_amount'];
+		$generate_unique_code = $discount_details['generate_unique_code'];
+
+		if ( '1' === $generate_unique_code && '' === $coupon_code ) {
+				$coupon_post_meta     = apply_filters( 'wcal_update_unique_coupon_post_meta_email', $coupon_code, $coupon_post_meta );
+				$coupon_code_to_apply = self::wcal_wp_coupon_code( $discount_amount, $discount_type, $expiry_date, $discount_shipping, $coupon_post_meta, $individual_use );
+		} else {
+			$coupon_code_to_apply = $coupon_code;
+		}
+		return $coupon_code_to_apply;
+	}
+
+	/**
+	 * It will create the unique coupon code.
+	 *
+	 * @param int            $discount_amt - Discount amount.
+	 * @param string         $get_discount_type - Discount type.
+	 * @param date           $get_expiry_date - Expiry date.
+	 * @param string         $discount_shipping - Shipping dicsount.
+	 * @param array | object $coupon_post_meta - Data of Parent coupon.
+	 * @param string         $individual_use - Force individual use.
+	 * @return string $final_string 12 Digit unique coupon code name
+	 * @since 2.3.6
+	 */
+	public static function wcal_wp_coupon_code( $discount_amt, $get_discount_type, $get_expiry_date, $discount_shipping = 'no', $coupon_post_meta = array(), $individual_use = 'yes' ) {
+		$ten_random_string         = self::wp_random_string();
+		$first_two_digit           = wp_rand( 0, 99 );
+		$final_string              = $first_two_digit . $ten_random_string;
+		$datetime                  = $get_expiry_date;
+		$coupon_code               = $final_string;
+		$coupon_product_categories = isset( $coupon_post_meta['product_categories'][0] ) && '' !== $coupon_post_meta['product_categories'][0] ? unserialize( $coupon_post_meta['product_categories'] [0] ) : array(); //phpcs:ignore
+
+		$coupon_exculde_product_categories = isset( $coupon_post_meta['exclude_product_categories'][0] ) && '' !== $coupon_post_meta['exclude_product_categories'][0] ? unserialize( $coupon_post_meta['exclude_product_categories'][0] ) : array(); //phpcs:ignore
+
+		$coupon_product_ids = isset( $coupon_post_meta['product_ids'][0] ) && '' !== $coupon_post_meta['product_ids'][0] ? $coupon_post_meta['product_ids'][0] : '';
+
+		$coupon_exclude_product_ids = isset( $coupon_post_meta['exclude_product_ids'][0] ) && '' !== $coupon_post_meta['exclude_product_ids'][0] ? $coupon_post_meta['exclude_product_ids'][0] : '';
+
+		$coupon_free_shipping = isset( $coupon_post_meta['free_shipping'][0] ) && '' !== $coupon_post_meta['free_shipping'][0] ? $coupon_post_meta['free_shipping'][0] : $discount_shipping;
+
+		$coupon_minimum_amount = isset( $coupon_post_meta['minimum_amount'][0] ) && '' !== $coupon_post_meta['minimum_amount'][0] ? $coupon_post_meta['minimum_amount'][0] : '';
+
+		$coupon_maximum_amount = isset( $coupon_post_meta['maximum_amount'][0] ) && '' !== $coupon_post_meta['maximum_amount'][0] ? $coupon_post_meta['maximum_amount'][0] : '';
+
+		$coupon_exclude_sale_items = isset( $coupon_post_meta['exclude_sale_items'][0] ) && '' !== $coupon_post_meta['exclude_sale_items'][0] ? $coupon_post_meta['exclude_sale_items'] [0] : 'no';
+
+		$use_limit = isset( $coupon_post_meta['usage_limit'][0] ) && '' !== $coupon_post_meta['usage_limit'][0] ? $coupon_post_meta['usage_limit'][0] : '';
+
+		$use_limit_user = isset( $coupon_post_meta['usage_limit_per_user'][0] ) && '' !== $coupon_post_meta['usage_limit_per_user'][0] ? $coupon_post_meta['usage_limit_per_user'][0] : '';
+
+		$atc_unique = isset( $coupon_post_meta['atc_unique_coupon'][0] ) && '' !== $coupon_post_meta['atc_unique_coupon'][0] ? $coupon_post_meta['atc_unique_coupon'][0] : false;
+
+		if ( class_exists( 'WC_Free_Gift_Coupons' ) ) {
+			$free_gift_coupon   = isset( $coupon_post_meta['gift_ids'][0] ) && '' !== $coupon_post_meta['gift_ids'][0] ? $coupon_post_meta['gift_ids'][0] : '';
+			$free_gift_shipping = isset( $coupon_post_meta['free_gift_shipping'][0] ) && '' !== $coupon_post_meta['free_gift_shipping'][0] ? $coupon_post_meta['free_gift_shipping'][0] : 'no';
+		}
+		if ( is_plugin_active( 'yith-woocommerce-brands-add-on/init.php' ) ) {
+			$coupon_brand = isset( $coupon_post_meta['brand'][0] ) && '' !== $coupon_post_meta['brand'][0] ? unserialize( $coupon_post_meta['brand'][0] ) : array(); //phpcs:ignore
+		}
+		$amount        = $discount_amt;
+		$discount_type = $get_discount_type;
+
+		// Add coupon meta.
+		$coupon_meta = array(
+			'discount_type'              => $discount_type,
+			'coupon_amount'              => $amount,
+			'minimum_amount'             => $coupon_minimum_amount,
+			'maximum_amount'             => $coupon_maximum_amount,
+			'individual_use'             => $individual_use,
+			'free_shipping'              => $coupon_free_shipping,
+			'product_ids'                => '',
+			'exclude_product_ids'        => '',
+			'usage_limit'                => $use_limit,
+			'usage_limit_per_user'       => $use_limit_user,
+			'date_expires'               => $datetime,
+			'apply_before_tax'           => 'yes',
+			'product_ids'                => $coupon_product_ids,
+			'exclude_sale_items'         => $coupon_exclude_sale_items,
+			'exclude_product_ids'        => $coupon_exclude_product_ids,
+			'product_categories'         => $coupon_product_categories,
+			'exclude_product_categories' => $coupon_exculde_product_categories,
+			'wcal_created_by'            => 'wcal',
+			'atc_unique_coupon'          => $atc_unique,
+		);
+
+		if ( class_exists( 'WC_Free_Gift_Coupons' ) ) {
+			$coupon_meta['gif_ids']            = $free_gift_coupon;
+			$coupon_meta['free_gift_shipping'] = $free_gift_shipping;
+		}
+		if ( is_plugin_active( 'yith-woocommerce-brands-add-on/init.php' ) ) {
+			$coupon_meta['brand'] = $coupon_brand;
+		}
+
+		$coupon        = apply_filters(
+			'wcap_cron_before_shop_coupon_create',
+			array(
+				'post_title'       => $coupon_code,
+				'post_content'     => 'This coupon provides 5% discount on cart price.',
+				'post_status'      => 'publish',
+				'post_author'      => 1,
+				'post_type'        => 'shop_coupon',
+				'post_expiry_date' => $datetime,
+				'meta_input'       => $coupon_meta,
+			)
+		);
+		$new_coupon_id = wp_insert_post( $coupon );
+
+		return $final_string;
+	}
+
+	/**
+	 * It will generate 12 digit unique string for coupon code.
+	 *
+	 * @return string $temp_array 12 digit unique string
+	 * @since 2.3.6
+	 */
+	public static function wp_random_string() {
+		$character_set_array   = array();
+		$character_set_array[] = array(
+			'count'      => 5,
+			'characters' => 'abcdefghijklmnopqrstuvwxyz',
+		);
+		$character_set_array[] = array(
+			'count'      => 5,
+			'characters' => '0123456789',
+		);
+		$temp_array            = array();
+		foreach ( $character_set_array as $character_set ) {
+			for ( $i = 0; $i < $character_set['count']; $i++ ) {
+					$temp_array[] = $character_set['characters'][ wp_rand( 0, strlen( $character_set['characters'] ) - 1 ) ];
+			}
+		}
+		shuffle( $temp_array );
+		return implode( '', $temp_array );
+	}
 }

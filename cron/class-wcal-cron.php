@@ -59,6 +59,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 				}
 
 				foreach ( $results as $key => $value ) {
+					$wc_email_template = $value;
 					if ( 'Minutes' === $value->day_or_hour ) {
 						$time_to_send_template_after = intval( $value->frequency ) * 60;
 					} elseif ( 'Days' === $value->day_or_hour ) {
@@ -441,6 +442,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													}
 
 													$user_email       = $value->user_email;
+													$email_body       = wcal_common::wcal_check_and_replace_email_tag( $email_body, $wc_email_template );
 													$email_body_final = stripslashes( $email_body );
 													$email_body_final = convert_smilies( $email_body_final );
 													if ( isset( $is_wc_template ) && '1' === $is_wc_template ) {

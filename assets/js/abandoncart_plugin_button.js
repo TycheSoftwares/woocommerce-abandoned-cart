@@ -67,6 +67,14 @@
                        editor.insertContent(this.value());
                    }
                }
+               ,
+               {
+            	   text: 'Coupon Code',
+                   value: '{{coupon.code}}',
+                   onclick: function() {
+                       editor.insertContent(this.value());
+                   }
+               }
                
            ]
     });
