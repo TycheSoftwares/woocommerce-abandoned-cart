@@ -1105,7 +1105,7 @@ class wcal_common { // phpcs:ignore
 		$final_string              = $first_two_digit . $ten_random_string;
 		$datetime                  = $get_expiry_date;
 		$coupon_code               = $final_string;
-		$coupon_product_categories = isset( $coupon_post_meta['product_categories'][0] ) && '' !== $coupon_post_meta['product_categories'][0] ? unserialize( $coupon_post_meta['product_categories'] [0] ) : array();
+		$coupon_product_categories = isset( $coupon_post_meta['product_categories'][0] ) && '' !== $coupon_post_meta['product_categories'][0] ? unserialize( $coupon_post_meta['product_categories'] [0] ) : array(); //phpcs:ignore
 
 		$coupon_exculde_product_categories = isset( $coupon_post_meta['exclude_product_categories'][0] ) && '' !== $coupon_post_meta['exclude_product_categories'][0] ? unserialize( $coupon_post_meta['exclude_product_categories'][0] ) : array(); //phpcs:ignore
 
@@ -1132,7 +1132,7 @@ class wcal_common { // phpcs:ignore
 			$free_gift_shipping = isset( $coupon_post_meta['free_gift_shipping'][0] ) && '' !== $coupon_post_meta['free_gift_shipping'][0] ? $coupon_post_meta['free_gift_shipping'][0] : 'no';
 		}
 		if ( is_plugin_active( 'yith-woocommerce-brands-add-on/init.php' ) ) {
-			$coupon_brand = isset( $coupon_post_meta['brand'][0] ) && '' !== $coupon_post_meta['brand'][0] ? unserialize( $coupon_post_meta['brand'][0] ) : array();
+			$coupon_brand = isset( $coupon_post_meta['brand'][0] ) && '' !== $coupon_post_meta['brand'][0] ? unserialize( $coupon_post_meta['brand'][0] ) : array(); //phpcs:ignore
 		}
 		$amount        = $discount_amt;
 		$discount_type = $get_discount_type;

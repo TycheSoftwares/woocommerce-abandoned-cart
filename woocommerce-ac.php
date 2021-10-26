@@ -2277,7 +2277,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					)
 				);
 
-				wp_register_script( 'enhanced', plugins_url() . '/woocommerce/assets/js/admin/wc-enhanced-select.js', array( 'jquery', 'select2' ) );
+					WCAL_PLUGIN_VERSION,
+				wp_register_script( 'enhanced', plugins_url() . '/woocommerce/assets/js/admin/wc-enhanced-select.js', array( 'jquery', 'select2' ), WCAL_PLUGIN_VERSION, false );
 
 				wp_localize_script(
 					'enhanced',
@@ -2698,9 +2699,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$day_or_hour     = isset( $_POST['day_or_hour'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['day_or_hour'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					$is_wc_template  = empty( $_POST['is_wc_template'] ) ? '0' : '1'; // phpcs:ignore WordPress.Security.NonceVerification
 
-					if ( isset( $_POST['ac_settings_frm'] ) && 'save' === sanitize_text_field( wp_unslash( $_POST['ac_settings_frm'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+					if ( isset( $_POST['ac_settings_frm'] ) && 'save' === sanitize_text_field( wp_unslash( $_POST['ac_settings_frm'] ) ) ) { // phpcs:ignore 
 						$default_value       = 0;
-						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore 
 						$unique_coupon       = ( empty( $_POST['unique_coupon'] ) ) ? '0' : '1'; // phpcs:ignore WordPress.Security.NonceVerification
 						$coupon_code_options = self::wcal_coupon_options();
 
