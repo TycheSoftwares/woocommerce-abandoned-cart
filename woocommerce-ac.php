@@ -2276,8 +2276,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						'ajax_url' => admin_url( 'admin-ajax.php' ),
 					)
 				);
-
-					WCAL_PLUGIN_VERSION,
 				wp_register_script( 'enhanced', plugins_url() . '/woocommerce/assets/js/admin/wc-enhanced-select.js', array( 'jquery', 'select2' ), WCAL_PLUGIN_VERSION, false );
 
 				wp_localize_script(
