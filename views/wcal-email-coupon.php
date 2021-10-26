@@ -28,14 +28,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php
 $is_unique_coupon = '';
 if ( 'edittemplate' === $mode ) {
-	$unique_coupon    = $results[0]->generate_unique_coupon_code;
+	$unique_coupon    = isset( $results[0]->generate_unique_coupon_code ) ? $results[0]->generate_unique_coupon_code : '';
 	$is_unique_coupon = '';
 	if ( '1' === $unique_coupon ) {
 		$is_unique_coupon = 'checked';
 	}
 }
 if ( 'copytemplate' === $mode ) {
-	$unique_coupon    = $results_copy[0]->generate_unique_coupon_code;
+	$unique_coupon    = isset( $results_copy[0]->generate_unique_coupon_code ) ? $results_copy[0]->generate_unique_coupon_code : '';
 	$is_unique_coupon = '';
 	if ( '1' === $unique_coupon ) {
 		$is_unique_coupon = 'checked';
@@ -67,7 +67,7 @@ if ( '' !== $is_unique_coupon ) {
 		$discount_type = isset( $results[0]->discount_type ) ? $results[0]->discount_type : '';
 
 		if ( 'copytemplate' === $mode ) {
-			$discount_type = $results_copy[0]->discount_type;
+			$discount_type = isset( $results_copy[0]->discount_type ) ? $results_copy[0]->discount_type : '';
 		}
 
 		$precent = 'percent' === $discount_type ? 'selected' : '';
@@ -89,11 +89,11 @@ if ( '' !== $is_unique_coupon ) {
 <?php
 $discount = 0;
 if ( 'edittemplate' === $mode ) {
-	$discount = $results[0]->discount;
+	$discount = isset( $results[0]->discount ) ? $results[0]->discount : '';
 }
 
 if ( 'copytemplate' === $mode ) {
-	$discount = $results_copy[0]->discount;
+	$discount = isset( $results_copy[0]->discount ) ? $results_copy[0]->discount : '';
 }
 
 	print '<input type="text" style="width:8%;" name="wcal_coupon_amount" id="wcal_coupon_amount" class="short" value="' . esc_attr( $discount ) . '">';
@@ -113,10 +113,10 @@ if ( 'copytemplate' === $mode ) {
 $discount_shipping_check = '';
 $discount_shipping       = '';
 if ( 'edittemplate' === $mode ) {
-	$discount_shipping = $results[0]->discount_shipping;
+	$discount_shipping = isset( $results[0]->discount_shipping ) ? $results[0]->discount_shipping : '' ;
 }
 if ( 'copytemplate' === $mode ) {
-	$discount_shipping = $results_copy[0]->discount_shipping;
+	$discount_shipping = isset( $results_copy[0]->discount_shipping ) ? $results_copy[0]->discount_shipping : '';
 }
 if ( 'yes' === $discount_shipping ) {
 	$discount_shipping_check = 'checked';
@@ -142,10 +142,10 @@ print '<input type="checkbox" name="wcal_allow_free_shipping" id="wcal_allow_fre
 		'days'  => 'Day(s)',
 	);
 	if ( 'edittemplate' === $mode ) {
-		$wcal_coupon_expiry = $results[0]->discount_expiry;
+		$wcal_coupon_expiry = isset( $results[0]->discount_expiry ) ? $results[0]->discount_expiry : '' ;
 	}
 	if ( 'copytemplate' === $mode ) {
-		$wcal_coupon_expiry = $results_copy[0]->discount_expiry;
+		$wcal_coupon_expiry = isset( $results_copy[0]->discount_expiry ) ? $results_copy[0]->discount_expiry : '' ;
 	}
 
 	$wcal_coupon_expiry_explode = explode( '-', $wcal_coupon_expiry );
@@ -181,13 +181,13 @@ print '<input type="checkbox" name="wcal_allow_free_shipping" id="wcal_allow_fre
 <?php
 $is_individual_use = 'checked';
 if ( 'edittemplate' === $mode ) {
-	$individual_use = $results[0]->individual_use;
+	$individual_use = isset( $results[0]->individual_use ) ? $results[0]->individual_use : '' ;
 	if ( '1' !== $individual_use ) {
 		$is_individual_use = '';
 	}
 }
 if ( 'copytemplate' === $mode ) {
-	$individual_use = $results_copy[0]->individual_use;
+	$individual_use = isset( $results_copy[0]->individual_use ) ? $results_copy[0]->individual_use : '';
 	if ( '1' !== $individual_use ) {
 		$is_individual_use = '';
 	}
