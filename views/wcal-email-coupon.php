@@ -113,7 +113,7 @@ if ( 'copytemplate' === $mode ) {
 $discount_shipping_check = '';
 $discount_shipping       = '';
 if ( 'edittemplate' === $mode ) {
-	$discount_shipping = isset( $results[0]->discount_shipping ) ? $results[0]->discount_shipping : '' ;
+	$discount_shipping = isset( $results[0]->discount_shipping ) ? $results[0]->discount_shipping : '';
 }
 if ( 'copytemplate' === $mode ) {
 	$discount_shipping = isset( $results_copy[0]->discount_shipping ) ? $results_copy[0]->discount_shipping : '';
@@ -142,10 +142,10 @@ print '<input type="checkbox" name="wcal_allow_free_shipping" id="wcal_allow_fre
 		'days'  => 'Day(s)',
 	);
 	if ( 'edittemplate' === $mode ) {
-		$wcal_coupon_expiry = isset( $results[0]->discount_expiry ) ? $results[0]->discount_expiry : '' ;
+		$wcal_coupon_expiry = isset( $results[0]->discount_expiry ) ? $results[0]->discount_expiry : '';
 	}
 	if ( 'copytemplate' === $mode ) {
-		$wcal_coupon_expiry = isset( $results_copy[0]->discount_expiry ) ? $results_copy[0]->discount_expiry : '' ;
+		$wcal_coupon_expiry = isset( $results_copy[0]->discount_expiry ) ? $results_copy[0]->discount_expiry : '';
 	}
 
 	$wcal_coupon_expiry_explode = explode( '-', $wcal_coupon_expiry );
@@ -181,7 +181,7 @@ print '<input type="checkbox" name="wcal_allow_free_shipping" id="wcal_allow_fre
 <?php
 $is_individual_use = 'checked';
 if ( 'edittemplate' === $mode ) {
-	$individual_use = isset( $results[0]->individual_use ) ? $results[0]->individual_use : '' ;
+	$individual_use = isset( $results[0]->individual_use ) ? $results[0]->individual_use : '';
 	if ( '1' !== $individual_use ) {
 		$is_individual_use = '';
 	}

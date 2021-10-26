@@ -235,7 +235,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				add_filter( 'ts_tracker_data', array( 'wcal_common', 'ts_add_plugin_tracking_data' ), 10, 1 );
 				add_filter( 'ts_tracker_opt_out_data', array( 'wcal_common', 'ts_get_data_for_opt_out' ), 10, 1 );
 				add_filter( 'ts_deativate_plugin_questions', array( &$this, 'wcal_deactivate_add_questions' ), 10, 1 );
-				
+
 				add_action( 'wp_ajax_wcal_json_find_coupons', array( &$this, 'wcal_json_find_coupons' ) );
 			}
 
@@ -251,10 +251,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_action( 'admin_notices', array( 'Wcal_Admin_Notice', 'wcal_show_db_update_notice' ) );
 
 			include_once 'includes/frontend/class-wcal-frontend.php';
-			
-			add_filter( 'cron_schedules', array( __CLASS__, 'wcal_add_cron_schedule' ) );
-			add_action( 'woocommerce_ac_delete_coupon_action', array(  __CLASS__, 'wcal_delete_expired_used_coupon_code' ) );
-			add_action( 'wp_ajax_wcal_delete_expired_used_coupon_code',array(  __CLASS__, 'wcal_delete_expired_used_coupon_code' ) ); 
+
+			add_filter( 'cron_schedules', array( __CLASS__, 'wcal_add_cron_schedule' ) ); //phpcs:ignore
+			add_action( 'woocommerce_ac_delete_coupon_action', array( __CLASS__, 'wcal_delete_expired_used_coupon_code' ) );
+			add_action( 'wp_ajax_wcal_delete_expired_used_coupon_code', array( __CLASS__, 'wcal_delete_expired_used_coupon_code' ) );
 		}
 
 		/**
@@ -819,7 +819,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				'ac_lite_general_settings_section',
 				array( __( '<br>Message to be displayed when the user chooses to opt out of cart tracking.</i>', 'woocommerce-abandoned-cart' ) )
 			);
-			
 			add_settings_field(
 				'wcal_delete_coupon_data',
 				__( 'Delete Coupons Automatically', 'woocommerce-abandoned-cart' ),
@@ -828,7 +827,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				'ac_lite_general_settings_section',
 				array( __( 'Enable this setting if you want to completely remove the expired and used coupon code automatically every 15 days.', 'woocommerce-abandoned-cart' ) )
 			);
-			
 			add_settings_field(
 				'wcal_delete_coupon_data_manually',
 				__( 'Delete Coupons Manually', 'woocommerce-abandoned-cart' ),
@@ -837,7 +835,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				'ac_lite_general_settings_section',
 				array( __( 'If you want to completely remove the expired and used coupon code now then click on "Delete" button.', 'woocommerce-abandoned-cart' ) )
 			);
-
 			/**
 			 * New section for the Adding the abandoned cart setting.
 			 *
@@ -953,9 +950,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			);
 
 			register_setting(
-	        	'woocommerce_ac_settings',
-	        	'wcal_delete_coupon_data'
-	      	);
+				'woocommerce_ac_settings',
+				'wcal_delete_coupon_data'
+			);
 
 			do_action( 'wcal_add_new_settings' );
 		}
@@ -2306,12 +2303,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 				wp_enqueue_script( 'enhanced' );
 
-				wp_register_script( 'selectWoo', plugins_url() . '/woocommerce/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ) );
+				wp_register_script( 'selectWoo', plugins_url() . '/woocommerce/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), WCAL_PLUGIN_VERSION, false );
 				wp_enqueue_script( 'selectWoo' );
 
-				wp_register_script( 'select2', plugins_url() . '/woocommerce/assets/js/select2/select2.js', array( 'jquery', 'jquery-ui-widget', 'jquery-ui-core' ) );
+				wp_register_script( 'select2', plugins_url() . '/woocommerce/assets/js/select2/select2.js', array( 'jquery', 'jquery-ui-widget', 'jquery-ui-core' ), WCAL_PLUGIN_VERSION, false );
 				wp_enqueue_script( 'select2' );
-
 
 				wp_dequeue_script( 'wc-enhanced-select' );
 			}
@@ -2703,7 +2699,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$is_wc_template  = empty( $_POST['is_wc_template'] ) ? '0' : '1'; // phpcs:ignore WordPress.Security.NonceVerification
 
 					if ( isset( $_POST['ac_settings_frm'] ) && 'save' === sanitize_text_field( wp_unslash( $_POST['ac_settings_frm'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-						$default_value = 0;
+						$default_value       = 0;
 						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 						$unique_coupon       = ( empty( $_POST['unique_coupon'] ) ) ? '0' : '1'; // phpcs:ignore WordPress.Security.NonceVerification
 						$coupon_code_options = self::wcal_coupon_options();
@@ -2748,9 +2744,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$default_value = '1';
 							}
 						}
-						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-						$unique_coupon       = ( empty( $_POST['unique_coupon'] ) ) ? '0' : '1'; // phpcs:ignore WordPress.Security.NonceVerification
+						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore 
+						$unique_coupon       = ( empty( $_POST['unique_coupon'] ) ) ? '0' : '1'; // phpcs:ignore 
 						$coupon_code_options = self::wcal_coupon_options();
+
 						$update_template_successfuly = $wpdb->query( //phpcs:ignore
 							$wpdb->prepare(
 								'UPDATE `' . $wpdb->prefix . 'ac_email_templates_lite` SET subject = %s, body = %s, frequency = %d, day_or_hour = %s, template_name = %s, is_wc_template = %s, default_template = %d, wc_email_header = %s,coupon_code = %s, individual_use =%s, generate_unique_coupon_code = %s, discount = %s, discount_type = %s, discount_shipping =%s, discount_expiry = %s  WHERE id = %d',
@@ -3582,7 +3579,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 											</span>
 										</td>
 									</tr>
-									<?php include_once( 'views/wcal-email-coupon.php' ); ?>
+									<?php include_once 'views/wcal-email-coupon.php'; ?>
 									<tr>
 										<th>
 											<label for="woocommerce_ac_email_preview"><b><?php esc_html_e( 'Send a test email to:', 'woocommerce-abandoned-cart' ); ?></b></label>
@@ -4034,9 +4031,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							'key'     => '_sku',
 							'value'   => $term,
 							'compare' => 'LIKE',
-						)
+						),
 					),
-					'fields'          => 'ids',
+					'fields'         => 'ids',
 				);
 				$posts = array_unique( array_merge( get_posts( $args ), get_posts( $args2 ), get_posts( $args3 ) ) );
 			} else {
@@ -4058,7 +4055,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							'compare' => 'LIKE',
 						),
 					),
-					'fields'          => 'ids',
+					'fields'         => 'ids',
 				);
 				$posts = array_unique( array_merge( get_posts( $args ), get_posts( $args2 ) ) );
 			}
@@ -4136,7 +4133,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public static function wcal_deleting_coupon_data_manually( $args ) {
 			?>
-			<!-- <a href="#" class="button button-large wcal_delete_coupon"><?php //echo __( "Delete", "woocommerce-ac" ); ?></a> -->
 			<input type="button" class="button-secondary" id="wcal_delete_coupons" value="<?php esc_html_e( 'Delete', 'woocommerce-ac' ); ?>" >
 			<label> <?php echo esc_attr( $args[0] ); ?></label>
 			<br>
@@ -4179,7 +4175,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				),
 			);
 
-			$args       = array(
+			$args    = array(
 				'posts_per_page' => -1,
 				'post_type'      => 'shop_coupon',
 				'post_status'    => 'publish',
@@ -4223,7 +4219,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_fetch_used_coupons() {
 
 			$coupon_ids = array();
-			$args = array(
+			$args       = array(
 				'posts_per_page' => -1,
 				'post_type'      => 'shop_coupon',
 				'post_status'    => 'publish',

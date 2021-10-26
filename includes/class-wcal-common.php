@@ -1107,7 +1107,7 @@ class wcal_common { // phpcs:ignore
 		$coupon_code               = $final_string;
 		$coupon_product_categories = isset( $coupon_post_meta['product_categories'][0] ) && '' !== $coupon_post_meta['product_categories'][0] ? unserialize( $coupon_post_meta['product_categories'] [0] ) : array();
 
-		$coupon_exculde_product_categories = isset( $coupon_post_meta['exclude_product_categories'][0] ) && '' !== $coupon_post_meta['exclude_product_categories'][0] ? unserialize( $coupon_post_meta['exclude_product_categories'][0] ) : array();
+		$coupon_exculde_product_categories = isset( $coupon_post_meta['exclude_product_categories'][0] ) && '' !== $coupon_post_meta['exclude_product_categories'][0] ? unserialize( $coupon_post_meta['exclude_product_categories'][0] ) : array(); //phpcs:ignore
 
 		$coupon_product_ids = isset( $coupon_post_meta['product_ids'][0] ) && '' !== $coupon_post_meta['product_ids'][0] ? $coupon_post_meta['product_ids'][0] : '';
 
