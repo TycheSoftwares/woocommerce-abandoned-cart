@@ -595,6 +595,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`is_wc_template` enum('0','1') NOT NULL,
 				`default_template` int(11) NOT NULL,
 				`wc_email_header` varchar(50) NOT NULL,
+				`discount` varchar(50)  NOT NULL,
+		        `discount_type` varchar(50)  NOT NULL,
+		        `discount_shipping` varchar(50)  NOT NULL,
+				`discount_expiry` varchar(50) NOT NULL,
+				`individual_use` enum('0','1') NOT NULL,
+		        `generate_unique_coupon_code` enum('0','1') NOT NULL,
 				PRIMARY KEY (`id`)
 				) $wcap_collate AUTO_INCREMENT=1"
 			);
