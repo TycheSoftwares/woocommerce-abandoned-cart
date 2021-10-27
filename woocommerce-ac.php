@@ -595,6 +595,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`is_wc_template` enum('0','1') NOT NULL,
 				`default_template` int(11) NOT NULL,
 				`wc_email_header` varchar(50) NOT NULL,
+				`coupon_code` varchar(50)  NOT NULL,
 				`discount` varchar(50)  NOT NULL,
 		        `discount_type` varchar(50)  NOT NULL,
 		        `discount_shipping` varchar(50)  NOT NULL,
