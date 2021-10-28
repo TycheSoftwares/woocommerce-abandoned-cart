@@ -1739,7 +1739,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$sent_email_id_pos       = strpos( $link_decode, '&' );
 				$email_sent_id           = substr( $link_decode, 0, $sent_email_id_pos );
 
-				if ( isset( sanitize_text_field( wp_unslash( $_GET['c'] ) ) ) ) { // phpcs:ignore 
+				if ( isset( $_GET['c'] ) ) { // phpcs:ignore 
 					$decrypt_coupon_code = rawurldecode( sanitize_text_field( wp_unslash( $_GET['c'] ) ) ); //phpcs:ignore
 					$decrypt_coupon_code = str_replace( ' ', '+', $decrypt_coupon_code );
 					$decode_coupon_code  = Wcal_Aes_Ctr::decrypt( $decrypt_coupon_code, $crypt_key, 256 );

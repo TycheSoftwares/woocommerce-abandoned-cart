@@ -1264,8 +1264,8 @@ class wcal_common { // phpcs:ignore
 							'coupon_code'    => $coupon_code,
 							'coupon_message' => __(
 								'Discount code applied successfully.',
-								'woocommerce-ac',
-							), 
+								'woocommerce-ac'
+							),
 						);
 						update_user_meta(
 							$user_id,
