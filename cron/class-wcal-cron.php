@@ -285,8 +285,14 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													$encoding_cart   = $email_sent_id . '&url=' . $cart_page_link . $utm;
 													$validate_cart   = $this->wcal_encrypt_validate( $encoding_cart );
 													$cart_link_track = get_option( 'siteurl' ) . '/?wcal_action=track_links&validate=' . $validate_cart;
-													$email_body      = str_ireplace( '{{cart.link}}', $cart_link_track, $email_body );
+													
+													list( $email_body , $coupon_code_to_apply ) = wcal_common::wcal_check_and_replace_email_tag( $email_body, $wc_email_template );
+													if ( '' !== $coupon_code_to_apply ) {
+														$encypted_coupon_code = $this->wcal_encrypt_validate( $coupon_code_to_apply );
+														$cart_link_track     .= '&c=' . $encypted_coupon_code;
+													}
 
+													$email_body      = str_ireplace( '{{cart.link}}', $cart_link_track, $email_body );
 													$validate_unsubscribe = $this->wcal_encrypt_validate( $email_sent_id );
 													if ( count( $results_sent ) > 0 && isset( $results_sent[0]->sent_email_id ) ) {
 														$email_sent_id_address = $results_sent[0]->sent_email_id;
@@ -442,7 +448,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													}
 
 													$user_email       = $value->user_email;
-													$email_body       = wcal_common::wcal_check_and_replace_email_tag( $email_body, $wc_email_template );
+
 													$email_body_final = stripslashes( $email_body );
 													$email_body_final = convert_smilies( $email_body_final );
 													if ( isset( $is_wc_template ) && '1' === $is_wc_template ) {

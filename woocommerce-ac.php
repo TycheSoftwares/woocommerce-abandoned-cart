@@ -255,6 +255,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_filter( 'cron_schedules', array( __CLASS__, 'wcal_add_cron_schedule' ) ); //phpcs:ignore
 			add_action( 'woocommerce_ac_delete_coupon_action', array( __CLASS__, 'wcal_delete_expired_used_coupon_code' ) );
 			add_action( 'wp_ajax_wcal_delete_expired_used_coupon_code', array( __CLASS__, 'wcal_delete_expired_used_coupon_code' ) );
+
+			add_action( 'woocommerce_coupon_error', array( 'wcal_common', 'wcal_capture_coupon_error' ), 15, 2 );
+			add_action( 'woocommerce_applied_coupon', array( 'wcal_common', 'wcal_capture_applied_coupon' ), 15, 2 );
+
+			add_action( 'woocommerce_before_cart_table', array( 'wcal_common', 'wcal_apply_direct_coupon_code' ) );
+			// Add coupon when user views checkout page (would not be added otherwise, unless user views cart first).
+			add_action( 'woocommerce_before_checkout_form', array( 'wcal_common', 'wcal_apply_direct_coupon_code' ) );
 		}
 
 		/**
@@ -1731,6 +1738,17 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$link_decode             = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $crypt_key, 256 );
 				$sent_email_id_pos       = strpos( $link_decode, '&' );
 				$email_sent_id           = substr( $link_decode, 0, $sent_email_id_pos );
+
+				if ( isset( $_GET['c'] ) ) { // phpcs:ignore it will check if coupon code parameter exists or not
+					$decrypt_coupon_code = rawurldecode( sanitize_text_field( wp_unslash( $_GET['c'] ) ) ); //phpcs:ignore
+					$decrypt_coupon_code = str_replace( ' ', '+', $decrypt_coupon_code );
+					$decode_coupon_code  = Wcal_Aes_Ctr::decrypt( $decrypt_coupon_code, $crypt_key, 256 );
+
+					wcal_common::wcal_set_cart_session( 'wcal_c', $decode_coupon_code ); // we need to set in session coz we directly apply coupon.
+					set_transient( 'wcal_c', $decode_coupon_code, 5 );
+				} else {
+					$decode_coupon_code     = '';
+				}
 
 				wcal_common::wcal_set_cart_session( 'email_sent_id', $email_sent_id );
 				set_transient( 'wcal_email_sent_id', $email_sent_id, 5 );
