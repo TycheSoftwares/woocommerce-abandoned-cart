@@ -1259,9 +1259,19 @@ class wcal_common { // phpcs:ignore
 			}
 			if ( is_array( $existing_coupon ) && count( $existing_coupon ) > 0 ) {
 				foreach ( $existing_coupon as $key => $value ) {
-					if ( isset( $existing_coupon[ $key ]['coupon_code'] ) && $existing_coupon[ $key ]['coupon_code'] != $coupon_code ) {
-						$existing_coupon[] = array( 'coupon_code' => $coupon_code, 'coupon_message' => __( 'Discount code applied successfully.', 'woocommerce-ac' ) );
-						update_user_meta( $user_id, '_woocommerce_ac_coupon', $existing_coupon );
+					if ( isset( $existing_coupon[ $key ]['coupon_code'] ) && $existing_coupon[ $key ]['coupon_code'] !== $coupon_code ) {
+						$existing_coupon[] = array(
+							'coupon_code'    => $coupon_code,
+							'coupon_message' => __(
+								'Discount code applied successfully.',
+								'woocommerce-ac',
+							), 
+						);
+						update_user_meta(
+							$user_id,
+							'_woocommerce_ac_coupon',
+							$existing_coupon
+						);
 						return $valid;
 					}
 				}
@@ -1324,8 +1334,8 @@ class wcal_common { // phpcs:ignore
 
 	/**
 	 * It will captures the coupon code errors specific to the abandoned carts.
-	 * @hook woocommerce_coupon_error
-	 * 
+	 *
+	 * @hook woocommerce_coupon_error. 
 	 * @param string $valid Error.
 	 * @param string $new Error code.
 	 * @globals mixed $wpdb .
@@ -1355,8 +1365,14 @@ class wcal_common { // phpcs:ignore
 
 		if ( '' !== $coupon_code ) {
 			$existing_coupon        = get_user_meta( $user_id, '_woocommerce_ac_coupon', false );
-			$existing_coupon[]      = array( 'coupon_code' => $coupon_code, 'coupon_message' => $valid );
-			$post_meta_coupon_array = array( 'coupon_code' => $coupon_code, 'coupon_message' => $valid );
+			$existing_coupon[]      = array(
+				'coupon_code'    => $coupon_code,
+				'coupon_message' => $valid,
+			);
+			$post_meta_coupon_array = array(
+				'coupon_code'    => $coupon_code,
+				'coupon_message' => $valid
+			);
 			if ( $user_id > 0 ) {
 				$updated = wcal_Common::wcal_update_coupon_post_meta( $abandoned_cart_id, $coupon_code, $valid );
 			}
@@ -1398,7 +1414,7 @@ class wcal_common { // phpcs:ignore
 					wc_print_notices();
 				}
 			}
-			// Add coupon
+			// Add coupon.
 			if ( ! $woocommerce->cart->add_discount( sanitize_text_field( $coupon_code ) ) ) {
 				wc_print_notices();
 			} else {

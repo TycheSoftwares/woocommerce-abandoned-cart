@@ -1739,7 +1739,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$sent_email_id_pos       = strpos( $link_decode, '&' );
 				$email_sent_id           = substr( $link_decode, 0, $sent_email_id_pos );
 
-				if ( isset( $_GET['c'] ) ) { // phpcs:ignore it will check if coupon code parameter exists or not
+				if ( isset( sanitize_text_field( wp_unslash( $_GET['c'] ) ) ) ) { // phpcs:ignore 
 					$decrypt_coupon_code = rawurldecode( sanitize_text_field( wp_unslash( $_GET['c'] ) ) ); //phpcs:ignore
 					$decrypt_coupon_code = str_replace( ' ', '+', $decrypt_coupon_code );
 					$decode_coupon_code  = Wcal_Aes_Ctr::decrypt( $decrypt_coupon_code, $crypt_key, 256 );
@@ -1747,7 +1747,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					wcal_common::wcal_set_cart_session( 'wcal_c', $decode_coupon_code ); // we need to set in session coz we directly apply coupon.
 					set_transient( 'wcal_c', $decode_coupon_code, 5 );
 				} else {
-					$decode_coupon_code     = '';
+					$decode_coupon_code = '';
 				}
 
 				wcal_common::wcal_set_cart_session( 'email_sent_id', $email_sent_id );
