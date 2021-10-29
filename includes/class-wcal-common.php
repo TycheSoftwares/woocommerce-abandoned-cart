@@ -1029,6 +1029,7 @@ class wcal_common { // phpcs:ignore
 	 * @param object $results_template_value - the template that's being sent.
 	 */
 	public static function wcal_check_and_replace_email_tag( $email_body_template, $results_template_value ) {
+		$coupon_code_to_apply = '';
 		if ( stripos( $email_body_template, '{{coupon.code}}' ) ) {
 			$discount_details['discount_expiry']      = $results_template_value->discount_expiry;
 			$discount_details['discount_type']        = $results_template_value->discount_type;
@@ -1047,7 +1048,7 @@ class wcal_common { // phpcs:ignore
 			$coupon_code_to_apply = self::wcal_get_coupon_email( $discount_details, $coupon_code, $default_template );
 			$email_body_template  = str_ireplace( '{{coupon.code}}', $coupon_code_to_apply, $email_body_template );
 		}
-		return $email_body_template;
+		return array( $email_body_template, $coupon_code_to_apply );
 	}
 	/**
 	 * Get the coupon which will be added in the email template.
@@ -1169,7 +1170,7 @@ class wcal_common { // phpcs:ignore
 		}
 
 		$coupon        = apply_filters(
-			'wcap_cron_before_shop_coupon_create',
+			'wcal_cron_before_shop_coupon_create',
 			array(
 				'post_title'       => $coupon_code,
 				'post_content'     => 'This coupon provides 5% discount on cart price.',
@@ -1210,4 +1211,225 @@ class wcal_common { // phpcs:ignore
 		shuffle( $temp_array );
 		return implode( '', $temp_array );
 	}
+
+	/**
+	 * It will captures the coupon code used by the customers.
+	 * It will store the coupon code for the specific abandoned cart.
+	 *
+	 * @hook woocommerce_applied_coupon
+	 * @param string $valid Coupon code.
+	 * @return string $valid Coupon code.
+	 * @globals mixed $wpdb
+	 * @since 5.11.0
+	 */
+	public static function wcal_capture_applied_coupon( $valid ) {
+
+		global $wpdb;
+
+		$coupon_code = self::wcal_get_cart_session( 'wcal_c' );
+
+		$user_id = self::wcal_get_cart_session( 'wcal_user_id' );
+
+		$user_id = '' !== $user_id ? $user_id : get_current_user_id();
+
+		if ( '' === $coupon_code && isset( $_POST['coupon_code'] ) ) { //phpcs:ignore
+			$coupon_code = $_POST['coupon_code']; //phpcs:ignore
+		} elseif ( isset( $valid ) ) {
+			$coupon_code = $valid;
+		}
+
+		if ( '' !== $valid ) {
+			if ( is_user_logged_in() ) {
+
+				$abandoned_cart_id_query   = 'SELECT id FROM `' . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0'";
+				$abandoned_cart_id_results = $wpdb->get_results( $wpdb->prepare( $abandoned_cart_id_query, $user_id ) ); //phpcs:ignore
+			} elseif ( ! is_user_logged_in() ) {
+					$abandoned_cart_id_query   = 'SELECT id FROM `' . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0' ORDER BY id DESC LIMIT 1";
+					$abandoned_cart_id_results = $wpdb->get_results( $wpdb->prepare( $abandoned_cart_id_query, $user_id ) ); //phpcs:ignore
+			}
+
+			$abandoned_cart_id = '0';
+			if ( isset( $abandoned_cart_id_results ) && ! empty( $abandoned_cart_id_results ) ) {
+				$abandoned_cart_id = $abandoned_cart_id_results[0]->id;
+			}
+			$existing_coupon = ( get_user_meta( $user_id, '_woocommerce_ac_coupon', true ) );
+			$applied         = wcal_Common::wcal_update_coupon_post_meta( $abandoned_cart_id, $coupon_code );
+			if ( $applied ) {
+				return $valid;
+			}
+			if ( is_array( $existing_coupon ) && count( $existing_coupon ) > 0 ) {
+				foreach ( $existing_coupon as $key => $value ) {
+					if ( isset( $existing_coupon[ $key ]['coupon_code'] ) && $existing_coupon[ $key ]['coupon_code'] !== $coupon_code ) {
+						$existing_coupon[] = array(
+							'coupon_code'    => $coupon_code,
+							'coupon_message' => __(
+								'Discount code applied successfully.',
+								'woocommerce-ac'
+							),
+						);
+						update_user_meta(
+							$user_id,
+							'_woocommerce_ac_coupon',
+							$existing_coupon
+						);
+						return $valid;
+					}
+				}
+			} else {
+				$coupon_details[] = array(
+					'coupon_code'    => $coupon_code,
+					'coupon_message' => __(
+						'Discount code applied successfully.',
+						'woocommerce-ac'
+					),
+				);
+				update_user_meta( $user_id, '_woocommerce_ac_coupon', $coupon_details );
+				return $valid;
+			}
+		}
+
+		return $valid;
+	}
+
+	/**
+	 * Update the Coupon data in post meta table.
+	 *
+	 * @param int    $cart_id - Abandoned Cart ID.
+	 * @param string $coupon_code - Coupon code to be updated.
+	 * @param string $msg - Msg to be added for the coupon.
+	 * @since 5.11
+	 */
+	public static function wcal_update_coupon_post_meta( $cart_id, $coupon_code, $msg = '' ) {
+
+		// Set default.
+		$msg = '' !== $msg ? $msg : __( 'Discount code applied successfully.', 'woocommerce-ac' );
+		// Fetch the record from the DB.
+		$get_coupons = get_post_meta( $cart_id, '_woocommerce_ac_coupon', true );
+
+		// Create a return array.
+		$return_coupons = array();
+
+		// If any coupon have been applied, populate them in the return array.
+		if ( is_array( $get_coupons ) && count( $get_coupons ) > 0 ) {
+			$exists = false;
+			foreach ( $get_coupons as $coupon_data ) {
+				if ( isset( $coupon_data['coupon_code'] ) && $coupon_code === $coupon_data['coupon_code'] ) {
+					$exists = true;
+				}
+			}
+
+			if ( ! $exists ) {
+				$get_coupons[] = array(
+					'coupon_code'    => $coupon_code,
+					'coupon_message' => $msg,
+				);
+				update_post_meta( $cart_id, '_woocommerce_ac_coupon', $get_coupons );
+				return true;
+			}
+		} else {
+			$get_coupons   = array();
+			$get_coupons[] = array(
+				'coupon_code'    => $coupon_code,
+				'coupon_message' => $msg,
+			);
+			update_post_meta( $cart_id, '_woocommerce_ac_coupon', $get_coupons );
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * It will captures the coupon code errors specific to the abandoned carts.
+	 *
+	 * @hook woocommerce_coupon_error.
+	 * @param string $valid Error.
+	 * @param string $new Error code.
+	 * @globals mixed $wpdb .
+	 * @return string $valid Error.
+	 * @since 2.4.3
+	 */
+	public static function wcal_capture_coupon_error( $valid, $new ) {
+
+		global $wpdb;
+		$coupon_code = self::wcal_get_cart_session( 'wcal_c' );
+
+		$user_id = self::wcal_get_cart_session( 'wcal_user_id' );
+
+		$user_id = '' !== $user_id ? $user_id : get_current_user_id();
+
+		$abandoned_cart_id_query   = 'SELECT id FROM `' . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0' ORDER BY id DESC LIMIT 1";
+		$abandoned_cart_id_results = $wpdb->get_results( $wpdb->prepare( $abandoned_cart_id_query, $user_id ) ); //phpcs:ignore
+		$abandoned_cart_id         = '0';
+
+		if ( isset( $abandoned_cart_id_results ) && count( $abandoned_cart_id_results ) > 0 ) {
+			$abandoned_cart_id = $abandoned_cart_id_results[0]->id;
+		}
+
+		if ( $coupon_code == '' && isset( $_POST['coupon_code'] ) ) { //phpcs:ignore
+			$coupon_code = $_POST['coupon_code']; //phpcs:ignore
+		}
+
+		if ( '' !== $coupon_code ) {
+			$existing_coupon        = get_user_meta( $user_id, '_woocommerce_ac_coupon', false );
+			$existing_coupon[]      = array(
+				'coupon_code'    => $coupon_code,
+				'coupon_message' => $valid,
+			);
+			$post_meta_coupon_array = array(
+				'coupon_code'    => $coupon_code,
+				'coupon_message' => $valid,
+			);
+			if ( $user_id > 0 ) {
+				$updated = wcal_Common::wcal_update_coupon_post_meta( $abandoned_cart_id, $coupon_code, $valid );
+			}
+			update_user_meta( $user_id, '_woocommerce_ac_coupon', $existing_coupon );
+		}
+		return $valid;
+	}
+
+	/**
+	 * It will directly apply the coupon code if the coupon code present in the abandoned cart reminder email link.
+	 * It will apply direct coupon on cart and checkout page.
+	 *
+	 * @hook woocommerce_before_cart_table
+	 * @hook woocommerce_before_checkout_form
+	 *
+	 * @param string $coupon_code Name of coupon.
+	 * @since 5.11
+	 */
+	public static function wcal_apply_direct_coupon_code( $coupon_code ) {
+		global $woocommerce_abandon_cart;
+		remove_action( 'woocommerce_cart_updated', array( $woocommerce_abandon_cart, 'wcal_store_cart_timestamp' ) );
+
+		$wcal_language = self::wcal_get_cart_session( 'wcal_selected_language' );
+		if ( '' !== $wcal_language && function_exists( 'icl_register_string' ) ) {
+			global $sitepress;
+			if ( null !== $sitepress ) {
+				$sitepress->switch_lang( $wcal_language );
+			}
+		}
+
+		$coupon_code = self::wcal_get_cart_session( 'wcal_c' );
+
+		if ( isset( $coupon_code ) && '' !== $coupon_code ) {
+
+			// If coupon has been already been added remove it.
+			if ( WC()->cart->has_discount( sanitize_text_field( $coupon_code ) ) ) {
+				if ( ! WC()->cart->remove_coupons( sanitize_text_field( $coupon_code ) ) ) {
+					wc_print_notices();
+				}
+			}
+			// Add coupon.
+			if ( ! WC()->cart->add_discount( sanitize_text_field( $coupon_code ) ) ) {
+				wc_print_notices();
+			} else {
+				wc_print_notices();
+			}
+			// Manually recalculate totals.  If you do not do this, a refresh is required before user will see updated totals when discount is removed.
+			WC()->cart->calculate_totals();
+			// need to clear the coupon code from session.
+			self::wcal_unset_cart_session( 'wcal_c' );
+		}
+	}
+
 }
