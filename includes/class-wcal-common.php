@@ -1335,7 +1335,7 @@ class wcal_common { // phpcs:ignore
 	/**
 	 * It will captures the coupon code errors specific to the abandoned carts.
 	 *
-	 * @hook woocommerce_coupon_error. 
+	 * @hook woocommerce_coupon_error.
 	 * @param string $valid Error.
 	 * @param string $new Error code.
 	 * @globals mixed $wpdb .
@@ -1371,7 +1371,7 @@ class wcal_common { // phpcs:ignore
 			);
 			$post_meta_coupon_array = array(
 				'coupon_code'    => $coupon_code,
-				'coupon_message' => $valid
+				'coupon_message' => $valid,
 			);
 			if ( $user_id > 0 ) {
 				$updated = wcal_Common::wcal_update_coupon_post_meta( $abandoned_cart_id, $coupon_code, $valid );
