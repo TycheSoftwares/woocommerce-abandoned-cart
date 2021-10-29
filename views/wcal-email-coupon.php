@@ -70,12 +70,12 @@ if ( '' !== $is_unique_coupon ) {
 			$discount_type = isset( $results_copy[0]->discount_type ) ? $results_copy[0]->discount_type : '';
 		}
 
-		$precent = 'percent' === $discount_type ? 'selected' : '';
-		$fixed   = 'fixed' === $discount_type ? 'selected' : '';
+		$precent = 'percent' === $discount_type ? true : '';
+		$fixed   = 'fixed' === $discount_type ? true : '';
 		?>
 		<select id="wcal_discount_type" name="wcal_discount_type">
-			<option value="percent" <?php echo( $precent ); ?> ><?php esc_html_e( 'Percentage discount', 'woocommerce-abandoned-cart' ); ?></option>
-			<option value="fixed" <?php echo( $fixed ); ?> ><?php esc_html_e( 'Fixed cart discount', 'woocommerce-abandoned-cart' ); ?></option>
+			<option value="percent" <?php if( $percent) { esc_attr_e( 'selected' ); } //phpcs:ignore ?> ><?php esc_html_e( 'Percentage discount', 'woocommerce-abandoned-cart' ); ?></option>
+			<option value="fixed" <?php if( $fixed) { esc_attr_e( 'selected' ); } //phpcs:ignore ?> ><?php esc_html_e( 'Fixed cart discount', 'woocommerce-abandoned-cart' ); ?></option>
 		</select>                                                    
 	</td>
 </tr>
