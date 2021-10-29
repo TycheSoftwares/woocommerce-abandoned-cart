@@ -1215,8 +1215,8 @@ class wcal_common { // phpcs:ignore
 	/**
 	 * It will captures the coupon code used by the customers.
 	 * It will store the coupon code for the specific abandoned cart.
+	 *
 	 * @hook woocommerce_applied_coupon
-	 * 
 	 * @param string $valid Coupon code.
 	 * @return string $valid Coupon code.
 	 * @globals mixed $wpdb
@@ -1243,7 +1243,7 @@ class wcal_common { // phpcs:ignore
 
 				$abandoned_cart_id_query   = 'SELECT id FROM `' . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0'";
 				$abandoned_cart_id_results = $wpdb->get_results( $wpdb->prepare( $abandoned_cart_id_query, $user_id ) ); //phpcs:ignore
-			}elseif ( ! is_user_logged_in() ) {
+			} elseif ( ! is_user_logged_in() ) {
 					$abandoned_cart_id_query   = 'SELECT id FROM `' . $wpdb->prefix . "ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = '0' AND recovered_cart = '0' ORDER BY id DESC LIMIT 1";
 					$abandoned_cart_id_results = $wpdb->get_results( $wpdb->prepare( $abandoned_cart_id_query, $user_id ) ); //phpcs:ignore
 			}
@@ -1276,7 +1276,13 @@ class wcal_common { // phpcs:ignore
 					}
 				}
 			} else {
-				$coupon_details[] = array( 'coupon_code' => $coupon_code, 'coupon_message' => __( 'Discount code applied successfully.', 'woocommerce-ac' ) );
+				$coupon_details[] = array(
+					'coupon_code'    => $coupon_code,
+					'coupon_message' => __(
+						'Discount code applied successfully.',
+						'woocommerce-ac'
+					),
+				);
 				update_user_meta( $user_id, '_woocommerce_ac_coupon', $coupon_details );
 				return $valid;
 			}
@@ -1422,7 +1428,7 @@ class wcal_common { // phpcs:ignore
 			}
 			// Manually recalculate totals.  If you do not do this, a refresh is required before user will see updated totals when discount is removed.
 			$woocommerce->cart->calculate_totals();
-			// need to clear the coupon code from session
+			// need to clear the coupon code from session.
 			self::wcal_unset_cart_session( 'wcal_c' );
 		}
 	}
