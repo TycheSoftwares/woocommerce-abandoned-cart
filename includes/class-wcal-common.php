@@ -1412,22 +1412,21 @@ class wcal_common { // phpcs:ignore
 		$coupon_code = self::wcal_get_cart_session( 'wcal_c' );
 
 		if ( isset( $coupon_code ) && '' !== $coupon_code ) {
-			global $woocommerce;
 
 			// If coupon has been already been added remove it.
-			if ( $woocommerce->cart->has_discount( sanitize_text_field( $coupon_code ) ) ) {
-				if ( ! $woocommerce->cart->remove_coupons( sanitize_text_field( $coupon_code ) ) ) {
+			if ( WC()->cart->has_discount( sanitize_text_field( $coupon_code ) ) ) {
+				if ( ! WC()->cart->remove_coupons( sanitize_text_field( $coupon_code ) ) ) {
 					wc_print_notices();
 				}
 			}
 			// Add coupon.
-			if ( ! $woocommerce->cart->add_discount( sanitize_text_field( $coupon_code ) ) ) {
+			if ( ! WC()->cart->add_discount( sanitize_text_field( $coupon_code ) ) ) {
 				wc_print_notices();
 			} else {
 				wc_print_notices();
 			}
 			// Manually recalculate totals.  If you do not do this, a refresh is required before user will see updated totals when discount is removed.
-			$woocommerce->cart->calculate_totals();
+			WC()->cart->calculate_totals();
 			// need to clear the coupon code from session.
 			self::wcal_unset_cart_session( 'wcal_c' );
 		}

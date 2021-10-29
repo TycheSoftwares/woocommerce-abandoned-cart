@@ -70,7 +70,7 @@ if ( '' !== $is_unique_coupon ) {
 			$discount_type = isset( $results_copy[0]->discount_type ) ? $results_copy[0]->discount_type : '';
 		}
 
-		$precent = 'percent' === $discount_type ? true : '';
+		$percent = 'percent' === $discount_type ? true : '';
 		$fixed   = 'fixed' === $discount_type ? true : '';
 		?>
 		<select id="wcal_discount_type" name="wcal_discount_type">
