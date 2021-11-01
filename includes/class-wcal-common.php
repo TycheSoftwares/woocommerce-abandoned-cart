@@ -1037,6 +1037,7 @@ class wcal_common { // phpcs:ignore
 			$discount_details['individual_use']       = $results_template_value->individual_use;
 			$discount_details['discount_amount']      = $results_template_value->discount;
 			$discount_details['generate_unique_code'] = $results_template_value->generate_unique_coupon_code;
+			$default_template                         = $results_template_value->default_template;
 
 			$coupon_id   = isset( $results_template_value->coupon_code ) ? $results_template_value->coupon_code : '';
 			$coupon_code = '';
