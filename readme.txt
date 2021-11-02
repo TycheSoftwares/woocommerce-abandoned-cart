@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, d
 Tags: cart abandonment, abandon cart, cart recovery, recover woocommerce cart, increase woocommerce conversion rate, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.8
+Tested up to: 5.8.1
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -222,6 +222,12 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.11.0 ( 02.11.2021 ) =
+* Enhancement - Added a new merge tag to include Coupon codes in email reminders.
+* Enhancement - Users can now set up the plugin to generate a unique coupon code in the reminder email or use an existing coupon created in Marketing > Coupons.
+* Enhancement - Coupons sent in reminder emails will be auto-applied when the cart link in the reminder email is accessed.
+* Enhancement - The site admin can now set up the plugin to automatically delete the expired and/or used coupons created by the plugin using WP Cron or delete them manually from the plugin settings page.
+
 = 5.10.0 ( 25.08.2021) =
 * Enhancement - Added the ability to setup reminder email frequency in minutes.
 * Tweak - Added a filter to allow reminder emails to be sent for carts with the total as 0.
