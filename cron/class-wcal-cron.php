@@ -83,7 +83,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 					$wcal_reply_email       = get_option( 'wcal_reply_email' );
 					if ( class_exists( 'WP_Better_Emails' ) ) {
 						$headers  = 'From: ' . $wcal_from_name . ' <' . $wcal_from_email . '>' . "\r\n";
-						$headers .= 'Content-Type: text/plain' . "\r\n";
+						$headers .= 'Content-Type: text/html' . "\r\n";
 						$headers .= 'Reply-To:  ' . $wcal_reply_email . ' ' . "\r\n";
 					} else {
 						$headers  = 'From: ' . $wcal_from_name . ' <' . $wcal_from_email . '>' . "\r\n";
