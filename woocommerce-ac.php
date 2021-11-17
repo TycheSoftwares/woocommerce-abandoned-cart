@@ -554,12 +554,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					if ( $blog_list_value->blog_id > 1 ) { // child sites.
 						$blog_id = $blog_list_value->blog_id;
 						self::wcal_process_activate( $blog_id );
+						add_blog_option( $blog_id, 'wcal_db_version', WCAL_PLUGIN_VERSION );
 					} else { // parent site.
 						self::wcal_process_activate();
+						add_blog_option( 1, 'wcal_db_version', WCAL_PLUGIN_VERSION );
 					}
 				}
 			} else { // single site.
 				self::wcal_process_activate();
+				add_option( 'wcal_db_version', WCAL_PLUGIN_VERSION );
 			}
 		}
 
