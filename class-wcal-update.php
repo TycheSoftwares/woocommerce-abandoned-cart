@@ -26,11 +26,31 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 		 * @since 5.8.2
 		 */
 		public static function wcal_schedule_update_action() {
+			// Apply a fix for update action not being run.
+			self::wcal_fix_db_version_issue();
 			// IMP: The default value for get option should be updated in each release to match the current version to ensure update code is not run for first time installs.
-			if ( get_option( 'wcal_previous_version', WCAL_PLUGIN_VERSION ) !== WCAL_PLUGIN_VERSION && function_exists( 'as_enqueue_async_action' ) && false === as_next_scheduled_action( 'wcal_update_db' ) ) {
+			if ( get_option( 'wcal_db_version', WCAL_PLUGIN_VERSION ) !== WCAL_PLUGIN_VERSION && function_exists( 'as_enqueue_async_action' ) && false === as_next_scheduled_action( 'wcal_update_db' ) ) {
 				as_enqueue_async_action( 'wcal_update_db' );
 			}
 		}
+
+		/**
+		 * Add the DB version option record.
+		 *
+		 * @since 5.11.1
+		 */
+		public static function wcal_fix_db_version_issue() {
+			if ( is_multisite() ) {
+
+				$blog_list = get_sites();
+				foreach ( $blog_list as $blog_list_key => $blog_list_value ) {
+					add_blog_option( $blog_id, 'wcal_db_version', '5.10.0' ); // This version number should not be changed. Issue #786.
+				}
+			} else { // single site.
+				add_option( 'wcal_db_version', '5.10.0' ); // This version number should not be changed. Issue #786.
+			}
+		}
+
 		/**
 		 * It will be executed when the plugin is upgraded.
 		 *
@@ -40,30 +60,26 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 		 */
 		public static function wcal_update_db_check() {
 
-			$wcal_previous_version = get_option( 'wcal_previous_version' );
+			// check whether its a multi site install or a single site install.
+			if ( is_multisite() ) {
 
-			if ( wcal_common::wcal_get_version() !== $wcal_previous_version ) {
-				// check whether its a multi site install or a single site install.
-				if ( is_multisite() ) {
-
-					// check if tables exist for the child sites, if not, create.
-					if ( 'yes' !== get_blog_option( 1, 'wcal_update_multisite' ) ) {
-						// run the activate function.
-						woocommerce_abandon_cart_lite::wcal_activate();
-						update_blog_option( 1, 'wcal_update_multisite', 'yes' );
-					}
-					$blog_list = get_sites();
-					foreach ( $blog_list as $blog_list_key => $blog_list_value ) {
-						if ( $blog_list_value->blog_id > 1 ) { // child sites.
-							$blog_id = $blog_list_value->blog_id;
-							self::wcal_process_db_update( $blog_id );
-						} else { // parent site.
-							self::wcal_process_db_update();
-						}
-					}
-				} else { // single site.
-					self::wcal_process_db_update();
+				// check if tables exist for the child sites, if not, create.
+				if ( 'yes' !== get_blog_option( 1, 'wcal_update_multisite' ) ) {
+					// run the activate function.
+					woocommerce_abandon_cart_lite::wcal_activate();
+					update_blog_option( 1, 'wcal_update_multisite', 'yes' );
 				}
+				$blog_list = get_sites();
+				foreach ( $blog_list as $blog_list_key => $blog_list_value ) {
+					if ( $blog_list_value->blog_id > 1 ) { // child sites.
+						$blog_id = $blog_list_value->blog_id;
+						self::wcal_process_db_update( $blog_id );
+					} else { // parent site.
+						self::wcal_process_db_update();
+					}
+				}
+			} else { // single site.
+				self::wcal_process_db_update();
 			}
 
 		}
@@ -87,11 +103,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 					$default_template->wcal_create_default_templates( $db_prefix, $blog_id );
 				}
 
-				$wcal_previous_version = get_option( 'wcal_previous_version' );
-
-				if ( wcal_common::wcal_get_version() !== $wcal_previous_version ) {
-					update_option( 'wcal_previous_version', WCAL_PLUGIN_VERSION );
-				}
+				update_option( 'wcal_db_version', WCAL_PLUGIN_VERSION );
 			} else { // multi site - child sites.
 				$wcal_guest_user_id_altered = get_blog_option( $blog_id, 'wcal_guest_user_id_altered' );
 
@@ -100,11 +112,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 					$default_template->wcal_create_default_templates( $db_prefix, $blog_id );
 				}
 
-				$wcal_previous_version = get_blog_option( $blog_id, 'wcal_previous_version' );
-
-				if ( wcal_common::wcal_get_version() !== $wcal_previous_version ) {
-					update_blog_option( $blog_id, 'wcal_previous_version', WCAL_PLUGIN_VERSION );
-				}
+				update_blog_option( $blog_id, 'wcal_db_version', WCAL_PLUGIN_VERSION );
 			}
 
 			/**
