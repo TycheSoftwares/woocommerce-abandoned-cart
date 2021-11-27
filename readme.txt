@@ -1,6 +1,6 @@
 ﻿
 === Abandoned Cart Lite for WooCommerce ===
-Contributors: ashokrane, pinal.shah, bhavik.kiri, chetnapatel, tychesoftwares, dhruvin
+Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares, dhruvin
 Tags: cart abandonment, abandon cart, cart recovery, recover woocommerce cart, increase woocommerce conversion rate, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
