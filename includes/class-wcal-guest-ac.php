@@ -292,7 +292,8 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 
 					$abandoned_cart_id = $wpdb->insert_id;
 					wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
-
+					wcal_common::wcal_add_checkout_link( $abandoned_cart_id );
+					wcal_common::wcal_run_webhook_after_cutoff( $abandoned_cart_id );
 					if ( is_multisite() ) {
 						// get main site's table prefix.
 						$main_prefix = $wpdb->get_blog_prefix( 1 );
@@ -339,6 +340,8 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 					if ( count( $get_abandoned_record ) > 0 ) {
 						$abandoned_cart_id = $get_abandoned_record[0]->id;
 						wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
+						wcal_common::wcal_add_checkout_link( $abandoned_cart_id );
+						wcal_common::wcal_run_webhook_after_cutoff( $abandoned_cart_id );
 					}
 
 					$wpdb->query( // phpcs:ignore

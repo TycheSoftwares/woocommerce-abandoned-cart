@@ -36,6 +36,8 @@ require_once 'includes/connectors/class-wcap-connectors-common.php';
 require_once 'includes/connectors/class-wcap-connector.php';
 require_once 'includes/connectors/class-wcap-display-connectors.php';
 require_once 'includes/class-wcap-integrations.php';
+require_once 'includes/wcal-functions.php';
+require_once 'includes/class-wcal-webhooks.php';
 
 load_plugin_textdomain( 'woocommerce-abandoned-cart', false, basename( dirname( __FILE__ ) ) . '/i18n/languages' );
 
@@ -1430,6 +1432,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							);
 							$abandoned_cart_id = $wpdb->insert_id;
 							wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
+							wcal_common::wcal_add_checkout_link( $abandoned_cart_id );
+							wcal_common::wcal_run_webhook_after_cutoff( $abandoned_cart_id );
 						}
 					} elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {
 						$updated_cart_info         = array();
@@ -1460,6 +1464,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 							$abandoned_cart_id = $wpdb->insert_id;
 							wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
+							wcal_common::wcal_add_checkout_link( $abandoned_cart_id );
+							wcal_common::wcal_run_webhook_after_cutoff( $abandoned_cart_id );
 						} else {
 							update_user_meta( $user_id, '_woocommerce_ac_modified_cart', md5( 'no' ) );
 						}
@@ -1489,6 +1495,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						if ( count( $get_abandoned_record ) > 0 ) {
 							$abandoned_cart_id = $get_abandoned_record[0]->id;
 							wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
+							wcal_common::wcal_add_checkout_link( $abandoned_cart_id );
+							wcal_common::wcal_run_webhook_after_cutoff( $abandoned_cart_id );
 						}
 					}
 				}
@@ -1539,12 +1547,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$user_type = 'GUEST';
 								$wpdb->query( //phpcs:ignore
 									$wpdb->prepare(
-										'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` (user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type) VALUES (%d, %s, %d, %s, %s)',
+										'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` (user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type, session_id, checkout_link) VALUES (%d, %s, %d, %s, %s, %s, %s)',
 										$user_id,
 										$updated_cart_info,
 										$current_time,
 										$cart_ignored,
-										$user_type
+										$user_type,
+										$get_cookie,
+										$results[0]->checkout_link
 									)
 								);
 								update_user_meta( $user_id, '_woocommerce_ac_modified_cart', md5( 'yes' ) );
@@ -1774,7 +1784,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			$track_link = isset( $_GET['wcal_action'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
-			if ( 'track_links' === $track_link ) {
+			if ( 'track_links' === $track_link || $track_link === 'checkout_link' ) {
 				if ( '' === session_id() ) {
 					// session has not started.
 					session_start();
@@ -1799,28 +1809,41 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$decode_coupon_code = '';
 				}
 
-				wcal_common::wcal_set_cart_session( 'email_sent_id', $email_sent_id );
-				set_transient( 'wcal_email_sent_id', $email_sent_id, 5 );
+				if ( 'track_links' === $track_link ) {
+					$email_sent_id     = 0;
+					$sent_email_id_pos = strpos( $link_decode, '&' );
+					$email_sent_id     = substr( $link_decode, 0, $sent_email_id_pos );
+
+					wcal_common::wcal_set_cart_session( 'email_sent_id', $email_sent_id );
+					set_transient( 'wcal_email_sent_id', $email_sent_id, 5 );
+
+					$get_ac_id_results = $wpdb->get_results( // phpcs:ignore
+						$wpdb->prepare(
+							'SELECT abandoned_order_id FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE id = %d',
+							$email_sent_id
+						)
+					);
+					$abandoned_id      = $get_ac_id_results[0]->abandoned_order_id;
+				} elseif ( 'checkout_link' === $track_link ) {
+					$abandoned_id     = 0;
+					$abandoned_id_pos = strpos( $link_decode, '&' );
+					$abandoned_id     = substr( $link_decode, 0, $abandoned_id_pos );
+					wcal_common::wcal_set_cart_session( 'wcal_recovered_cart', true );
+				}
 
 				$url_pos = strpos( $link_decode, '=' );
 				++$url_pos;
 				$url               = substr( $link_decode, $url_pos );
-				$get_ac_id_results = $wpdb->get_results( //phpcs:ignore
-					$wpdb->prepare(
-						'SELECT abandoned_order_id FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE id = %d',
-						$email_sent_id
-					)
-				);
 
-				wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $get_ac_id_results[0]->abandoned_order_id );
-				set_transient( 'wcal_abandoned_id', $get_ac_id_results[0]->abandoned_order_id, 5 );
+				wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_id );
+				set_transient( 'wcal_abandoned_id', $abandoned_id, 5 );
 
 				$get_user_results = array();
-				if ( count( $get_ac_id_results ) > 0 ) {
+				if ( $abandoned_id > 0 ) {
 					$get_user_results  = $wpdb->get_results( //phpcs:ignore
 						$wpdb->prepare(
 							'SELECT user_id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE id = %d',
-							$get_ac_id_results[0]->abandoned_order_id
+							$abandoned_id
 						)
 					);
 				}

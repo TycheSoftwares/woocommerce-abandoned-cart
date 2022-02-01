@@ -286,6 +286,10 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'individual_use'" ) ) { //phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_email_templates_lite ADD COLUMN `individual_use` ENUM("0","1") CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL AFTER `discount_expiry`' ); //phpcs:ignore
 			}
+			// 5.12.0
+			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM `' . $db_prefix . "ac_abandoned_cart_history_lite` LIKE 'checkout_link'" ) ) { // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_abandoned_cart_history_lite ADD `checkout_link` varchar(200) NOT NULL AFTER `email_reminder_status`' ); // phpcs:ignore
+			}
 		}
 		/**
 		 * Add a new column email_reminder_status in the cart history lite table.
