@@ -1,0 +1,457 @@
+#wcap_integrators_break {
+  margin-top: 70px;
+  border-color: #a9a9a9;
+}
+
+li a.wcap_integrators_view {
+  font-size:15px;
+  padding: 0px 15px 0px 15px;
+}
+
+/* Connector boxes */
+.wcap-col-group {
+  width: 100%;
+}
+
+.wcap-col-md-4 {
+  width: 31%;
+  float: left;
+  padding: 1%;
+}
+
+.wcap-connector-wrap {
+  background-color: #fff;
+  border: 1px solid #dedfea;
+  width: 100%;
+  position: relative;
+}
+
+.wcap-connector-img-outer {
+  text-align: center;
+  max-width: 110px;
+  box-shadow: 0 0 2px 0 rgba(0,0,0,.11);
+  float: left;
+}
+
+.wcap-connector-img {
+  min-height: 90px;
+  display: table;
+}
+
+.wcap-connector-img-section {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.wcap_connector_icon {
+  width: 100%;
+}
+
+.wcap_connector_info {
+  margin-left: 110px;
+  padding-left: 20px;
+}
+
+.wcap_connector_info_head {
+  color: #0073aa;
+  font-size: 18px;
+  line-height: 24px;
+  margin-bottom: 5px;
+}
+
+.wcap_connector_info_details {
+  color: #8e8e8e;
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.wcap-connector-action {
+  clear: both;
+  border-top: 1px solid #dedfea;
+  display: flow-root;
+  width: 100%;
+  height: 72px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  padding-bottom: 20px;
+  width: 100%;  
+}
+
+.wcap-connector-btns {
+  width: auto;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-right: 15px;
+  padding-left: 15px;
+  background: #f9f9f9;
+/*  display: flex; */
+  justify-content: space-between;
+  min-height: 30px;
+}
+
+.wcap_button_sync {
+  background: #2271b1;
+  border-color: #2271b1;
+  color: #fff;
+  text-decoration: none;
+  text-shadow: none;
+  border-radius: 3px;
+  padding: 5px 10px 5px 10px;
+  border-width: 1px;
+  border-style: solid;
+  box-sizing: border-box;
+  float: right;
+}
+
+.wcap_settings {
+  color: #2271b1;
+  border-color: #2271b1;
+  background: #f6f7f7;
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 2.15384615;
+  min-height: 30px;
+  margin: 0;
+  padding: 0 10px;
+  cursor: pointer;
+  border-width: 1px;
+  border-style: solid;
+  -webkit-appearance: none;
+  border-radius: 3px;
+  white-space: nowrap;
+  box-sizing: border-box;
+  float: right;
+  margin-right: 5%;
+}
+.wcap_main_connect {
+  display: inline;
+  margin-right: 10px;
+  float: right;
+}
+
+.wcap_button_disconnect {
+  border: none;
+  color: #2271b1;
+  background-color: transparent;
+}
+
+.span_disconnect {
+  margin-right: 4px;
+}
+
+.wcap_button_disconnect:hover {
+  cursor: pointer;
+}
+
+.wcap_button_sync:hover {
+  cursor: pointer;
+}
+
+/** Popup **/
+body.wcap-modal-open {
+  overflow: hidden; 
+}
+
+.wcap-modal {
+  z-index: 100000;
+  width: 40%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  max-width: 93%;
+  max-height: 80%; 
+}
+body.wcap-modal-loading .wcap-modal:before {
+  height: 24px;
+  width: 24px;
+  display: block;
+  position: absolute;
+  top: 75%; 
+  left: 50%;
+  margin-left: -12px;
+  margin-top: -12px;
+  -webkit-animation: spin .8s linear infinite;
+          animation: spin .8s linear infinite;
+  content: "";
+  background: url("../../images/loader.svg") center center;
+  background-size: cover;
+  line-height: 1;
+  text-align: center;
+  font-size: 2em;
+  color: rgba(0, 0, 0, 0.75);
+  z-index: 10; 
+}
+
+.wcap_msg {
+  font-size: 2em;
+  text-align: center;
+  margin-top: 30%;
+}
+
+body.wcap-modal-success .wcap-modal:before {
+  height: 100px;
+  width: 100px;
+  display: block;
+  position: absolute;
+  top: 28%; 
+  left: 45%;
+  margin-left: -30px;
+  content: "";
+  background: url("../../images/success.svg") center center;
+  background-size: cover;
+  line-height: 1;
+  text-align: center;
+  font-size: 2em;
+  color: rgba(0, 0, 0, 0.75);
+  z-index: 10; 
+}
+
+body.wcap-modal-failure .wcap-modal:before {
+  height: 100px;
+  width: 100px;
+  display: block;
+  position: absolute;
+  top: 28%; 
+  left: 45%;
+  margin-left: -30px;
+  content: "";
+  background: url("../../images/failure.svg") center center;
+  background-size: cover;
+  line-height: 1;
+  text-align: center;
+  font-size: 2em;
+  color: rgba(0, 0, 0, 0.75);
+  z-index: 10; 
+}
+
+.wcap-modal .wcap-icon-close {
+  text-align: center;
+  line-height: 29px;
+  width: 53px;
+  height: 53px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #666;
+  cursor: pointer;
+  border-left: 1px solid #E1E1E1; 
+ 
+}
+.wcap-modal .wcap-icon-close:before {
+  font-size: 23px;
+  font-family: dashicons;
+  line-height: 53px;
+  speak: none;
+  -webkit-font-smoothing: antialiased;
+  content: "\f335"; 
+}
+.wcap-modal .wcap-icon-close:hover {
+  background: #f5f5f5;
+  color: #000000; 
+  border-radius: 0px 10px 0px 0px;
+}
+.wcap-modal h2 {
+  font-size: 1.4em; 
+}
+.wcap-modal h3 {
+  font-size: 1.2em; 
+}
+
+.wcap-modal__contents {
+  background-color: #f5f5f5;
+  min-height: 230px;
+  border-radius: 10px 10px 10px 10px; 
+}
+
+.wcap-modal-overlay {
+  background: #000;
+  opacity: 0.7;
+  filter: alpha(opacity=70);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100000; 
+}
+
+.wcap-modal__header {
+  height: 53px;
+  background: #ffffff;
+  border-bottom: 1px solid #E1E1E1;
+  box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.1); 
+  border-radius: 10px 10px 0px 0px ;
+}
+.wcap-modal__header h1 {
+  padding: 0 18px;
+  font-size: 19px;
+  line-height: 53px;
+  margin: 0; 
+  float: left;
+}
+
+.wcap-modal__header h5 {
+  padding: 0;
+  font-size: 12px;
+  line-height: 53px;
+  margin: 0; 
+  float: left;
+}
+
+.wcap-modal__footer {
+  box-sizing: border-box;
+  background: #ffffff;
+  border-top: 1px solid #E1E1E1;
+  box-shadow: 0 -4px 4px -4px rgba(0, 0, 0, 0.1);
+  padding: 14px 18px;
+  min-height: 50px;
+  border-radius: 0px 0px 10px 10px ;      
+
+}
+.wcap-modal__footer.button {
+  width: 100%;
+  float: left; 
+  margin-left: 3px; 
+}
+
+.wcap-modal__footer.button {
+
+}
+
+.wcap-modal__body {
+  overflow: auto;
+  min-height: 130px;
+  padding: 10px 20px 10px 20px;
+}
+.wcap-modal__body hr {
+    margin: 17px 0;
+    border: none;
+    border-bottom: 1px solid #E1E1E1; 
+}
+.wcap-modal__body ul {
+  margin: 17px 0 17px; 
+}
+
+.wcap-modal__body-inner {
+  margin: 17px 18px 22px; 
+}
+
+input.form-control {
+  width: 79%;
+  margin: 10px 0px 10px 0px;
+  padding: 2px;
+}
+
+select.form-control {
+  width: 100%;
+  margin: 10px 0px 10px 0px;
+  padding: 2px;
+}
+
+.wcap_form_submit {
+  margin-top: 10px;  
+}
+
+@media (max-width:1024px) {
+  .wcap-col-md-4 {
+    width: 100%;
+    margin-top: 2%;
+  }
+  
+  .wcap_button_sync {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: none;
+    border-radius: 3px;
+    padding: 5px 10px 5px 10px;
+    border-width: 1px;
+    border-style: solid;
+    box-sizing: border-box;  
+  }
+ 
+  input.form-control {
+    width: 100%;
+    margin: 10px 0px 10px 0px;
+    padding: 2px;
+  }
+
+  .wcap_msg {
+    font-size: 2em;
+    text-align: center;
+    margin-top: 55%;
+  }
+  
+  body.wcap-modal-success .wcap-modal:before {
+    height: 100px;
+    width: 100px;
+    display: block;
+    position: absolute;
+    top: 30%; 
+    left: 45%;
+    margin-left: -30px;
+    content: "";
+    background: url("../../images/success.svg") center center;
+    background-size: cover;
+    line-height: 1;
+    text-align: center;
+    font-size: 2em;
+    color: rgba(0, 0, 0, 0.75);
+    z-index: 10; 
+  }
+  
+  body.wcap-modal-failure .wcap-modal:before {
+    height: 100px;
+    width: 100px;
+    display: block;
+    position: absolute;
+    top: 30%; 
+    left: 45%;
+    margin-left: -30px;
+    content: "";
+    background: url("../../images/failure.svg") center center;
+    background-size: cover;
+    line-height: 1;
+    text-align: center;
+    font-size: 2em;
+    color: rgba(0, 0, 0, 0.75);
+    z-index: 10; 
+  }
+  
+}
+@media (min-width:1201px) {
+ .wcap-connector_card_outer {
+      height: 120px;
+    }
+    .wcap-col-md-4 {
+      height: 210px;
+      margin-bottom: 20px;
+    }
+}
+@media (min-width:1024px) and (max-width:1200px){
+  .wcap-connector_card_outer {
+    height: 180px;
+  }
+  .wcap-col-md-4 {
+    height: 280px;
+    margin-bottom: 20px;
+  }
+  .wcap_connector_info_head {
+    font-size: 14px;
+ }
+ .wcap-connector_card_outer {
+  min-height: 165px;
+  }
+  .wcap_connector_info_details {
+    min-height: 100px;
+  } 
+}
+.no_link {
+	color: #000 !important;
+	cursor: default !important;
+	font-weight: 600;
+}
+.wcap_integrators_view {
+	cursor: pointer;
+}

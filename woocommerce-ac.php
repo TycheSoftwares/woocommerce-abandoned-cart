@@ -32,6 +32,10 @@ require_once 'includes/admin/class-wcal-abandoned-cart-details.php';
 require_once 'includes/admin/class-wcap-pro-settings.php';
 require_once 'includes/admin/class-wcap-pro-settings-callbacks.php';
 require_once 'includes/admin/class-wcap-add-cart-popup-modal.php';
+require_once 'includes/connectors/class-wcap-connectors-common.php';
+require_once 'includes/connectors/class-wcap-connector.php';
+require_once 'includes/connectors/class-wcap-display-connectors.php';
+require_once 'includes/class-wcap-integrations.php';
 
 load_plugin_textdomain( 'woocommerce-abandoned-cart', false, basename( dirname( __FILE__ ) ) . '/i18n/languages' );
 
@@ -613,7 +617,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`individual_use` enum('0','1') NOT NULL,
 		        `generate_unique_coupon_code` enum('0','1') NOT NULL,
 				PRIMARY KEY (`id`)
-				) $wcap_collate AUTO_INCREMENT=1"
+				) $wcap_collate AUTO_INCREMENT=1" // phpcs:ignore
 			);
 
 			$sent_table_name = $db_prefix . 'ac_sent_history_lite';
@@ -625,7 +629,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`sent_time` datetime NOT NULL,
 				`sent_email_id` text COLLATE utf8_unicode_ci NOT NULL,
 				PRIMARY KEY  (`id`)
-				) $wcap_collate AUTO_INCREMENT=1 "
+				) $wcap_collate AUTO_INCREMENT=1 " // phpcs:ignore
 			);
 
 			$ac_history_table_name = $db_prefix . 'ac_abandoned_cart_history_lite';
@@ -642,12 +646,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				`email_reminder_status` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				PRIMARY KEY (`id`)
-				) $wcap_collate"
+				) $wcap_collate" // phpcs:ignore
 			);
 
 			$guest_table        = $db_prefix . 'ac_guest_abandoned_cart_history_lite';
 			$result_guest_table = $wpdb->get_results( // phpcs:ignore
-				"SHOW TABLES LIKE '$guest_table'"
+				"SHOW TABLES LIKE '$guest_table'" // phpcs:ignore
 			);
 
 			if ( 0 === count( $result_guest_table ) ) {
@@ -677,7 +681,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					`shipping_zipcode` double,
 					`shipping_charges` double,
 					PRIMARY KEY (`id`)
-					) $wcap_collate AUTO_INCREMENT=63000000"
+					) $wcap_collate AUTO_INCREMENT=63000000" // phpcs:ignore
 				);
 			}
 
@@ -2426,9 +2430,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			global $pagenow;
 
-			$page   = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-			$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-
+			$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+			$action  = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+			$section = isset( $_GET['wcal_section'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_section'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 			if ( 'woocommerce_ac_page' !== $page ) {
 				return;
 			} elseif ( 'woocommerce_ac_page' === $page && ( 'dashboard' === $action || '' === $action ) ) {
@@ -2446,6 +2450,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				wp_enqueue_style( 'jquery-ui-style', plugins_url( '/assets/css/admin/jquery-ui-smoothness.css', __FILE__ ), '', WCAL_PLUGIN_VERSION );
 				wp_enqueue_style( 'wcal-reports', plugins_url( '/assets/css/admin/wcal_reports.min.css', __FILE__ ), '', WCAL_PLUGIN_VERSION );
 
+			} elseif ( 'woocommerce_ac_page' === $page && 'emailsettings' === $action && 'wcap_connectors' === $section ) {
+				wp_enqueue_style( 'wcap-connectors', plugins_url( 'assets/css/admin/wcap_integrations_main.min.css', __FILE__ ), '', WCAL_PLUGIN_VERSION );
 			} elseif ( 'woocommerce_ac_page' === $page ) {
 
 				wp_enqueue_style( 'jquery-ui', plugins_url( '/assets/css/admin/jquery-ui.css', __FILE__ ), '', WCAL_PLUGIN_VERSION, false );
@@ -2593,6 +2599,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$wcap_sms_settings           = '';
 					$wcap_atc_settings           = '';
 					$wcap_fb_settings            = '';
+					$wcap_connectors             = '';
 
 					$section = isset( $_GET['wcal_section'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_section'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					switch ( $section ) {
@@ -2611,6 +2618,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							break;
 						case 'wcap_fb_settings':
 							$wcap_fb_settings = 'current';
+							break;
+						case 'wcap_connectors':
+							$wcap_connectors = 'current';
 							break;
 						default:
 							$wcal_general_settings_class = 'current';
@@ -2631,7 +2641,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_fb_settings" class="<?php echo esc_attr( $wcap_fb_settings ); ?>"><?php esc_html_e( 'Facebook Messenger', 'woocommerce-ac' ); ?> </a> |
 							</li>
 							<li>
-								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_sms_settings" class="<?php echo esc_attr( $wcap_sms_settings ); ?>"><?php esc_html_e( 'SMS', 'woocommerce-ac' ); ?> </a>
+								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_sms_settings" class="<?php echo esc_attr( $wcap_sms_settings ); ?>"><?php esc_html_e( 'SMS', 'woocommerce-ac' ); ?> </a> |
+							</li>
+							<li>
+								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_connectors" class="<?php echo esc_attr( $wcap_connectors ); ?>"><?php esc_html_e( 'Connectors', 'woocommerce-ac' ); ?> </a>
 							</li>
 							<?php do_action( 'wcal_add_custom_settings_tab', $section ); ?>
 						</ul>
@@ -2663,6 +2676,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							WCAP_Pro_Settings::wcap_fb_settings();
 						} elseif ( 'wcap_sms_settings' === $section ) {
 							WCAP_Pro_Settings::wcap_sms_settings();
+						} elseif ( 'wcap_connectors' === $section ) {
+							WCAP_Pro_Settings::wcap_connectors();
 						}
 						do_action( 'wcal_add_custom_settings_tab_content', $section );
 						?>
@@ -3753,11 +3768,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						emailVal = jQuery( '#send_test_email' ).val();
 						const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;	
 						if ( !re.test( emailVal ) ) {	
-							jQuery( '#preview_email_sent_msg' ).html( '<?php echo __( 'Please enter a valid email.', 'woocommerce-abandoned-cart' ); ?>' );
+							jQuery( '#preview_email_sent_msg' ).html( '<?php echo esc_html__( 'Please enter a valid email.', 'woocommerce-abandoned-cart' ); ?>' );
 							jQuery( '#preview_email_sent_msg' ).show();
 							return false;		
 						}
-					
+
 						jQuery( '#preview_email_sent_msg' ).hide();
 
 						$( '.ajax_img' ).show();

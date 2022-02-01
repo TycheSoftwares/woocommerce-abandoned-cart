@@ -71,6 +71,14 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 		}
 
 		/**
+		 * Connector tab.
+		 *
+		 * @since 5.12.0
+		 */
+		public static function wcap_connectors() {
+			Wcap_Integrations::wcap_integrations_main();
+		}
+		/**
 		 * General Settings for AC Pro.
 		 */
 		public static function wcap_pro_general_settings() {
