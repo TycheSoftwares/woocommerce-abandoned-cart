@@ -1011,7 +1011,7 @@ class wcal_common { // phpcs:ignore
 			if ( ! isset( $template_freq ) ) {
 				continue;
 			}
-			
+
 			$list_frequencies[ $active->id ] = (int) $template_freq;
 		}
 
@@ -1434,7 +1434,7 @@ class wcal_common { // phpcs:ignore
 		}
 	}
 
-		/**
+	/**
 	 * Get the post meta data for AC Coupons.
 	 *
 	 * @param int $cart_id - Abandoned Cart ID.
