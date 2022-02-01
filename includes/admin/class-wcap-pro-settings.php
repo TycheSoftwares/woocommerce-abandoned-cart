@@ -472,6 +472,7 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 			?>
 			<strong><i>
 			<?php
+			// translators: Link to purchase Pro version.
 			printf( wp_kses_post( __( "Upgrade to <a href='%s' target='_blank'>Abandoned Cart Pro for WooCommerce</a> to enable the settings shown below.", 'woocommerce-abandoned-cart' ) ), esc_url( $purchase_link ) );
 			?>
 			</i></strong>

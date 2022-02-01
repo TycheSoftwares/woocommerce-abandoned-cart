@@ -950,7 +950,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				'ac_lite_track_guest_cart_from_cart_page'
 			);
 
-			register_setting( 
+			register_setting(
 				'woocommerce_ac_settings',
 				'wcal_enable_gdpr_consent'
 			);
