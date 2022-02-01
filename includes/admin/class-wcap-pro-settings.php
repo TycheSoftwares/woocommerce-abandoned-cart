@@ -77,13 +77,20 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 
 			$upgrade_pro_msg = '<br><b><i>Upgrade to <a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=acupgradetopro&utm_medium=link&utm_campaign=AbandonCartLite" target="_blank">Abandoned Cart Pro for WooCommerce</a> to enable the setting.</i></b>';
 
+			add_settings_section(
+				'ac_lite_pro_settings',                 // ID used to identify this section and with which to register options.
+				__( 'Pro Version Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
+				array( 'WCAP_Pro_Settings', 'ac_lite_pro_callback' ), // Callback used to render the description of the section.
+				'woocommerce_ac_page'                               // Page on which to add this section of options.
+			);
+
 			add_settings_field(
 				'ac_cart_abandoned_time_guest',
 				__( 'Cart abandoned cut-off time for guest users', 'woocommerce-abandoned-cart' ),
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_cart_abandoned_time_guest_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
-				array( __( 'For guest users & visitors consider cart abandoned after X minutes of item being added to cart & order not placed.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				'ac_lite_pro_settings',
+				array( __( 'For guest users & visitors consider cart abandoned after X minutes of item being added to cart & order not placed.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -91,8 +98,8 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				__( 'Do not track carts of guest users', 'woocommerce-abandoned-cart' ),
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_disable_guest_cart_email_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
-				array( __( 'Abandoned carts of guest users will not be tracked.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				'ac_lite_pro_settings',
+				array( __( 'Abandoned carts of guest users will not be tracked.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -100,8 +107,8 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				__( 'Do not track carts of logged-in users', 'woocommerce-abandoned-cart' ),
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_disable_logged_in_cart_email_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
-				array( __( 'Abandoned carts of logged-in users will not be tracked.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				'ac_lite_pro_settings',
+				array( __( 'Abandoned carts of logged-in users will not be tracked.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -109,8 +116,8 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				__( 'Send reminder emails for newly abandoned carts after X days of order placement', 'woocommerce-abandoned-cart' ),
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_cart_abandoned_after_x_days_order_placed_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
-				array( __( 'Reminder emails will be sent for newly abandoned carts only after X days of a previously placed order for a user with the same email address as that of the abandoned cart', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				'ac_lite_pro_settings',
+				array( __( 'Reminder emails will be sent for newly abandoned carts only after X days of a previously placed order for a user with the same email address as that of the abandoned cart', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -118,8 +125,8 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				__( 'Capture email address from custom fields.', 'woocommerce-abandoned-cart' ),
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_capture_email_from_forms' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
-				array( __( 'Enable this setting to capture email address from other form fields.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				'ac_lite_pro_settings',
+				array( __( 'Enable this setting to capture email address from other form fields.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -127,8 +134,8 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				__( 'Class names of the form fields.', 'woocommerce-abandoned-cart' ),
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_email_forms_classes' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
-				array( __( 'Enter class names of fields separated by commas from where email needs to be captured.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				'ac_lite_pro_settings',
+				array( __( 'Enter class names of fields separated by commas from where email needs to be captured.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -136,8 +143,8 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				__( 'Capture Email address from URL', 'woocommerce-abandoned-cart' ),
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_capture_email_address_from_url' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
-				array( __( 'If your site URL contain the same key, then it will capture it as an email address of customer.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				'ac_lite_pro_settings',
+				array( __( 'If your site URL contain the same key, then it will capture it as an email address of customer.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -145,8 +152,8 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				__( 'Remove Data on Uninstall?', 'woocommerce-abandoned-cart' ),
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_deleting_plugin_data' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
-				array( __( 'Enable this setting if you want to completely remove Abandoned Cart data when plugin is deleted.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				'ac_lite_pro_settings',
+				array( __( 'Enable this setting if you want to completely remove Abandoned Cart data when plugin is deleted.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -154,8 +161,8 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				__( 'Add Product to Cart when Close Icon is clicked?', 'woocommerce-abandoned-cart' ),
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_atc_close_icon_add_product_to_cart_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
-				array( __( 'Enable this setting if you want the product to the added to cart when the user clicks on the Close Icon in the Add to Cart Popup Modal.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				'ac_lite_pro_settings',
+				array( __( 'Enable this setting if you want the product to the added to cart when the user clicks on the Close Icon in the Add to Cart Popup Modal.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -163,8 +170,8 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				__( 'Enable Email Verification:', 'woocommerce-abandoned-cart' ),
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_enable_debounce_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
-				array( __( 'Enable this checkbox to allow email verification to be done via DeBounce API services.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				'ac_lite_pro_settings',
+				array( __( 'Enable this checkbox to allow email verification to be done via DeBounce API services.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -172,68 +179,8 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				__( 'Enter DeBounce API Key', 'woocommerce-abandoned-cart' ),
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_debounce_api_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
-				array( __( 'Enter DeBounce JS API Key.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'ac_enable_cart_emails'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'ac_cart_abandoned_time_guest'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'ac_disable_guest_cart_email'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'ac_disable_logged_in_cart_email'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'ac_capture_email_from_forms'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'ac_cart_abandoned_after_x_days_order_placed'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'ac_email_forms_classes'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'ac_capture_email_address_from_url'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'wcac_delete_plugin_data'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'wcap_atc_close_icon_add_product_to_cart'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'wcap_enable_debounce'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'ac_debounce_api'
+				'ac_lite_pro_settings',
+				array( __( 'Enter DeBounce JS API Key.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -254,16 +201,6 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( __( 'Select the page where product name in reminder emails should redirect to.', 'woocommerce-ac' ) . $upgrade_pro_msg )
 			);
 
-			register_setting(
-				'ac_email_settings_section',
-				'wcap_product_image_size'
-			);
-
-			register_setting(
-				'woocommerce_ac_settings',
-				'wcap_product_name_redirect'
-			);
-
 			add_settings_section(
 				'ac_cron_job_settings_section',           // ID used to identify this section and with which to register options.
 				__( 'Setting for sending Emails & SMS using Action Scheduler', 'woocommerce-abandoned-cart' ),      // Title to be displayed on the administration page.
@@ -277,7 +214,7 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_use_auto_cron_callback' ),
 				'woocommerce_ac_page',
 				'ac_cron_job_settings_section',
-				array( __( 'Enabling this setting will send the abandoned cart reminder emails to the customer after the set time. If disabled, abandoned cart reminder emails will not be sent using the Action Scheduler. You will need to set cron job manually from cPanel. If you are unsure how to set the cron job, please <a href= mailto:support@tychesoftwares.com>contact us</a> for it.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				array( __( 'Enabling this setting will send the abandoned cart reminder emails to the customer after the set time. If disabled, abandoned cart reminder emails will not be sent using the Action Scheduler. You will need to set cron job manually from cPanel. If you are unsure how to set the cron job, please <a href= mailto:support@tychesoftwares.com>contact us</a> for it.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -286,7 +223,7 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_cron_time_duration_callback' ),
 				'woocommerce_ac_page',
 				'ac_cron_job_settings_section',
-				array( __( 'The duration in minutes after which an action should be automatically scheduled to send email, SMS & FB reminders to customers.', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				array( __( 'The duration in minutes after which an action should be automatically scheduled to send email, SMS & FB reminders to customers.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_section(
@@ -302,7 +239,7 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_restrict_ip_address_callback' ),
 				'woocommerce_ac_page',
 				'ac_restrict_settings_section',
-				array( __( 'The carts abandoned from these IP addresses will not be tracked by the plugin. Accepts wildcards, e.g <code>192.168.*</code> will block all IP addresses which starts from "192.168". <i>Separate IP addresses with commas.</i>', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				array( __( 'The carts abandoned from these IP addresses will not be tracked by the plugin. Accepts wildcards, e.g <code>192.168.*</code> will block all IP addresses which starts from "192.168". <i>Separate IP addresses with commas.</i>', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -311,7 +248,7 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_restrict_email_address_callback' ),
 				'woocommerce_ac_page',
 				'ac_restrict_settings_section',
-				array( __( 'The carts abandoned using these email addresses will not be tracked by the plugin. <i>Separate email addresses with commas.</i>', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				array( __( 'The carts abandoned using these email addresses will not be tracked by the plugin. <i>Separate email addresses with commas.</i>', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
@@ -320,7 +257,7 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_restrict_domain_address_callback' ),
 				'woocommerce_ac_page',
 				'ac_restrict_settings_section',
-				array( __( 'The carts abandoned from email addresses with these domains will not be tracked by the plugin. <i>Separate email address domains with commas.</i>', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg )
+				array( __( 'The carts abandoned from email addresses with these domains will not be tracked by the plugin. <i>Separate email address domains with commas.</i>', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_section(
@@ -337,13 +274,9 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_unsubscribe_landing_page_callback' ),
 				'woocommerce_ac_page',
 				'ac_unsubscribe_section',
-				array( __( "Select a source where the user must be redirected when an Unsubscribe link is clicked from reminders sent. For details, please check the <a href='$doc_link' target='_blank'>documentation</a>.", 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg ) // phpcs:ignore
+				array( __( "Select a source where the user must be redirected when an Unsubscribe link is clicked from reminders sent. For details, please check the <a href='$doc_link' target='_blank'>documentation</a>.", 'woocommerce-abandoned-cart' ) ) // phpcs:ignore
 			);
 
-			register_setting(
-				'woocommerce_ac_settings',
-				'wcap_unsubscribe_landing_page'
-			);
 		}
 
 		/**
@@ -438,26 +371,6 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( $upgrade_pro_msg )
 			);
 
-			register_setting(
-				'woocommerce_sms_settings',
-				'wcap_enable_sms_reminders'
-			);
-
-			register_setting(
-				'woocommerce_sms_settings',
-				'wcap_sms_from_phone'
-			);
-
-			register_setting(
-				'woocommerce_sms_settings',
-				'wcap_sms_account_sid'
-			);
-
-			register_setting(
-				'woocommerce_sms_settings',
-				'wcap_sms_auth_token'
-			);
-
 			add_settings_section(
 				'wcap_fb_settings_section',
 				__( 'Facebook Messenger Settings', 'woocommerce-abandoned-cart' ),
@@ -547,46 +460,22 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( __( '<i>Enter your Verify Token</i>', 'woocommerce-abandoned-cart' ) . $upgrade_pro_msg, 'wcap_fb_verify_token' ) // phpcs:ignore
 			);
 
-			register_setting(
-				'woocommerce_fb_settings',
-				'wcap_enable_fb_reminders'
-			);
+		}
 
-			register_setting(
-				'woocommerce_fb_settings',
-				'wcap_enable_fb_reminders_popup'
-			);
-
-			register_setting(
-				'woocommerce_fb_settings',
-				'wcap_fb_consent_text'
-			);
-
-			register_setting(
-				'woocommerce_fb_settings',
-				'wcap_fb_page_id'
-			);
-
-			register_setting(
-				'woocommerce_fb_settings',
-				'wcap_fb_user_icon'
-			);
-
-			register_setting(
-				'woocommerce_fb_settings',
-				'wcap_fb_app_id'
-			);
-
-			register_setting(
-				'woocommerce_fb_settings',
-				'wcap_fb_page_token'
-			);
-
-			register_setting(
-				'woocommerce_fb_settings',
-				'wcap_fb_verify_token'
-			);
-
+		/**
+		 * Callback Pro Settings section.
+		 *
+		 * @since 5.12.0
+		 */
+		public static function ac_lite_pro_callback() {
+			$purchase_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=acupgradetopro&utm_medium=link&utm_campaign=AbandonCartLite';
+			?>
+			<strong><i>
+			<?php
+			printf( wp_kses_post( __( "Upgrade to <a href='%s' target='_blank'>Abandoned Cart Pro for WooCommerce</a> to enable the settings shown below.", 'woocommerce-abandoned-cart' ) ), esc_url( $purchase_link ) );
+			?>
+			</i></strong>
+			<?php
 		}
 
 	} // end of class.

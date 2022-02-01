@@ -38,7 +38,7 @@ jQuery( 'input#billing_email' ).on( 'change', function() {
 jQuery( document ).ready( function() {
     
     if ( wcal_guest_capture_params._show_gdpr_message && ! jQuery("#wcal_gdpr_message_block").length && gdpr_consent ) {
-        jQuery("#billing_email").after("<span id='wcal_gdpr_message_block'> <span style='font-size: small'> "+ wcal_guest_capture_params._gdpr_message +" <a style='cursor: pointer' id='wcal_gdpr_no_thanks'> "+ wcal_guest_capture_params._gdpr_nothanks_msg +" </a></span></span>");
+        jQuery("#billing_email").after("<span id='wcal_gdpr_message_block'> <span style='font-size: small'> "+ wcal_guest_capture_params._gdpr_message +" <a style='cursor: pointer; text-decoration:none;' id='wcal_gdpr_no_thanks'> "+ wcal_guest_capture_params._gdpr_nothanks_msg +" </a></span></span>");
     }
 
     jQuery("#wcal_gdpr_no_thanks").click(  function () {

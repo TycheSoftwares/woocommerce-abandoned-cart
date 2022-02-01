@@ -362,6 +362,13 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				}
 			}
 
+			// 5.12.0 - GDPR Consent.
+			if ( '' === get_option( 'wcal_gdpr_consent_migrated', '' ) ) {
+				update_option( 'wcal_gdpr_consent_migrated', 'yes' );
+				if ( '' !== get_option( 'wcal_guest_cart_capture_msg', '' ) || '' !== get_option( 'wcal_logged_cart_capture_msg', '' ) ) {
+					update_option( 'wcal_enable_gdpr_consent', 'on' );
+				}
+			}
 		}
 
 		/**

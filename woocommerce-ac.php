@@ -751,7 +751,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			// First, we register a section. This is necessary since all future options must belong to a section.
 			add_settings_section(
 				'ac_lite_general_settings_section',                 // ID used to identify this section and with which to register options.
-				__( 'Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
+				__( 'Cart Abandonment Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
 				array( $this, 'ac_lite_general_options_callback' ), // Callback used to render the description of the section.
 				'woocommerce_ac_page'                               // Page on which to add this section of options.
 			);
@@ -801,12 +801,28 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				array( __( 'Enable tracking of abandoned products & carts even if customer does not visit the checkout page or does not enter any details on the checkout page like Name or Email. Tracking will begin as soon as a visitor adds a product to their cart and visits the cart page.', 'woocommerce-abandoned-cart' ) )
 			);
 
+			add_settings_section(
+				'ac_lite_gdpr_settings',                 // ID used to identify this section and with which to register options.
+				__( 'GDPR Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
+				array( $this, 'ac_lite_gdpr_callback' ), // Callback used to render the description of the section.
+				'woocommerce_ac_page'                               // Page on which to add this section of options.
+			);
+
+			add_settings_field(
+				'wcal_enable_gdpr_consent',
+				__( 'Enable GDPR Notice', 'woocommerce-abandoned-cart' ),
+				array( $this, 'wcal_enable_gdpr_callback' ),
+				'woocommerce_ac_page',
+				'ac_lite_gdpr_settings',
+				array( __( 'Enable this setting to display a notice informing customers that their email and cart data are saved to send abandonment reminders.', 'woocommerce-abandoned-cart' ) )
+			);
+
 			add_settings_field(
 				'wcal_guest_cart_capture_msg',
 				__( 'Message to be displayed for Guest users when tracking their carts', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_guest_cart_capture_msg_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_gdpr_settings',
 				array( __( '<br>In compliance with GDPR, add a message on the Checkout page to inform Guest users of how their data is being used.<br><i>For example: Your email address will help us support your shopping experience throughout the site. Please check our Privacy Policy to see how we use your personal data.</i>', 'woocommerce-abandoned-cart' ) )
 			);
 
@@ -815,7 +831,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				__( 'Message to be displayed for registered users when tracking their carts.', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_logged_cart_capture_msg_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_gdpr_settings',
 				array( __( '<br>In compliance with GDPR, add a message on the Shop & Product pages to inform Registered users of how their data is being used.<br><i>For example: Please check our Privacy Policy to see how we use your personal data.</i>', 'woocommerce-abandoned-cart' ) )
 			);
 
@@ -824,7 +840,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				__( 'Allow the visitor to opt out of cart tracking.', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_gdpr_allow_opt_out_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_gdpr_settings',
 				array( __( '<br>In compliance with GDPR, allow the site visitor (guests & registered users) to opt out from cart tracking. This message will be displayed in conjunction with the GDPR message above.</i>', 'woocommerce-abandoned-cart' ) )
 			);
 
@@ -833,15 +849,21 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				__( 'Message to be displayed when the user chooses to opt out of cart tracking.', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_gdpr_opt_out_msg_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_gdpr_settings',
 				array( __( '<br>Message to be displayed when the user chooses to opt out of cart tracking.</i>', 'woocommerce-abandoned-cart' ) )
+			);
+			add_settings_section(
+				'ac_lite_coupon_settings',                 // ID used to identify this section and with which to register options.
+				__( 'Coupon Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
+				array( $this, 'ac_lite_coupon_callback' ), // Callback used to render the description of the section.
+				'woocommerce_ac_page'                               // Page on which to add this section of options.
 			);
 			add_settings_field(
 				'wcal_delete_coupon_data',
 				__( 'Delete Coupons Automatically', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_deleting_coupon_data' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_coupon_settings',
 				array( __( 'Enable this setting if you want to completely remove the expired and used coupon code automatically every 15 days.', 'woocommerce-abandoned-cart' ) )
 			);
 			add_settings_field(
@@ -849,7 +871,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				__( 'Delete Coupons Manually', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_deleting_coupon_data_manually' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_coupon_settings',
 				array( __( 'If you want to completely remove the expired and used coupon code now then click on "Delete" button.', 'woocommerce-abandoned-cart' ) )
 			);
 			/**
@@ -926,6 +948,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			register_setting(
 				'woocommerce_ac_settings',
 				'ac_lite_track_guest_cart_from_cart_page'
+			);
+
+			register_setting( 
+				'woocommerce_ac_settings',
+				'wcal_enable_gdpr_consent'
 			);
 
 			register_setting(
@@ -1130,6 +1157,21 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			echo wp_kses_post( $html );
 		}
 
+		/**
+		 * Callback - Enable GDPR consent.
+		 *
+		 * @param array $args - Arguments.
+		 * @since 5.12.0
+		 */
+		public static function wcal_enable_gdpr_callback( $args ) {
+			$wcal_enable_gdpr = get_option( 'wcal_enable_gdpr_consent', '' );
+			$wcal_gdpr_status = isset( $wcal_enable_gdpr ) && '' === $wcal_enable_gdpr ? 'off' : 'on';
+			?>
+			<input type="checkbox" id="wcal_enable_gdpr_consent" name="wcal_enable_gdpr_consent" value="on" <?php echo checked( 'on', $wcal_gdpr_status, false ); ?> />
+			<label for="wcal_enable_gdpr_consent"> <?php echo esc_attr( $args[0] ); ?></label>
+			<a >
+			<?php
+		}
 		/**
 		 * Call back function for guest user cart capture message
 		 *
@@ -2544,7 +2586,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				if ( 'emailsettings' === $action ) {
 					// Save the field values.
 					?>
-					<p><?php esc_html_e( 'Change settings for sending email notifications to Customers, to Admin etc.', 'woocommerce-abandoned-cart' ); ?></p>
 					<div id="content">
 					<?php
 					$wcal_general_settings_class = '';
@@ -2598,6 +2639,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						<?php
 						if ( 'wcal_general_settings' === $section || '' === $section ) {
 							?>
+							<p><?php esc_html_e( 'Change settings for sending email notifications to Customers, to Admin etc.', 'woocommerce-abandoned-cart' ); ?></p>
 							<form method="post" action="options.php">
 								<?php settings_fields( 'woocommerce_ac_settings' ); ?>
 								<?php do_settings_sections( 'woocommerce_ac_page' ); ?>
@@ -2607,6 +2649,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							<?php
 						} elseif ( 'wcal_email_settings' === $section ) {
 							?>
+							<p><?php esc_html_e( 'Change settings for sending email notifications to Customers, to Admin etc.', 'woocommerce-abandoned-cart' ); ?></p>
 							<form method="post" action="options.php">
 								<?php settings_fields( 'woocommerce_ac_email_settings' ); ?>
 								<?php do_settings_sections( 'woocommerce_ac_email_page' ); ?>
@@ -4106,6 +4149,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
+		 * Callback for Coupon settings section.
+		 */
+		public static function ac_lite_coupon_callback() {}
+
+		/**
 		 * Option for deleting the plugin data upon uninstall.
 		 *
 		 * @param array $args Argument for adding field details.
@@ -4307,6 +4355,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_coupon_callback() {
 		}
 
+		/**
+		 * Callback for GDPR settings section.
+		 */
+		public static function ac_lite_gdpr_callback() {}
 	}
 }
 $woocommerce_abandon_cart = new woocommerce_abandon_cart_lite();
