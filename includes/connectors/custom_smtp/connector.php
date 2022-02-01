@@ -62,6 +62,7 @@ class Wcap_Custom_SMTP extends Wcap_Connector {
 		$this->wcap_define_plugin_properties();
 		$this->connector_url = WCAP_CUSTOMSMTP_PLUGIN_URL;
 		add_action( 'wp_ajax_wcap_save_connector_settings', array( &$this, 'wcap_save_connector_settings' ), 9 );
+		add_filter( 'wcap_basic_connectors_loaded', array( &$this, 'wcap_basic_connectors_loaded' ), 9, 1 );
 	}
 	/**
 	 * Function to define constans
@@ -86,6 +87,19 @@ class Wcap_Custom_SMTP extends Wcap_Connector {
 			define( 'WCAP_CUSTOMSMTP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 		}
 	}
+
+	/**
+	 * Function to re-arrange connectors list
+	 *
+	 * @param array $connector_list - list of connectors.
+	 */
+	public function wcap_basic_connectors_loaded( $connector_list ) {
+		$custom_smtp = $connector_list['wcap_custom_smtp'];
+		unset( $connector_list['wcap_custom_smtp'] );
+		$connector_list = array_merge( array( 'wcap_custom_smtp' => $custom_smtp ), $connector_list );
+		return $connector_list;
+	}
+
 	/**
 	 * Function to Add card in connector's main page.
 	 *
