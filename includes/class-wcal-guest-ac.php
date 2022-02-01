@@ -60,19 +60,28 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 				WCAL_PLUGIN_VERSION,
 				true
 			);
-
-			$guest_msg = get_option( 'wcal_guest_cart_capture_msg' );
+			$enable_gdpr = get_option( 'wcal_enable_gdpr_consent', '' );
+			$guest_msg   = get_option( 'wcal_guest_cart_capture_msg' );
 
 			$session_gdpr = wcal_common::wcal_get_cart_session( 'wcal_cart_tracking_refused' );
 			$show_gdpr    = isset( $session_gdpr ) && 'yes' == $session_gdpr ? false : true; // phpcs:ignore
 
 			$vars = array();
-			if ( isset( $guest_msg ) && '' !== $guest_msg ) {
+			if ( 'on' === $enable_gdpr ) {
+				$display_msg = isset( $guest_msg ) && '' !== $guest_msg ? $guest_msg : __( 'Saving your email and cart details helps us keep you up to date with this order.', 'woocommerce-abandoned-cart' );
+				$display_msg = apply_filters( 'wcal_gdpr_email_consent_guest_users', $display_msg );
+
+				$no_thanks = get_option( 'wcal_gdpr_allow_opt_out', '' );
+				$no_thanks = apply_filters( 'wcal_gdpr_opt_out_text', $no_thanks );
+
+				$opt_out_confirmation_msg = get_option( 'wcal_gdpr_opt_out_message', '' );
+				$opt_out_confirmation_msg = apply_filters( 'wcal_gdpr_opt_out_confirmation_text', $opt_out_confirmation_msg );
+
 				$vars = array(
 					'_show_gdpr_message'        => $show_gdpr,
-					'_gdpr_message'             => htmlspecialchars( get_option( 'wcal_guest_cart_capture_msg' ), ENT_QUOTES ),
-					'_gdpr_nothanks_msg'        => htmlspecialchars( get_option( 'wcal_gdpr_allow_opt_out' ), ENT_QUOTES ),
-					'_gdpr_after_no_thanks_msg' => htmlspecialchars( get_option( 'wcal_gdpr_opt_out_message' ), ENT_QUOTES ),
+					'_gdpr_message'             => htmlspecialchars( $display_msg, ENT_QUOTES ),
+					'_gdpr_nothanks_msg'        => htmlspecialchars( $no_thanks, ENT_QUOTES ),
+					'_gdpr_after_no_thanks_msg' => htmlspecialchars( $opt_out_confirmation_msg, ENT_QUOTES ),
 					'enable_ca_tracking'        => true,
 				);
 			}
@@ -283,7 +292,8 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 
 					$abandoned_cart_id = $wpdb->insert_id;
 					wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
-
+					wcal_common::wcal_add_checkout_link( $abandoned_cart_id );
+					wcal_common::wcal_run_webhook_after_cutoff( $abandoned_cart_id );
 					if ( is_multisite() ) {
 						// get main site's table prefix.
 						$main_prefix = $wpdb->get_blog_prefix( 1 );
@@ -330,6 +340,8 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 					if ( count( $get_abandoned_record ) > 0 ) {
 						$abandoned_cart_id = $get_abandoned_record[0]->id;
 						wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
+						wcal_common::wcal_add_checkout_link( $abandoned_cart_id );
+						wcal_common::wcal_run_webhook_after_cutoff( $abandoned_cart_id );
 					}
 
 					$wpdb->query( // phpcs:ignore

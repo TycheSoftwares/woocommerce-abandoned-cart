@@ -32,6 +32,12 @@ require_once 'includes/admin/class-wcal-abandoned-cart-details.php';
 require_once 'includes/admin/class-wcap-pro-settings.php';
 require_once 'includes/admin/class-wcap-pro-settings-callbacks.php';
 require_once 'includes/admin/class-wcap-add-cart-popup-modal.php';
+require_once 'includes/connectors/class-wcap-connectors-common.php';
+require_once 'includes/connectors/class-wcap-connector.php';
+require_once 'includes/connectors/class-wcap-display-connectors.php';
+require_once 'includes/class-wcap-integrations.php';
+require_once 'includes/wcal-functions.php';
+require_once 'includes/class-wcal-webhooks.php';
 
 load_plugin_textdomain( 'woocommerce-abandoned-cart', false, basename( dirname( __FILE__ ) ) . '/i18n/languages' );
 
@@ -613,7 +619,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`individual_use` enum('0','1') NOT NULL,
 		        `generate_unique_coupon_code` enum('0','1') NOT NULL,
 				PRIMARY KEY (`id`)
-				) $wcap_collate AUTO_INCREMENT=1"
+				) $wcap_collate AUTO_INCREMENT=1" // phpcs:ignore
 			);
 
 			$sent_table_name = $db_prefix . 'ac_sent_history_lite';
@@ -625,7 +631,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`sent_time` datetime NOT NULL,
 				`sent_email_id` text COLLATE utf8_unicode_ci NOT NULL,
 				PRIMARY KEY  (`id`)
-				) $wcap_collate AUTO_INCREMENT=1 "
+				) $wcap_collate AUTO_INCREMENT=1 " // phpcs:ignore
 			);
 
 			$ac_history_table_name = $db_prefix . 'ac_abandoned_cart_history_lite';
@@ -642,12 +648,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				`email_reminder_status` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				PRIMARY KEY (`id`)
-				) $wcap_collate"
+				) $wcap_collate" // phpcs:ignore
 			);
 
 			$guest_table        = $db_prefix . 'ac_guest_abandoned_cart_history_lite';
 			$result_guest_table = $wpdb->get_results( // phpcs:ignore
-				"SHOW TABLES LIKE '$guest_table'"
+				"SHOW TABLES LIKE '$guest_table'" // phpcs:ignore
 			);
 
 			if ( 0 === count( $result_guest_table ) ) {
@@ -677,7 +683,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					`shipping_zipcode` double,
 					`shipping_charges` double,
 					PRIMARY KEY (`id`)
-					) $wcap_collate AUTO_INCREMENT=63000000"
+					) $wcap_collate AUTO_INCREMENT=63000000" // phpcs:ignore
 				);
 			}
 
@@ -751,7 +757,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			// First, we register a section. This is necessary since all future options must belong to a section.
 			add_settings_section(
 				'ac_lite_general_settings_section',                 // ID used to identify this section and with which to register options.
-				__( 'Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
+				__( 'Cart Abandonment Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
 				array( $this, 'ac_lite_general_options_callback' ), // Callback used to render the description of the section.
 				'woocommerce_ac_page'                               // Page on which to add this section of options.
 			);
@@ -801,12 +807,28 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				array( __( 'Enable tracking of abandoned products & carts even if customer does not visit the checkout page or does not enter any details on the checkout page like Name or Email. Tracking will begin as soon as a visitor adds a product to their cart and visits the cart page.', 'woocommerce-abandoned-cart' ) )
 			);
 
+			add_settings_section(
+				'ac_lite_gdpr_settings',                 // ID used to identify this section and with which to register options.
+				__( 'GDPR Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
+				array( $this, 'ac_lite_gdpr_callback' ), // Callback used to render the description of the section.
+				'woocommerce_ac_page'                               // Page on which to add this section of options.
+			);
+
+			add_settings_field(
+				'wcal_enable_gdpr_consent',
+				__( 'Enable GDPR Notice', 'woocommerce-abandoned-cart' ),
+				array( $this, 'wcal_enable_gdpr_callback' ),
+				'woocommerce_ac_page',
+				'ac_lite_gdpr_settings',
+				array( __( 'Enable this setting to display a notice informing customers that their email and cart data are saved to send abandonment reminders.', 'woocommerce-abandoned-cart' ) )
+			);
+
 			add_settings_field(
 				'wcal_guest_cart_capture_msg',
 				__( 'Message to be displayed for Guest users when tracking their carts', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_guest_cart_capture_msg_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_gdpr_settings',
 				array( __( '<br>In compliance with GDPR, add a message on the Checkout page to inform Guest users of how their data is being used.<br><i>For example: Your email address will help us support your shopping experience throughout the site. Please check our Privacy Policy to see how we use your personal data.</i>', 'woocommerce-abandoned-cart' ) )
 			);
 
@@ -815,7 +837,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				__( 'Message to be displayed for registered users when tracking their carts.', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_logged_cart_capture_msg_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_gdpr_settings',
 				array( __( '<br>In compliance with GDPR, add a message on the Shop & Product pages to inform Registered users of how their data is being used.<br><i>For example: Please check our Privacy Policy to see how we use your personal data.</i>', 'woocommerce-abandoned-cart' ) )
 			);
 
@@ -824,7 +846,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				__( 'Allow the visitor to opt out of cart tracking.', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_gdpr_allow_opt_out_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_gdpr_settings',
 				array( __( '<br>In compliance with GDPR, allow the site visitor (guests & registered users) to opt out from cart tracking. This message will be displayed in conjunction with the GDPR message above.</i>', 'woocommerce-abandoned-cart' ) )
 			);
 
@@ -833,15 +855,21 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				__( 'Message to be displayed when the user chooses to opt out of cart tracking.', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_gdpr_opt_out_msg_callback' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_gdpr_settings',
 				array( __( '<br>Message to be displayed when the user chooses to opt out of cart tracking.</i>', 'woocommerce-abandoned-cart' ) )
+			);
+			add_settings_section(
+				'ac_lite_coupon_settings',                 // ID used to identify this section and with which to register options.
+				__( 'Coupon Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
+				array( $this, 'ac_lite_coupon_callback' ), // Callback used to render the description of the section.
+				'woocommerce_ac_page'                               // Page on which to add this section of options.
 			);
 			add_settings_field(
 				'wcal_delete_coupon_data',
 				__( 'Delete Coupons Automatically', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_deleting_coupon_data' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_coupon_settings',
 				array( __( 'Enable this setting if you want to completely remove the expired and used coupon code automatically every 15 days.', 'woocommerce-abandoned-cart' ) )
 			);
 			add_settings_field(
@@ -849,7 +877,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				__( 'Delete Coupons Manually', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_deleting_coupon_data_manually' ),
 				'woocommerce_ac_page',
-				'ac_lite_general_settings_section',
+				'ac_lite_coupon_settings',
 				array( __( 'If you want to completely remove the expired and used coupon code now then click on "Delete" button.', 'woocommerce-abandoned-cart' ) )
 			);
 			/**
@@ -926,6 +954,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			register_setting(
 				'woocommerce_ac_settings',
 				'ac_lite_track_guest_cart_from_cart_page'
+			);
+
+			register_setting(
+				'woocommerce_ac_settings',
+				'wcal_enable_gdpr_consent'
 			);
 
 			register_setting(
@@ -1130,6 +1163,21 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			echo wp_kses_post( $html );
 		}
 
+		/**
+		 * Callback - Enable GDPR consent.
+		 *
+		 * @param array $args - Arguments.
+		 * @since 5.12.0
+		 */
+		public static function wcal_enable_gdpr_callback( $args ) {
+			$wcal_enable_gdpr = get_option( 'wcal_enable_gdpr_consent', '' );
+			$wcal_gdpr_status = isset( $wcal_enable_gdpr ) && '' === $wcal_enable_gdpr ? 'off' : 'on';
+			?>
+			<input type="checkbox" id="wcal_enable_gdpr_consent" name="wcal_enable_gdpr_consent" value="on" <?php echo checked( 'on', $wcal_gdpr_status, false ); ?> />
+			<label for="wcal_enable_gdpr_consent"> <?php echo esc_attr( $args[0] ); ?></label>
+			<a >
+			<?php
+		}
 		/**
 		 * Call back function for guest user cart capture message
 		 *
@@ -1384,6 +1432,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							);
 							$abandoned_cart_id = $wpdb->insert_id;
 							wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
+							wcal_common::wcal_add_checkout_link( $abandoned_cart_id );
+							wcal_common::wcal_run_webhook_after_cutoff( $abandoned_cart_id );
 						}
 					} elseif ( isset( $results[0]->abandoned_cart_time ) && $compare_time > $results[0]->abandoned_cart_time ) {
 						$updated_cart_info         = array();
@@ -1414,6 +1464,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 							$abandoned_cart_id = $wpdb->insert_id;
 							wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
+							wcal_common::wcal_add_checkout_link( $abandoned_cart_id );
+							wcal_common::wcal_run_webhook_after_cutoff( $abandoned_cart_id );
 						} else {
 							update_user_meta( $user_id, '_woocommerce_ac_modified_cart', md5( 'no' ) );
 						}
@@ -1443,6 +1495,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						if ( count( $get_abandoned_record ) > 0 ) {
 							$abandoned_cart_id = $get_abandoned_record[0]->id;
 							wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_cart_id );
+							wcal_common::wcal_add_checkout_link( $abandoned_cart_id );
+							wcal_common::wcal_run_webhook_after_cutoff( $abandoned_cart_id );
 						}
 					}
 				}
@@ -1493,12 +1547,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$user_type = 'GUEST';
 								$wpdb->query( //phpcs:ignore
 									$wpdb->prepare(
-										'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` (user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type) VALUES (%d, %s, %d, %s, %s)',
+										'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` (user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type, session_id, checkout_link) VALUES (%d, %s, %d, %s, %s, %s, %s)',
 										$user_id,
 										$updated_cart_info,
 										$current_time,
 										$cart_ignored,
-										$user_type
+										$user_type,
+										$get_cookie,
+										$results[0]->checkout_link
 									)
 								);
 								update_user_meta( $user_id, '_woocommerce_ac_modified_cart', md5( 'yes' ) );
@@ -1728,7 +1784,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			$track_link = isset( $_GET['wcal_action'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
-			if ( 'track_links' === $track_link ) {
+			if ( 'track_links' === $track_link || $track_link === 'checkout_link' ) {
 				if ( '' === session_id() ) {
 					// session has not started.
 					session_start();
@@ -1753,28 +1809,41 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$decode_coupon_code = '';
 				}
 
-				wcal_common::wcal_set_cart_session( 'email_sent_id', $email_sent_id );
-				set_transient( 'wcal_email_sent_id', $email_sent_id, 5 );
+				if ( 'track_links' === $track_link ) {
+					$email_sent_id     = 0;
+					$sent_email_id_pos = strpos( $link_decode, '&' );
+					$email_sent_id     = substr( $link_decode, 0, $sent_email_id_pos );
+
+					wcal_common::wcal_set_cart_session( 'email_sent_id', $email_sent_id );
+					set_transient( 'wcal_email_sent_id', $email_sent_id, 5 );
+
+					$get_ac_id_results = $wpdb->get_results( // phpcs:ignore
+						$wpdb->prepare(
+							'SELECT abandoned_order_id FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE id = %d',
+							$email_sent_id
+						)
+					);
+					$abandoned_id      = $get_ac_id_results[0]->abandoned_order_id;
+				} elseif ( 'checkout_link' === $track_link ) {
+					$abandoned_id     = 0;
+					$abandoned_id_pos = strpos( $link_decode, '&' );
+					$abandoned_id     = substr( $link_decode, 0, $abandoned_id_pos );
+					wcal_common::wcal_set_cart_session( 'wcal_recovered_cart', true );
+				}
 
 				$url_pos = strpos( $link_decode, '=' );
 				++$url_pos;
 				$url               = substr( $link_decode, $url_pos );
-				$get_ac_id_results = $wpdb->get_results( //phpcs:ignore
-					$wpdb->prepare(
-						'SELECT abandoned_order_id FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE id = %d',
-						$email_sent_id
-					)
-				);
 
-				wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $get_ac_id_results[0]->abandoned_order_id );
-				set_transient( 'wcal_abandoned_id', $get_ac_id_results[0]->abandoned_order_id, 5 );
+				wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_id );
+				set_transient( 'wcal_abandoned_id', $abandoned_id, 5 );
 
 				$get_user_results = array();
-				if ( count( $get_ac_id_results ) > 0 ) {
+				if ( $abandoned_id > 0 ) {
 					$get_user_results  = $wpdb->get_results( //phpcs:ignore
 						$wpdb->prepare(
 							'SELECT user_id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE id = %d',
-							$get_ac_id_results[0]->abandoned_order_id
+							$abandoned_id
 						)
 					);
 				}
@@ -2384,9 +2453,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			global $pagenow;
 
-			$page   = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-			$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-
+			$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+			$action  = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+			$section = isset( $_GET['wcal_section'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_section'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 			if ( 'woocommerce_ac_page' !== $page ) {
 				return;
 			} elseif ( 'woocommerce_ac_page' === $page && ( 'dashboard' === $action || '' === $action ) ) {
@@ -2404,6 +2473,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				wp_enqueue_style( 'jquery-ui-style', plugins_url( '/assets/css/admin/jquery-ui-smoothness.css', __FILE__ ), '', WCAL_PLUGIN_VERSION );
 				wp_enqueue_style( 'wcal-reports', plugins_url( '/assets/css/admin/wcal_reports.min.css', __FILE__ ), '', WCAL_PLUGIN_VERSION );
 
+			} elseif ( 'woocommerce_ac_page' === $page && 'emailsettings' === $action && 'wcap_connectors' === $section ) {
+				wp_enqueue_style( 'wcap-connectors', plugins_url( 'assets/css/admin/wcap_integrations_main.min.css', __FILE__ ), '', WCAL_PLUGIN_VERSION );
 			} elseif ( 'woocommerce_ac_page' === $page ) {
 
 				wp_enqueue_style( 'jquery-ui', plugins_url( '/assets/css/admin/jquery-ui.css', __FILE__ ), '', WCAL_PLUGIN_VERSION, false );
@@ -2544,7 +2615,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				if ( 'emailsettings' === $action ) {
 					// Save the field values.
 					?>
-					<p><?php esc_html_e( 'Change settings for sending email notifications to Customers, to Admin etc.', 'woocommerce-abandoned-cart' ); ?></p>
 					<div id="content">
 					<?php
 					$wcal_general_settings_class = '';
@@ -2552,6 +2622,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$wcap_sms_settings           = '';
 					$wcap_atc_settings           = '';
 					$wcap_fb_settings            = '';
+					$wcap_connectors             = '';
 
 					$section = isset( $_GET['wcal_section'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_section'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					switch ( $section ) {
@@ -2570,6 +2641,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							break;
 						case 'wcap_fb_settings':
 							$wcap_fb_settings = 'current';
+							break;
+						case 'wcap_connectors':
+							$wcap_connectors = 'current';
 							break;
 						default:
 							$wcal_general_settings_class = 'current';
@@ -2590,7 +2664,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_fb_settings" class="<?php echo esc_attr( $wcap_fb_settings ); ?>"><?php esc_html_e( 'Facebook Messenger', 'woocommerce-ac' ); ?> </a> |
 							</li>
 							<li>
-								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_sms_settings" class="<?php echo esc_attr( $wcap_sms_settings ); ?>"><?php esc_html_e( 'SMS', 'woocommerce-ac' ); ?> </a>
+								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_sms_settings" class="<?php echo esc_attr( $wcap_sms_settings ); ?>"><?php esc_html_e( 'SMS', 'woocommerce-ac' ); ?> </a> |
+							</li>
+							<li>
+								<a href="admin.php?page=woocommerce_ac_page&action=emailsettings&wcal_section=wcap_connectors" class="<?php echo esc_attr( $wcap_connectors ); ?>"><?php esc_html_e( 'Connectors', 'woocommerce-ac' ); ?> </a>
 							</li>
 							<?php do_action( 'wcal_add_custom_settings_tab', $section ); ?>
 						</ul>
@@ -2598,6 +2675,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						<?php
 						if ( 'wcal_general_settings' === $section || '' === $section ) {
 							?>
+							<p><?php esc_html_e( 'Change settings for sending email notifications to Customers, to Admin etc.', 'woocommerce-abandoned-cart' ); ?></p>
 							<form method="post" action="options.php">
 								<?php settings_fields( 'woocommerce_ac_settings' ); ?>
 								<?php do_settings_sections( 'woocommerce_ac_page' ); ?>
@@ -2607,6 +2685,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							<?php
 						} elseif ( 'wcal_email_settings' === $section ) {
 							?>
+							<p><?php esc_html_e( 'Change settings for sending email notifications to Customers, to Admin etc.', 'woocommerce-abandoned-cart' ); ?></p>
 							<form method="post" action="options.php">
 								<?php settings_fields( 'woocommerce_ac_email_settings' ); ?>
 								<?php do_settings_sections( 'woocommerce_ac_email_page' ); ?>
@@ -2620,6 +2699,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							WCAP_Pro_Settings::wcap_fb_settings();
 						} elseif ( 'wcap_sms_settings' === $section ) {
 							WCAP_Pro_Settings::wcap_sms_settings();
+						} elseif ( 'wcap_connectors' === $section ) {
+							WCAP_Pro_Settings::wcap_connectors();
 						}
 						do_action( 'wcal_add_custom_settings_tab_content', $section );
 						?>
@@ -3710,11 +3791,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						emailVal = jQuery( '#send_test_email' ).val();
 						const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;	
 						if ( !re.test( emailVal ) ) {	
-							jQuery( '#preview_email_sent_msg' ).html( '<?php echo __( 'Please enter a valid email.', 'woocommerce-abandoned-cart' ); ?>' );
+							jQuery( '#preview_email_sent_msg' ).html( '<?php echo esc_html__( 'Please enter a valid email.', 'woocommerce-abandoned-cart' ); ?>' );
 							jQuery( '#preview_email_sent_msg' ).show();
 							return false;		
 						}
-					
+
 						jQuery( '#preview_email_sent_msg' ).hide();
 
 						$( '.ajax_img' ).show();
@@ -4106,6 +4187,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
+		 * Callback for Coupon settings section.
+		 */
+		public static function ac_lite_coupon_callback() {}
+
+		/**
 		 * Option for deleting the plugin data upon uninstall.
 		 *
 		 * @param array $args Argument for adding field details.
@@ -4307,6 +4393,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_coupon_callback() {
 		}
 
+		/**
+		 * Callback for GDPR settings section.
+		 */
+		public static function ac_lite_gdpr_callback() {}
 	}
 }
 $woocommerce_abandon_cart = new woocommerce_abandon_cart_lite();
