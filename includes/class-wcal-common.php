@@ -999,6 +999,7 @@ class wcal_common { // phpcs:ignore
 			switch ( $active->day_or_hour ) {
 				case 'Minutes':
 					$template_freq = $active->frequency * 60;
+					break;
 				case 'Days':
 					$template_freq = $active->frequency * $day_seconds;
 					break;
@@ -1433,4 +1434,131 @@ class wcal_common { // phpcs:ignore
 		}
 	}
 
+		/**
+	 * Get the post meta data for AC Coupons.
+	 *
+	 * @param int $cart_id - Abandoned Cart ID.
+	 * @return array $return_coupons Return Coupon data.
+	 * @since 5.12.0
+	 */
+	public static function wcal_get_coupon_post_meta( $cart_id ) {
+
+		// Fetch the record from the DB.
+		$get_coupons = get_post_meta( $cart_id, '_woocommerce_ac_coupon', true );
+
+		// Create a return array.
+		$return_coupons = array();
+
+		// If any coupon have been applied, populate them in the return array.
+		if ( is_array( $get_coupons ) && count( $get_coupons ) > 0 ) {
+			foreach ( $get_coupons as $coupon_data ) {
+				$coupon_msg  = '';
+				$coupon_code = '';
+				if ( isset( $coupon_data['coupon_code'] ) ) {
+					$coupon_code = $coupon_data['coupon_code'];
+				}
+				if ( isset( $coupon_data['coupon_message'] ) ) {
+					$coupon_msg = $coupon_data['coupon_message'];
+				}
+
+				if ( '' !== $coupon_code && ! in_array( $coupon_code, $return_coupons, true ) ) {
+					$return_coupons[ $coupon_code ] = $coupon_msg;
+				}
+			}
+		}
+		return $return_coupons;
+	}
+
+	/**
+	 * Add a scheduled action for the webhok to be delivered once the cart cut off is reached.
+	 *
+	 * @param int $cart_id - Abandoned Cart ID.
+	 * @since 5.12.0
+	 */
+	public static function wcal_run_webhook_after_cutoff( $cart_id ) {
+		// check if the Webhook is present & active.
+		global $wpdb;
+
+		$get_webhook_status = $wpdb->get_var( // phpcs:ignore
+			$wpdb->prepare(
+				'SELECT status FROM `' . $wpdb->prefix . 'wc_webhooks` WHERE topic = %s',
+				'wcap_cart.cutoff'
+			)
+		);
+
+		if ( isset( $get_webhook_status ) && 'active' === $get_webhook_status ) {
+			// Reconfirm that the cart is either a registered user cart or a guest cart. The webhook will not be run for visitor carts.
+			$cart_data = $wpdb->get_results( // phpcs:ignore
+				$wpdb->prepare(
+					'SELECT user_id, user_type, cart_ignored, recovered_cart FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE id = %d',
+					$cart_id
+				)
+			);
+
+			$user_id   = isset( $cart_data[0]->user_id ) ? $cart_data[0]->user_id : 0;
+			$user_type = isset( $cart_data[0]->user_type ) ? $cart_data[0]->user_type : '';
+
+			if ( $user_id > 0 && '' != $user_type && '0' == $cart_data[0]->cart_ignored && $cart_data[0]->recovered_cart <= 0 ) { // phpcs:ignore
+				$cut_off = is_numeric( get_option( 'ac_lite_cart_abandoned_time', 10 ) ) ? get_option( 'ac_lite_cart_abandoned_time', 10 ) * 60 : 10 * 60;
+
+				if ( $cut_off > 0 ) {
+					// run the hook.
+					as_schedule_single_action( time() + $cut_off, 'wcap_webhook_after_cutoff', array( 'id' => $cart_id ) );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Update Checkout Link in cart history table.
+	 *
+	 * @param int $cart_id - Cart ID.
+	 * @since 8.7.0
+	 */
+	public static function wcal_add_checkout_link( $cart_id ) {
+
+		global $wpdb;
+		if ( version_compare( WOOCOMMERCE_VERSION, '2.3' ) < 0 ) {
+			global $woocommerce;
+			$checkout_page_link = $woocommerce->cart->get_checkout_url();
+		} else {
+			$checkout_page_id   = wc_get_page_id( 'checkout' );
+			$checkout_page_link = $checkout_page_id ? get_permalink( $checkout_page_id ) : '';
+		}
+
+		// Force SSL if needed.
+		$ssl_is_used = is_ssl() ? true : false;
+
+		if ( true === $ssl_is_used || 'yes' === get_option( 'woocommerce_force_ssl_checkout' ) ) {
+			$checkout_page_link = str_ireplace( 'http:', 'https:', $checkout_page_link );
+		}
+
+		$encoding_checkout = $cart_id . '&url=' . $checkout_page_link;
+		$validate_checkout = Wcal_Common::encrypt_validate( $encoding_checkout );
+
+		$checkout_link = get_option( 'siteurl' ) . '/?wcal_action=checkout_link&validate=' . $validate_checkout;
+
+		$wpdb->update( // phpcs:ignore
+			$wpdb->prefix . 'ac_abandoned_cart_history_lite',
+			array(
+				'checkout_link' => $checkout_link,
+			),
+			array(
+				'id' => $cart_id,
+			)
+		);
+	}
+
+	/**
+	 * This function is used to encode the string.
+	 *
+	 * @param string $validate String need to encrypt.
+	 * @return string $validate_encoded Encrypted string.
+	 * @since 5.0
+	 */
+	public static function encrypt_validate( $validate ) {
+		$crypt_key        = get_option( 'ac_security_key' );
+		$validate_encoded = Wcal_Aes_Ctr::encrypt( $validate, $crypt_key, 256 );
+		return( $validate_encoded );
+	}
 }
