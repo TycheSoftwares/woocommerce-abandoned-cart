@@ -12,7 +12,7 @@ $uid         = $admin_usr[0]->id;
 $admin_phone = get_user_meta( $uid, 'billing_phone', true );
 ?>
 
-<p><style type="text/css">
+<style rel="stylesheet" type="text/css">
 		* {
 			-webkit-font-smoothing: antialiased;
 		}
@@ -23,17 +23,19 @@ $admin_phone = get_user_meta( $uid, 'billing_phone', true );
 			padding: 0;
 		}
 		html {
-			width: 100%;
+			margin: auto;
+			display: table;
 		}
 		body {
 			margin: 0;
 			padding: 0;
 			color: #808080;
-			width: 100% !important;
 			font-family: Arial, Helvetica, sans-serif;
 			-webkit-text-size-adjust: 100%!important;
 			-ms-text-size-adjust: 100%!important;
 			-webkit-font-smoothing: antialiased!important;
+			display: table-cell;
+    		vertical-align: middle;
 		}
 		img {
 			outline: none;
@@ -116,11 +118,11 @@ $admin_phone = get_user_meta( $uid, 'billing_phone', true );
 				width: 100% !important;
 			}
 		}
-	</style></p><p><style type="text/css">
 		@import url(https://fonts.googleapis.com/css?family=Lato);
 		@import url(https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700);
 		@import url(https://fonts.googleapis.com/css?family=Cabin);
-	</style></p><table style="background-color: #f6f3f3; font-size: 15px; line-height: 20px; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#f6f3f3"><tbody><tr><td align="center" valign="top" width="100%"><!-- [if mso | IE]>      
+	</style>
+	<table style="background-color: #f6f3f3; font-size: 15px; line-height: 20px; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#f6f3f3"><tbody><tr><td align="center" valign="top" width="100%"><!-- [if mso | IE]>      
 	<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" align="center" style="width:600px;">        
 	<tr>          
 	<td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">      
