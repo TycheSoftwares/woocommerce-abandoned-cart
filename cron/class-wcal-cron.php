@@ -283,17 +283,17 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													}
 
 													$encoding_cart   = $email_sent_id . '&url=' . $cart_page_link . $utm;
-													$validate_cart   = $this->wcal_encrypt_validate( $encoding_cart );
+													$validate_cart   = wcal_common::wcal_encrypt_validate( $encoding_cart );
 													$cart_link_track = get_option( 'siteurl' ) . '/?wcal_action=track_links&validate=' . $validate_cart;
 
 													list( $email_body , $coupon_code_to_apply ) = wcal_common::wcal_check_and_replace_email_tag( $email_body, $wc_email_template );
 													if ( '' !== $coupon_code_to_apply ) {
-														$encypted_coupon_code = $this->wcal_encrypt_validate( $coupon_code_to_apply );
+														$encypted_coupon_code = wcal_common::wcal_encrypt_validate( $coupon_code_to_apply );
 														$cart_link_track     .= '&c=' . $encypted_coupon_code;
 													}
 
 													$email_body           = str_ireplace( '{{cart.link}}', $cart_link_track, $email_body );
-													$validate_unsubscribe = $this->wcal_encrypt_validate( $email_sent_id );
+													$validate_unsubscribe = wcal_common::wcal_encrypt_validate( $email_sent_id );
 													if ( count( $results_sent ) > 0 && isset( $results_sent[0]->sent_email_id ) ) {
 														$email_sent_id_address = $results_sent[0]->sent_email_id;
 													}
@@ -802,18 +802,6 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 			}
 
 			return false;
-		}
-		/**
-		 * This function is used to encode the validate string.
-		 *
-		 * @param string $validate String  to validate.
-		 * @return encoded data $validate_encoded.
-		 * @since 1.3
-		 */
-		public function wcal_encrypt_validate( $validate ) {
-			$crypt_key        = get_option( 'wcal_security_key' );
-			$validate_encoded = Wcal_Aes_Ctr::encrypt( $validate, $crypt_key, 256 );
-			return( $validate_encoded );
 		}
 
 		/**

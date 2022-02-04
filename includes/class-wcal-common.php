@@ -1534,7 +1534,7 @@ class wcal_common { // phpcs:ignore
 		}
 
 		$encoding_checkout = $cart_id . '&url=' . $checkout_page_link;
-		$validate_checkout = Wcal_Common::encrypt_validate( $encoding_checkout );
+		$validate_checkout = Wcal_Common::wcal_encrypt_validate( $encoding_checkout );
 
 		$checkout_link = get_option( 'siteurl' ) . '/?wcal_action=checkout_link&validate=' . $validate_checkout;
 
@@ -1554,10 +1554,10 @@ class wcal_common { // phpcs:ignore
 	 *
 	 * @param string $validate String need to encrypt.
 	 * @return string $validate_encoded Encrypted string.
-	 * @since 5.0
+	 * @since 1.3
 	 */
-	public static function encrypt_validate( $validate ) {
-		$crypt_key        = get_option( 'ac_security_key' );
+	public static function wcal_encrypt_validate( $validate ) {
+		$crypt_key        = get_option( 'wcal_security_key' );
 		$validate_encoded = Wcal_Aes_Ctr::encrypt( $validate, $crypt_key, 256 );
 		return( $validate_encoded );
 	}
