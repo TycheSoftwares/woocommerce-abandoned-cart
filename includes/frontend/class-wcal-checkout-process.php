@@ -51,8 +51,8 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 
 			$get_abandoned_id_of_order  = get_post_meta( $order_id, 'wcal_recover_order_placed', true );
 			$get_sent_email_id_of_order = get_post_meta( $order_id, 'wcal_recover_order_placed_sent_id', true );
-
-			if ( isset( $get_sent_email_id_of_order ) && '' !== $get_sent_email_id_of_order ) {
+			$recovered                  = wcal_common::wcal_get_cart_session( 'wcal_recovered_cart' );
+			if ( ( isset( $get_sent_email_id_of_order ) && '' !== $get_sent_email_id_of_order ) || $recovered ) {
 
 				// When Placed order button is clicked, we create post meta for that order, If that meta is found then update our plugin table for recovered cart.
 				$this->wcal_updated_recovered_cart_table( $get_abandoned_id_of_order, $order_id, $get_sent_email_id_of_order, $order );
@@ -163,13 +163,13 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 				// check if more than one reminder email has been sent.
 				$get_old_cart_id = $wpdb->get_col( // phpcs:ignore
 					$wpdb->prepare(
-						'SELECT abandoned_order_id FROM `$wcal_sent_email_table_name` WHERE id = %d',
+						'SELECT abandoned_order_id FROM `' . $wcal_sent_email_table_name . '` WHERE id = %d', // phpcs:ignore
 						$wcal_check_email_sent_to_cart
 					)
 				);
 
 				$get_ids = array();
-				if ( isset( $get_old_cart_id ) ) {
+				if ( isset( $get_old_cart_id ) && $get_old_cart_id > 0 ) {
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 					$get_ids = $wpdb->get_col(
 						$wpdb->prepare(
@@ -222,6 +222,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 				delete_post_meta( $order_id, 'wcal_recover_order_placed' );
 				delete_post_meta( $order_id, 'wcal_recover_order_placed_sent_id' );
 				delete_post_meta( $order_id, 'wcal_recovered_email_sent' );
+				do_action( 'wcal_cart_recovered', $cart_id, $order_id );
 			}
 		}
 
@@ -579,13 +580,14 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 			$email_sent_id         = wcal_common::wcal_get_cart_session( 'email_sent_id' );
 			$abandoned_order_id    = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
 			$wcal_user_id_of_guest = wcal_common::wcal_get_cart_session( 'user_id' );
+			$recovered             = wcal_common::wcal_get_cart_session( 'wcal_recovered_cart' );
 
 			$wcal_history_table_name    = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
 			$wcal_guest_table_name      = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
 			$wcal_sent_email_table_name = $wpdb->prefix . 'ac_sent_history_lite';
 
 			$abandoned_order_id_to_save = $abandoned_order_id;
-			if ( (int) $email_sent_id > 0 ) { // recovered cart.
+			if ( (int) $email_sent_id > 0 || $recovered ) { // recovered cart.
 
 				if ( '' == $abandoned_order_id || $abandoned_order_id == false ) { // phpcs:ignore
 
