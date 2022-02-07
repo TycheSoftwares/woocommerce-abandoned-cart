@@ -30,7 +30,18 @@ if ( ! class_exists( 'WCAP_Pro_Settings_Callbacks' ) ) {
 		 * SMS Settings section.
 		 */
 		public static function wcap_sms_settings_section_callback() {
-			echo esc_html_e( 'Configure your Twilio account settings below. Please note that due to some restrictions from Twilio, customers <i>may sometimes</i> receive delayed messages', 'woocommerce-abandoned-cart' );
+			$purchase_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=acupgradetopro&utm_medium=link&utm_campaign=AbandonCartLite';
+			?>
+			<p style="font-size:16px;">
+				<b><i>
+				<?php
+				// translators: %s Purchase Link.
+				printf( wp_kses_post( __( "Upgrade to <a href='%s' target='_blank'>Abandoned Cart Pro for WooCommerce</a> to enable the feature.", 'woocommerce-abandoned-cart' ) ), esc_url( $purchase_link ) );
+				?>
+				</i></b>
+			</p>
+			<?php
+			echo wp_kses_post( _e( 'Configure your Twilio account settings below. Please note that due to some restrictions from Twilio, customers <i>may sometimes</i> receive delayed messages', 'woocommerce-abandoned-cart' ) );
 		}
 
 		/**
@@ -103,6 +114,17 @@ if ( ! class_exists( 'WCAP_Pro_Settings_Callbacks' ) ) {
 		 * FB Section.
 		 */
 		public static function wcap_fb_description() {
+			$purchase_link = 'https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=acupgradetopro&utm_medium=link&utm_campaign=AbandonCartLite';
+			?>
+			<p style="font-size:16px;">
+				<b><i>
+				<?php
+				// translators: %s Purchase Link.
+				printf( wp_kses_post( __( "Upgrade to <a href='%s' target='_blank'>Abandoned Cart Pro for WooCommerce</a> to enable the feature.", 'woocommerce-abandoned-cart' ) ), esc_url( $purchase_link ) );
+				?>
+				</i></b>
+			</p>
+			<?php
 			$doc_link = 'https://www.tychesoftwares.com/docs/docs/abandoned-cart-pro-for-woocommerce/send-abandoned-cart-reminder-notifications-using-facebook-messenger';
 			echo wp_kses_post( __( "Configure the plugin to send notifications to Facebook Messenger using the settings below. Please refer the <a href='$doc_link' target='_blank'>following documentation</a> to complete the setup.", 'woocommerce-abandoned-cart' ) ); // phpcs:ignore
 		}
