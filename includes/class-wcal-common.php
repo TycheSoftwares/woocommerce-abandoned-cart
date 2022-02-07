@@ -1501,9 +1501,9 @@ class wcal_common { // phpcs:ignore
 			if ( $user_id > 0 && '' != $user_type && '0' == $cart_data[0]->cart_ignored && $cart_data[0]->recovered_cart <= 0 ) { // phpcs:ignore
 				$cut_off = is_numeric( get_option( 'ac_lite_cart_abandoned_time', 10 ) ) ? get_option( 'ac_lite_cart_abandoned_time', 10 ) * 60 : 10 * 60;
 
-				if ( $cut_off > 0 ) {
+				if ( $cut_off > 0 && ! as_has_scheduled_action( 'wcap_webhook_after_cutoff', array( 'id' => (int) $cart_id ) ) ) {
 					// run the hook.
-					as_schedule_single_action( time() + $cut_off, 'wcap_webhook_after_cutoff', array( 'id' => $cart_id ) );
+					as_schedule_single_action( time() + $cut_off, 'wcap_webhook_after_cutoff', array( 'id' => (int) $cart_id ) );
 				}
 			}
 		}
