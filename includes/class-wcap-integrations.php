@@ -63,7 +63,7 @@ class Wcap_Integrations {
 
 		?>
 		<h2><?php esc_html_e( 'Connectors', 'woocommerce-ac' ); ?></h2>
-		<p>
+		<p style='font-size:15px;'>
 		<?php
 		$upgrade_pro_msg = '<b><i>Upgrade to <a href="https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=acupgradetopro&utm_medium=link&utm_campaign=AbandonCartLite" target="_blank">Abandoned Cart Pro for WooCommerce</a> to enable any of the connectors and send the contact details and abandoned cart data to email marketing tools & CRMs.</i></b>';
 		echo wp_kses_post( $upgrade_pro_msg );
