@@ -647,6 +647,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`unsubscribe_link` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
 				`session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				`email_reminder_status` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+				`checkout_link` varchar(500) COLLATE utf8_unicode_ci NOT NULL
 				PRIMARY KEY (`id`)
 				) $wcap_collate" // phpcs:ignore
 			);
