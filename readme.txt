@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares, dhruvin
 Tags: cart abandonment, abandon cart, cart recovery, recover woocommerce cart, increase woocommerce conversion rate, increase sales with woocommerce
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.8.2
+Tested up to: 5.9
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -222,6 +222,13 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.12.0 ( 08.02.2022 ) =
+* Enhancement - Introduced 2 new webhooks that allows the admin to send cart abandonment and recovery data to delivery URLs.
+* Tweak - Introduced the ability to enable/disable GDPR consent.
+* Tweak - Introduced new Pro version features & settings.
+* Fix - Fixed compatibility with WP Better Emails plugin.
+* Fix - Made the default email template responsive.
+
 = 5.11.1 ( 18.11.2021 ) =
 * Fix - Email templates cannot be inserted/updated for updating users as DB changed are not being reflected correctly.
 
