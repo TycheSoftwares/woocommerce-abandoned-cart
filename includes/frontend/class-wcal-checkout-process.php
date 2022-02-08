@@ -55,7 +55,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 			if ( ( isset( $get_sent_email_id_of_order ) && '' !== $get_sent_email_id_of_order ) || $recovered ) {
 
 				// When Placed order button is clicked, we create post meta for that order, If that meta is found then update our plugin table for recovered cart.
-				$this->wcal_updated_recovered_cart_table( $get_abandoned_id_of_order, $order_id, $get_sent_email_id_of_order, $order );
+				$this->wcal_updated_recovered_cart( $get_abandoned_id_of_order, $order_id, $get_sent_email_id_of_order, $order );
 			} elseif ( '' !== $get_abandoned_id_of_order && isset( $get_abandoned_id_of_order ) ) {
 
 				// If order status is not pending or failed then, we  will delete the abandoned cart record. Post meta will be created only if the cut off time has been reached.
@@ -125,9 +125,9 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 		 * @param integer  $wcal_check_email_sent_to_cart - ID of the record in the Email Sent History table.
 		 * @param WC_Order $order - Order Details.
 		 *
-		 * @since 7.7
+		 * @since 5.3.0
 		 */
-		public function wcal_updated_recovered_cart_table( $cart_id, $order_id, $wcal_check_email_sent_to_cart, $order ) {
+		public function wcal_updated_recovered_cart( $cart_id, $order_id, $wcal_check_email_sent_to_cart, $order ) {
 
 			global $wpdb;
 
@@ -457,110 +457,6 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 			}
 
 			return $woo_order_status;
-		}
-
-		/**
-		 * Updates the Abandoned Cart History table as well as the
-		 * Email Sent History table to indicate the order has been
-		 * recovered
-		 *
-		 * @param integer  $cart_id - ID of the Abandoned Cart.
-		 * @param integer  $order_id - Recovered Order ID.
-		 * @param integer  $wcal_check_email_sent_to_cart - ID of the record in the Email Sent History table.
-		 * @param WC_Order $order - Order Details.
-		 *
-		 * @since 5.3.0
-		 */
-		public function wcal_updated_recovered_cart( $cart_id, $order_id, $wcal_check_email_sent_to_cart, $order ) {
-
-			global $wpdb;
-
-			$wcal_ac_table_name    = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
-			$wcal_email_sent_table = $wpdb->prefix . 'ac_sent_history_lite';
-			$wcal_guest_ac_table   = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
-
-			// check & make sure that the recovered cart details are not already updated.
-			$get_status = $wpdb->get_col( // phpcs:ignore
-				$wpdb->prepare(
-					'SELECT recovered_cart FROM `' . $wcal_ac_table_name . '` WHERE id = %d', // phpcs:ignore
-					$cart_id
-				)
-			);
-
-			$recovered_status = isset( $get_status[0] ) ? $get_status[0] : '';
-
-			if ( 0 == $recovered_status ) { // phpcs:ignore
-				// Update the cart history table.
-				$update_details = array(
-					'recovered_cart' => $order_id,
-					'cart_ignored'   => '1',
-				);
-
-				$current_user_id = get_current_user_id();
-
-				if ( wcal_common::wcal_get_cart_session( 'user_id' ) != $current_user_id && 0 != $current_user_id ) { // phpcs:ignore
-					$update_details['user_id'] = $current_user_id;
-				}
-
-				// check if more than one reminder email has been sent.
-				$get_old_cart_id = $wpdb->get_col( // phpcs:ignore
-					$wpdb->prepare(
-						'SELECT abandoned_order_id FROM `' . $wcal_email_sent_table . '` WHERE id = %d', // phpcs:ignore
-						$wcal_check_email_sent_to_cart
-					)
-				);
-
-				$get_ids = array();
-				if ( isset( $get_old_cart_id ) ) {
-					$get_ids = $wpdb->get_col( // phpcs:ignore
-						$wpdb->prepare(
-							'SELECT id FROM `' . $wcal_email_sent_table . '` WHERE abandoned_order_id = %d', // phpcs:ignore
-							$get_old_cart_id
-						)
-					);
-				}
-
-				$update_sent_history = array();
-
-				if ( '' !== get_post_meta( $order_id, 'wcal_abandoned_timestamp', true ) ) {
-					$update_details['abandoned_cart_time'] = get_post_meta( $order_id, 'wcal_abandoned_timestamp', true );
-
-					$update_sent_history['abandoned_order_id'] = $cart_id;
-
-					delete_post_meta( $order_id, 'wcal_abandoned_timestamp', $update_details['abandoned_cart_time'] );
-				}
-
-				$wpdb->update( // phpcs:ignore
-					$wcal_ac_table_name,
-					$update_details,
-					array( 'id' => $cart_id )
-				);
-
-				// update the email sent history table.
-				if ( is_array( $get_ids ) && count( $get_ids ) > 1 ) {
-					$list_ids = implode( ',', $get_ids );
-					$wpdb->query( // phpcs:ignore
-						$wpdb->prepare(
-							'UPDATE `' . $wcal_email_sent_table . '` SET abandoned_order_id = %d WHERE id IN (%s)', // phpcs:ignore
-							$cart_id,
-							$list_ids
-						)
-					);
-				} elseif ( isset( $update_sent_history['abandoned_order_id'] ) ) {
-					$wpdb->update( // phpcs:ignore
-						$wcal_email_sent_table,
-						$update_sent_history,
-						array( 'id' => $wcal_check_email_sent_to_cart )
-					);
-				}
-
-				// Add Order Note.
-				$order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
-				delete_post_meta( $order_id, 'wcal_abandoned_cart_id' );
-				delete_post_meta( $order_id, 'wcal_recover_order_placed' );
-				delete_post_meta( $order_id, 'wcal_recover_order_placed_sent_id' );
-				delete_post_meta( $order_id, 'wcal_recovered_email_sent' );
-			}
 		}
 
 		/**
