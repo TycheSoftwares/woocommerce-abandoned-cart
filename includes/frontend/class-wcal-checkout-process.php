@@ -161,7 +161,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 				}
 
 				// check if more than one reminder email has been sent.
-				$get_old_cart_id = $wpdb->get_col( // phpcs:ignore
+				$get_old_cart_id = $wpdb->get_var( // phpcs:ignore
 					$wpdb->prepare(
 						'SELECT abandoned_order_id FROM `' . $wcal_sent_email_table_name . '` WHERE id = %d', // phpcs:ignore
 						$wcal_check_email_sent_to_cart
@@ -182,11 +182,26 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 				$update_sent_history = array();
 
 				if ( '' !== get_post_meta( $order_id, 'wcal_abandoned_timestamp', true ) ) {
-					$update_details['abandoned_cart_time'] = get_post_meta( $order_id, 'wcal_abandoned_timestamp', true );
-
+					$update_details['abandoned_cart_time']     = get_post_meta( $order_id, 'wcal_abandoned_timestamp', true );
 					$update_sent_history['abandoned_order_id'] = $cart_id;
 
 					delete_post_meta( $order_id, 'wcal_abandoned_timestamp', $update_details['abandoned_cart_time'] );
+					// update the email sent history table.
+					if ( is_array( $get_ids ) && count( $get_ids ) > 1 ) {
+						$list_ids = implode( ',', $get_ids );
+						// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+						$wpdb->query(
+							'UPDATE `' . $wcal_sent_email_table_name . "` SET abandoned_order_id = '" . (int) $cart_id . "' WHERE id IN (" . $list_ids . ")" // phpcs:ignore
+						);
+					} else {
+						$wpdb->update( // phpcs:ignore
+							$wcal_sent_email_table_name,
+							$update_sent_history,
+							array(
+								'id' => $wcal_check_email_sent_to_cart,
+							)
+						);
+					}
 				}
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 				$wpdb->update(
@@ -196,25 +211,6 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 						'id' => $cart_id,
 					)
 				);
-
-				// update the email sent history table.
-				if ( is_array( $get_ids ) && count( $get_ids ) > 1 ) {
-					$list_ids = implode( ',', $get_ids );
-					// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-					$wpdb->query(
-						'UPDATE `' . $wcal_sent_email_table_name . '` SET abandoned_order_id = %d WHERE id IN (%s)', // phpcs:ignore
-						(int) $cart_id,
-						$list_ids
-					);
-				} elseif ( isset( $update_sent_history['abandoned_order_id'] ) ) {
-					$wpdb->update( // phpcs:ignore
-						$wcal_sent_email_table_name,
-						$update_sent_history,
-						array(
-							'id' => $wcal_check_email_sent_to_cart,
-						)
-					);
-				}
 
 				// Add Order Note.
 				$order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
@@ -440,9 +436,9 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 						}
 					}
 				}
-				// in admin, return if status is not processing or completed without updating further. 
-				if ( is_admin() && isset ( $_POST['order_status'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-					$woo_order_status = sanitize_text_field( wp_unslash( $_POST['order_status'] ) );
+				// in admin, return if status is not processing or completed without updating further.
+				if ( is_admin() && isset( $_POST['order_status'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+					$woo_order_status = sanitize_text_field( wp_unslash( $_POST['order_status'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
 					if ( ! in_array( $woo_order_status, array( 'wc-processing', 'wc-completed' ) ) ) {
 						return $woo_order_status;
 					}
