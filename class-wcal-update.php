@@ -288,7 +288,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 			}
 			// 5.12.0
 			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM `' . $db_prefix . "ac_abandoned_cart_history_lite` LIKE 'checkout_link'" ) ) { // phpcs:ignore
-				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_abandoned_cart_history_lite ADD `checkout_link` varchar(200) NOT NULL AFTER `email_reminder_status`' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_abandoned_cart_history_lite ADD `checkout_link` varchar(500) NOT NULL AFTER `email_reminder_status`' ); // phpcs:ignore
 			}
 		}
 		/**
