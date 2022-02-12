@@ -3,7 +3,7 @@ name: "✨ New Enhancement"
 about: Suggest an idea for this project
 title: ''
 labels: enhancement
-assignees: Chetna1510
+assignees: Pinal
 
 ---
 
