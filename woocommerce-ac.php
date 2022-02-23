@@ -268,6 +268,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_action( 'woocommerce_before_cart_table', array( 'wcal_common', 'wcal_apply_direct_coupon_code' ) );
 			// Add coupon when user views checkout page (would not be added otherwise, unless user views cart first).
 			add_action( 'woocommerce_before_checkout_form', array( 'wcal_common', 'wcal_apply_direct_coupon_code' ) );
+			add_filter( 'woocommerce_email_from_address', array( __CLASS__, 'wcal_from_address_for_emails' ), 10, 3 );
+			add_filter( 'woocommerce_email_from_name', array( __CLASS__, 'wcal_from_name_for_emails' ), 10, 3 );
 		}
 
 		/**
@@ -1785,7 +1787,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			$track_link = isset( $_GET['wcal_action'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
-			if ( 'track_links' === $track_link || $track_link === 'checkout_link' ) {
+			if ( 'track_links' === $track_link || 'checkout_link' === $track_link ) {
 				if ( '' === session_id() ) {
 					// session has not started.
 					session_start();
@@ -1834,7 +1836,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 				$url_pos = strpos( $link_decode, '=' );
 				++$url_pos;
-				$url               = substr( $link_decode, $url_pos );
+				$url = substr( $link_decode, $url_pos );
 
 				wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_id );
 				set_transient( 'wcal_abandoned_id', $abandoned_id, 5 );
@@ -3931,6 +3933,34 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				);
 			}
 			wp_die();
+		}
+
+		/**
+		 * Set up from email address in emails sent by our plugin when WC template style is ON.
+		 *
+		 * @param str    $wp_admin_address - From email address set up in WP.
+		 * @param object $email - Email object.
+		 * @param str    $from_email - Email Address passed in.
+		 *
+		 * @since 5.13.0
+		 */
+		public static function wcal_from_address_for_emails( $wp_admin_address, $email, $from_email ) {
+			$from_address = '' == $email->title ? get_option( 'wcal_from_email' ) : $wp_admin_address; // phpcs:ignore
+			return $from_address;
+		}
+
+		/**
+		 * Set up from name in emails sent by our plugin when WC template style is ON.
+		 *
+		 * @param str    $wp_admin_name - From name set up in WP.
+		 * @param object $email - Email object.
+		 * @param str    $from_name_default - Name passed in.
+		 *
+		 * @since 5.13.0
+		 */
+		public static function wcal_from_name_for_emails( $wp_admin_name, $email, $from_name_default ) {
+			$from_name = '' == $email->title ? get_option( 'wcal_from_name' ) : $wp_admin_name; // phpcs:ignore
+			return $from_name;
 		}
 		/**
 		 * It will replace the test email data with the static content.
