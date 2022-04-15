@@ -1,7 +1,7 @@
 ﻿
 === Abandoned Cart Lite for WooCommerce ===
 Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares,
-Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions, Best abandoned cart plugin for WooCommerce, WooCommerce abandoned cart plugin free, Abandoned cart WooCommerce plugin, Best FREE abandoned cart WooCommerce plugin
+Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions, Best abandoned cart plugin for WooCommerce, WooCommerce abandoned cart plugin free, Abandoned cart WooCommerce plugin
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
 Tested up to: 5.9
@@ -12,6 +12,8 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.me/TycheSoftwares
 
 == Description ==
+
+###  Best FREE abandoned cart WooCommerce plugin
 
 According to experts, the average cart abandonment rate is around 70% to 75%. The reason for cart abandonment is different for each industry. If you want a rock-solid WooCommerce cart abandonment plugin that ticks all boxes in your [cart abandonment strategy](https://www.tychesoftwares.com/abandoned-cart-strategy/), the Abandoned Cart Lite for WooCommerce is the one for you. 
 
@@ -27,7 +29,7 @@ The FREE Abandoned Cart Lite for WooCommerce is bundled with all the essential f
 * A handy report showing the number of times a product was abandoned and recovered
 * Seven merge codes are available to help you send PERSONALIZED reminder emails
 
-> **This plugin works as described: the lite version doesn’t cut down in functionality. You can have your orders recovered and save on sales. Depending on what you are selling, this can be a few orders to justify ordering the full package – i’m only a few away!**
+> **This plugin works as described: the lite version doesn’t cut down in functionality. You can have your orders recovered and save on sales. Depending on what you are selling, this can be a few orders to justify ordering the full package – I’m only a few away!**
 
 > **Very recommended!**
 > **- [jaysnl](https://wordpress.org/support/topic/great-support-and-value-buy-it/)**
