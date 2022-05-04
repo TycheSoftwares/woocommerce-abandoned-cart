@@ -1760,7 +1760,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					);
 					echo esc_html( 'Unsubscribed Successfully' );
 					sleep( 2 );
-					$url = get_option( 'siteurl' );
+					$url = apply_filters( 'wcal_unsubscribe_redirect', get_option( 'home' ) );
 					?>
 					<script>
 						location.href = "<?php echo esc_url( $url ); ?>";
