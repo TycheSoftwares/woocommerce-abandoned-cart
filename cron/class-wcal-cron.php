@@ -297,6 +297,8 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													$email_body                    = str_ireplace( '{{cart.unsubscribe}}', $unsubscribe_link_track, $email_body );
 													$var                           = '';
 													if ( preg_match( '{{products.cart}}', $email_body, $matched ) ) {
+														$img_header           = __( 'Item', 'woocommerce-abandoned-cart' );
+														$product_name_header  = __( 'Name', 'woocommerce-abandoned-cart' );
 														$qty_header           = __( 'Quantity', 'woocommerce-abandoned-cart' );
 														$price_header         = __( 'Price', 'woocommerce-abandoned-cart' );
 														$line_subtotal_header = __( 'Line Subtotal', 'woocommerce-abandoned-cart' );
@@ -306,8 +308,8 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 															$var = '<table width = 100% style="margin-right: auto; margin-left:auto;">
                                                                 <tr> <td colspan="5"> <h3 style="text-align:center">' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
                                                                 <tr>
-                                                                <th>' . __( 'Item', 'woocommerce-abandoned-cart' ) . '</th>
-                                                                <th>' . __( 'Name', 'woocommerce-abandoned-cart' ) . '</th>
+																<th>' . apply_filters( 'wcal_reminder_email_img_header', $img_header ) . '</th>
+                                                                <th>' . apply_filters( 'wcal_reminder_email_product_header', $product_name_header ) . '</th>
                                                                 <th>' . apply_filters( 'wcal_reminder_email_qty_header', $qty_header ) . '</th>
                                                                 <th>' . apply_filters( 'wcal_reminder_email_price_header', $price_header ) . '</th>
                                                                 <th>' . apply_filters( 'wcal_reminder_email_line_subtotal_header', $line_subtotal_header ) . '</th>
@@ -317,8 +319,8 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 															$var = '<table border="0" cellpadding="10" cellspacing="0" class="templateDataTable" style="margin-right: auto; margin-left:auto;">
                                                             <tr> <td colspan="5"> <h3 style="text-align:center">' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
                                                                 <tr>
-                                                                <th>' . __( 'Item', 'woocommerce-abandoned-cart' ) . '</th>
-                                                                <th>' . __( 'Name', 'woocommerce-abandoned-cart' ) . '</th>
+																<th>' . apply_filters( 'wcal_reminder_email_img_header', $img_header ) . '</th>
+                                                                <th>' . apply_filters( 'wcal_reminder_email_product_header', $product_name_header ) . '</th>
                                                                 <th>' . apply_filters( 'wcal_reminder_email_qty_header', $qty_header ) . '</th>
                                                                 <th>' . apply_filters( 'wcal_reminder_email_price_header', $price_header ) . '</th>
                                                                 <th>' . apply_filters( 'wcal_reminder_email_line_subtotal_header', $line_subtotal_header ) . '</th>
@@ -400,11 +402,12 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 																	}
 																	$product_name = $product_name_with_variable;
 																}
-
+																$image_col     = '<a href="' . $cart_link_track . '"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a>';
+																$prod_col      = '<a href="' . $cart_link_track . '">' . $product_name . '</a>';
 																$product_name  = apply_filters( 'wcal_reminder_email_after_product_name', $product_name, $v );
 																$var          .= '<tr align="center">
-                                                                    <td> <a href="' . $cart_link_track . '"> <img src="' . $image_url . '" alt="" height="42" width="42" /> </a></td>
-                                                                    <td> <a href="' . $cart_link_track . '">' . $product_name . '</a></td>
+																	<td> ' . apply_filters( 'wcal_reminder_email_image_value', $image_col ) . '</td>
+																	<td> ' . apply_filters( 'wcal_reminder_email_prod_value', $prod_col ) . '</td>
                                                                     <td> ' . apply_filters( 'wcal_reminder_email_qty_value', $quantity_total ) . '</td>
                                                                     <td> ' . apply_filters( 'wcal_reminder_email_price_value', $item_subtotal ) . '</td>
                                                                     <td> ' . apply_filters( 'wcal_reminder_email_line_subtotal_value', $item_total_display ) . '</td>
