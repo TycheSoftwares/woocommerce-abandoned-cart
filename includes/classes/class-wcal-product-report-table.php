@@ -177,7 +177,7 @@ class WCAL_Product_Report_Table extends WP_List_Table {
 			foreach ( $chunck_array_value as $k => $v ) {
 				$return_product_report[ $i ] = new stdClass();
 				$prod_name                   = get_post( $k );
-				if ( null !== $prod_name || '' !== $prod_name ) {
+				if ( $prod_name ) {
 					$product_name    = $prod_name->post_title;
 					$abandoned_count = $v;
 					$recover         = array_count_values( $recover_product_array );
