@@ -44,7 +44,10 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 				$blog_list = get_sites();
 				foreach ( $blog_list as $blog_list_key => $blog_list_value ) {
-					add_blog_option( $blog_id, 'wcal_db_version', '5.10.0' ); // This version number should not be changed. Issue #786.
+					if ( $blog_list_value->blog_id > 1 ) { // child sites.
+						$blog_id = $blog_list_value->blog_id;
+						add_blog_option( $blog_id, 'wcal_db_version', '5.10.0' ); // This version number should not be changed. Issue #786.
+					}
 				}
 			} else { // single site.
 				add_option( 'wcal_db_version', '5.10.0' ); // This version number should not be changed. Issue #786.
