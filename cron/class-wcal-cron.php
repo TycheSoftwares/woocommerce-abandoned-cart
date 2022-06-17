@@ -275,7 +275,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 														$cart_page_id   = wc_get_page_id( 'cart' );
 														$cart_page_link = $cart_page_id ? get_permalink( $cart_page_id ) : '';
 													}
-
+													$cart_page_link  = apply_filters( 'wcal_cart_link_email_before_encoding', $cart_page_link, $value->id );
 													$encoding_cart   = $email_sent_id . '&url=' . $cart_page_link . $utm;
 													$validate_cart   = wcal_common::wcal_encrypt_validate( $encoding_cart );
 													$cart_link_track = get_option( 'siteurl' ) . '/?wcal_action=track_links&validate=' . $validate_cart;
