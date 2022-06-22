@@ -452,7 +452,8 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 				self::$recovered_count = count( $ids );
 
 				foreach ( $ids as $order_id ) {
-					$amount += get_post_meta( $order_id, '_order_total', true );
+					$order_total = (float) get_post_meta( $order_id, '_order_total', true );
+					$amount     += round( $order_total, 2 );
 				}
 			}
 			return $amount;
