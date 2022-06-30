@@ -2809,6 +2809,20 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$day_or_hour     = isset( $_POST['day_or_hour'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['day_or_hour'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					$is_wc_template  = empty( $_POST['is_wc_template'] ) ? '0' : '1'; // phpcs:ignore WordPress.Security.NonceVerification
 
+					// If the link merge tags are prefixed with http://|https:// please remove it.
+					$rectify_links = array(
+						'http://{{cart.link}}',
+						'https://{{cart.link}}',
+						'http://{{cart.unsubscribe}}',
+						'https://{{cart.unsubscribe}}',
+						'http://{{shop.url}}',
+						'https://{{shop.url}}',
+					);
+					foreach ( $rectify_links as $merge_tag ) {
+						$start_tag                 = stripos( $merge_tag, '{{' );
+						$new_tag                   = substr( $merge_tag, $start_tag );
+						$woocommerce_ac_email_body = str_ireplace( $merge_tag, $new_tag, $woocommerce_ac_email_body );
+					}
 					if ( isset( $_POST['ac_settings_frm'] ) && 'save' === sanitize_text_field( wp_unslash( $_POST['ac_settings_frm'] ) ) ) { // phpcs:ignore 
 						$default_value       = 0;
 						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore 
