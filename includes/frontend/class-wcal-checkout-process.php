@@ -325,7 +325,8 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 						$blogname      = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 						$email_subject = __( 'New Customer Order - Recovered', 'woocommerce' );
 						$user_email    = get_option( 'admin_email' );
-						$headers[]     = 'From: Admin <' . $user_email . '>';
+						$send_to       = apply_filters( 'wcal_recovery_email_from', $user_email );
+						$headers[]     = 'From: Admin <' . $send_to . '>';
 						$headers[]     = 'Content-Type: text/html';
 						$user_email    = apply_filters( 'wcal_send_recovery_email_to', $user_email );
 						// Buffer.
