@@ -218,7 +218,7 @@ class wcal_common { // phpcs:ignore
 		global $wpdb;
 		$wcal_email_templates_count = 0;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		$wcal_email_templates_results = $wpdb->get_results( 'SELECT id, is_active, is_wc_template,frequency, day_or_hour FROM `' . $wpdb->prefix . 'ac_email_templates_lite`' );
+		$wcal_email_templates_results = $wpdb->get_results( 'SELECT id, is_active, is_wc_template,frequency, day_or_hour, coupon_code, generate_unique_coupon_code FROM `' . $wpdb->prefix . 'ac_email_templates_lite`' );
 
 		$wcal_email_templates_count = count( $wcal_email_templates_results );
 
@@ -237,10 +237,12 @@ class wcal_common { // phpcs:ignore
 				)
 			);
 
-			$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['is_activate']      = ( 1 === $wcal_email_templates_results_value->is_active ) ? 'Active' : 'Deactive';
-			$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['is_wc_template']   = ( 1 === $wcal_email_templates_results_value->is_wc_template ) ? 'Yes' : 'No';
-			$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['template_time']    = $wcal_template_time;
-			$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['total_email_sent'] = $wcal_template_sent_count;
+			$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['is_activate']                 = ( 1 === $wcal_email_templates_results_value->is_active ) ? 'Active' : 'Deactive';
+			$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['is_wc_template']              = ( 1 === $wcal_email_templates_results_value->is_wc_template ) ? 'Yes' : 'No';
+			$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['template_time']               = $wcal_template_time;
+			$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['total_email_sent']            = $wcal_template_sent_count;
+			$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['coupon_code']                 = $wcal_email_templates_results_value->coupon_code;
+			$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['generate_unique_coupon_code'] = $wcal_email_templates_results_value->generate_unique_coupon_code;
 		}
 
 		return $wcal_templates_data;
@@ -455,10 +457,6 @@ class wcal_common { // phpcs:ignore
 			'wcal_capture_visitors_cart'       => get_option( 'ac_lite_track_guest_cart_from_cart_page' ),
 			'wcal_delete_abandoned_order_days' => get_option( 'ac_lite_delete_abandoned_order_days' ),
 			'wcal_enable_gdpr_consent'         => get_option( 'wcal_enable_gdpr_consent' ),
-			'wcal_guest_cart_capture_msg'      => get_option( 'wcal_guest_cart_capture_msg' ),
-			'wcal_logged_cart_capture_msg'     => get_option( 'wcal_logged_cart_capture_msg' ),
-			'wcal_gdpr_allow_opt_out'          => get_option( 'wcal_gdpr_allow_opt_out' ),
-			'wcal_gdpr_opt_out_message'        => get_option( 'wcal_gdpr_opt_out_message' ),
 			'wcal_delete_coupon_data'          => get_option( 'wcal_delete_coupon_data' ),
 		);
 	}
