@@ -450,9 +450,16 @@ class wcal_common { // phpcs:ignore
 	private static function wcal_ts_get_all_plugin_options_values() {
 
 		return array(
-			'wcal_cart_cut_off_time'     => get_option( 'ac_lite_cart_abandoned_time' ),
-			'wcal_admin_recovery_email'  => get_option( 'ac_lite_email_admin_on_recovery' ),
-			'wcal_capture_visitors_cart' => get_option( 'ac_lite_track_guest_cart_from_cart_page' ),
+			'wcal_cart_cut_off_time'           => get_option( 'ac_lite_cart_abandoned_time' ),
+			'wcal_admin_recovery_email'        => get_option( 'ac_lite_email_admin_on_recovery' ),
+			'wcal_capture_visitors_cart'       => get_option( 'ac_lite_track_guest_cart_from_cart_page' ),
+			'wcal_delete_abandoned_order_days' => get_option( 'ac_lite_delete_abandoned_order_days' ),
+			'wcal_enable_gdpr_consent'         => get_option( 'wcal_enable_gdpr_consent' ),
+			'wcal_guest_cart_capture_msg'      => get_option( 'wcal_guest_cart_capture_msg' ),
+			'wcal_logged_cart_capture_msg'     => get_option( 'wcal_logged_cart_capture_msg' ),
+			'wcal_gdpr_allow_opt_out'          => get_option( 'wcal_gdpr_allow_opt_out' ),
+			'wcal_gdpr_opt_out_message'        => get_option( 'wcal_gdpr_opt_out_message' ),
+			'wcal_delete_coupon_data'          => get_option( 'wcal_delete_coupon_data' ),
 		);
 	}
 
