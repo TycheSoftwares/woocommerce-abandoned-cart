@@ -169,9 +169,9 @@ class Wcal_Delete_Handler {
 		global $wpdb;
 
 		$delete_ac_after_days = get_option( 'ac_lite_delete_abandoned_order_days', 365 );
-            if ( 0 == $delete_ac_after_days || ''  == $delete_ac_after_days ) { // If for some reason, it is blanks or 0, reset it to 365.
-                $delete_ac_after_days = '365';
-            }
+		if ( 0 === $delete_ac_after_days || '' === $delete_ac_after_days ) { // If for some reason, it is blanks or 0, reset it to 365.
+			$delete_ac_after_days = '365';
+		}
 		if ( '' !== $delete_ac_after_days && 0 !== $delete_ac_after_days ) {
 
 			$delete_ac_after_days_time = $delete_ac_after_days * 86400;
