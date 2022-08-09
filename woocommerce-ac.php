@@ -613,6 +613,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`is_wc_template` enum('0','1') NOT NULL,
 				`default_template` int(11) NOT NULL,
 				`wc_email_header` varchar(50) NOT NULL,
+				`email_type` varchar(50) DEFAULT 'abandoned_cart_email',
 				`coupon_code` varchar(50)  NOT NULL,
 				`discount` varchar(50)  NOT NULL,
 		        `discount_type` varchar(50)  NOT NULL,
@@ -1084,9 +1085,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public static function wcal_delete_days_validation( $input ) {
 			$output = '';
-			if ( '' == $input || ( is_numeric( $input ) && $input > 0 ) ) { // phpcS:ignore
+			if ( is_numeric( $input ) && $input > 0 ) {
 				$output = stripslashes( $input );
 			} else {
+				$output = '365';
 				add_settings_error( 'ac_lite_delete_abandoned_order_days', 'error found', __( 'Automatically Delete Abandoned Orders after X days has to be greater than 0.', 'woocommerce-abandoned-cart' ) );
 			}
 			return $output;
@@ -1100,7 +1102,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public static function wcal_delete_abandoned_orders_days_callback( $args ) {
 			// First, we read the option.
-			$delete_abandoned_order_days = get_option( 'ac_lite_delete_abandoned_order_days' );
+			$delete_abandoned_order_days = get_option( 'ac_lite_delete_abandoned_order_days', '365' );
+			if ( '' === $delete_abandoned_order_days ) {
+				$delete_abandoned_order_days = '365';
+			}
 			// Next, we update the name attribute to access this element's ID in the context of the display options array.
 			// We also access the show_header element of the options collection in the call to the checked() helper function.
 			printf(
