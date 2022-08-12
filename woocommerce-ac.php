@@ -2833,10 +2833,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore 
 						$unique_coupon       = ( empty( $_POST['unique_coupon'] ) ) ? '0' : '1'; // phpcs:ignore WordPress.Security.NonceVerification
 						$coupon_code_options = self::wcal_coupon_options();
+						$email_type          = 'abandoned_cart_email';
 
 						$insert_template_successfuly = $wpdb->query( //phpcs:ignore
 							$wpdb->prepare(
-								'INSERT INTO `' . $wpdb->prefix . 'ac_email_templates_lite` (subject, body, frequency, day_or_hour, template_name, is_wc_template, default_template, wc_email_header, coupon_code, individual_use, generate_unique_coupon_code, discount, discount_type, discount_shipping, discount_expiry ) VALUES ( %s, %s, %d, %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s )',
+								'INSERT INTO `' . $wpdb->prefix . 'ac_email_templates_lite` (subject, body, frequency, day_or_hour, template_name, is_wc_template, default_template, wc_email_header, coupon_code, individual_use, generate_unique_coupon_code, discount, discount_type, discount_shipping, discount_expiry, email_type ) VALUES ( %s, %s, %d, %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s )',
 								$woocommerce_ac_email_subject,
 								$woocommerce_ac_email_body,
 								$email_frequency,
@@ -2851,7 +2852,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$coupon_code_options['coupon_amount'],
 								$coupon_code_options['discount_type'],
 								$coupon_code_options['discount_shipping'],
-								$coupon_code_options['coupon_expiry']
+								$coupon_code_options['coupon_expiry'],
+								$email_type
 							)
 						);
 					}
@@ -2877,10 +2879,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$coupon_code_id      = isset( $_POST['coupon_ids'][0] ) ? sanitize_text_field( wp_unslash( implode( ',', $_POST['coupon_ids'] ) ) ) : ''; // phpcs:ignore 
 						$unique_coupon       = ( empty( $_POST['unique_coupon'] ) ) ? '0' : '1'; // phpcs:ignore 
 						$coupon_code_options = self::wcal_coupon_options();
+						$email_type          = 'abandoned_cart_email';
 
 						$update_template_successfuly = $wpdb->query( //phpcs:ignore
 							$wpdb->prepare(
-								'UPDATE `' . $wpdb->prefix . 'ac_email_templates_lite` SET subject = %s, body = %s, frequency = %d, day_or_hour = %s, template_name = %s, is_wc_template = %s, default_template = %d, wc_email_header = %s,coupon_code = %s, individual_use =%s, generate_unique_coupon_code = %s, discount = %s, discount_type = %s, discount_shipping =%s, discount_expiry = %s  WHERE id = %d',
+								'UPDATE `' . $wpdb->prefix . 'ac_email_templates_lite` SET subject = %s, body = %s, frequency = %d, day_or_hour = %s, template_name = %s, is_wc_template = %s, default_template = %d, wc_email_header = %s,coupon_code = %s, individual_use =%s, generate_unique_coupon_code = %s, discount = %s, discount_type = %s, discount_shipping =%s, discount_expiry = %s, email_type = %s  WHERE id = %d',
 								$woocommerce_ac_email_subject,
 								$woocommerce_ac_email_body,
 								$email_frequency,
@@ -2896,6 +2899,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$coupon_code_options['discount_type'],
 								$coupon_code_options['discount_shipping'],
 								$coupon_code_options['coupon_expiry'],
+								$email_type,
 								$id
 							)
 						);
