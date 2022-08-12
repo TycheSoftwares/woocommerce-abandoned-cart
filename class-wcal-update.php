@@ -181,6 +181,21 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 						$wpdb->query( "ALTER TABLE {$db_prefix}ac_abandoned_cart_history_lite ADD `session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL AFTER `unsubscribe_link`;" ); //phpcs:ignore
 					}
 				}
+				// Create new column for email type in templates.
+				if ( $wpdb->get_var( "SHOW TABLES LIKE '{$db_prefix}ac_email_templates_lite';" ) ) { //phpcs:ignore
+					if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$db_prefix}ac_email_templates_lite` LIKE 'email_type';" ) ) { //phpcs:ignore
+						$wpdb->query( "ALTER TABLE {$db_prefix}ac_email_templates_lite ADD `email_type` VARCHAR(50) DEFAULT 'abandoned_cart_email' NOT NULL;" ); //phpcs:ignore
+					}
+				}
+				if ( 'yes' !== get_option( 'wcal_email_type_setup', '' ) ) {
+					update_option( 'wcal_email_type_setup', 'yes' );
+					$wpdb->update(//phpcs:ignore
+						$db_prefix . 'ac_email_templates_lite',
+						array(
+							'email_type' => 'abandoned_cart_email',
+						)
+					);
+				}
 
 				/**
 				 * We have moved email templates fields in the setings section. SO to remove that fields column fro the db we need it.
