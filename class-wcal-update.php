@@ -184,7 +184,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				// Create new column for email type in templates.
 				if ( $wpdb->get_var( "SHOW TABLES LIKE '{$db_prefix}ac_email_templates_lite';" ) ) { //phpcs:ignore
 					if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$db_prefix}ac_email_templates_lite` LIKE 'email_type';" ) ) { //phpcs:ignore
-						$wpdb->query( "ALTER TABLE {$db_prefix}ac_email_templates_lite ADD `email_type` VARCHAR(50) DEFAULT 'abandoned_cart_email' NOT NULL;" ); //phpcs:ignore
+						$wpdb->query( "ALTER TABLE {$db_prefix}ac_email_templates_lite ADD `email_type` VARCHAR(50) NOT NULL AFTER `id`;" ); //phpcs:ignore
 					}
 				}
 				if ( 'yes' !== get_option( 'wcal_email_type_setup', '' ) ) {
