@@ -73,6 +73,7 @@ if ( is_multisite() ) { // Multisite.
 			delete_blog_option( $blog_id_number, 'wcal_previous_version' );
 			delete_blog_option( $blog_id_number, 'wcal_gdpr_consent_migrated' );
 			delete_blog_option( $blog_id_number, 'wcal_enable_gdpr_consent' );
+			delete_blog_option( $blog_id_number, 'wcal_email_type_setup' );
 		} else {
 
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -151,3 +152,4 @@ delete_option( 'wcal_previous_version' );
 
 delete_option( 'wcal_gdpr_consent_migrated' );
 delete_option( 'wcal_enable_gdpr_consent' );
+delete_option( 'wcal_email_type_setup' );
