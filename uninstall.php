@@ -38,6 +38,8 @@ if ( is_multisite() ) { // Multisite.
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 			$wpdb->get_results( 'DROP TABLE ' . $sub_site_prefix . 'ac_guest_abandoned_cart_history_lite' ); //phpcs:ignore
 
+			$wpdb->query( "DELETE FROM `$sub_site_prefix" . "options` WHERE option_name LIKE 'wcal_template_%'" ); // phpcs:ignore
+
 			delete_blog_option( $blog_id_number, 'woocommerce_ac_email_body' );
 			delete_blog_option( $blog_id_number, 'ac_lite_cart_abandoned_time' );
 			delete_blog_option( $blog_id_number, 'ac_lite_email_admin_on_recovery' );
@@ -74,6 +76,11 @@ if ( is_multisite() ) { // Multisite.
 			delete_blog_option( $blog_id_number, 'wcal_gdpr_consent_migrated' );
 			delete_blog_option( $blog_id_number, 'wcal_enable_gdpr_consent' );
 			delete_blog_option( $blog_id_number, 'wcal_email_type_setup' );
+			delete_blog_option( $blog_id_number, 'wcal_add_utm_to_links' );
+			delete_blog_option( $blog_id_number, 'wcal_delete_coupon_data' );
+			delete_blog_option( $blog_id_number, 'wcal_gdpr_allow_opt_out' );
+			delete_blog_option( $blog_id_number, 'wcal_gdpr_opt_out_message' );
+			delete_blog_option( $blog_id_number, 'wcal_guest_user_id_altered' );
 		} else {
 
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -93,6 +100,8 @@ if ( is_multisite() ) { // Multisite.
 
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 			$wpdb->get_results( "DELETE FROM `$wpdb->prefix" . "usermeta` WHERE meta_key = '_woocommerce_ac_modified_cart'" ); //phpcs:ignore
+
+			$wpdb->query( "DELETE FROM `$wpdb->prefix" . "options` WHERE option_name LIKE 'wcal_template_%'" ); // phpcs:ignore
 		}
 	}
 } else { // Single site.
@@ -114,6 +123,8 @@ if ( is_multisite() ) { // Multisite.
 
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 	$wpdb->get_results( "DELETE FROM `$wpdb->prefix" . "usermeta` WHERE meta_key = '_woocommerce_ac_modified_cart'" ); //phpcs:ignore
+
+	$wpdb->query( "DELETE FROM `$wpdb->prefix" . "options` WHERE option_name LIKE 'wcal_template_%'" ); // phpcs:ignore
 }
 
 delete_option( 'woocommerce_ac_email_body' );
@@ -153,3 +164,8 @@ delete_option( 'wcal_previous_version' );
 delete_option( 'wcal_gdpr_consent_migrated' );
 delete_option( 'wcal_enable_gdpr_consent' );
 delete_option( 'wcal_email_type_setup' );
+delete_option( 'wcal_add_utm_to_links' );
+delete_option( 'wcal_delete_coupon_data' );
+delete_option( 'wcal_gdpr_allow_opt_out' );
+delete_option( 'wcal_gdpr_opt_out_message' );
+delete_option( 'wcal_guest_user_id_altered' );
