@@ -189,12 +189,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				}
 				if ( 'yes' !== get_option( 'wcal_email_type_setup', '' ) ) {
 					update_option( 'wcal_email_type_setup', 'yes' );
-					$wpdb->update(//phpcs:ignore
-						$db_prefix . 'ac_email_templates_lite',
-						array(
-							'email_type' => 'abandoned_cart_email',
-						)
-					);
+					$wpdb->query( 'UPDATE `' . $db_prefix . 'ac_email_templates_lite` SET email_type="abandoned_cart_email"' ); // phpcs:ignore
 				}
 
 				/**
