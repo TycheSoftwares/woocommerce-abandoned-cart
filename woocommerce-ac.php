@@ -2897,7 +2897,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$coupon_code_options['coupon_amount'],
 								$coupon_code_options['discount_type'],
 								$coupon_code_options['discount_shipping'],
-								$coupon_code_options['coupon_expiry']
+								$coupon_code_options['coupon_expiry'],
 								$id
 							)
 						);
