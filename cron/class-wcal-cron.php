@@ -582,7 +582,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 			$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_var( // phpcS:ignore
 				$wpdb->prepare(
 					"SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = 'wcal_abandoned_cart_id' AND meta_value = %d LIMIT 1", // phpcs:ignore
-					$abandoned_id
+					$wcal_cart_id
 				)
 			);
 
