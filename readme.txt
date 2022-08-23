@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares,
 Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions, Best abandoned cart plugin for WooCommerce, WooCommerce abandoned cart plugin free, Abandoned cart WooCommerce plugin
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 5.9
+Tested up to: 6.0.1
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -155,6 +155,22 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.13.0 ( 23.08.2022 ) =
+* Tweak - The plugin will now delete carts older than 365 days to ensure performance is not affected.
+* Tweak - Added a email type column in email templates database table. This will not result in any frontend changes for reminder email templates.
+* Tweak - Added hooks to change the sender and recipient email address for order recovery notifications.
+* Tweak - Added a hook to allow the site admin to change the cart recovery URL in reminder emails.
+* Tweak - Added hooks to modify the cart table in reminder emails.
+* Tweak - Performance improvements have been added in the action scheduler code run every 15 mins.
+* Tweak - Added a hook to change the URL the user is redirected to when unsubscribing from reminder emails.
+* Tweak - Updated the data tracked and sent from user sites for better data analysis and user behaviour.
+* Fix - From email address and user name is taken from WP Settings instead of plugin when WC template style headers are enabled.
+* Fix - WP Multisite installation compatibility.
+* Fix - An extra https:// was being added to cart recovery links in reminder emails occassionaly.
+* Fix - A fatal error was observed on rare occassions on the plugin dashboard.
+* Fix - A fatal error was observed on the Product Report tab.
+* Fix - Orphan record were being left by the plugin in the options table on uninstalling.
+
 = 5.12.0 ( 08.02.2022 ) =
 * Enhancement - Introduced 2 new webhooks that allows the admin to send cart abandonment and recovery data to delivery URLs.
 * Tweak - Introduced the ability to enable/disable GDPR consent.
