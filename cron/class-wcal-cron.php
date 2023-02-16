@@ -303,9 +303,11 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 														$price_header         = __( 'Price', 'woocommerce-abandoned-cart' );
 														$line_subtotal_header = __( 'Line Subtotal', 'woocommerce-abandoned-cart' );
 
+														$table_custom_style = '';
+														$table_custom_style = apply_filters( 'wcal_add_table_style_email', $table_custom_style );
 														if ( class_exists( 'WP_Better_Emails' ) ) {
 
-															$var = '<table width = 100% style="margin-right: auto; margin-left:auto;">
+															$var = '<table width = 100% style="margin-right: auto; margin-left:auto;' . $table_custom_style . '">
                                                                 <tr> <td colspan="5"> <h3 style="text-align:center">' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
                                                                 <tr>
 																<th>' . apply_filters( 'wcal_reminder_email_img_header', $img_header ) . '</th>
@@ -316,7 +318,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
                                                                 </tr>';
 														} else {
 
-															$var = '<table border="0" cellpadding="10" cellspacing="0" class="templateDataTable" style="margin-right: auto; margin-left:auto;">
+															$var = '<table border="0" cellpadding="10" cellspacing="0" class="templateDataTable" style="margin-right: auto; margin-left:auto;' . $table_custom_style . '">
                                                             <tr> <td colspan="5"> <h3 style="text-align:center">' . __( 'Your Shopping Cart', 'woocommerce-abandoned-cart' ) . '</h3> </td></tr>
                                                                 <tr>
 																<th>' . apply_filters( 'wcal_reminder_email_img_header', $img_header ) . '</th>

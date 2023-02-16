@@ -270,6 +270,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_action( 'woocommerce_before_checkout_form', array( 'wcal_common', 'wcal_apply_direct_coupon_code' ) );
 			add_filter( 'woocommerce_email_from_address', array( __CLASS__, 'wcal_from_address_for_emails' ), 10, 3 );
 			add_filter( 'woocommerce_email_from_name', array( __CLASS__, 'wcal_from_name_for_emails' ), 10, 3 );
+			// 5.14.0
+			if ( 'yes' === get_option( 'wcal_guest_users_manual_reset_needed', '' ) ) {
+				add_action( 'admin_notices', array( 'Wcal_Update', 'wcal_add_notice' ) );
+			}
 		}
 
 		/**
@@ -691,6 +695,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				);
 			}
 
+			$wcal_guest_user_id_altered = 0 === $blog_id ? get_option( 'wcal_guest_user_id_altered' ) : get_blog_option( $blog_id, 'wcal_guest_user_id_altered' );
+
+			// Alter Guest Table A_I value if needed.
+			if ( 'yes' !== $wcal_guest_user_id_altered ) {
+				Wcal_Update::wcal_reset_guest_user_id( $db_prefix, $blog_id, 1 );
+			}
 			// Default templates - function call to create default templates.
 			$check_table_empty = $wpdb->get_var( 'SELECT COUNT(*) FROM `' . $db_prefix . 'ac_email_templates_lite`' ); // phpcs:ignore
 
