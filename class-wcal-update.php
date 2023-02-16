@@ -405,6 +405,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 		 *
 		 * @param string $db_prefix - DB Prefix.
 		 * @param int    $blog_id - Blog ID (needed for multisites).
+		 *
 		 * @since 5.14.0
 		 */
 		public function wcal_reset_guest_user_id( $db_prefix, $blog_id ) {
@@ -437,6 +438,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 		 * @param int    $blog_id - Blog ID (needed for multisites).
 		 * @param int    $count - Number of times we tried to set the A_I to a correct value.
 		 * @return bool  Status - success|failure.
+		 *
 		 * @since 5.14.0
 		 */
 		public function wcal_confirm_guest_user_id( $db_prefix, $blog_id, $count ) {
@@ -479,6 +481,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 		/**
 		 * Add a notice in WP Admin
+		 *
 		 * @since 5.14.0
 		 */
 		public static function wcal_add_notice() {
