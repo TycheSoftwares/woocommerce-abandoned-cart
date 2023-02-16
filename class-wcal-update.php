@@ -118,21 +118,9 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				update_blog_option( $blog_id, 'wcal_db_version', WCAL_PLUGIN_VERSION );
 			}
 
-			/**
-			 * This is used to prevent guest users wrong Id. If guest users id is less then 63000000 then this code will
-			 * ensure that we will change the id of guest tables so it wont affect on the next guest users.
-			 */
-			if ( $wpdb->get_var( "SHOW TABLES LIKE '{$db_prefix}ac_guest_abandoned_cart_history_lite';" ) && 'yes' !== $wcal_guest_user_id_altered ) { //phpcs:ignore
-				$last_id = $wpdb->get_var( "SELECT max(id) FROM `{$db_prefix}ac_guest_abandoned_cart_history_lite`;" ); //phpcs:ignore
-				if ( null !== $last_id && $last_id <= 63000000 ) {
-					$wpdb->query( "ALTER TABLE {$db_prefix}ac_guest_abandoned_cart_history_lite AUTO_INCREMENT = 63000000;" ); //phpcs:ignore
-
-					if ( 0 === $blog_id ) {
-						update_option( 'wcal_guest_user_id_altered', 'yes' );
-					} else {
-						update_blog_option( $blog_id, 'wcal_guest_user_id_altered', 'yes' );
-					}
-				}
+			// 5.14.0 - Alter Guest Table Auto Increment value if needed.
+			if ( 'yes' !== $wcal_guest_user_id_altered ) {
+				self::wcal_reset_guest_user_id( $db_prefix, $blog_id );
 			}
 
 			self::wcal_alter_tables( $db_prefix, $blog_id );
@@ -410,6 +398,97 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 					update_blog_option( $blog_id, 'ac_lite_delete_redundant_queries', 'yes' );
 				}
 			}
+		}
+
+		/**
+		 * Check if the A_I value is set correctly for guest users table.
+		 *
+		 * @param string $db_prefix - DB Prefix.
+		 * @param int    $blog_id - Blog ID (needed for multisites).
+		 * @since 5.14.0
+		 */
+		public function wcal_reset_guest_user_id( $db_prefix, $blog_id ) {
+			global $wpdb;
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $db_prefix . "ac_guest_abandoned_cart_history_lite'" ) ) { // phpcs:ignore
+				$last_id = $wpdb->get_var( 'SELECT max(id) FROM `' . $db_prefix . 'ac_guest_abandoned_cart_history_lite`;' ); // phpcs:ignore
+				if ( null !== $last_id && $last_id <= 63000000 ) {
+					$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_guest_abandoned_cart_history_lite AUTO_INCREMENT = 63000000;' ); // phpcs:ignore
+					if ( 0 === $blog_id ) {
+						update_option( 'wcal_guest_users_manual_reset_needed', 'no' );
+					} else {
+						update_blog_option( $blog_id, 'wcal_guest_users_manual_reset_needed', 'no' );
+					}
+				}
+				$user_id_status = $this->wcal_confirm_guest_user_id( $db_prefix, $blog_id, $count );
+				if ( ! $user_id_status ) {
+					if ( 0 === $blog_id ) {
+						update_option( 'wcal_guest_users_manual_reset_needed', 'yes' );
+					} else {
+						update_blog_option( $blog_id, 'wcal_guest_users_manual_reset_needed', 'yes' );
+					}
+				}
+			}
+		}
+
+		/**
+		 * Check if the A_I value is set correctly for guest users table.
+		 *
+		 * @param string $db_prefix - DB Prefix.
+		 * @param int    $blog_id - Blog ID (needed for multisites).
+		 * @param int    $count - Number of times we tried to set the A_I to a correct value.
+		 * @return bool  Status - success|failure.
+		 * @since 5.14.0
+		 */
+		public function wcal_confirm_guest_user_id( $db_prefix, $blog_id, $count ) {
+			global $wpdb;
+
+			// Insert a Test Record.
+			$wpdb->insert( // phpcs:ignore
+				$db_prefix . 'ac_guest_abandoned_cart_history_lite',
+				array(
+					'email_id' => 'test@tychesoftwares.com',
+				)
+			);
+			// Fetch the record to confirm the User ID.
+			$last_id = $wpdb->get_var( 'SELECT max(id) FROM `' . $db_prefix . 'ac_guest_abandoned_cart_history_lite`;' ); // phpcs:ignore
+			if ( null !== $last_id && $last_id >= 63000000 ) { // If correct, delete the test record.
+				$wpdb->delete( // phpcs:ignore
+					$db_prefix . 'ac_guest_abandoned_cart_history_lite',
+					array(
+						'id'       => $last_id,
+						'email_id' => 'test@tychesoftwares.com',
+					)
+				);
+				if ( 0 === $blog_id ) {
+					update_option( 'wcal_guest_user_id_altered', 'yes' );
+				} else {
+					update_blog_option( $blog_id, 'wcal_guest_user_id_altered', 'yes' );
+				}
+				return true;
+			} else {
+				if ( 1 === $count ) {
+					$count += 1; // phpcs:ignore
+					$this->wcal_reset_guest_user_id( $db_prefix, $blog_id, $count );
+				} else {
+					return false;
+				}
+			}
+			return false;
+
+		}
+
+		/**
+		 * Add a notice in WP Admin
+		 * @since 5.14.0
+		 */
+		public static function wcal_add_notice() {
+			?>
+			<div class="notice notice-error">
+				<p>
+					<?php _e( 'There was an error creating the guest cart table for Abandoned Cart Lite for WooCommerce. Please contact the plugin author via <a href="mailto:support@tychesoftwares.freshdesk.com">email</a>', 'woocommerce-abandoned-cart' ); // phpcs:ignore?>
+				</p>
+			</div>
+			<?php
 		}
 	}
 }
