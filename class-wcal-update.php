@@ -405,10 +405,11 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 		 *
 		 * @param string $db_prefix - DB Prefix.
 		 * @param int    $blog_id - Blog ID (needed for multisites).
+		 * @param int    $count - Number of times we tried to set the A_I to a correct value.
 		 *
 		 * @since 5.14.0
 		 */
-		public function wcal_reset_guest_user_id( $db_prefix, $blog_id ) {
+		public static function wcal_reset_guest_user_id( $db_prefix, $blog_id, $count ) {
 			global $wpdb;
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $db_prefix . "ac_guest_abandoned_cart_history_lite'" ) ) { // phpcs:ignore
 				$last_id = $wpdb->get_var( 'SELECT max(id) FROM `' . $db_prefix . 'ac_guest_abandoned_cart_history_lite`;' ); // phpcs:ignore
@@ -420,7 +421,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 						update_blog_option( $blog_id, 'wcal_guest_users_manual_reset_needed', 'no' );
 					}
 				}
-				$user_id_status = $this->wcal_confirm_guest_user_id( $db_prefix, $blog_id, $count );
+				$user_id_status = self::wcal_confirm_guest_user_id( $db_prefix, $blog_id, $count );
 				if ( ! $user_id_status ) {
 					if ( 0 === $blog_id ) {
 						update_option( 'wcal_guest_users_manual_reset_needed', 'yes' );
@@ -441,7 +442,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 		 *
 		 * @since 5.14.0
 		 */
-		public function wcal_confirm_guest_user_id( $db_prefix, $blog_id, $count ) {
+		public static function wcal_confirm_guest_user_id( $db_prefix, $blog_id, $count ) {
 			global $wpdb;
 
 			// Insert a Test Record.
@@ -470,7 +471,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 			} else {
 				if ( 1 === $count ) {
 					$count += 1; // phpcs:ignore
-					$this->wcal_reset_guest_user_id( $db_prefix, $blog_id, $count );
+					self::wcal_reset_guest_user_id( $db_prefix, $blog_id, $count );
 				} else {
 					return false;
 				}
