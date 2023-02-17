@@ -120,7 +120,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 			// 5.14.0 - Alter Guest Table Auto Increment value if needed.
 			if ( 'yes' !== $wcal_guest_user_id_altered ) {
-				self::wcal_reset_guest_user_id( $db_prefix, $blog_id );
+				self::wcal_reset_guest_user_id( $db_prefix, $blog_id, 1 );
 			}
 
 			self::wcal_alter_tables( $db_prefix, $blog_id );
