@@ -335,11 +335,12 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 						wc_get_template(
 							'emails/admin-new-order.php',
 							array(
-								'order'         => $order,
-								'email_heading' => $email_heading,
-								'sent_to_admin' => false,
-								'plain_text'    => false,
-								'email'         => true,
+								'order'              => $order,
+								'email_heading'      => $email_heading,
+								'additional_content' => false,
+								'sent_to_admin'      => false,
+								'plain_text'         => false,
+								'email'              => true,
 							)
 						);
 						// Get contents.
