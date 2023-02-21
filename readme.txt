@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares,
 Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions, Best abandoned cart plugin for WooCommerce, WooCommerce abandoned cart plugin free, Abandoned cart WooCommerce plugin
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 6.0.1
+Tested up to: 6.1.1
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -155,6 +155,10 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.14.0 ( 21.02.2023 ) =
+* Tweak - Added a filter to allow the user to add CSS styles to product table in reminder email.
+* Tweak - Added the ability to auto fix the guest cart history table auto_increment ID.
+
 = 5.13.0 ( 23.08.2022 ) =
 * Tweak - The plugin will now delete carts older than 365 days to ensure performance is not affected.
 * Tweak - Added a email type column in email templates database table. This will not result in any frontend changes for reminder email templates.
