@@ -504,7 +504,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					// wrap the content with the email template and then add styles.
 					$message = $email->style_inline( $mailer->wrap_message( $email_heading, $message ) );
 				}
-				echo $message; // phpcs:ignore
+				echo do_shortcode($message); // phpcs:ignore
 				exit;
 			}
 
@@ -521,7 +521,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$message = ob_get_clean();
 				}
 				// print the preview email.
-				echo $message; // phpcs:ignore
+				echo do_shortcode($message); // phpcs:ignore
 				exit;
 			}
 		}
