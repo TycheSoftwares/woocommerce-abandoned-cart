@@ -100,7 +100,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 			if ( 0 === $blog_id ) { // single site.
 				$wcal_guest_user_id_altered = get_option( 'wcal_guest_user_id_altered' );
-
+				$wcal_manual_reset_needed   = get_option( 'wcal_guest_users_manual_reset_needed' );
 				if ( ! get_option( 'wcal_new_default_templates' ) ) {
 					$default_template = new Wcal_Default_Template_Settings();
 					$default_template->wcal_create_default_templates( $db_prefix, $blog_id );
@@ -109,7 +109,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				update_option( 'wcal_db_version', WCAL_PLUGIN_VERSION );
 			} else { // multi site - child sites.
 				$wcal_guest_user_id_altered = get_blog_option( $blog_id, 'wcal_guest_user_id_altered' );
-
+				$wcal_manual_reset_needed   = get_blog_option( $blog_id, 'wcal_guest_users_manual_reset_needed' );
 				if ( ! get_blog_option( $blog_id, 'wcal_new_default_templates' ) ) {
 					$default_template = new Wcal_Default_Template_Settings();
 					$default_template->wcal_create_default_templates( $db_prefix, $blog_id );
@@ -120,6 +120,8 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 
 			// 5.14.0 - Alter Guest Table Auto Increment value if needed.
 			if ( 'yes' !== $wcal_guest_user_id_altered ) {
+				self::wcal_reset_guest_user_id( $db_prefix, $blog_id, 1 );
+			} elseif ( 'yes' === $wcal_manual_reset_needed ) { // Fix #860 - This should be removed in 5.15.0.
 				self::wcal_reset_guest_user_id( $db_prefix, $blog_id, 1 );
 			}
 
@@ -415,20 +417,32 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				$last_id = $wpdb->get_var( 'SELECT max(id) FROM `' . $db_prefix . 'ac_guest_abandoned_cart_history_lite`;' ); // phpcs:ignore
 				if ( null !== $last_id && $last_id <= 63000000 ) {
 					$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_guest_abandoned_cart_history_lite AUTO_INCREMENT = 63000000;' ); // phpcs:ignore
-					if ( 0 === $blog_id ) {
-						update_option( 'wcal_guest_users_manual_reset_needed', 'no' );
-					} else {
-						update_blog_option( $blog_id, 'wcal_guest_users_manual_reset_needed', 'no' );
-					}
+				} elseif ( $last_id > 63000000 ) {
+					self::wcal_update_option( $blog_id, 'wcal_guest_users_manual_reset_needed', 'no' );
+					return;
 				}
 				$user_id_status = self::wcal_confirm_guest_user_id( $db_prefix, $blog_id, $count );
 				if ( ! $user_id_status ) {
-					if ( 0 === $blog_id ) {
-						update_option( 'wcal_guest_users_manual_reset_needed', 'yes' );
-					} else {
-						update_blog_option( $blog_id, 'wcal_guest_users_manual_reset_needed', 'yes' );
-					}
+					self::wcal_update_option( $blog_id, 'wcal_guest_users_manual_reset_needed', 'yes' );
+				} else {
+					self::wcal_update_option( $blog_id, 'wcal_guest_users_manual_reset_needed', 'no' );
+					return;
 				}
+			}
+		}
+
+		/**
+		 * Update the option record.
+		 *
+		 * @param int $blog_id - Blog ID.
+		 * @param string $option_name - Option Name.
+		 * @param string $option_value - Option Value.
+		 */
+		public static function wcal_update_option( $blog_id, $option_name, $option_value ) {
+			if ( 0 === $blog_id ) {
+				update_option( $option_name, $option_value );
+			} else {
+				update_blog_option( $blog_id, $option_name, $option_value );
 			}
 		}
 
@@ -462,11 +476,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 						'email_id' => 'test@tychesoftwares.com',
 					)
 				);
-				if ( 0 === $blog_id ) {
-					update_option( 'wcal_guest_user_id_altered', 'yes' );
-				} else {
-					update_blog_option( $blog_id, 'wcal_guest_user_id_altered', 'yes' );
-				}
+				self::wcal_update_option( $blog_id, 'wcal_guest_user_id_altered', 'yes' );
 				return true;
 			} else {
 				if ( 1 === $count ) {
