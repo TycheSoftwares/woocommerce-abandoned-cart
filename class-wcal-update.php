@@ -434,7 +434,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 		/**
 		 * Update the option record.
 		 *
-		 * @param int $blog_id - Blog ID.
+		 * @param int    $blog_id - Blog ID.
 		 * @param string $option_name - Option Name.
 		 * @param string $option_value - Option Value.
 		 */
