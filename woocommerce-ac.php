@@ -10,7 +10,7 @@
  * Domain Path: /i18n/languages/
  * Requires PHP: 5.6
  * WC requires at least: 4.0.0
- * WC tested up to: 7.4.0
+ * WC tested up to: 7.5.1
  *
  * @package Abandoned-Cart-Lite-for-WooCommerce
  */

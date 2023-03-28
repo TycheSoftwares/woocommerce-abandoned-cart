@@ -155,6 +155,9 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+= 5.14.1 ( 28.03.2023 ) = 
+* Fix - Added a fix which corrects the notice display for guest tables when the plugin is successful in fixing the table ID.
+
 = 5.14.0 ( 21.02.2023 ) =
 * Tweak - Added a filter to allow the user to add CSS styles to product table in reminder email.
 * Tweak - Added the ability to auto fix the guest cart history table auto_increment ID.
