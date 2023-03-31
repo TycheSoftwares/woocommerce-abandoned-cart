@@ -286,7 +286,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 														$cart_link_track     .= '&c=' . $encypted_coupon_code;
 													}
 
-													$email_body           = str_ireplace( '{{cart.link}}', add_filters( 'wc_abandoned_cart_email_content_cart.link', $cart_link_track, false, $value ), $email_body );
+													$email_body           = str_ireplace( '{{cart.link}}', apply_filters( 'wc_abandoned_cart_email_content_cart.link', $cart_link_track, false, $value ), $email_body );
 													$validate_unsubscribe = wcal_common::wcal_encrypt_validate( $email_sent_id );
 													if ( count( $results_sent ) > 0 && isset( $results_sent[0]->sent_email_id ) ) {
 														$email_sent_id_address = $results_sent[0]->sent_email_id;
