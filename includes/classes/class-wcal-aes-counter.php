@@ -206,20 +206,20 @@ class Wcal_Aes_Ctr extends Wcal_Aes {
 	/**
 	 * Unsigned right shift function, since PHP has neither >>> operator nor unsigned ints
 	 *
-	 * @param a  number to be shifted (32-bit integer)
-	 * @param b  number of bits to shift a to the right (0..31)
+	 * @param int $a  number to be shifted (32-bit integer).
+	 * @param int $b  number of bits to shift a to the right (0..31).
 	 * @return   a right-shifted and zero-filled by b bits
 	 * @since 2.8
 	 */
 	private static function urs( $a, $b ) {
 		$a  = intval( $a ) & 0xffffffff;
-		$b  &= 0x1f; // (bounds check)
-		if ( $a & 0x80000000 && $b > 0 ) { // if left-most bit set
-			$a     = ( $a >> 1 ) & 0x7fffffff; // right-shift one bit & clear left-most bit
+		$b &= 0x1f; // (bounds check)
+		if ( $a & 0x80000000 && $b > 0 ) { // if left-most bit set.
+			$a     = ( $a >> 1 ) & 0x7fffffff; // right-shift one bit & clear left-most bit.
 			$check = $b - 1;
-			$a     = $a >> ( $check ); // remaining right-shifts
-		} else { // otherwise
-			$a = ( $a >> $b ); // use normal right-shift
+			$a     = $a >> ( $check ); // remaining right-shifts.
+		} else { // otherwise.
+			$a = ( $a >> $b ); // use normal right-shift.
 		}
 		return $a;
 	}
