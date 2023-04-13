@@ -155,7 +155,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 										 * condition will not call that function andthe reminder email will be sent.
 										 */
 
-										$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_results( // phpcs:ignore
+/*										$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_results( // phpcs:ignore
 											$wpdb->prepare(
 												'SELECT wpm.post_id, wpost.post_date, wpost.post_status FROM `' . $wpdb->prefix . 'postmeta` AS wpm
 												LEFT JOIN `' . $wpdb->prefix . 'posts` AS wpost
@@ -169,7 +169,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 												'shop_order'
 											)
 										);
-
+*/
 										// Check if any further orders have come from the user. If yes and the order status is Pending or Failed, email will be sent.
 										$wcal_check_cart_status = self::wcal_get_cart_status( $time_to_send_template_after, $cart_update_time, $value->user_id, $value->user_type, $value->id, $value->user_email );
 
@@ -601,6 +601,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 					$order = $order_obj[0];
 				}
 			}
+			
 			if ( isset( $order ) && is_object( $order ) ) {
 
 				$order_data = $order->get_data();
@@ -664,8 +665,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 		public static function wcal_update_cart_status( $cart_id, $wcal_cart_time, $time_to_send_template_after, $wcal_user_email, $order_details ) {
 			global $wpdb;
 
-			$current_time    = current_time( 'timestamp' ); // phpcs:ignore
-			$todays_date     = date( 'Y-m-d', $current_time ); // phpcs:ignore
+			$todays_date     = date( 'Y-m-d' ); // phpcs:ignore
 			$order_date      = $order_details['date_created'];
 			$order_date_time = $order_details['date_time_created'];
 			$order_status    = $order_details['status'];
@@ -679,7 +679,19 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 					$cart_id
 				)
 			);
-			if ( $order_date_str > $current_time ) {
+			if ( strtotime( $order_date_time ) > $wcal_cart_time ) {
+				// Mark the cart as ignored.
+				$wpdb->update( // phpcs:ignore
+					$wpdb->prefix . 'ac_abandoned_cart_history_lite',
+					array(
+						'cart_ignored' => '1',
+					),
+					array(
+						'id' => $cart_id,
+					)
+				);
+				return 1;
+			} elseif ( $order_date_str >= strtotime( $todays_date ) ) {
 				// In some case the cart is recovered but it is not marked as the recovered. So here we check if any record is found for that cart id if yes then update the record respectively.
 				$wcal_check_email_sent_to_cart = self::wcal_get_cart_sent_data( $cart_id );
 
@@ -735,18 +747,6 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 						)
 					);
 				}
-				return 1;
-			} elseif ( strtotime( $order_date_time ) > $wcal_cart_time ) {
-				// Mark the cart as ignored.
-				$wpdb->update( // phpcs:ignore
-					$wpdb->prefix . 'ac_abandoned_cart_history_lite',
-					array(
-						'cart_ignored' => '1',
-					),
-					array(
-						'id' => $cart_id,
-					)
-				);
 				return 1;
 			} elseif ( 'wc-pending' === $order_status || 'wc-failed' === $order_status ) { // Send the reminders.
 				return 0;
