@@ -155,22 +155,6 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 										 * condition will not call that function andthe reminder email will be sent.
 										 */
 
-										/*										
-											$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_results( // phpcs:ignore
-												$wpdb->prepare(
-													'SELECT wpm.post_id, wpost.post_date, wpost.post_status FROM `' . $wpdb->prefix . 'postmeta` AS wpm
-													LEFT JOIN `' . $wpdb->prefix . 'posts` AS wpost
-													ON wpm.post_id = wpost.ID
-													WHERE wpm.meta_key = %s AND
-													wpm.meta_value = %s AND wpm.post_id = wpost.ID AND
-													wpost.post_type = %s
-													ORDER BY wpm.post_id DESC LIMIT 1',
-													'wcal_recover_order_placed',
-													$value->id,
-													'shop_order'
-												)
-											);
-										*/
 										// Check if any further orders have come from the user. If yes and the order status is Pending or Failed, email will be sent.
 										$wcal_check_cart_status = self::wcal_get_cart_status( $time_to_send_template_after, $cart_update_time, $value->user_id, $value->user_type, $value->id, $value->user_email );
 
