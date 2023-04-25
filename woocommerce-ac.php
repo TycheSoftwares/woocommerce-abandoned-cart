@@ -4286,7 +4286,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_delete_expired_used_coupon_code() {
 
 			global $wpdb;
-			if ( ! current_user_can( 'manage_options' ) && ! wp_verify_nonce( $_POST['ajax_nonce'], 'delete_expired_used_coupon_code' ) ) { //phpcs:ignore
+			if ( ! current_user_can( 'manage_options' ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'delete_expired_used_coupon_code' ) ) { //phpcs:ignore
 				wp_send_json_error();
 			}
 

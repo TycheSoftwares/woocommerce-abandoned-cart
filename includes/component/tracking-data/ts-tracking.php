@@ -111,7 +111,7 @@ class Wcal_TS_tracking {
 	 * It will delete the tracking option from the database.
 	 */
 	public static function ts_reset_tracking_setting() {
-		if ( isset( $_GET['_wpnonce'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'reset_tracking' ) ) { //phpcs:ignore
+		if ( isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_GET['_wpnonce'] ), 'reset_tracking' ) ) { //phpcs:ignore
 			if ( isset( $_GET ['ts_action'] ) && 'wcal_reset_tracking' === $_GET ['ts_action'] ) {
 				delete_option( self::$plugin_prefix . '_allow_tracking' );
 				delete_option( 'ts_tracker_last_send' );
