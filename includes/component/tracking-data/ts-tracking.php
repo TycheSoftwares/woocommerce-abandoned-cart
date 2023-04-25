@@ -111,12 +111,13 @@ class Wcal_TS_tracking {
 	 * It will delete the tracking option from the database.
 	 */
 	public static function ts_reset_tracking_setting() {
-
-		if ( isset( $_GET ['ts_action'] ) && 'wcal_reset_tracking' == $_GET ['ts_action'] ) {
-			delete_option( self::$plugin_prefix . '_allow_tracking' );
-			delete_option( 'ts_tracker_last_send' );
-			$ts_url = remove_query_arg( 'ts_action' );
-			wp_safe_redirect( $ts_url );
+		if ( isset( $_GET['_wpnonce']) && wp_verify_nonce( $_GET['_wpnonce'], 'reset_tracking' ) ) {
+			if ( isset( $_GET ['ts_action'] ) && 'wcal_reset_tracking' == $_GET ['ts_action'] ) {
+				delete_option( self::$plugin_prefix . '_allow_tracking' );
+				delete_option( 'ts_tracker_last_send' );
+				$ts_url = remove_query_arg( 'ts_action' );
+				wp_safe_redirect( $ts_url );
+			}
 		}
 	}
 
@@ -157,6 +158,7 @@ class Wcal_TS_tracking {
 		// Next, we update the name attribute to access this element's ID in the context of the display options array
 		// We also access the show_header element of the options collection in the call to the checked() helper function
 		$ts_action = self::$ts_settings_page . '&amp;ts_action=' . self::$plugin_prefix . '_reset_tracking';
+		$ts_action = add_query_arg( '_wpnonce', wp_create_nonce( 'reset_tracking' ), $ts_action );
 		printf( '<a href="' . $ts_action . '" class="button button-large reset_tracking">Reset</a>' );
 
 		// Here, we'll take the first argument of the array and add it to a label next to the checkbox

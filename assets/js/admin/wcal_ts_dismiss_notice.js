@@ -27,6 +27,7 @@ jQuery(document).ready( function() {
 
 			jQuery.post( ajaxurl, {
 				action: 'wcal_delete_expired_used_coupon_code',
+				ajax_nonce: wcal_dismiss_params.ajax_nonce,
 			}, function() {
 
 			}).done(function( data ) {
