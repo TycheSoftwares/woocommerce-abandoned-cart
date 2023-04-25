@@ -57,7 +57,7 @@ class Wcal_Aes_Ctr extends Wcal_Aes {
 		$key = Wcal_Aes::cipher( $pwBytes, Wcal_Aes::keyExpansion( $pwBytes ) );
 		$key = array_merge( $key, array_slice( $key, 0, $nBytes - 16 ) ); // expand key to 16/24/32 bytes long
 
-		// initialise 1st 8 bytes of counter block with nonce (NIST SP800-38A §B.2): [0-1] = millisec,
+		// initialise 1st 8 bytes of counter block with nonce (NIST SP800-38A ï¿½B.2): [0-1] = millisec,
 		// [2-3] = random, [4-7] = seconds, giving guaranteed sub-ms uniqueness up to Feb 2106
 		$counterBlock = array();
 		$nonce        = floor( microtime( true ) * 1000 ); // timestamp: milliseconds since 1-Jan-1970
@@ -206,20 +206,20 @@ class Wcal_Aes_Ctr extends Wcal_Aes {
 	/**
 	 * Unsigned right shift function, since PHP has neither >>> operator nor unsigned ints
 	 *
-	 * @param a  number to be shifted (32-bit integer)
-	 * @param b  number of bits to shift a to the right (0..31)
+	 * @param int $a  number to be shifted (32-bit integer).
+	 * @param int $b  number of bits to shift a to the right (0..31).
 	 * @return   a right-shifted and zero-filled by b bits
 	 * @since 2.8
 	 */
 	private static function urs( $a, $b ) {
-		 $a &= 0xffffffff;
-		$b  &= 0x1f; // (bounds check)
-		if ( $a & 0x80000000 && $b > 0 ) { // if left-most bit set
-			$a     = ( $a >> 1 ) & 0x7fffffff; // right-shift one bit & clear left-most bit
+		$a  = intval( $a ) & 0xffffffff;
+		$b &= 0x1f; // (bounds check)
+		if ( $a & 0x80000000 && $b > 0 ) { // if left-most bit set.
+			$a     = ( $a >> 1 ) & 0x7fffffff; // right-shift one bit & clear left-most bit.
 			$check = $b - 1;
-			$a     = $a >> ( $check ); // remaining right-shifts
-		} else { // otherwise
-			$a = ( $a >> $b ); // use normal right-shift
+			$a     = $a >> ( $check ); // remaining right-shifts.
+		} else { // otherwise.
+			$a = ( $a >> $b ); // use normal right-shift.
 		}
 		return $a;
 	}
