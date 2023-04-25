@@ -2388,8 +2388,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					'wcal_admin_notices',
 					'wcal_dismiss_params',
 					array(
-						'ajax_url' => admin_url( 'admin-ajax.php' ),
-						'ajax_nonce'=> wp_create_nonce( 'delete_expired_used_coupon_code' ),
+						'ajax_url'   => admin_url( 'admin-ajax.php' ),
+						'ajax_nonce' => wp_create_nonce( 'delete_expired_used_coupon_code' ),
 					)
 				);
 				wp_register_script( 'enhanced', plugins_url() . '/woocommerce/assets/js/admin/wc-enhanced-select.js', array( 'jquery', 'select2' ), WCAL_PLUGIN_VERSION, false );
@@ -4286,7 +4286,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_delete_expired_used_coupon_code() {
 
 			global $wpdb;
-			if ( ! current_user_can( 'manage_options' ) && ! isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( $_POST['ajax_nonce'], 'delete_expired_used_coupon_code' ) ) {
+			if ( ! current_user_can( 'manage_options' ) && ! wp_verify_nonce( $_POST['ajax_nonce'], 'delete_expired_used_coupon_code' ) ) { //phpcs:ignore
 				wp_send_json_error();
 			}
 
