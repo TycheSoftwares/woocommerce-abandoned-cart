@@ -156,7 +156,7 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 
 == Changelog ==
 
-= 5.14.2 ( 26.04.2023 ) =
+= 5.14.2 ( 23.05.2023 ) =
 * Fix - Customers are receiving abandoned cart emails even after they purchased.
 * Fix - An error is displaying on cart page with PHP 8.1.
 * Fix - Cross-Site Request Forgery vulnerability in the plugin.
