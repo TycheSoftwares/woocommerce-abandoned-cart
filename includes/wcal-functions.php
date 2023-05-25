@@ -93,16 +93,12 @@ function wcal_get_product_details( $cart_data ) {
  * @return bool
  * @since  5.14.2
  */
-function is_hpos_enabled()
-{
-
+function is_hpos_enabled() {
 	if ( version_compare( WOOCOMMERCE_VERSION, '7.1.0' ) < 0 ) {
-        return false;
+		return false;
 	}
-
 	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-        return true;
-    }
-
-    return false;
+		return true;
+	}
+	return false;
 }
