@@ -14,6 +14,7 @@
  *
  * @package Abandoned-Cart-Lite-for-WooCommerce
  */
+
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
 require_once 'class-wcal-update.php';

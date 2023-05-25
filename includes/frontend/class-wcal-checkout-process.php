@@ -298,6 +298,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 				global $wpdb;
 
 				$wcal_history_table_name = $wpdb->prefix . 'ac_abandoned_cart_history_lite';
+				$order                   = wc_get_order( $order_id );
 				$wcal_abandoned_id       = $order->get_meta( 'wcal_abandoned_cart_id' );
 
 				$wpdb->update(  // phpcs:ignore

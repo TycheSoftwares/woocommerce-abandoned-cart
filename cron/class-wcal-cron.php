@@ -574,14 +574,13 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 								'key'     => 'wcap_abandoned_cart_id',
 								'value'   => $wcal_cart_id,
 								'compare' => 'EQUAL',
-							)
+							),
 						),
 					)
 				);
 				if ( ! empty( $get_order ) ) {
 					$order = $get_order[0];
 				}
-
 			} else { // Traditional CPT-based orders are in use.
 
 				$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_var( // phpcS:ignore
