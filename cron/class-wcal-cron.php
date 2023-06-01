@@ -565,13 +565,13 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 
 			$order_id         = 0;
 			$wcal_cart_status = false;
-			if ( is_hpos_enabled() ) { // HPOS usage is enabled.
+			if ( wcal_is_hpos_enabled() ) { // HPOS usage is enabled.
 				$get_order = wc_get_orders(
 					array(
 						'limit'      => 1,
-						'meta_query' => array(
+						'meta_query' => array( // phpcs:ignore
 							array(
-								'key'     => 'wcap_abandoned_cart_id',
+								'key'     => 'wcal_abandoned_cart_id',
 								'value'   => $wcal_cart_id,
 								'compare' => 'EQUAL',
 							),

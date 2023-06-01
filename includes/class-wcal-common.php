@@ -185,7 +185,7 @@ class wcal_common { // phpcs:ignore
 		foreach ( $wcal_data as $wcal_data_key => $wcal_data_value ) {
 
 			$order                        = wc_get_order( $wcal_data_value->recovered_cart );
-			$wcal_order_total             = $order->get_total();
+			$wcal_order_total             = $order ? $order->get_total() : 0;
 			$wcal_recovered_orders_amount = $wcal_recovered_orders_amount + $wcal_order_total;
 		}
 		return $wcal_recovered_orders_amount;

@@ -109,13 +109,9 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 							$wcal_history_table_name,
 							array( 'id' => $get_abandoned_id_of_order )
 						);
-						if ( is_hpos_enabled() ) {
 							$order = wc_get_order( $order_id );
 							$order->delete_meta_data( 'wcal_recover_order_placed', $get_abandoned_id_of_order );
 							$order->save();
-						} else {
-							delete_post_meta( $order_id, 'wcal_recover_order_placed', $get_abandoned_id_of_order );
-						}
 					}
 				}
 			}
@@ -191,12 +187,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 					$update_details['abandoned_cart_time']     = $order->get_meta( 'wcal_abandoned_timestamp' );
 					$update_sent_history['abandoned_order_id'] = $cart_id;
 
-					if ( is_hpos_enabled() ) {
-						$order->delete_meta_data( 'wcal_abandoned_timestamp', $update_details['abandoned_cart_time'] );
-						$order->save();
-					} else {
-						delete_post_meta( $order_id, 'wcal_abandoned_timestamp', $update_details['abandoned_cart_time'] );
-					}
+					$order->delete_meta_data( 'wcal_abandoned_timestamp', $update_details['abandoned_cart_time'] );
 					// update the email sent history table.
 					if ( is_array( $get_ids ) && count( $get_ids ) > 1 ) {
 						$list_ids = implode( ',', $get_ids );
@@ -225,18 +216,11 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 
 				// Add Order Note.
 				$order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
-				if ( is_hpos_enabled() ) {
-					$order->delete_meta_data( $order_id, 'wcal_abandoned_cart_id' );
-					$order->delete_meta_data( $order_id, 'wcal_recover_order_placed' );
-					$order->delete_meta_data( $order_id, 'wcal_recover_order_placed_sent_id' );
-					$order->delete_meta_data( $order_id, 'wcal_recovered_email_sent' );
-					$order->save();
-				} else {
-					delete_post_meta( $order_id, 'wcal_abandoned_cart_id' );
-					delete_post_meta( $order_id, 'wcal_recover_order_placed' );
-					delete_post_meta( $order_id, 'wcal_recover_order_placed_sent_id' );
-					delete_post_meta( $order_id, 'wcal_recovered_email_sent' );
-				}
+				$order->delete_meta_data( $order_id, 'wcal_abandoned_cart_id' );
+				$order->delete_meta_data( $order_id, 'wcal_recover_order_placed' );
+				$order->delete_meta_data( $order_id, 'wcal_recover_order_placed_sent_id' );
+				$order->delete_meta_data( $order_id, 'wcal_recovered_email_sent' );
+				$order->save();
 				do_action( 'wcal_cart_recovered', $cart_id, $order_id );
 			}
 		}
@@ -367,13 +351,8 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 						// Get contents.
 						$email_body = ob_get_clean();
 						wc_mail( $user_email, $email_subject, $email_body, $headers );
-
-						if ( is_hpos_enabled() ) {
-							$order->update_meta_data( 'wcal_recovered_email_sent', 'yes' );
-							$order->save();
-						} else {
-							update_post_meta( $order_id, 'wcal_recovered_email_sent', 'yes' );
-						}
+						$order->update_meta_data( 'wcal_recovered_email_sent', 'yes' );
+						$order->save();
 					}
 				}
 			}
@@ -448,12 +427,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 							$wcal_user_id = $ac_user_id_result[0]->user_id;
 
 							if ( $wcal_user_id >= 63000000 ) {
-								if ( is_hpos_enabled() ) {
-									$order->add_meta_data( 'wcal_abandoned_timestamp', $ac_user_id_result[0]->abandoned_cart_time );
-									$order->save();
-								} else {
-									add_post_meta( $order_id, 'wcal_abandoned_timestamp', $ac_user_id_result[0]->abandoned_cart_time );
-								}
+								$order->add_meta_data( 'wcal_abandoned_timestamp', $ac_user_id_result[0]->abandoned_cart_time );
 
 								$wpdb->delete( // phpcs:ignore
 									$wcal_guest_ac_table_name,
@@ -465,12 +439,8 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 								$wcal_ac_table_name,
 								array( 'id' => $get_abandoned_id_of_order )
 							);
-							if ( is_hpos_enabled() ) {
-								$order->delete_meta_data( 'wcal_recover_order_placed', $get_abandoned_id_of_order );
-								$order->save();
-							} else {
-								delete_post_meta( $order_id, 'wcal_recover_order_placed', $get_abandoned_id_of_order );
-							}
+							$order->delete_meta_data( 'wcal_recover_order_placed', $get_abandoned_id_of_order );
+							$order->save();
 						}
 					}
 				}
@@ -551,12 +521,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 						if ( is_array( $get_ac_id_guest_results ) && count( $get_ac_id_guest_results ) > 0 ) {
 							$abandoned_order_id_of_guest = $get_ac_id_guest_results[0]->id;
 
-							if ( is_hpos_enabled() ) {
-								$order->add_meta_data( 'wcal_abandoned_timestamp', $get_ac_id_guest_results[0]->abandoned_cart_time );
-								$order->save();
-							} else {
-								add_post_meta( $order_id, 'wcal_abandoned_timestamp', $get_ac_id_guest_results[0]->abandoned_cart_time );
-							}
+							$order->add_meta_data( 'wcal_abandoned_timestamp', $get_ac_id_guest_results[0]->abandoned_cart_time );
 
 							$wpdb->delete( // phpcs:ignore
 								$wcal_guest_table_name,
@@ -572,14 +537,8 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 					}
 				}
 
-				if ( is_hpos_enabled() ) {
-					$order->add_meta_data( 'wcal_recover_order_placed_sent_id', $email_sent_id );
-					$order->add_meta_data( $order_id, 'wcal_recover_order_placed', $abandoned_order_id );
-					$order->save();
-				} else {
-					add_post_meta( $order_id, 'wcal_recover_order_placed_sent_id', $email_sent_id );
-					add_post_meta( $order_id, 'wcal_recover_order_placed', $abandoned_order_id );
-				}
+				$order->add_meta_data( 'wcal_recover_order_placed_sent_id', $email_sent_id );
+				$order->add_meta_data( $order_id, 'wcal_recover_order_placed', $abandoned_order_id );
 			} elseif ( '' !== $abandoned_order_id ) {
 
 				if ( ( isset( $_POST['account_password'] ) && '' !== $_POST['account_password'] ) || // phpcs:ignore WordPress.Security.NonceVerification
@@ -599,12 +558,8 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 				}
 			}
 
-			if ( is_hpos_enabled() ) {
-				$order->add_meta_data( 'wcal_abandoned_cart_id', $abandoned_order_id_to_save );
-				$order->save();
-			} else {
-				add_post_meta( $order_id, 'wcal_abandoned_cart_id', $abandoned_order_id_to_save );
-			}
+			$order->add_meta_data( 'wcal_abandoned_cart_id', $abandoned_order_id_to_save );
+			$order->save();
 		}
 	}
 }

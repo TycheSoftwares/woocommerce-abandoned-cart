@@ -447,7 +447,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 				$order_time_format = date_i18n( get_option( 'time_format' ), $recovered_stamp );
 				$recovered_date    = "$order_date_format $order_time_format";
 
-				if ( is_hpos_enabled() ) { // HPOS usage is enabled.
+				if ( wcal_is_hpos_enabled() ) { // HPOS usage is enabled.
 					$order_url = admin_url( "admin.php?page=wc-orders&id=$recovered_order&action=edit" );
 				} else { // Traditional CPT-based orders are in use.
 					$order_url = admin_url( "post.php?post=$recovered_order&action=edit" );
