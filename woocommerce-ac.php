@@ -15,6 +15,8 @@
  * @package Abandoned-Cart-Lite-for-WooCommerce
  */
 
+use Automattic\WooCommerce\Utilities\OrderUtil;
+
 require_once 'class-wcal-update.php';
 require_once 'includes/class-wcal-guest-ac.php';
 require_once 'includes/class-wcal-default-template-settings.php';
@@ -193,6 +195,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			// WordPress Administration Menu.
 			add_action( 'admin_menu', array( &$this, 'wcal_admin_menu' ) );
+			add_action( 'before_woocommerce_init', array( &$this, 'wcal_custom_order_tables_compatibility' ), 999 );
 
 			// Actions to be done on cart update.
 			add_action( 'woocommerce_add_to_cart', array( &$this, 'wcal_store_cart_timestamp' ), PHP_INT_MAX );
@@ -588,6 +591,18 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				as_unschedule_action( 'woocommerce_ac_send_email_action' ); // Remove the scheduled action.
 			}
 			do_action( 'wcal_deactivate' );
+		}
+		/**
+		 * Sets the compatibility with Woocommerce HPOS.
+		 *
+		 * @since 5.14.2
+		 */
+		public static function wcal_custom_order_tables_compatibility() {
+
+			if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', 'woocommerce-abandoned-cart/woocommerce-ac.php', true );
+				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'orders_cache', 'woocommerce-abandoned-cart/woocommerce-ac.php', true );
+			}
 		}
 
 		/**
