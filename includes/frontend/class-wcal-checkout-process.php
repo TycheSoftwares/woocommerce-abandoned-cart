@@ -216,10 +216,10 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 
 				// Add Order Note.
 				$order->add_order_note( __( 'This order was abandoned & subsequently recovered.', 'woocommerce-abandoned-cart' ) );
-				$order->delete_meta_data( $order_id, 'wcal_abandoned_cart_id' );
-				$order->delete_meta_data( $order_id, 'wcal_recover_order_placed' );
-				$order->delete_meta_data( $order_id, 'wcal_recover_order_placed_sent_id' );
-				$order->delete_meta_data( $order_id, 'wcal_recovered_email_sent' );
+				$order->delete_meta_data( 'wcal_abandoned_cart_id' );
+				$order->delete_meta_data( 'wcal_recover_order_placed' );
+				$order->delete_meta_data( 'wcal_recover_order_placed_sent_id' );
+				$order->delete_meta_data( 'wcal_recovered_email_sent' );
 				$order->save();
 				do_action( 'wcal_cart_recovered', $cart_id, $order_id );
 			}
@@ -538,7 +538,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 				}
 
 				$order->add_meta_data( 'wcal_recover_order_placed_sent_id', $email_sent_id );
-				$order->add_meta_data( $order_id, 'wcal_recover_order_placed', $abandoned_order_id );
+				$order->add_meta_data( 'wcal_recover_order_placed', $abandoned_order_id );
 			} elseif ( '' !== $abandoned_order_id ) {
 
 				if ( ( isset( $_POST['account_password'] ) && '' !== $_POST['account_password'] ) || // phpcs:ignore WordPress.Security.NonceVerification
