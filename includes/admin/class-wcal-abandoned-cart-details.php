@@ -440,14 +440,18 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 			<?php
 			echo wp_kses_post( stripslashes( $wcal_abandoned_status ) );
 			if ( $recovered_order > 0 ) {
-				$order_post      = get_post( $recovered_order );
+				$order_post      = wc_get_order( $recovered_order );
 				$recovered_stamp = strtotime( $order_post->post_date );
 
 				$order_date_format = date_i18n( get_option( 'date_format' ), $recovered_stamp );
 				$order_time_format = date_i18n( get_option( 'time_format' ), $recovered_stamp );
 				$recovered_date    = "$order_date_format $order_time_format";
 
-				$order_url = admin_url( "post.php?post=$recovered_order&action=edit" );
+				if ( wcal_is_hpos_enabled() ) { // HPOS usage is enabled.
+					$order_url = admin_url( "admin.php?page=wc-orders&id=$recovered_order&action=edit" );
+				} else { // Traditional CPT-based orders are in use.
+					$order_url = admin_url( "post.php?post=$recovered_order&action=edit" );
+				}
 				echo wp_kses_post(
 					sprintf(
 						// translators: Recovered Order Link, Order ID, Recovered Date.

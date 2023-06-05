@@ -565,18 +565,37 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 
 			$order_id         = 0;
 			$wcal_cart_status = false;
+			if ( wcal_is_hpos_enabled() ) { // HPOS usage is enabled.
+				$get_order = wc_get_orders(
+					array(
+						'limit'      => 1,
+						'meta_query' => array( // phpcs:ignore
+							array(
+								'key'     => 'wcal_abandoned_cart_id',
+								'value'   => $wcal_cart_id,
+								'compare' => 'EQUAL',
+							),
+						),
+					)
+				);
+				if ( ! empty( $get_order ) ) {
+					$order = $get_order[0];
+				}
+			} else { // Traditional CPT-based orders are in use.
 
-			$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_var( // phpcS:ignore
-				$wpdb->prepare(
-					"SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = 'wcal_abandoned_cart_id' AND meta_value = %d LIMIT 1", // phpcs:ignore
-					$wcal_cart_id
-				)
-			);
+				$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_var( // phpcS:ignore
+					$wpdb->prepare(
+						"SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = 'wcal_abandoned_cart_id' AND meta_value = %d LIMIT 1", // phpcs:ignore
+						$wcal_cart_id
+					)
+				);
 
-			if ( is_array( $results_wcal_check_if_cart_is_present_in_post_meta ) && $results_wcal_check_if_cart_is_present_in_post_meta > 0 ) {
-				$order_id = $results_wcal_check_if_cart_is_present_in_post_meta;
-				$order    = wc_get_order( $order_id );
-			} else { // check for an order for the same date & email address.
+				if ( is_array( $results_wcal_check_if_cart_is_present_in_post_meta ) && $results_wcal_check_if_cart_is_present_in_post_meta > 0 ) {
+					$order_id = $results_wcal_check_if_cart_is_present_in_post_meta;
+					$order    = wc_get_order( $order_id );
+				}
+			}
+			if ( ! isset( $order ) ) { // check for an order for the same date & email address.
 				$args      = array(
 					'customer' => $wcal_user_email,
 					'limit'    => 1,
@@ -586,6 +605,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 					$order = $order_obj[0];
 				}
 			}
+
 			if ( isset( $order ) && is_object( $order ) ) {
 
 				$order_data = $order->get_data();

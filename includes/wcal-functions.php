@@ -9,6 +9,8 @@
  * @since 5.12.0
  */
 
+use Automattic\WooCommerce\Utilities\OrderUtil;
+
 /**
  * Returns the Cart History Data.
  *
@@ -84,4 +86,19 @@ function wcal_get_product_details( $cart_data ) {
 	}
 
 	return $product_details;
+}
+/**
+ * Returns if HPOS is enabled
+ *
+ * @return bool
+ * @since  5.14.2
+ */
+function wcal_is_hpos_enabled() {
+	if ( version_compare( WOOCOMMERCE_VERSION, '7.1.0' ) < 0 ) {
+		return false;
+	}
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		return true;
+	}
+	return false;
 }

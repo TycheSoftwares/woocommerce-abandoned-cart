@@ -452,7 +452,8 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 				self::$recovered_count = count( $ids );
 
 				foreach ( $ids as $order_id ) {
-					$order_total = (float) get_post_meta( $order_id, '_order_total', true );
+					$order       = wc_get_order( $order_id );
+					$order_total = $order ? (float) $order->get_total() : 0;
 					$amount     += round( $order_total, 2 );
 				}
 			}
@@ -513,7 +514,8 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 				foreach ( $get_carts as $cart_value ) {
 
 					if ( $cart_value->recovered_cart > 0 ) {
-						$abandoned_amount += get_post_meta( $cart_value->recovered_cart, '_order_total', true );
+						$order             = wc_get_order( $cart_value->recovered_cart );
+						$abandoned_amount += $order ? $order->get_total() : 0;
 						$abandoned_count++;
 					} else {
 
@@ -631,7 +633,8 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 						$abandoned_amount += isset( $cart->line_total ) ? $cart->line_total : 0;
 						$recovered_id      = $cart_value->recovered_cart;
 						if ( (int) $recovered_id > 0 ) {
-							$rec_order_total   = get_post_meta( $recovered_id, '_order_total', true );
+							$order             = wc_get_order( $recovered_id );
+							$rec_order_total   = $order ? $order->get_total() : 0;
 							$recovered_amount += isset( $rec_order_total ) && $rec_order_total > 0 ? $rec_order_total : 0;
 						}
 					}
