@@ -1982,7 +1982,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$tax_total            = 0;
 				if ( count( $saved_cart ) > 0 ) {
 					foreach ( $saved_cart as $key => $value ) {
-						if ( count( $value ) > 0 ) {
+						if ( is_array( $value ) && count( $value ) > 0 ) {
 							foreach ( $value as $a => $b ) {
 								$c['product_id']        = $b['product_id'];
 								$c['variation_id']      = $b['variation_id'];
