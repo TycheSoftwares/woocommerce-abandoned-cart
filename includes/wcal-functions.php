@@ -87,6 +87,106 @@ function wcal_get_product_details( $cart_data ) {
 
 	return $product_details;
 }
+
+/**
+ * Return a Random key which can be used for encryption.
+ *
+ * @param string $user_email - User EMail Address.
+ * @param bool   $insert - Insert and save the crypt key in the sent history table.
+ * @param int    $cart_id - Abandoned Cart ID.
+ * @return string $crypt_key - Key to be used for encryption.
+ *
+ * @since 5.14.0
+ */
+function wcal_get_crypt_key( $user_email, $insert = false, $cart_id = 0 ) {
+	global $wpdb;
+
+	$crypt_key = $wpdb->get_var( // phpcs:ignore
+		$wpdb->prepare(
+			'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
+			$user_email
+		)
+	);
+
+	if ( '' === $crypt_key ) {
+		$crypt_key = wcal_generate_random_key();
+		if ( $insert ) { // This is true when the checkout link is generated and simply saved in the cart history table.
+			$wpdb->insert( // phpcs:ignore
+				$wpdb->prefix . 'ac_sent_history_lite',
+				array(
+					'template_id'        => 0,
+					'abandoned_order_id' => $cart_id,
+					'sent_time'          => current_time( 'mysql' ),
+					'sent_email_id'      => $user_email,
+					'encrypt_key'        => $crypt_key,
+				)
+			);
+
+		}
+	}
+	return $crypt_key;
+}
+
+/**
+ * Generate a 16 digit random key.
+ *
+ * @return string $random_string - Random String.
+ * @since 5.14.0
+ */
+function wcal_generate_random_key() {
+	$characters    = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$random_string = '';
+	$n             = 16;
+	for ( $i = 0; $i < $n; $i++ ) {
+		$index          = wp_rand( 0, strlen( $characters ) - 1 );
+		$random_string .= $characters[ $index ];
+	}
+
+	return $random_string;
+}
+
+/**
+ * Return personal details for user.
+ *
+ * @param int $abandoned_id - Cart ID.
+ * @return array $customer_data - Customer Details.
+ *
+ * @since 5.14.0
+ */
+function wcal_get_contact_data( $abandoned_id ) {
+	// Fetch the contact data.
+	$cart_history  = wcal_get_data_cart_history( $abandoned_id );
+	$customer_data = array();
+	if ( $cart_history ) {
+		// Defaults.
+		$email     = '';
+		$firstname = '';
+		$lastname  = '';
+		$user_id   = $cart_history->user_id;
+		$user_type = $cart_history->user_type;
+
+		if ( $user_id >= 63000000 && 'GUEST' === $user_type ) {
+			$guest_data = wcal_get_data_guest_history( $user_id );
+			if ( isset( $cart_history ) && isset( $guest_data ) ) {
+				$email     = $guest_data->email_id;
+				$firstname = $guest_data->billing_first_name;
+				$lastname  = $guest_data->billing_last_name;
+			}
+		} elseif ( $user_id > 0 ) {
+			// Get the first & last name from the user data.
+			$user_info = new WP_User( $user_id );
+			$firstname = $user_info->first_name;
+			$lastname  = $user_info->last_name;
+			$email     = $user_info->user_email;
+		}
+		$customer_data['firstname'] = $firstname;
+		$customer_data['lastname']  = $lastname;
+		$customer_data['email']     = $email;
+		$customer_data['user_id']   = $user_id;
+	}
+	return $customer_data;
+}
+
 /**
  * Returns if HPOS is enabled
  *

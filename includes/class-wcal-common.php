@@ -1539,32 +1539,41 @@ class wcal_common { // phpcs:ignore
 			$checkout_page_link = str_ireplace( 'http:', 'https:', $checkout_page_link );
 		}
 
-		$encoding_checkout = $cart_id . '&url=' . $checkout_page_link;
-		$validate_checkout = Wcal_Common::wcal_encrypt_validate( $encoding_checkout );
+		$user_details = wcal_get_contact_data( $cart_id );
+		$user_email   = is_array( $user_details ) && count( $user_details ) > 0 && isset( $user_details['email'] ) ? $user_details['email'] : '';
+		if ( '' !== $user_email ) {
+			$crypt_key         = wcal_get_crypt_key( $user_email, true, $cart_id );
+			$encoding_checkout = $cart_id . '&url=' . $checkout_page_link;
+			$validate_checkout = Wcal_Common::wcal_encrypt_validate( $encoding_checkout, $crypt_key );
 
-		$checkout_link = get_option( 'siteurl' ) . '/?wcal_action=checkout_link&validate=' . $validate_checkout;
-
-		$wpdb->update( // phpcs:ignore
-			$wpdb->prefix . 'ac_abandoned_cart_history_lite',
-			array(
-				'checkout_link' => $checkout_link,
-			),
-			array(
-				'id' => $cart_id,
-			)
-		);
+			$checkout_link = get_option( 'siteurl' ) . '/?wcal_action=checkout_link&user_email=' . $user_email . '&validate=' . $validate_checkout;
+			$wpdb->update( // phpcs:ignore
+				$wpdb->prefix . 'ac_abandoned_cart_history_lite',
+				array(
+					'checkout_link' => $checkout_link,
+				),
+				array(
+					'id' => $cart_id,
+				)
+			);
+		}
 	}
 
 	/**
 	 * This function is used to encode the string.
 	 *
-	 * @param string $validate String need to encrypt.
-	 * @return string $validate_encoded Encrypted string.
+	 * @param string $validate - String need to encrypt.
+	 * @param string $crypt_key - Key to use for encryption.
+	 *
+	 * @return string $validate_encoded -  Encrypted string.
 	 * @since 1.3
 	 */
-	public static function wcal_encrypt_validate( $validate ) {
-		$crypt_key        = get_option( 'wcal_security_key' );
-		$validate_encoded = Wcal_Aes_Ctr::encrypt( $validate, $crypt_key, 256 );
-		return( $validate_encoded );
+	public static function wcal_encrypt_validate( $validate, $crypt_key ) {
+		// Fetch the encrypt key.
+		if ( '' !== $crypt_key ) {
+			$validate_encoded = Wcal_Aes_Ctr::encrypt( $validate, $crypt_key, 256 );
+			return( $validate_encoded );
+		}
+		return false;
 	}
 }

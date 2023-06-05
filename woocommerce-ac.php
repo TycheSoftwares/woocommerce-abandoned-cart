@@ -1742,8 +1742,18 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$validate_email_id_string      = str_replace( ' ', '+', $encoded_email_id );
 				$validate_email_address_string = '';
 				$validate_email_id_decode      = 0;
-				$crypt_key                     = get_option( 'wcal_security_key' );
-				$validate_email_id_decode      = Wcal_Aes_Ctr::decrypt( $validate_email_id_string, $crypt_key, 256 );
+				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
+					$sent_email = sanitize_text_field( wp_unslash( $_GET['user_email'] ) ); // phpcs:ignore
+					$crypt_key  = $wpdb->get_var( // phpcs:ignore
+						$wpdb->prepare(
+							'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
+							$sent_email
+						)
+					);
+				} else {
+					$crypt_key = get_option( 'wcal_security_key' );
+				}
+				$validate_email_id_decode = Wcal_Aes_Ctr::decrypt( $validate_email_id_string, $crypt_key, 256 );
 				if ( isset( $_GET['track_email_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 					$encoded_email_address         = rawurldecode( sanitize_text_field( wp_unslash( $_GET['track_email_id'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
 					$validate_email_address_string = str_replace( ' ', '+', $encoded_email_address );
@@ -1826,10 +1836,20 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$validate_server_string  = isset( $_GET ['validate'] ) ? rawurldecode( wp_unslash( $_GET ['validate'] ) ) : ''; // phpcs:ignore
 				$validate_server_string  = str_replace( ' ', '+', $validate_server_string );
 				$validate_encoded_string = $validate_server_string;
-				$crypt_key               = get_option( 'wcal_security_key' );
-				$link_decode             = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $crypt_key, 256 );
-				$sent_email_id_pos       = strpos( $link_decode, '&' );
-				$email_sent_id           = substr( $link_decode, 0, $sent_email_id_pos );
+				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
+					$sent_email = sanitize_text_field( wp_unslash( $_GET['user_email'] ) ); // phpcs:ignore
+					$crypt_key  = $wpdb->get_var( // phpcs:ignore
+						$wpdb->prepare(
+							'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
+							$sent_email
+						)
+					);
+				} else {
+					$crypt_key = get_option( 'wcal_security_key' );
+				}
+				$link_decode       = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $crypt_key, 256 );
+				$sent_email_id_pos = strpos( $link_decode, '&' );
+				$email_sent_id     = substr( $link_decode, 0, $sent_email_id_pos );
 
 				if ( isset( $_GET['c'] ) ) { // phpcs:ignore 
 					$decrypt_coupon_code = rawurldecode( sanitize_text_field( wp_unslash( $_GET['c'] ) ) ); //phpcs:ignore

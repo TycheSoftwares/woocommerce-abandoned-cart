@@ -230,12 +230,14 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 												}
 												$email_body = str_ireplace( '{{cart.abandoned_date}}', $order_date, $email_body );
 
+												$crypt_key = wcal_get_crypt_key( $value->user_email );
 												$wpdb->query( // phpcs:ignore
 													$wpdb->prepare(
-														"INSERT INTO `" . $wpdb->prefix . "ac_sent_history_lite` ( template_id, abandoned_order_id, sent_time, sent_email_id ) VALUES ( %s, %s, '" . current_time( 'mysql' ) . "', %s )", // phpcs:ignore
+														"INSERT INTO `" . $wpdb->prefix . "ac_sent_history_lite` ( template_id, abandoned_order_id, sent_time, sent_email_id, encrypt_key ) VALUES ( %s, %s, '" . current_time( 'mysql' ) . "', %s, %s )", // phpcs:ignore
 														$template_id,
 														$value->id,
-														$value->user_email
+														$value->user_email,
+														$crypt_key
 													)
 												);
 
@@ -262,22 +264,22 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													}
 													$cart_page_link  = apply_filters( 'wcal_cart_link_email_before_encoding', $cart_page_link, $value->id );
 													$encoding_cart   = $email_sent_id . '&url=' . $cart_page_link . $utm;
-													$validate_cart   = wcal_common::wcal_encrypt_validate( $encoding_cart );
-													$cart_link_track = get_option( 'siteurl' ) . '/?wcal_action=track_links&validate=' . $validate_cart;
+													$validate_cart   = wcal_common::wcal_encrypt_validate( $encoding_cart, $crypt_key );
+													$cart_link_track = get_option( 'siteurl' ) . '/?wcal_action=track_links&user_email=' . $value->user_email . '&validate=' . $validate_cart;
 
 													list( $email_body , $coupon_code_to_apply ) = wcal_common::wcal_check_and_replace_email_tag( $email_body, $wc_email_template );
 													if ( '' !== $coupon_code_to_apply ) {
-														$encypted_coupon_code = wcal_common::wcal_encrypt_validate( $coupon_code_to_apply );
+														$encypted_coupon_code = wcal_common::wcal_encrypt_validate( $coupon_code_to_apply, $crypt_key );
 														$cart_link_track     .= '&c=' . $encypted_coupon_code;
 													}
 
 													$email_body           = str_ireplace( '{{cart.link}}', $cart_link_track, $email_body );
-													$validate_unsubscribe = wcal_common::wcal_encrypt_validate( $email_sent_id );
+													$validate_unsubscribe = wcal_common::wcal_encrypt_validate( $email_sent_id, $crypt_key );
 													if ( count( $results_sent ) > 0 && isset( $results_sent[0]->sent_email_id ) ) {
 														$email_sent_id_address = $results_sent[0]->sent_email_id;
 													}
 													$encrypt_email_sent_id_address = hash( 'sha256', $email_sent_id_address );
-													$plugins_url                   = get_option( 'siteurl' ) . '/?wcal_track_unsubscribe=wcal_unsubscribe&validate=' . $validate_unsubscribe . '&track_email_id=' . $encrypt_email_sent_id_address;
+													$plugins_url                   = get_option( 'siteurl' ) . '/?wcal_track_unsubscribe=wcal_unsubscribe&user_email=' . $value->user_email . '&validate=' . $validate_unsubscribe . '&track_email_id=' . $encrypt_email_sent_id_address;
 													$unsubscribe_link_track        = $plugins_url;
 													$email_body                    = str_ireplace( '{{cart.unsubscribe}}', $unsubscribe_link_track, $email_body );
 													$var                           = '';

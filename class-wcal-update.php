@@ -241,16 +241,8 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				}
 
 				if ( 0 === $blog_id ) {
-					if ( ! get_option( 'wcal_security_key' ) ) {
-						update_option( 'wcal_security_key', 'qJB0rGtIn5UB1xG03efyCp' );
-					}
-
 					update_option( 'ac_lite_alter_table_queries', 'yes' );
 				} else {
-					if ( ! get_blog_option( $blog_id, 'wcal_security_key' ) ) {
-						update_blog_option( $blog_id, 'wcal_security_key', 'qJB0rGtIn5UB1xG03efyCp' );
-					}
-
 					update_blog_option( $blog_id, 'ac_lite_alter_table_queries', 'yes' );
 				}
 			}
@@ -292,6 +284,10 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 			// 5.12.0
 			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM `' . $db_prefix . "ac_abandoned_cart_history_lite` LIKE 'checkout_link'" ) ) { // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_abandoned_cart_history_lite ADD `checkout_link` varchar(500) NOT NULL AFTER `email_reminder_status`' ); // phpcs:ignore
+			}
+			// 5.14.3
+			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM `' . $db_prefix . "ac_sent_history_lite` LIKE 'encrypt_key';" ) ) { //phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_sent_history_lite ADD `encrypt_key` VARCHAR(500) NOT NULL AFTER `sent_email_id`;' ); //phpcs:ignore
 			}
 		}
 		/**
