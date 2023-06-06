@@ -652,6 +652,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`abandoned_order_id` int(11) NOT NULL,
 				`sent_time` datetime NOT NULL,
 				`sent_email_id` text COLLATE utf8_unicode_ci NOT NULL,
+				`encrypt_key` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
 				PRIMARY KEY  (`id`)
 				) $wcap_collate AUTO_INCREMENT=1 " // phpcs:ignore
 			);
