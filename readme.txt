@@ -156,6 +156,12 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 
 == Changelog ==
 
+= 5.15.0 ( 06.06.2023 ) =
+* Fix - A fatal error received when clicked on checkout link from webhook.
+* Fix - The wrong recovered end time appears on the recovered order tab page.
+* Fix - Vulnerability fix for hardcoded encryption key.
+* Enhancement - Introduced compatibility with WooCommerce High Performance Order Storage.
+
 = 5.14.2 ( 23.05.2023 ) =
 * Fix - Customers are receiving abandoned cart emails even after they purchased.
 * Fix - An error is displaying on cart page with PHP 8.1.
