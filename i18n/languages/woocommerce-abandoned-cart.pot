@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-22 17:07+0530\n"
+"POT-Creation-Date: 2023-06-06 15:53+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,85 +17,85 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: class-wcal-update.php:502
+#: class-wcal-update.php:498
 msgid ""
 "There was an error creating the guest cart table for Abandoned Cart Lite for "
 "WooCommerce. Please contact the plugin author via <a href=\"mailto:"
 "support@tychesoftwares.freshdesk.com\">email</a>"
 msgstr ""
 
-#: woocommerce-ac.php:317 woocommerce-ac.php:2241
+#: woocommerce-ac.php:320 woocommerce-ac.php:2277
 #: includes/connectors/class-wcap-display-connectors.php:69
 msgid "Settings"
 msgstr ""
 
-#: woocommerce-ac.php:346
+#: woocommerce-ac.php:349
 msgid "Emails are not being sent to customers."
 msgstr ""
 
-#: woocommerce-ac.php:352
+#: woocommerce-ac.php:355
 msgid "Capturing of cart and other information was not satisfactory."
 msgstr ""
 
-#: woocommerce-ac.php:358
+#: woocommerce-ac.php:361
 msgid "I cannot see abandoned cart reminder emails records."
 msgstr ""
 
-#: woocommerce-ac.php:364
+#: woocommerce-ac.php:367
 msgid "I want to upgrade the plugin to the PRO version."
 msgstr ""
 
-#: woocommerce-ac.php:487
+#: woocommerce-ac.php:490
 msgid "HTML Email Template"
 msgstr ""
 
-#: woocommerce-ac.php:493
+#: woocommerce-ac.php:496
 msgid "Abandoned cart Email Template"
 msgstr ""
 
-#: woocommerce-ac.php:774
+#: woocommerce-ac.php:790
 msgid "Cart Abandonment Settings"
 msgstr ""
 
-#: woocommerce-ac.php:781
+#: woocommerce-ac.php:797
 msgid "Enable abandoned cart emails"
 msgstr ""
 
-#: woocommerce-ac.php:785
+#: woocommerce-ac.php:801
 msgid "Yes, enable the abandoned cart emails."
 msgstr ""
 
-#: woocommerce-ac.php:790
+#: woocommerce-ac.php:806
 msgid "Cart abandoned cut-off time"
 msgstr ""
 
-#: woocommerce-ac.php:794
+#: woocommerce-ac.php:810
 msgid ""
 "Consider cart abandoned after X minutes of item being added to cart & order "
 "not placed."
 msgstr ""
 
-#: woocommerce-ac.php:799
+#: woocommerce-ac.php:815
 msgid "Automatically Delete Abandoned Orders after X days"
 msgstr ""
 
-#: woocommerce-ac.php:803
+#: woocommerce-ac.php:819
 msgid "Automatically delete abandoned cart orders after X days."
 msgstr ""
 
-#: woocommerce-ac.php:808
+#: woocommerce-ac.php:824
 msgid "Email admin On Order Recovery"
 msgstr ""
 
-#: woocommerce-ac.php:812
+#: woocommerce-ac.php:828
 msgid "Sends email to Admin if an Abandoned Cart Order is recovered."
 msgstr ""
 
-#: woocommerce-ac.php:817
+#: woocommerce-ac.php:833
 msgid "Start tracking from Cart Page"
 msgstr ""
 
-#: woocommerce-ac.php:821
+#: woocommerce-ac.php:837
 msgid ""
 "Enable tracking of abandoned products & carts even if customer does not "
 "visit the checkout page or does not enter any details on the checkout page "
@@ -103,25 +103,25 @@ msgid ""
 "to their cart and visits the cart page."
 msgstr ""
 
-#: woocommerce-ac.php:826
+#: woocommerce-ac.php:842
 msgid "GDPR Settings"
 msgstr ""
 
-#: woocommerce-ac.php:833
+#: woocommerce-ac.php:849
 msgid "Enable GDPR Notice"
 msgstr ""
 
-#: woocommerce-ac.php:837
+#: woocommerce-ac.php:853
 msgid ""
 "Enable this setting to display a notice informing customers that their email "
 "and cart data are saved to send abandonment reminders."
 msgstr ""
 
-#: woocommerce-ac.php:842
+#: woocommerce-ac.php:858
 msgid "Message to be displayed for Guest users when tracking their carts"
 msgstr ""
 
-#: woocommerce-ac.php:846
+#: woocommerce-ac.php:862
 msgid ""
 "<br>In compliance with GDPR, add a message on the Checkout page to inform "
 "Guest users of how their data is being used.<br><i>For example: Your email "
@@ -129,351 +129,351 @@ msgid ""
 "Please check our Privacy Policy to see how we use your personal data.</i>"
 msgstr ""
 
-#: woocommerce-ac.php:851
+#: woocommerce-ac.php:867
 msgid "Message to be displayed for registered users when tracking their carts."
 msgstr ""
 
-#: woocommerce-ac.php:855
+#: woocommerce-ac.php:871
 msgid ""
 "<br>In compliance with GDPR, add a message on the Shop & Product pages to "
 "inform Registered users of how their data is being used.<br><i>For example: "
 "Please check our Privacy Policy to see how we use your personal data.</i>"
 msgstr ""
 
-#: woocommerce-ac.php:860
+#: woocommerce-ac.php:876
 msgid "Allow the visitor to opt out of cart tracking."
 msgstr ""
 
-#: woocommerce-ac.php:864
+#: woocommerce-ac.php:880
 msgid ""
 "<br>In compliance with GDPR, allow the site visitor (guests & registered "
 "users) to opt out from cart tracking. This message will be displayed in "
 "conjunction with the GDPR message above.</i>"
 msgstr ""
 
-#: woocommerce-ac.php:869
+#: woocommerce-ac.php:885
 msgid ""
 "Message to be displayed when the user chooses to opt out of cart tracking."
 msgstr ""
 
-#: woocommerce-ac.php:873
+#: woocommerce-ac.php:889
 msgid ""
 "<br>Message to be displayed when the user chooses to opt out of cart "
 "tracking.</i>"
 msgstr ""
 
-#: woocommerce-ac.php:877
+#: woocommerce-ac.php:893
 msgid "Coupon Settings"
 msgstr ""
 
-#: woocommerce-ac.php:883
+#: woocommerce-ac.php:899
 msgid "Delete Coupons Automatically"
 msgstr ""
 
-#: woocommerce-ac.php:887
+#: woocommerce-ac.php:903
 msgid ""
 "Enable this setting if you want to completely remove the expired and used "
 "coupon code automatically every 15 days."
 msgstr ""
 
-#: woocommerce-ac.php:891
+#: woocommerce-ac.php:907
 msgid "Delete Coupons Manually"
 msgstr ""
 
-#: woocommerce-ac.php:895
+#: woocommerce-ac.php:911
 msgid ""
 "If you want to completely remove the expired and used coupon code now then "
 "click on \"Delete\" button."
 msgstr ""
 
-#: woocommerce-ac.php:904
+#: woocommerce-ac.php:920
 msgid "Settings for abandoned cart recovery emails"
 msgstr ""
 
-#: woocommerce-ac.php:911
+#: woocommerce-ac.php:927
 msgid "\"From\" Name"
 msgstr ""
 
-#: woocommerce-ac.php:920
+#: woocommerce-ac.php:936
 msgid "\"From\" Address"
 msgstr ""
 
-#: woocommerce-ac.php:929
+#: woocommerce-ac.php:945
 msgid "Send Reply Emails to"
 msgstr ""
 
-#: woocommerce-ac.php:938
+#: woocommerce-ac.php:954
 msgid "UTM parameters to be added to all the links in reminder emails"
 msgstr ""
 
-#: woocommerce-ac.php:942
+#: woocommerce-ac.php:958
 msgid ""
 "UTM parameters that should be added to all the links in reminder emails."
 msgstr ""
 
-#: woocommerce-ac.php:1084
+#: woocommerce-ac.php:1100
 msgid ""
 "Abandoned cart cut off time should be numeric and has to be greater than 0."
 msgstr ""
 
-#: woocommerce-ac.php:1102
+#: woocommerce-ac.php:1118
 msgid ""
 "Automatically Delete Abandoned Orders after X days has to be greater than 0."
 msgstr ""
 
-#: woocommerce-ac.php:1364
+#: woocommerce-ac.php:1380
 #: includes/admin/class-wcal-personal-data-export.php:137
 msgid "Abandoned Carts"
 msgstr ""
 
-#: woocommerce-ac.php:2220
+#: woocommerce-ac.php:2256
 msgid "Dashboard"
 msgstr ""
 
-#: woocommerce-ac.php:2227
+#: woocommerce-ac.php:2263
 #: includes/classes/class-wcal-dashboard-report.php:161
 msgid "Abandoned Orders"
 msgstr ""
 
-#: woocommerce-ac.php:2234
+#: woocommerce-ac.php:2270
 msgid "Email Templates"
 msgstr ""
 
-#: woocommerce-ac.php:2248
+#: woocommerce-ac.php:2284
 msgid "Recovered Orders"
 msgstr ""
 
-#: woocommerce-ac.php:2255
+#: woocommerce-ac.php:2291
 msgid "Product Report"
 msgstr ""
 
-#: woocommerce-ac.php:2297
+#: woocommerce-ac.php:2333
 #, php-format
 msgid "Please enter in decimal (%s) format without thousand separators."
 msgstr ""
 
-#: woocommerce-ac.php:2299
+#: woocommerce-ac.php:2335
 #, php-format
 msgid ""
 "Please enter in monetary decimal (%s) format without thousand separators and "
 "currency symbols."
 msgstr ""
 
-#: woocommerce-ac.php:2300
+#: woocommerce-ac.php:2336
 msgid "Please enter in country code with two capital letters."
 msgstr ""
 
-#: woocommerce-ac.php:2301
+#: woocommerce-ac.php:2337
 msgid "Please enter in a value less than the regular price."
 msgstr ""
 
-#: woocommerce-ac.php:2305
+#: woocommerce-ac.php:2341
 msgid "Import"
 msgstr ""
 
-#: woocommerce-ac.php:2306
+#: woocommerce-ac.php:2342
 msgid "Export"
 msgstr ""
 
-#: woocommerce-ac.php:2401
+#: woocommerce-ac.php:2437
 msgctxt "enhanced select"
 msgid "One result is available, press enter to select it."
 msgstr ""
 
-#: woocommerce-ac.php:2402
+#: woocommerce-ac.php:2438
 msgctxt "enhanced select"
 msgid "%qty% results are available, use up and down arrow keys to navigate."
 msgstr ""
 
-#: woocommerce-ac.php:2403
+#: woocommerce-ac.php:2439
 msgctxt "enhanced select"
 msgid "No matches found"
 msgstr ""
 
-#: woocommerce-ac.php:2404
+#: woocommerce-ac.php:2440
 msgctxt "enhanced select"
 msgid "Loading failed"
 msgstr ""
 
-#: woocommerce-ac.php:2405
+#: woocommerce-ac.php:2441
 msgctxt "enhanced select"
 msgid "Please enter 1 or more characters"
 msgstr ""
 
-#: woocommerce-ac.php:2406
+#: woocommerce-ac.php:2442
 msgctxt "enhanced select"
 msgid "Please enter %qty% or more characters"
 msgstr ""
 
-#: woocommerce-ac.php:2407
+#: woocommerce-ac.php:2443
 msgctxt "enhanced select"
 msgid "Please delete 1 character"
 msgstr ""
 
-#: woocommerce-ac.php:2408
+#: woocommerce-ac.php:2444
 msgctxt "enhanced select"
 msgid "Please delete %qty% characters"
 msgstr ""
 
-#: woocommerce-ac.php:2409
+#: woocommerce-ac.php:2445
 msgctxt "enhanced select"
 msgid "You can only select 1 item"
 msgstr ""
 
-#: woocommerce-ac.php:2410
+#: woocommerce-ac.php:2446
 msgctxt "enhanced select"
 msgid "You can only select %qty% items"
 msgstr ""
 
-#: woocommerce-ac.php:2411
+#: woocommerce-ac.php:2447
 msgctxt "enhanced select"
 msgid "Loading more results&hellip;"
 msgstr ""
 
-#: woocommerce-ac.php:2412
+#: woocommerce-ac.php:2448
 msgctxt "enhanced select"
 msgid "Searching&hellip;"
 msgstr ""
 
-#: woocommerce-ac.php:2535
+#: woocommerce-ac.php:2571
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: woocommerce-ac.php:2539
+#: woocommerce-ac.php:2575
 msgid "WooCommerce - Abandon Cart Lite"
 msgstr ""
 
-#: woocommerce-ac.php:2611
+#: woocommerce-ac.php:2647
 msgid "The Abandoned cart has been successfully deleted."
 msgstr ""
 
-#: woocommerce-ac.php:2613
+#: woocommerce-ac.php:2649
 msgid "All Abandoned Carts have been successfully deleted."
 msgstr ""
 
-#: woocommerce-ac.php:2615
+#: woocommerce-ac.php:2651
 msgid "All Visitor carts have been successfully deleted."
 msgstr ""
 
-#: woocommerce-ac.php:2617
+#: woocommerce-ac.php:2653
 msgid "All Guest carts have been successfully deleted."
 msgstr ""
 
-#: woocommerce-ac.php:2619
+#: woocommerce-ac.php:2655
 msgid "All Registered carts have been deleted."
 msgstr ""
 
-#: woocommerce-ac.php:2630
+#: woocommerce-ac.php:2666
 msgid "The Template has been successfully deleted."
 msgstr ""
 
-#: woocommerce-ac.php:2674
+#: woocommerce-ac.php:2710
 msgid "General Settings"
 msgstr ""
 
-#: woocommerce-ac.php:2677
+#: woocommerce-ac.php:2713
 msgid "Email Sending Settings"
 msgstr ""
 
-#: woocommerce-ac.php:2680
+#: woocommerce-ac.php:2716
 msgid "Add To Cart Popup Editor"
 msgstr ""
 
-#: woocommerce-ac.php:2683
+#: woocommerce-ac.php:2719
 msgid "Facebook Messenger"
 msgstr ""
 
-#: woocommerce-ac.php:2686
+#: woocommerce-ac.php:2722
 msgid "SMS"
 msgstr ""
 
-#: woocommerce-ac.php:2689 includes/class-wcap-integrations.php:65
+#: woocommerce-ac.php:2725 includes/class-wcap-integrations.php:65
 msgid "Connectors"
 msgstr ""
 
-#: woocommerce-ac.php:2697 woocommerce-ac.php:2707
+#: woocommerce-ac.php:2733 woocommerce-ac.php:2743
 msgid ""
 "Change settings for sending email notifications to Customers, to Admin etc."
 msgstr ""
 
-#: woocommerce-ac.php:2734
+#: woocommerce-ac.php:2770
 msgid ""
 "The list below shows all Abandoned Carts which have remained in cart for a "
 "time higher than the \"Cart abandoned cut-off time\" setting."
 msgstr ""
 
-#: woocommerce-ac.php:2776
+#: woocommerce-ac.php:2812
 msgid "All "
 msgstr ""
 
-#: woocommerce-ac.php:2781
+#: woocommerce-ac.php:2817
 #, php-format
 msgid "Registered %s"
 msgstr ""
 
-#: woocommerce-ac.php:2787
+#: woocommerce-ac.php:2823
 #, php-format
 msgid "Guest %s"
 msgstr ""
 
-#: woocommerce-ac.php:2793
+#: woocommerce-ac.php:2829
 msgid "Carts without Customer Details"
 msgstr ""
 
-#: woocommerce-ac.php:2814
+#: woocommerce-ac.php:2850
 msgid ""
 "Add email templates at different intervals to maximize the possibility of "
 "recovering your abandoned carts."
 msgstr ""
 
-#: woocommerce-ac.php:2970
+#: woocommerce-ac.php:3006
 msgid ""
 "The Email Template has been successfully added. In order to start sending "
 "this email to your customers, please activate it."
 msgstr ""
 
-#: woocommerce-ac.php:2980
+#: woocommerce-ac.php:3016
 msgid ""
 "There was a problem adding the email template. Please contact the plugin "
 "author via <a href= \"https://wordpress.org/support/plugin/woocommerce-"
 "abandoned-cart\">support forum</a>."
 msgstr ""
 
-#: woocommerce-ac.php:2992
+#: woocommerce-ac.php:3028
 msgid "The Email Template has been successfully updated."
 msgstr ""
 
-#: woocommerce-ac.php:3002
+#: woocommerce-ac.php:3038
 msgid ""
 "There was a problem updating the email template. Please contact the plugin "
 "author via <a href= \"https://wordpress.org/support/plugin/woocommerce-"
 "abandoned-cart\">support forum</a>."
 msgstr ""
 
-#: woocommerce-ac.php:3011
+#: woocommerce-ac.php:3047
 msgid "Add New Template"
 msgstr ""
 
-#: woocommerce-ac.php:3083
+#: woocommerce-ac.php:3119
 msgid ""
 "The Report below shows how many Abandoned Carts we were able to recover for "
 "you by sending automatic emails to encourage shoppers."
 msgstr ""
 
-#: woocommerce-ac.php:3134
+#: woocommerce-ac.php:3170
 msgid "Start Date:"
 msgstr ""
 
-#: woocommerce-ac.php:3136
+#: woocommerce-ac.php:3172
 msgid "End Date:"
 msgstr ""
 
-#: woocommerce-ac.php:3138
+#: woocommerce-ac.php:3174
 #: includes/classes/class-wcal-dashboard-report.php:319
 msgid "Go"
 msgstr ""
 
-#: woocommerce-ac.php:3156
+#: woocommerce-ac.php:3192
 #, php-format
 msgid ""
 "During the selected range <strong>%1$d</strong> carts totaling <strong>%2$s</"
@@ -481,144 +481,144 @@ msgid ""
 "them, which led to an extra <strong>%4$s</strong>"
 msgstr ""
 
-#: woocommerce-ac.php:3181
+#: woocommerce-ac.php:3217
 #, php-format
 msgid "Abandoned Order #%s Details"
 msgstr ""
 
-#: woocommerce-ac.php:3185 woocommerce-ac.php:4035 woocommerce-ac.php:4070
-#: cron/class-wcal-cron.php:285
+#: woocommerce-ac.php:3221 woocommerce-ac.php:4071 woocommerce-ac.php:4106
+#: cron/class-wcal-cron.php:287
 msgid "Item"
 msgstr ""
 
-#: woocommerce-ac.php:3186 woocommerce-ac.php:4036 woocommerce-ac.php:4071
-#: cron/class-wcal-cron.php:286
+#: woocommerce-ac.php:3222 woocommerce-ac.php:4072 woocommerce-ac.php:4107
+#: cron/class-wcal-cron.php:288
 msgid "Name"
 msgstr ""
 
-#: woocommerce-ac.php:3187 woocommerce-ac.php:4037 woocommerce-ac.php:4072
-#: cron/class-wcal-cron.php:287
+#: woocommerce-ac.php:3223 woocommerce-ac.php:4073 woocommerce-ac.php:4108
+#: cron/class-wcal-cron.php:289
 msgid "Quantity"
 msgstr ""
 
-#: woocommerce-ac.php:3188 woocommerce-ac.php:4039 woocommerce-ac.php:4074
-#: cron/class-wcal-cron.php:289
+#: woocommerce-ac.php:3224 woocommerce-ac.php:4075 woocommerce-ac.php:4110
+#: cron/class-wcal-cron.php:291
 msgid "Line Subtotal"
 msgstr ""
 
-#: woocommerce-ac.php:3189
+#: woocommerce-ac.php:3225
 msgid "Line Total"
 msgstr ""
 
-#: woocommerce-ac.php:3414
-#: includes/admin/class-wcal-abandoned-cart-details.php:471
+#: woocommerce-ac.php:3450
+#: includes/admin/class-wcal-abandoned-cart-details.php:475
 msgid "Customer Details"
 msgstr ""
 
-#: woocommerce-ac.php:3418
+#: woocommerce-ac.php:3454
 msgid "Billing Details"
 msgstr ""
 
-#: woocommerce-ac.php:3419
+#: woocommerce-ac.php:3455
 msgid "Name:"
 msgstr ""
 
-#: woocommerce-ac.php:3422 woocommerce-ac.php:3443
+#: woocommerce-ac.php:3458 woocommerce-ac.php:3479
 msgid "Address:"
 msgstr ""
 
-#: woocommerce-ac.php:3433
+#: woocommerce-ac.php:3469
 msgid "Email:"
 msgstr ""
 
-#: woocommerce-ac.php:3437
+#: woocommerce-ac.php:3473
 msgid "Phone:"
 msgstr ""
 
-#: woocommerce-ac.php:3442
+#: woocommerce-ac.php:3478
 msgid "Shipping Details"
 msgstr ""
 
-#: woocommerce-ac.php:3452
+#: woocommerce-ac.php:3488
 msgid "Shipping Address same as Billing Address"
 msgstr ""
 
-#: woocommerce-ac.php:3465
+#: woocommerce-ac.php:3501
 msgid "Shipping Charges"
 msgstr ""
 
-#: woocommerce-ac.php:3549
+#: woocommerce-ac.php:3585
 msgid "Template Name:"
 msgstr ""
 
-#: woocommerce-ac.php:3559
+#: woocommerce-ac.php:3595
 msgid "Enter a template name for reference"
 msgstr ""
 
-#: woocommerce-ac.php:3565
+#: woocommerce-ac.php:3601
 msgid "Subject:"
 msgstr ""
 
-#: woocommerce-ac.php:3575
+#: woocommerce-ac.php:3611
 msgid "Enter the subject that should appear in the email sent"
 msgstr ""
 
-#: woocommerce-ac.php:3581
+#: woocommerce-ac.php:3617
 msgid "Email Body:"
 msgstr ""
 
-#: woocommerce-ac.php:3608
+#: woocommerce-ac.php:3644
 msgid "Message to be sent in the reminder email."
 msgstr ""
 
-#: woocommerce-ac.php:3635
+#: woocommerce-ac.php:3671
 msgid "Use WooCommerce Template Style:"
 msgstr ""
 
-#: woocommerce-ac.php:3651
+#: woocommerce-ac.php:3687
 msgid ""
 "Use WooCommerce default style template for abandoned cart reminder emails."
 msgstr ""
 
-#: woocommerce-ac.php:3658
+#: woocommerce-ac.php:3694
 msgid "Email Template Header Text: "
 msgstr ""
 
-#: woocommerce-ac.php:3673
+#: woocommerce-ac.php:3709
 msgid ""
 "Enter the header which will appear in the abandoned WooCommerce email sent. "
 "This is only applicable when only used when \"Use WooCommerce Template Style:"
 "\" is checked."
 msgstr ""
 
-#: woocommerce-ac.php:3679
+#: woocommerce-ac.php:3715
 msgid "Send this email:"
 msgstr ""
 
-#: woocommerce-ac.php:3721
+#: woocommerce-ac.php:3757
 msgid "after cart is abandoned."
 msgstr ""
 
-#: woocommerce-ac.php:3728
+#: woocommerce-ac.php:3764
 msgid "Send a test email to:"
 msgstr ""
 
-#: woocommerce-ac.php:3737
+#: woocommerce-ac.php:3773
 msgid "Enter the email id to which the test email needs to be sent."
 msgstr ""
 
-#: woocommerce-ac.php:3751
+#: woocommerce-ac.php:3787
 msgid "Update Changes"
 msgstr ""
 
-#: woocommerce-ac.php:3755
+#: woocommerce-ac.php:3791
 #: includes/admin/class-wcap-add-cart-popup-modal.php:84
 #: includes/admin/class-wcap-pro-settings.php:66
 #: includes/admin/class-wcap-pro-settings.php:299
 msgid "Save Changes"
 msgstr ""
 
-#: woocommerce-ac.php:3777
+#: woocommerce-ac.php:3813
 msgid ""
 "If you love <strong>Abandoned Cart Lite for WooCommerce</strong>, then "
 "please leave us a <a href=\"https://wordpress.org/support/plugin/woocommerce-"
@@ -627,39 +627,39 @@ msgid ""
 "advance. :)"
 msgstr ""
 
-#: woocommerce-ac.php:3829
+#: woocommerce-ac.php:3865
 msgid "Please enter a valid email."
 msgstr ""
 
-#: woocommerce-ac.php:4033 woocommerce-ac.php:4067
-#: cron/class-wcal-cron.php:296 cron/class-wcal-cron.php:307
+#: woocommerce-ac.php:4069 woocommerce-ac.php:4103
+#: cron/class-wcal-cron.php:298 cron/class-wcal-cron.php:309
 msgid "Your Shopping Cart"
 msgstr ""
 
-#: woocommerce-ac.php:4038 woocommerce-ac.php:4073
-#: cron/class-wcal-cron.php:288
+#: woocommerce-ac.php:4074 woocommerce-ac.php:4109
+#: cron/class-wcal-cron.php:290
 msgid "Price"
 msgstr ""
 
-#: woocommerce-ac.php:4043 woocommerce-ac.php:4078
+#: woocommerce-ac.php:4079 woocommerce-ac.php:4114
 msgid "Men's Formal Shoes"
 msgstr ""
 
-#: woocommerce-ac.php:4050 woocommerce-ac.php:4085
+#: woocommerce-ac.php:4086 woocommerce-ac.php:4121
 msgid "Woman's Hand Bags"
 msgstr ""
 
-#: woocommerce-ac.php:4059 woocommerce-ac.php:4094
-#: cron/class-wcal-cron.php:417
+#: woocommerce-ac.php:4095 woocommerce-ac.php:4130
+#: cron/class-wcal-cron.php:419
 msgid "Cart Total:"
 msgstr ""
 
-#: woocommerce-ac.php:4305
+#: woocommerce-ac.php:4341
 #, php-format
 msgid "%1$s: %2$d"
 msgstr ""
 
-#: woocommerce-ac.php:4315
+#: woocommerce-ac.php:4351
 #: includes/classes/class-wcal-abandoned-orders-table.php:183
 #: includes/classes/class-wcal-abandoned-orders-table.php:785
 #: includes/classes/class-wcal-templates-table.php:175
@@ -667,11 +667,11 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: woocommerce-ac.php:4446
+#: woocommerce-ac.php:4482
 msgid "Once Every Fifteen Minutes"
 msgstr ""
 
-#: woocommerce-ac.php:4451
+#: woocommerce-ac.php:4487
 msgid "Once Every Fifteen Days"
 msgstr ""
 
@@ -679,11 +679,11 @@ msgstr ""
 msgid "Abandoned cart reminder"
 msgstr ""
 
-#: cron/class-wcal-cron.php:333 cron/class-wcal-cron.php:365
+#: cron/class-wcal-cron.php:335 cron/class-wcal-cron.php:367
 msgid "SKU: "
 msgstr ""
 
-#: cron/class-wcal-cron.php:429
+#: cron/class-wcal-cron.php:431
 msgid "Product no longer exists"
 msgstr ""
 
@@ -794,20 +794,20 @@ msgid ""
 "valid only for the first 20 customers."
 msgstr ""
 
-#: includes/class-wcal-common.php:679
+#: includes/class-wcal-common.php:680
 msgid "Database Updated Successfully"
 msgstr ""
 
-#: includes/class-wcal-common.php:694
+#: includes/class-wcal-common.php:695
 msgid "Database Update Failed. Please try again after sometime"
 msgstr ""
 
-#: includes/class-wcal-common.php:854
+#: includes/class-wcal-common.php:855
 msgid "This product no longer exists"
 msgstr ""
 
-#: includes/class-wcal-common.php:1273 includes/class-wcal-common.php:1289
-#: includes/class-wcal-common.php:1312
+#: includes/class-wcal-common.php:1274 includes/class-wcal-common.php:1290
+#: includes/class-wcal-common.php:1313
 msgid "Discount code applied successfully."
 msgstr ""
 
@@ -871,18 +871,18 @@ msgstr ""
 msgid "Cart #%s"
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:454
+#: includes/admin/class-wcal-abandoned-cart-details.php:458
 #: includes/templates/rules/html-rules-add-row.php:21
 #: includes/templates/rules/html-rules-edit-row.php:25
 msgid "Order"
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:454
+#: includes/admin/class-wcal-abandoned-cart-details.php:458
 #, php-format
 msgid "Recovered on %s"
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:470
+#: includes/admin/class-wcal-abandoned-cart-details.php:474
 #: includes/admin/class-wcal-personal-data-export.php:193
 #: includes/admin/class-wcal-personal-data-export.php:208
 #: includes/classes/class-wcal-abandoned-orders-table.php:107
@@ -890,44 +890,44 @@ msgstr ""
 msgid "Email Address"
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:472
+#: includes/admin/class-wcal-abandoned-cart-details.php:476
 #: includes/classes/class-wcal-abandoned-orders-table.php:109
 #: includes/classes/class-wcal-recover-orders-table.php:136
 msgid "Order Total"
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:473
+#: includes/admin/class-wcal-abandoned-cart-details.php:477
 #: includes/admin/class-wcal-personal-data-export.php:187
 #: includes/admin/class-wcal-personal-data-export.php:203
 #: includes/classes/class-wcal-abandoned-orders-table.php:110
 msgid "Abandoned Date"
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:488
+#: includes/admin/class-wcal-abandoned-cart-details.php:492
 msgid "Item Name"
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:489
+#: includes/admin/class-wcal-abandoned-cart-details.php:493
 msgid "Item Cost"
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:490
+#: includes/admin/class-wcal-abandoned-cart-details.php:494
 msgid "Item Quantity"
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:509
+#: includes/admin/class-wcal-abandoned-cart-details.php:513
 msgid "Close"
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:742
+#: includes/admin/class-wcal-abandoned-cart-details.php:746
 msgid "Tax: "
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:748
+#: includes/admin/class-wcal-abandoned-cart-details.php:752
 msgid "includes Tax: "
 msgstr ""
 
-#: includes/admin/class-wcal-abandoned-cart-details.php:769
+#: includes/admin/class-wcal-abandoned-cart-details.php:773
 msgid "Product has been deleted"
 msgstr ""
 
@@ -1873,12 +1873,12 @@ msgstr ""
 msgid "Connect"
 msgstr ""
 
-#: includes/frontend/class-wcal-checkout-process.php:216
+#: includes/frontend/class-wcal-checkout-process.php:218
 msgid "This order was abandoned & subsequently recovered."
 msgstr ""
 
-#: includes/frontend/class-wcal-checkout-process.php:324
-#: includes/frontend/class-wcal-checkout-process.php:326
+#: includes/frontend/class-wcal-checkout-process.php:329
+#: includes/frontend/class-wcal-checkout-process.php:331
 msgid "New Customer Order - Recovered"
 msgstr ""
 
