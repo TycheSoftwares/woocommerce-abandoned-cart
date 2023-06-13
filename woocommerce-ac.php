@@ -1759,7 +1759,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$encoded_email_address         = rawurldecode( sanitize_text_field( wp_unslash( $_GET['track_email_id'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
 						$validate_email_address_string = str_replace( ' ', '+', $encoded_email_address );
 					}
-	
+
 					$results_sent  = $wpdb->get_results( //phpcs:ignore
 						$wpdb->prepare(
 							'SELECT * FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE id = %d ',
@@ -1790,7 +1790,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						if ( isset( $get_user_results[0] ) ) {
 							$user_id = $get_user_results[0]->user_id;
 						}
-	
+
 						$wpdb->query( //phpcs:ignore
 							$wpdb->prepare(
 								'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET unsubscribe_link = %s WHERE user_id= %d AND cart_ignored = %s',
@@ -1905,7 +1905,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						);
 					}
 					$user_id = isset( $get_user_results ) && count( $get_user_results ) > 0 ? (int) $get_user_results[0]->user_id : 0;
-				} 
+				}
 
 				if ( 0 === $user_id ) {
 					echo esc_html( 'Link expired' );
