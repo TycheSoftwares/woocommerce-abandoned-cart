@@ -1753,59 +1753,61 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						)
 					);
 				}
-				$validate_email_id_decode = Wcal_Aes_Ctr::decrypt( $validate_email_id_string, $crypt_key, 256 );
-				if ( isset( $_GET['track_email_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-					$encoded_email_address         = rawurldecode( sanitize_text_field( wp_unslash( $_GET['track_email_id'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
-					$validate_email_address_string = str_replace( ' ', '+', $encoded_email_address );
-				}
-
-				$results_sent  = $wpdb->get_results( //phpcs:ignore
-					$wpdb->prepare(
-						'SELECT * FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE id = %d ',
-						$validate_email_id_decode
-					)
-				);
-				$email_address = '';
-				if ( isset( $results_sent[0] ) ) {
-					$email_address = $results_sent[0]->sent_email_id;
-				}
-				if ( hash( 'sha256', $email_address ) === $validate_email_address_string && '' !== $email_address ) {
-					$email_sent_id     = $validate_email_id_decode;
-					$get_ac_id_results = $wpdb->get_results( //phpcs:ignore
+				if ( '' !== $crypt_key ) {
+					$validate_email_id_decode = Wcal_Aes_Ctr::decrypt( $validate_email_id_string, $crypt_key, 256 );
+					if ( isset( $_GET['track_email_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+						$encoded_email_address         = rawurldecode( sanitize_text_field( wp_unslash( $_GET['track_email_id'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
+						$validate_email_address_string = str_replace( ' ', '+', $encoded_email_address );
+					}
+	
+					$results_sent  = $wpdb->get_results( //phpcs:ignore
 						$wpdb->prepare(
-							'SELECT abandoned_order_id FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE id = %d',
-							$email_sent_id
+							'SELECT * FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE id = %d ',
+							$validate_email_id_decode
 						)
 					);
-					$user_id           = 0;
-					if ( isset( $get_ac_id_results[0] ) ) {
-						$get_user_results  = $wpdb->get_results( //phpcs:ignore
+					$email_address = '';
+					if ( isset( $results_sent[0] ) ) {
+						$email_address = $results_sent[0]->sent_email_id;
+					}
+					if ( hash( 'sha256', $email_address ) === $validate_email_address_string && '' !== $email_address ) {
+						$email_sent_id     = $validate_email_id_decode;
+						$get_ac_id_results = $wpdb->get_results( //phpcs:ignore
 							$wpdb->prepare(
-								'SELECT user_id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE id = %d',
-								$get_ac_id_results[0]->abandoned_order_id
+								'SELECT abandoned_order_id FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE id = %d',
+								$email_sent_id
 							)
 						);
+						$user_id           = 0;
+						if ( isset( $get_ac_id_results[0] ) ) {
+							$get_user_results  = $wpdb->get_results( //phpcs:ignore
+								$wpdb->prepare(
+									'SELECT user_id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE id = %d',
+									$get_ac_id_results[0]->abandoned_order_id
+								)
+							);
+						}
+						if ( isset( $get_user_results[0] ) ) {
+							$user_id = $get_user_results[0]->user_id;
+						}
+	
+						$wpdb->query( //phpcs:ignore
+							$wpdb->prepare(
+								'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET unsubscribe_link = %s WHERE user_id= %d AND cart_ignored = %s',
+								1,
+								$user_id,
+								0
+							)
+						);
+						echo esc_html( 'Unsubscribed Successfully' );
+						sleep( 2 );
+						$url = apply_filters( 'wcal_unsubscribe_redirect', get_option( 'home' ) );
+						?>
+						<script>
+							location.href = "<?php echo esc_url( $url ); ?>";
+						</script>
+						<?php
 					}
-					if ( isset( $get_user_results[0] ) ) {
-						$user_id = $get_user_results[0]->user_id;
-					}
-
-					$wpdb->query( //phpcs:ignore
-						$wpdb->prepare(
-							'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET unsubscribe_link = %s WHERE user_id= %d AND cart_ignored = %s',
-							1,
-							$user_id,
-							0
-						)
-					);
-					echo esc_html( 'Unsubscribed Successfully' );
-					sleep( 2 );
-					$url = apply_filters( 'wcal_unsubscribe_redirect', get_option( 'home' ) );
-					?>
-					<script>
-						location.href = "<?php echo esc_url( $url ); ?>";
-					</script>
-					<?php
 				}
 			} else {
 				return $args;
@@ -1837,6 +1839,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$validate_server_string  = str_replace( ' ', '+', $validate_server_string );
 				$validate_encoded_string = $validate_server_string;
 				$crypt_key               = '';
+				$user_id                 = 0;
+				$abandoned_id            = 0;
 				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
 					$sent_email = sanitize_text_field( wp_unslash( $_GET['user_email'] ) ); // phpcs:ignore
 					$crypt_key  = $wpdb->get_var( // phpcs:ignore
@@ -1846,64 +1850,72 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						)
 					);
 				}
-				$link_decode       = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $crypt_key, 256 );
-				$sent_email_id_pos = strpos( $link_decode, '&' );
-				$email_sent_id     = substr( $link_decode, 0, $sent_email_id_pos );
-
-				if ( isset( $_GET['c'] ) ) { // phpcs:ignore 
-					$decrypt_coupon_code = rawurldecode( sanitize_text_field( wp_unslash( $_GET['c'] ) ) ); //phpcs:ignore
-					$decrypt_coupon_code = str_replace( ' ', '+', $decrypt_coupon_code );
-					$decode_coupon_code  = Wcal_Aes_Ctr::decrypt( $decrypt_coupon_code, $crypt_key, 256 );
-
-					wcal_common::wcal_set_cart_session( 'wcal_c', $decode_coupon_code ); // we need to set in session coz we directly apply coupon.
-					set_transient( 'wcal_c', $decode_coupon_code, 5 );
-				} else {
-					$decode_coupon_code = '';
-				}
-
-				if ( 'track_links' === $track_link ) {
-					$email_sent_id     = 0;
+				if ( '' !== $crypt_key ) {
+					$link_decode       = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $crypt_key, 256 );
 					$sent_email_id_pos = strpos( $link_decode, '&' );
 					$email_sent_id     = substr( $link_decode, 0, $sent_email_id_pos );
 
-					wcal_common::wcal_set_cart_session( 'email_sent_id', $email_sent_id );
-					set_transient( 'wcal_email_sent_id', $email_sent_id, 5 );
+					if ( isset( $_GET['c'] ) ) { // phpcs:ignore 
+						$decrypt_coupon_code = rawurldecode( sanitize_text_field( wp_unslash( $_GET['c'] ) ) ); //phpcs:ignore
+						$decrypt_coupon_code = str_replace( ' ', '+', $decrypt_coupon_code );
+						$decode_coupon_code  = Wcal_Aes_Ctr::decrypt( $decrypt_coupon_code, $crypt_key, 256 );
 
-					$get_ac_id_results = $wpdb->get_results( // phpcs:ignore
-						$wpdb->prepare(
-							'SELECT abandoned_order_id FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE id = %d',
-							$email_sent_id
-						)
-					);
-					$abandoned_id      = $get_ac_id_results[0]->abandoned_order_id;
-				} elseif ( 'checkout_link' === $track_link ) {
-					$abandoned_id     = 0;
-					$abandoned_id_pos = strpos( $link_decode, '&' );
-					$abandoned_id     = substr( $link_decode, 0, $abandoned_id_pos );
-					wcal_common::wcal_set_cart_session( 'wcal_recovered_cart', true );
-				}
+						wcal_common::wcal_set_cart_session( 'wcal_c', $decode_coupon_code ); // we need to set in session coz we directly apply coupon.
+						set_transient( 'wcal_c', $decode_coupon_code, 5 );
+					} else {
+						$decode_coupon_code = '';
+					}
 
-				$url_pos = strpos( $link_decode, '=' );
-				++$url_pos;
-				$url = substr( $link_decode, $url_pos );
+					if ( 'track_links' === $track_link ) {
+						$email_sent_id     = 0;
+						$sent_email_id_pos = strpos( $link_decode, '&' );
+						$email_sent_id     = substr( $link_decode, 0, $sent_email_id_pos );
 
-				wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_id );
-				set_transient( 'wcal_abandoned_id', $abandoned_id, 5 );
+						wcal_common::wcal_set_cart_session( 'email_sent_id', $email_sent_id );
+						set_transient( 'wcal_email_sent_id', $email_sent_id, 5 );
 
-				$get_user_results = array();
-				if ( $abandoned_id > 0 ) {
-					$get_user_results  = $wpdb->get_results( //phpcs:ignore
-						$wpdb->prepare(
-							'SELECT user_id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE id = %d',
-							$abandoned_id
-						)
-					);
-				}
-				$user_id = isset( $get_user_results ) && count( $get_user_results ) > 0 ? (int) $get_user_results[0]->user_id : 0;
+						$get_ac_id_results = $wpdb->get_results( // phpcs:ignore
+							$wpdb->prepare(
+								'SELECT abandoned_order_id FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE id = %d',
+								$email_sent_id
+							)
+						);
+						$abandoned_id      = $get_ac_id_results[0]->abandoned_order_id;
+					} elseif ( 'checkout_link' === $track_link ) {
+						$abandoned_id     = 0;
+						$abandoned_id_pos = strpos( $link_decode, '&' );
+						$abandoned_id     = substr( $link_decode, 0, $abandoned_id_pos );
+						wcal_common::wcal_set_cart_session( 'wcal_recovered_cart', true );
+					}
+
+					$url_pos = strpos( $link_decode, '=' );
+					++$url_pos;
+					$url = substr( $link_decode, $url_pos );
+
+					wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_id );
+					set_transient( 'wcal_abandoned_id', $abandoned_id, 5 );
+
+					$get_user_results = array();
+					if ( $abandoned_id > 0 ) {
+						$get_user_results  = $wpdb->get_results( //phpcs:ignore
+							$wpdb->prepare(
+								'SELECT user_id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE id = %d',
+								$abandoned_id
+							)
+						);
+					}
+					$user_id = isset( $get_user_results ) && count( $get_user_results ) > 0 ? (int) $get_user_results[0]->user_id : 0;
+				} 
 
 				if ( 0 === $user_id ) {
 					echo esc_html( 'Link expired' );
-					exit;
+					if ( version_compare( $woocommerce->version, '3.0.0', '>=' ) ) {
+						wp_safe_redirect( get_permalink( wc_get_page_id( 'shop' ) ) );
+						exit;
+					} else {
+						wp_safe_redirect( get_permalink( woocommerce_get_page_id( 'shop' ) ) );
+						exit;
+					}
 				}
 				$user = wp_set_current_user( $user_id );
 				if ( $user_id >= '63000000' ) {
