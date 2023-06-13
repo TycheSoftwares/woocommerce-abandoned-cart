@@ -3,7 +3,7 @@
  * Plugin Name: Abandoned Cart Lite for WooCommerce
  * Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
  * Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
- * Version: 5.15.0
+ * Version: 5.15.1
  * Author: Tyche Softwares
  * Author URI: http://www.tychesoftwares.com/
  * Text Domain: woocommerce-abandoned-cart
@@ -126,7 +126,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			if ( ! defined( 'WCAL_PLUGIN_VERSION' ) ) {
-				define( 'WCAL_PLUGIN_VERSION', '5.15.0' );
+				define( 'WCAL_PLUGIN_VERSION', '5.15.1' );
 			}
 
 			if ( ! defined( 'WCAL_PLUGIN_PATH' ) ) {
@@ -1743,6 +1743,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$validate_email_id_string      = str_replace( ' ', '+', $encoded_email_id );
 				$validate_email_address_string = '';
 				$validate_email_id_decode      = 0;
+				$crypt_key                     = '';
 				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
 					$sent_email = sanitize_text_field( wp_unslash( $_GET['user_email'] ) ); // phpcs:ignore
 					$crypt_key  = $wpdb->get_var( // phpcs:ignore
@@ -1751,8 +1752,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							$sent_email
 						)
 					);
-				} else {
-					$crypt_key = get_option( 'wcal_security_key' );
 				}
 				$validate_email_id_decode = Wcal_Aes_Ctr::decrypt( $validate_email_id_string, $crypt_key, 256 );
 				if ( isset( $_GET['track_email_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
@@ -1837,6 +1836,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$validate_server_string  = isset( $_GET ['validate'] ) ? rawurldecode( wp_unslash( $_GET ['validate'] ) ) : ''; // phpcs:ignore
 				$validate_server_string  = str_replace( ' ', '+', $validate_server_string );
 				$validate_encoded_string = $validate_server_string;
+				$crypt_key               = '';
 				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
 					$sent_email = sanitize_text_field( wp_unslash( $_GET['user_email'] ) ); // phpcs:ignore
 					$crypt_key  = $wpdb->get_var( // phpcs:ignore
@@ -1845,8 +1845,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							$sent_email
 						)
 					);
-				} else {
-					$crypt_key = get_option( 'wcal_security_key' );
 				}
 				$link_decode       = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $crypt_key, 256 );
 				$sent_email_id_pos = strpos( $link_decode, '&' );
