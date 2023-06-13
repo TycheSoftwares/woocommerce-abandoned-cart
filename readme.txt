@@ -156,6 +156,9 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 
 == Changelog ==
 
+= 5.15.1 ( 13.06.2023 ) =
+* Fix - Removed backward compatibility for old reminder email links.
+
 = 5.15.0 ( 06.06.2023 ) =
 * Fix - A fatal error received when clicked on checkout link from webhook.
 * Fix - Vulnerability fix for hardcoded encryption key.
