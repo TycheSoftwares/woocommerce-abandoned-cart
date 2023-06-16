@@ -141,7 +141,9 @@ class Wcal_Webhooks {
 	 * @since 8.7.0
 	 */
 	public static function wcal_generate_payload( $payload, $resource, $resource_data, $id ) {
-
+		if ( ! is_array( $resource_data ) || ! isset( $resource_data ) ) {
+			return $payload;
+		}
 		switch ( $resource_data['action'] ) {
 			case 'cutoff':
 			case 'recovered':
