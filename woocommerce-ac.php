@@ -1746,14 +1746,22 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$crypt_key                     = '';
 				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
 					$sent_email = sanitize_text_field( wp_unslash( $_GET['user_email'] ) ); // phpcs:ignore
-					$crypt_key  = $wpdb->get_var( // phpcs:ignore
+					$key_count  = $wpdb->get_var( // phpcs:ignore
 						$wpdb->prepare(
-							'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
+							'SELECT count(id) FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
 							$sent_email
 						)
 					);
+					if ( isset( $key_count ) && null !== $key_count && ! empty( $key_count ) && $key_count > 0 ) {
+						$crypt_key  = $wpdb->get_var( // phpcs:ignore
+							$wpdb->prepare(
+								'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
+								$sent_email
+							)
+						);
+					}
 				}
-				if ( '' !== $crypt_key ) {
+				if ( ! empty( $crypt_key ) && null !== $crypt_key && '' !== $crypt_key ) {
 					$validate_email_id_decode = Wcal_Aes_Ctr::decrypt( $validate_email_id_string, $crypt_key, 256 );
 					if ( isset( $_GET['track_email_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 						$encoded_email_address         = rawurldecode( sanitize_text_field( wp_unslash( $_GET['track_email_id'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
@@ -1843,14 +1851,22 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$abandoned_id            = 0;
 				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
 					$sent_email = sanitize_text_field( wp_unslash( $_GET['user_email'] ) ); // phpcs:ignore
-					$crypt_key  = $wpdb->get_var( // phpcs:ignore
+					$key_count  = $wpdb->get_var( // phpcs:ignore
 						$wpdb->prepare(
-							'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
+							'SELECT count(id) FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
 							$sent_email
 						)
 					);
+					if ( isset( $key_count ) && null !== $key_count && ! empty( $key_count ) && $key_count > 0 ) {
+						$crypt_key  = $wpdb->get_var( // phpcs:ignore
+							$wpdb->prepare(
+								'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
+								$sent_email
+							)
+						);
+					}
 				}
-				if ( '' !== $crypt_key ) {
+				if ( ! empty( $crypt_key ) && null !== $crypt_key && '' !== $crypt_key ) {
 					$link_decode       = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $crypt_key, 256 );
 					$sent_email_id_pos = strpos( $link_decode, '&' );
 					$email_sent_id     = substr( $link_decode, 0, $sent_email_id_pos );
