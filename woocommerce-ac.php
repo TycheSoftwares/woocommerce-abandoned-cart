@@ -3897,12 +3897,46 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						var send_email_id         = $( '#send_test_email' ).val();
 						var is_wc_template        = document.getElementById( "is_wc_template" ).checked;
 						var wc_template_header    = $( '#wcal_wc_email_header' ).val() != '' ? $( '#wcal_wc_email_header' ).val() : 'Abandoned cart reminder';
+						if ( $( '#unique_coupon' ).is( ":checked" ) )
+						{
+							var generate_unique_code   = '1';
+						} else {
+							var generate_unique_code   = '0';
+						}
+
+						if ( $( '#individual_use' ).is( ":checked" ) )
+						{
+							var individual_use   = '1';
+						} else {
+							var individual_use   = '0';
+						}
+
+						if ( $( '#wcal_allow_free_shipping' ).is( ":checked" ) )
+						{
+							var discount_shipping   = 'yes';
+						} else {
+							var discount_shipping   = 'no';
+						}
+
+						var coupon_code           = $( '#coupon_ids' ).val();
+						var discount_type         = $( '#wcal_discount_type').val();
+						var discount_amount       = $( '#wcal_coupon_amount').val();
+						var discount_expiry       = $( '#wcal_coupon_expiry').val();
+						var default_template      = '';
 						var data                  = {
 														subject_email_preview: subject_email_preview,
 														body_email_preview   : body_email_preview,
 														send_email_id        : send_email_id,
 														is_wc_template       : is_wc_template,
 														wc_template_header   : wc_template_header,
+														discount_expiry      : discount_expiry,
+														discount_type        : discount_type,
+														coupon_code          : coupon_code,
+														discount_shipping    : discount_shipping,
+														individual_use       : individual_use,
+														discount_amount      : discount_amount,
+														generate_unique_code : generate_unique_code,
+														default_template     : default_template,
 														action               : 'wcal_preview_email_sent'
 													};
 
@@ -4062,6 +4096,34 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$body_email_preview    = isset( $_POST['body_email_preview'] ) ? convert_smilies( wp_unslash( $_POST['body_email_preview'] ) ) : ''; // phpcs:ignore
 				$is_wc_template        = isset( $_POST['is_wc_template'] ) ? sanitize_text_field( wp_unslash( $_POST['is_wc_template'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				$wc_template_header    = isset( $_POST['wc_template_header'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_POST['wc_template_header'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$discount_expiry       = isset( $_POST['discount_expiry'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_expiry'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$discount_type         = isset( $_POST['discount_type'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_type'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$discount_shipping     = isset( $_POST['discount_shipping'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_shipping'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$individual_use        = isset( $_POST['individual_use'] ) ? sanitize_text_field( wp_unslash( $_POST['individual_use'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$discount_amount       = isset( $_POST['discount_amount'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_amount'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$generate_unique_code  = isset( $_POST['generate_unique_code'] ) ? sanitize_text_field( wp_unslash( $_POST['generate_unique_code'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$coupon_code           = isset( $_POST['coupon_code'][0] ) ? sanitize_text_field( wp_unslash( $_POST['coupon_code'][0] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$discount_details      = array();
+				$coupon_code_to_apply  = '';
+				if ( stripos( $body_email_preview, '{{coupon.code}}' ) ) {
+					$discount_details['discount_expiry']      = $discount_expiry;
+					$discount_details['discount_type']        = $discount_type;
+					$discount_details['discount_shipping']    = $discount_shipping;
+					$discount_details['individual_use']       = $individual_use;
+					$discount_details['discount_amount']      = $discount_amount;
+					$discount_details['generate_unique_code'] = $generate_unique_code;
+					$default_template                         = '';
+
+					$coupon_id   = isset( $coupon_code ) ? $coupon_code : '';
+					$coupon_code = '';
+					if ( '' !== $coupon_id ) {
+						$coupon_to_apply = get_post( $coupon_id, ARRAY_A );
+						$coupon_code     = $coupon_to_apply['post_title'];
+					}
+
+					$coupon_code_to_apply = wcal_common::wcal_get_coupon_email( $discount_details, $coupon_code, $default_template );
+					$body_email_preview   = str_ireplace( '{{coupon.code}}', $coupon_code_to_apply, $body_email_preview );
+				}
 
 				$body_email_preview = str_ireplace( '{{customer.firstname}}', 'John', $body_email_preview );
 				$body_email_preview = str_ireplace( '{{customer.firstname}}', 'John', $body_email_preview );
