@@ -108,7 +108,7 @@ function wcal_get_crypt_key( $user_email, $insert = false, $cart_id = 0 ) {
 		)
 	);
 
-	if ( '' === $crypt_key ) {
+	if ( null === $crypt_key || empty( $crypt_key ) || '' === $crypt_key ) {
 		$crypt_key = wcal_generate_random_key();
 		if ( $insert ) { // This is true when the checkout link is generated and simply saved in the cart history table.
 			$wpdb->insert( // phpcs:ignore
