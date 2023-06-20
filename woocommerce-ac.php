@@ -1746,19 +1746,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$crypt_key                     = '';
 				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
 					$sent_email = sanitize_text_field( wp_unslash( $_GET['user_email'] ) ); // phpcs:ignore
-					$key_count  = $wpdb->get_var( // phpcs:ignore
+					$key_data   = $wpdb->get_var( // phpcs:ignore
 						$wpdb->prepare(
-							'SELECT count(id) FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
+							'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
 							$sent_email
 						)
 					);
-					if ( isset( $key_count ) && null !== $key_count && ! empty( $key_count ) && $key_count > 0 ) {
-						$crypt_key  = $wpdb->get_var( // phpcs:ignore
-							$wpdb->prepare(
-								'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
-								$sent_email
-							)
-						);
+					if ( $wpdb->num_rows > 0 && isset( $key_data[0]->encrypt_key ) ) {
+						$crypt_key = $key_data[0]->encrypt_key;
 					}
 				}
 				if ( ! empty( $crypt_key ) && null !== $crypt_key && '' !== $crypt_key ) {
@@ -1851,19 +1846,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$abandoned_id            = 0;
 				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
 					$sent_email = sanitize_text_field( wp_unslash( $_GET['user_email'] ) ); // phpcs:ignore
-					$key_count  = $wpdb->get_var( // phpcs:ignore
+					$key_data   = $wpdb->get_var( // phpcs:ignore
 						$wpdb->prepare(
-							'SELECT count(id) FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
+							'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
 							$sent_email
 						)
 					);
-					if ( isset( $key_count ) && null !== $key_count && ! empty( $key_count ) && $key_count > 0 ) {
-						$crypt_key  = $wpdb->get_var( // phpcs:ignore
-							$wpdb->prepare(
-								'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
-								$sent_email
-							)
-						);
+					if ( $wpdb->num_rows > 0 && isset( $key_data[0]->encrypt_key ) ) {
+						$crypt_key = $key_data[0]->encrypt_key;
 					}
 				}
 				if ( ! empty( $crypt_key ) && null !== $crypt_key && '' !== $crypt_key ) {
