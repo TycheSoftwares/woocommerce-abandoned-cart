@@ -156,6 +156,10 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 
 == Changelog ==
 
+=  5.15.2 ( 21.06.2023 ) =
+* Fix - Fixed an issue where coupons are not being added to test emails.
+* Fix - Enhanced encryption key check.
+
 = 5.15.1 ( 13.06.2023 ) =
 * Fix - Removed backward compatibility for old reminder email links.
 
