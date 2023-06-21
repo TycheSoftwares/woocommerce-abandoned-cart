@@ -1745,7 +1745,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$validate_email_id_decode      = 0;
 				$crypt_key                     = '';
 				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
-					$sent_email = sanitize_text_field( wp_unslash( $_GET['user_email'] ) ); // phpcs:ignore
+					$sent_email = str_replace( ' ', '+', sanitize_text_field( wp_unslash( $_GET['user_email'] ) ) ); // phpcs:ignore
 					$key_data   = $wpdb->get_results( // phpcs:ignore
 						$wpdb->prepare(
 							'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
@@ -1845,7 +1845,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$user_id                 = 0;
 				$abandoned_id            = 0;
 				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
-					$sent_email = sanitize_text_field( wp_unslash( $_GET['user_email'] ) ); // phpcs:ignore
+					$sent_email = str_replace( ' ', '+', sanitize_text_field( wp_unslash( $_GET['user_email'] ) ) ); // phpcs:ignore
 					$key_data   = $wpdb->get_results( // phpcs:ignore
 						$wpdb->prepare(
 							'SELECT encrypt_key FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_email_id = %s ORDER BY id DESC',
