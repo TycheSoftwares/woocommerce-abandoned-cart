@@ -447,7 +447,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 					// in admin, return if status is not processing or completed without updating further.
 					if ( is_admin() && isset( $_POST['order_status'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 						$woo_order_status = sanitize_text_field( wp_unslash( $_POST['order_status'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
-						if ( ! in_array( $woo_order_status, array( 'wc-processing', 'wc-completed' ) ) ) {
+						if ( ! in_array( $woo_order_status, array( 'wc-processing', 'wc-completed' ) ) ) { // phpcs:ignore
 							return $woo_order_status;
 						}
 					}
