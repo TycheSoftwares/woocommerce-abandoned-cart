@@ -81,7 +81,7 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 					'_show_gdpr_message'        => $show_gdpr,
 					'_gdpr_message'             => htmlspecialchars( $display_msg, ENT_QUOTES ),
 					'_gdpr_nothanks_msg'        => htmlspecialchars( $no_thanks, ENT_QUOTES ),
-					'_gdpr_after_no_thanks_msg' => htmlspecialchars( $opt_out_confirmation_msg, ENT_QUOTES ),
+					'_gdpr_after_no_thanks_msg' => htmlspecialchars( wp_strip_all_tags( $opt_out_confirmation_msg, ENT_QUOTES ) ),
 					'enable_ca_tracking'        => true,
 				);
 			}
