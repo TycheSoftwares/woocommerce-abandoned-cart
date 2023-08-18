@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares,
 Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions, Best abandoned cart plugin for WooCommerce, WooCommerce abandoned cart plugin free, Abandoned cart WooCommerce plugin
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 6.1.1
+Tested up to: 6.2.2
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -155,6 +155,28 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+
+=  5.15.2 ( 21.06.2023 ) =
+* Fix - Fixed an issue where coupons are not being added to test emails.
+* Fix - Enhanced encryption key check.
+
+= 5.15.1 ( 13.06.2023 ) =
+* Fix - Removed backward compatibility for old reminder email links.
+
+= 5.15.0 ( 06.06.2023 ) =
+* Fix - A fatal error received when clicked on checkout link from webhook.
+* Fix - Vulnerability fix for hardcoded encryption key.
+* Enhancement - Introduced compatibility with WooCommerce High Performance Order Storage.
+
+= 5.14.2 ( 23.05.2023 ) =
+* Fix - Customers are receiving abandoned cart emails even after they purchased.
+* Fix - An error is displaying on cart page with PHP 8.1.
+* Fix - Cross-Site Request Forgery vulnerability in the plugin.
+* Tweak - Modified the Action Scheduler setting description to remove references to manual cron jobs. This has been done as the plugin now uses the Action Scheduler library.
+
+= 5.14.1 ( 28.03.2023 ) = 
+* Fix - Added a fix which corrects the notice display for guest tables when the plugin is successful in fixing the table ID.
+
 = 5.14.0 ( 21.02.2023 ) =
 * Tweak - Added a filter to allow the user to add CSS styles to product table in reminder email.
 * Tweak - Added the ability to auto fix the guest cart history table auto_increment ID.

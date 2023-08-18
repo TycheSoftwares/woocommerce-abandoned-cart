@@ -58,7 +58,7 @@ if ( ! class_exists( 'Wcal_Tracking_Msg' ) ) {
 					$opt_out_confirmation_msg = apply_filters( 'wcal_gdpr_opt_out_confirmation_text', $opt_out_confirmation_msg );
 
 					$vars = array(
-						'_gdpr_after_no_thanks_msg' => htmlspecialchars( $opt_out_confirmation_msg, ENT_QUOTES ),
+						'_gdpr_after_no_thanks_msg' => htmlspecialchars( $opt_out_confirmation_msg, ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
 						'ajax_url'                  => admin_url( 'admin-ajax.php' ),
 					);
 

@@ -155,21 +155,6 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 										 * condition will not call that function andthe reminder email will be sent.
 										 */
 
-										$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_results( // phpcs:ignore
-											$wpdb->prepare(
-												'SELECT wpm.post_id, wpost.post_date, wpost.post_status FROM `' . $wpdb->prefix . 'postmeta` AS wpm
-												LEFT JOIN `' . $wpdb->prefix . 'posts` AS wpost
-												ON wpm.post_id = wpost.ID
-												WHERE wpm.meta_key = %s AND
-												wpm.meta_value = %s AND wpm.post_id = wpost.ID AND
-												wpost.post_type = %s
-												ORDER BY wpm.post_id DESC LIMIT 1',
-												'wcal_recover_order_placed',
-												$value->id,
-												'shop_order'
-											)
-										);
-
 										// Check if any further orders have come from the user. If yes and the order status is Pending or Failed, email will be sent.
 										$wcal_check_cart_status = self::wcal_get_cart_status( $time_to_send_template_after, $cart_update_time, $value->user_id, $value->user_type, $value->id, $value->user_email );
 
@@ -245,12 +230,14 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 												}
 												$email_body = str_ireplace( '{{cart.abandoned_date}}', apply_filters( 'wc_abandoned_cart_email_content_cart.abandoned_date', $order_date, false, $value ), $email_body );
 
+												$crypt_key = wcal_get_crypt_key( $value->user_email );
 												$wpdb->query( // phpcs:ignore
 													$wpdb->prepare(
-														"INSERT INTO `" . $wpdb->prefix . "ac_sent_history_lite` ( template_id, abandoned_order_id, sent_time, sent_email_id ) VALUES ( %s, %s, '" . current_time( 'mysql' ) . "', %s )", // phpcs:ignore
+														"INSERT INTO `" . $wpdb->prefix . "ac_sent_history_lite` ( template_id, abandoned_order_id, sent_time, sent_email_id, encrypt_key ) VALUES ( %s, %s, '" . current_time( 'mysql' ) . "', %s, %s )", // phpcs:ignore
 														$template_id,
 														$value->id,
-														$value->user_email
+														$value->user_email,
+														$crypt_key
 													)
 												);
 
@@ -277,22 +264,21 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													}
 													$cart_page_link  = apply_filters( 'wcal_cart_link_email_before_encoding', $cart_page_link, $value->id );
 													$encoding_cart   = $email_sent_id . '&url=' . $cart_page_link . $utm;
-													$validate_cart   = wcal_common::wcal_encrypt_validate( $encoding_cart );
-													$cart_link_track = get_option( 'siteurl' ) . '/?wcal_action=track_links&validate=' . $validate_cart;
+													$validate_cart   = wcal_common::wcal_encrypt_validate( $encoding_cart, $crypt_key );
+													$cart_link_track = get_option( 'siteurl' ) . '/?wcal_action=track_links&user_email=' . $value->user_email . '&validate=' . $validate_cart;
 
 													list( $email_body , $coupon_code_to_apply ) = wcal_common::wcal_check_and_replace_email_tag( $email_body, $wc_email_template );
 													if ( '' !== $coupon_code_to_apply ) {
-														$encypted_coupon_code = wcal_common::wcal_encrypt_validate( $coupon_code_to_apply );
+														$encypted_coupon_code = wcal_common::wcal_encrypt_validate( $coupon_code_to_apply, $crypt_key );
 														$cart_link_track     .= '&c=' . $encypted_coupon_code;
 													}
-
-													$email_body           = str_ireplace( '{{cart.link}}', apply_filters( 'wc_abandoned_cart_email_content_cart.link', $cart_link_track, false, $value ), $email_body );
-													$validate_unsubscribe = wcal_common::wcal_encrypt_validate( $email_sent_id );
+													$email_body           = str_ireplace( '{{cart.link}}', apply_filters( 'wcal_abandoned_cart_email_content_cart.link', $cart_link_track, false, $value ), $email_body );
+													$validate_unsubscribe = wcal_common::wcal_encrypt_validate( $email_sent_id, $crypt_key );
 													if ( count( $results_sent ) > 0 && isset( $results_sent[0]->sent_email_id ) ) {
 														$email_sent_id_address = $results_sent[0]->sent_email_id;
 													}
 													$encrypt_email_sent_id_address = hash( 'sha256', $email_sent_id_address );
-													$plugins_url                   = get_option( 'siteurl' ) . '/?wcal_track_unsubscribe=wcal_unsubscribe&validate=' . $validate_unsubscribe . '&track_email_id=' . $encrypt_email_sent_id_address;
+													$plugins_url                   = get_option( 'siteurl' ) . '/?wcal_track_unsubscribe=wcal_unsubscribe&user_email=' . $value->user_email . '&validate=' . $validate_unsubscribe . '&track_email_id=' . $encrypt_email_sent_id_address;
 													$unsubscribe_link_track        = $plugins_url;
 													$email_body                    = str_ireplace( '{{cart.unsubscribe}}', apply_filters( 'wc_abandoned_cart_email_content_cart.unsubscribe', $unsubscribe_link_track, false, $value ), $email_body );
 													$var                           = '';
@@ -580,18 +566,37 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 
 			$order_id         = 0;
 			$wcal_cart_status = false;
+			if ( wcal_is_hpos_enabled() ) { // HPOS usage is enabled.
+				$get_order = wc_get_orders(
+					array(
+						'limit'      => 1,
+						'meta_query' => array( // phpcs:ignore
+							array(
+								'key'     => 'wcal_abandoned_cart_id',
+								'value'   => $wcal_cart_id,
+								'compare' => 'EQUAL',
+							),
+						),
+					)
+				);
+				if ( ! empty( $get_order ) ) {
+					$order = $get_order[0];
+				}
+			} else { // Traditional CPT-based orders are in use.
 
-			$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_var( // phpcS:ignore
-				$wpdb->prepare(
-					"SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = 'wcal_abandoned_cart_id' AND meta_value = %d LIMIT 1", // phpcs:ignore
-					$wcal_cart_id
-				)
-			);
+				$results_wcal_check_if_cart_is_present_in_post_meta = $wpdb->get_var( // phpcS:ignore
+					$wpdb->prepare(
+						"SELECT post_id FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = 'wcal_abandoned_cart_id' AND meta_value = %d LIMIT 1", // phpcs:ignore
+						$wcal_cart_id
+					)
+				);
 
-			if ( is_array( $results_wcal_check_if_cart_is_present_in_post_meta ) && $results_wcal_check_if_cart_is_present_in_post_meta > 0 ) {
-				$order_id = $results_wcal_check_if_cart_is_present_in_post_meta;
-				$order    = wc_get_order( $order_id );
-			} else { // check for an order for the same date & email address.
+				if ( is_array( $results_wcal_check_if_cart_is_present_in_post_meta ) && $results_wcal_check_if_cart_is_present_in_post_meta > 0 ) {
+					$order_id = $results_wcal_check_if_cart_is_present_in_post_meta;
+					$order    = wc_get_order( $order_id );
+				}
+			}
+			if ( ! isset( $order ) ) { // check for an order for the same date & email address.
 				$args      = array(
 					'customer' => $wcal_user_email,
 					'limit'    => 1,
@@ -601,6 +606,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 					$order = $order_obj[0];
 				}
 			}
+
 			if ( isset( $order ) && is_object( $order ) ) {
 
 				$order_data = $order->get_data();
@@ -664,8 +670,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 		public static function wcal_update_cart_status( $cart_id, $wcal_cart_time, $time_to_send_template_after, $wcal_user_email, $order_details ) {
 			global $wpdb;
 
-			$current_time    = current_time( 'timestamp' ); // phpcs:ignore
-			$todays_date     = date( 'Y-m-d', $current_time ); // phpcs:ignore
+			$todays_date     = date( 'Y-m-d' ); // phpcs:ignore
 			$order_date      = $order_details['date_created'];
 			$order_date_time = $order_details['date_time_created'];
 			$order_status    = $order_details['status'];
@@ -679,7 +684,19 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 					$cart_id
 				)
 			);
-			if ( $order_date_str > $current_time ) {
+			if ( strtotime( $order_date_time ) > $wcal_cart_time ) {
+				// Mark the cart as ignored.
+				$wpdb->update( // phpcs:ignore
+					$wpdb->prefix . 'ac_abandoned_cart_history_lite',
+					array(
+						'cart_ignored' => '1',
+					),
+					array(
+						'id' => $cart_id,
+					)
+				);
+				return 1;
+			} elseif ( $order_date_str >= strtotime( $todays_date ) ) {
 				// In some case the cart is recovered but it is not marked as the recovered. So here we check if any record is found for that cart id if yes then update the record respectively.
 				$wcal_check_email_sent_to_cart = self::wcal_get_cart_sent_data( $cart_id );
 
@@ -735,18 +752,6 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 						)
 					);
 				}
-				return 1;
-			} elseif ( strtotime( $order_date_time ) > $wcal_cart_time ) {
-				// Mark the cart as ignored.
-				$wpdb->update( // phpcs:ignore
-					$wpdb->prefix . 'ac_abandoned_cart_history_lite',
-					array(
-						'cart_ignored' => '1',
-					),
-					array(
-						'id' => $cart_id,
-					)
-				);
 				return 1;
 			} elseif ( 'wc-pending' === $order_status || 'wc-failed' === $order_status ) { // Send the reminders.
 				return 0;

@@ -222,7 +222,7 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 				array( 'WCAP_Pro_Settings_Callbacks', 'wcap_use_auto_cron_callback' ),
 				'woocommerce_ac_page',
 				'ac_cron_job_settings_section',
-				array( __( 'Enabling this setting will send the abandoned cart reminder emails to the customer after the set time. If disabled, abandoned cart reminder emails will not be sent using the Action Scheduler. You will need to set cron job manually from cPanel. If you are unsure how to set the cron job, please <a href= mailto:support@tychesoftwares.com>contact us</a> for it.', 'woocommerce-abandoned-cart' ) )
+				array( __( 'Enabling this setting will send the abandoned cart reminder emails to the customer after the set time. If disabled, automated abandoned cart reminders will not be sent by the plugin. Carts will be tracked based on the settings, but no reminders will be sent.', 'woocommerce-abandoned-cart' ) )
 			);
 
 			add_settings_field(
