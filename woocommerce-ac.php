@@ -4182,7 +4182,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 
 				$body_email_preview = str_ireplace( '{{customer.firstname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer_firstname', 'John', true, null ), $body_email_preview );
-				$body_email_preview = str_ireplace( '{{customer.firstname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer_firstname', 'John', true, null ), $body_email_preview );
 				$body_email_preview = str_ireplace( '{{customer.lastname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer_lastname', 'Doe', true, null ), $body_email_preview );
 				$body_email_preview = str_ireplace( '{{customer.fullname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer_fullname', 'John Doe', true, null ), $body_email_preview );
 				$current_time_stamp = current_time( 'timestamp' ); // phpcs:ignore
