@@ -277,6 +277,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( 'yes' === get_option( 'wcal_guest_users_manual_reset_needed', '' ) ) {
 				add_action( 'admin_notices', array( 'Wcal_Update', 'wcal_add_notice' ) );
 			}
+			// 5.15.0
+			add_action( 'wp_login', array( &$this, 'wcal_populate_wc_session' ) );
 		}
 
 		/**
@@ -958,6 +960,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				array( __( 'UTM parameters that should be added to all the links in reminder emails.', 'woocommerce-abandoned-cart' ) )
 			);
 
+			add_settings_field(
+				'wcal_auto_login_users',
+				__( 'Auto login WordPress users coming to the site using reminder email links', 'woocommerce-abandoned-cart' ),
+				array( &$this, 'wcal_auto_login_users_callback' ),
+				'woocommerce_ac_email_page',
+				'ac_email_settings_section',
+				array( __( 'Should users registered on the site be auto logged in when they click a link in the reminder emails?', 'woocommerce-abandoned-cart' ) )
+			);
+
 			// Finally, we register the fields with WordPress.
 			register_setting(
 				'woocommerce_ac_settings',
@@ -1027,6 +1038,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			register_setting(
 				'woocommerce_ac_email_settings',
 				'wcal_add_utm_to_links'
+			);
+
+			register_setting(
+				'woocommerce_ac_email_settings',
+				'wcal_auto_login_users'
 			);
 
 			register_setting(
@@ -1367,6 +1383,25 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			<textarea id='wcal_add_utm_to_links' rows='4' cols='50' name='wcal_add_utm_to_links' ><?php echo esc_html( $wcal_add_utm_to_links ); ?></textarea>
 			<?php
 			$html = '<label for="wcal_add_utm_to_links">' . $args[0] . '</label>';
+			echo wp_kses_post( $html );
+		}
+
+		/**
+		 * Callback for Auto login Users.
+		 *
+		 * @param array $args - Arguments for the setting.
+		 * @since 5.9.0
+		 */
+		public static function wcal_auto_login_users_callback( $args ) {
+
+			$wcal_auto_login_users = get_option( 'wcal_auto_login_users', '' );
+			if ( isset( $wcal_auto_login_users ) && '' === $wcal_auto_login_users ) {
+				$wcal_auto_login_users = 'off';
+			}
+			printf(
+				'<input type="checkbox" id="wcal_auto_login_users" name="wcal_auto_login_users" value="on" ' . checked( 'on', $wcal_auto_login_users, false ) . ' />'
+			);
+			$html = '<label for="wcal_auto_login_users"> ' . $args[0] . '</label>';
 			echo wp_kses_post( $html );
 		}
 
@@ -1956,12 +1991,20 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 				if ( $user_id < '63000000' ) {
 					$user_login = $user->data->user_login;
-					wp_set_auth_cookie( $user_id );
-					$my_temp = wc_load_persistent_cart( $user_login, $user );
-					do_action( 'wp_login', $user_login, $user );
-					if ( isset( $sign_in ) && is_wp_error( $sign_in ) ) {
-						echo esc_html( $sign_in->get_error_message() );
-						exit;
+					if ( 'on' === get_option( 'wcal_auto_login_users', 'on' ) ) {
+						wp_set_auth_cookie( $user_id );
+						$my_temp = wc_load_persistent_cart( $user_login, $user );
+						do_action( 'wp_login', $user_login, $user );
+						if ( isset( $sign_in ) && is_wp_error( $sign_in ) ) {
+							echo esc_html( $sign_in->get_error_message() );
+							exit;
+						}
+					} else {
+						wp_set_auth_cookie( $user_id, false, '', 'loggedout' );
+						$my_temp = wc_load_persistent_cart( $user_login, $user );
+						set_transient( 'wcal_email_sent_id', $email_sent_id, 1800 );
+						set_transient( 'wcal_user_id', $user_id, 1800 );
+						$url = apply_filters( 'wcal_change_redirect_link', get_option( 'siteurl' ) . '/my-account/' );
 					}
 				} else {
 					$my_temp = $this->wcal_load_guest_persistent_cart( $user_id );
@@ -1973,6 +2016,19 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 			} else {
 				return $template;
+			}
+		}
+		/**
+		 * Populate WC Session with values on user login.
+		 *
+		 * @since 5.14.0
+		 */
+		public static function wcal_populate_wc_session() {
+			$email_sent_id = get_transient( 'wcal_email_sent_id' );
+			$user_id       = get_transient( 'wcal_user_id' );
+			if ( $email_sent_id && $user_id && (int) $email_sent_id > 0 && (int) $user_id > 0 ) {
+				wcal_set_cart_session( 'wcal_email_sent_id', $email_sent_id );
+				wcal_set_cart_session( 'wcal_user_id', $user_id );
 			}
 		}
 

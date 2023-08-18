@@ -348,6 +348,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 					add_option( 'ac_lite_track_guest_cart_from_cart_page', $disable_guest_from_cart_page );
 
 					update_option( 'ac_lite_settings_status', 'INDIVIDUAL' );
+					update_option( 'wcal_auto_login_users', 'on' );
 					// Delete the main settings record.
 					delete_option( 'woocommerce_ac_settings' );
 
@@ -359,6 +360,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 					add_blog_option( $blog_id, 'ac_lite_track_guest_cart_from_cart_page', $disable_guest_from_cart_page );
 
 					update_blog_option( $blog_id, 'ac_lite_settings_status', 'INDIVIDUAL' );
+					update_blog_option( $blog_id, 'wcal_auto_login_users', 'on' );
 					// Delete the main settings record.
 					delete_blog_option( $blog_id, 'woocommerce_ac_settings' );
 
