@@ -179,18 +179,18 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 											if ( true === $wcal_check_cart_total ) {
 												if ( 'GUEST' === $value->user_type ) {
 													if ( isset( $results_guest[0]->billing_first_name ) ) {
-														$email_body    = str_ireplace( '{{customer.firstname}}', $results_guest[0]->billing_first_name, $email_body );
-														$email_subject = str_ireplace( '{{customer.firstname}}', $results_guest[0]->billing_first_name, $email_subject );
+														$email_body    = str_ireplace( '{{customer.firstname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer.firstname', $results_guest[0]->billing_first_name, false, $value ), $email_body );
+														$email_subject = str_ireplace( '{{customer.firstname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer.firstname', $results_guest[0]->billing_first_name, false, $value ), $email_subject );
 													}
 													if ( isset( $results_guest[0]->billing_last_name ) ) {
-														$email_body = str_ireplace( '{{customer.lastname}}', $results_guest[0]->billing_last_name, $email_body );
+														$email_body = str_ireplace( '{{customer.lastname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer.lastname', $results_guest[0]->billing_last_name, false, $value ), $email_body );
 													}
 													if ( isset( $results_guest[0]->billing_first_name ) && isset( $results_guest[0]->billing_last_name ) ) {
-														$email_body = str_ireplace( '{{customer.fullname}}', $results_guest[0]->billing_first_name . ' ' . $results_guest[0]->billing_last_name, $email_body );
+														$email_body = str_ireplace( '{{customer.fullname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer.fullname', $results_guest[0]->billing_first_name . ' ' . $results_guest[0]->billing_last_name, false, $value ), $email_body );
 													} elseif ( isset( $results_guest[0]->billing_first_name ) ) {
-														$email_body = str_ireplace( '{{customer.fullname}}', $results_guest[0]->billing_first_name, $email_body );
+														$email_body = str_ireplace( '{{customer.fullname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer.fullname', $results_guest[0]->billing_first_name, false, $value ), $email_body );
 													} elseif ( isset( $results_guest[0]->billing_last_name ) ) {
-														$email_body = str_ireplace( '{{customer.fullname}}', $results_guest[0]->billing_last_name, $email_body );
+														$email_body = str_ireplace( '{{customer.fullname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer.fullname', $results_guest[0]->billing_last_name, false, $value ), $email_body );
 													}
 												} else {
 													$user_first_name      = '';
@@ -205,8 +205,8 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													} else {
 														$user_first_name = $user_first_name_temp;
 													}
-													$email_body          = str_ireplace( '{{customer.firstname}}', $user_first_name, $email_body );
-													$email_subject       = str_ireplace( '{{customer.firstname}}', $user_first_name, $email_subject );
+													$email_body          = str_ireplace( '{{customer.firstname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer.firstname', $user_first_name, false, $value ), $email_body );
+													$email_subject       = str_ireplace( '{{customer.firstname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer.firstname', $user_first_name, false, $value ), $email_subject );
 													$user_last_name      = '';
 													$user_last_name_temp = get_user_meta( $value->user_id, 'billing_last_name', true );
 													if ( isset( $user_last_name_temp ) && '' === $user_last_name_temp ) {
@@ -219,8 +219,8 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													} else {
 														$user_last_name = $user_last_name_temp;
 													}
-													$email_body = str_ireplace( '{{customer.lastname}}', $user_last_name, $email_body );
-													$email_body = str_ireplace( '{{customer.fullname}}', $user_first_name . ' ' . $user_last_name, $email_body );
+													$email_body = str_ireplace( '{{customer.lastname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer.lastname', $user_last_name, false, $value ), $email_body );
+													$email_body = str_ireplace( '{{customer.fullname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer.fullname', $user_first_name . ' ' . $user_last_name, false, $value ), $email_body );
 												}
 												$order_date = '';
 												if ( $cart_update_time > 0 ) {
@@ -228,7 +228,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													$time_format = date_i18n( get_option( 'time_format' ), $cart_update_time );
 													$order_date  = $date_format . ' ' . $time_format;
 												}
-												$email_body = str_ireplace( '{{cart.abandoned_date}}', $order_date, $email_body );
+												$email_body = str_ireplace( '{{cart.abandoned_date}}', apply_filters( 'wcal_abandoned_cart_email_content_cart.abandoned_date', $order_date, false, $value ), $email_body );
 
 												$crypt_key = wcal_get_crypt_key( $value->user_email );
 												$wpdb->query( // phpcs:ignore
@@ -272,8 +272,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 														$encypted_coupon_code = wcal_common::wcal_encrypt_validate( $coupon_code_to_apply, $crypt_key );
 														$cart_link_track     .= '&c=' . $encypted_coupon_code;
 													}
-
-													$email_body           = str_ireplace( '{{cart.link}}', $cart_link_track, $email_body );
+													$email_body           = str_ireplace( '{{cart.link}}', apply_filters( 'wcal_abandoned_cart_email_content_cart.link', $cart_link_track, false, $value ), $email_body );
 													$validate_unsubscribe = wcal_common::wcal_encrypt_validate( $email_sent_id, $crypt_key );
 													if ( count( $results_sent ) > 0 && isset( $results_sent[0]->sent_email_id ) ) {
 														$email_sent_id_address = $results_sent[0]->sent_email_id;
@@ -281,7 +280,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													$encrypt_email_sent_id_address = hash( 'sha256', $email_sent_id_address );
 													$plugins_url                   = get_option( 'siteurl' ) . '/?wcal_track_unsubscribe=wcal_unsubscribe&user_email=' . $value->user_email . '&validate=' . $validate_unsubscribe . '&track_email_id=' . $encrypt_email_sent_id_address;
 													$unsubscribe_link_track        = $plugins_url;
-													$email_body                    = str_ireplace( '{{cart.unsubscribe}}', $unsubscribe_link_track, $email_body );
+													$email_body                    = str_ireplace( '{{cart.unsubscribe}}', apply_filters( 'wcal_abandoned_cart_email_content_cart.unsubscribe', $unsubscribe_link_track, false, $value ), $email_body );
 													$var                           = '';
 													if ( preg_match( '{{products.cart}}', $email_body, $matched ) ) {
 														$img_header           = __( 'Item', 'woocommerce-abandoned-cart' );
@@ -425,11 +424,11 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
                                                                 <td> ' . $cart_total . '</td>
                                                             </tr>';
 															$var             .= '</table>';
-															$email_body       = str_ireplace( '{{products.cart}}', $var, $email_body );
-															$email_subject    = str_ireplace( '{{product.name}}', $sub_line_prod_name, $email_subject );
+															$email_body       = str_ireplace( '{{products.cart}}', apply_filters( 'wcal_abandoned_cart_email_content_products.cart', $var, false, $value ), $email_body );
+															$email_subject    = str_ireplace( '{{product.name}}', apply_filters( 'wcal_abandoned_cart_email_content_product.name', $sub_line_prod_name, false, $value ), $email_subject );
 														} else {
-															$email_body    = str_ireplace( '{{products.cart}}', __( 'Product no longer exists', 'woocommerce-abandoned-cart' ), $email_body );
-															$email_subject = str_ireplace( '{{product.name}}', $sub_line_prod_name, $email_subject );
+															$email_body    = str_ireplace( '{{products.cart}}', apply_filters( 'wcal_abandoned_cart_email_content_products.cart', __( 'Product no longer exists', 'woocommerce-abandoned-cart' ), false, $value ), $email_body );
+															$email_subject = str_ireplace( '{{product.name}}', apply_filters( 'wcal_abandoned_cart_email_content_product.name', $sub_line_prod_name, false, $value ), $email_subject );
 														}
 													}
 
