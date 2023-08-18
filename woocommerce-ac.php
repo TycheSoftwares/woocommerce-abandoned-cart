@@ -277,6 +277,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( 'yes' === get_option( 'wcal_guest_users_manual_reset_needed', '' ) ) {
 				add_action( 'admin_notices', array( 'Wcal_Update', 'wcal_add_notice' ) );
 			}
+			// 5.15.0
+			add_action( 'wp_login', array( &$this, 'wcal_populate_wc_session' ) );
 		}
 
 		/**
@@ -2014,6 +2016,19 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 			} else {
 				return $template;
+			}
+		}
+		/**
+		 * Populate WC Session with values on user login.
+		 *
+		 * @since 5.14.0
+		 */
+		public static function wcal_populate_wc_session() {
+			$email_sent_id = get_transient( 'wcal_email_sent_id' );
+			$user_id       = get_transient( 'wcal_user_id' );
+			if ( $email_sent_id && $user_id && (int) $email_sent_id > 0 && (int) $user_id > 0 ) {
+				wcal_set_cart_session( 'wcal_email_sent_id', $email_sent_id );
+				wcal_set_cart_session( 'wcal_user_id', $user_id );
 			}
 		}
 
