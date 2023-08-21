@@ -2027,8 +2027,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			$email_sent_id = get_transient( 'wcal_email_sent_id' );
 			$user_id       = get_transient( 'wcal_user_id' );
 			if ( $email_sent_id && $user_id && (int) $email_sent_id > 0 && (int) $user_id > 0 ) {
-				wcal_set_cart_session( 'wcal_email_sent_id', $email_sent_id );
-				wcal_set_cart_session( 'wcal_user_id', $user_id );
+				wcal_common::wcal_set_cart_session( 'wcal_email_sent_id', $email_sent_id );
+				wcal_common::wcal_set_cart_session( 'wcal_user_id', $user_id );
 			}
 		}
 
