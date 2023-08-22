@@ -96,7 +96,7 @@ class Wcal_Admin_Notice {
 						printf(
 						// Translators: Plugin Name and URL.
 							esc_html__( 'Enabling this setting will allow users registered on the website to access it via reminder email links without needing to login, which may be a security vulnerability.', 'woocommerce-abandoned-cart' ),
-							wp_kses_post( '<b>Abandoned Cart Lite for WooCommerce</b>' ),
+							wp_kses_post( '<b>Abandoned Cart Lite for WooCommerce</b>' )
 						);
 						?>
 						</p>
