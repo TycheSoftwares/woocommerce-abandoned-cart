@@ -240,6 +240,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				add_action( 'wp_ajax_wcal_toggle_template_status', array( &$this, 'wcal_toggle_template_status' ) );
 				add_action( 'wp_ajax_wcal_abandoned_cart_info', array( &$this, 'wcal_abandoned_cart_info' ) );
 				add_action( 'wp_ajax_wcal_dismiss_admin_notice', array( &$this, 'wcal_dismiss_admin_notice' ) );
+				add_filter( 'pre_update_option_wcal_auto_login_users', array( &$this, 'wcal_update_admin_notice_value' ), 10, 2 );
 
 				add_filter( 'ts_tracker_data', array( 'wcal_common', 'ts_add_plugin_tracking_data' ), 10, 1 );
 				add_filter( 'ts_tracker_opt_out_data', array( 'wcal_common', 'ts_get_data_for_opt_out' ), 10, 1 );
@@ -4050,7 +4051,25 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( '' !== $notice_key ) {
 				update_option( $notice_key, true );
 			}
+			$notice_keys = isset( $_POST['notices'] ) ? sanitize_text_field( wp_unslash( $_POST['notices'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+			if ( '' !== $notice_keys ) {
+				update_option( $notice_keys, true );
+			}
 			die();
+		}
+		/**
+		 * Ajax function which will save the notice state in database.
+		 *
+		 * @param str $new_value - new value.
+		 * @param str $old_value - old value.
+		 * @since 5.16.0
+		 */
+		public static function wcal_update_admin_notice_value( $new_value, $old_value ) {
+			// Check test mode.
+			if ( $new_value !== $old_value && ! empty( $new_value ) && 'on' === $new_value ) {
+				update_option( 'wcal_auto_login_notice_dismiss', false );
+			}
+			return $new_value;
 		}
 
 		/**

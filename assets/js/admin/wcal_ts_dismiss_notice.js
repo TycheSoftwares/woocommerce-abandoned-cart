@@ -16,6 +16,21 @@ jQuery(document).ready( function() {
 		});
 
 	});
+
+	jQuery( '#wcal_auto_login_notice' ).on( 'click', '.notice-dismiss', function() {
+		var data = {
+			notices: 'wcal_auto_login_notice_dismiss',
+			action: "wcal_dismiss_admin_notice"
+
+		};
+
+		var admin_url = wcal_dismiss_params.ajax_url;
+
+			jQuery.post( admin_url, data, function( response ) {
+
+		});
+
+	});
 	
 	jQuery('#wcal_delete_coupons').click( function( event ) {
 		var msg 	= "Are you sure you want delete the expired and used coupons created by Abandonment Cart Pro for WooCommerce Plugin?";
