@@ -240,6 +240,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				add_action( 'wp_ajax_wcal_toggle_template_status', array( &$this, 'wcal_toggle_template_status' ) );
 				add_action( 'wp_ajax_wcal_abandoned_cart_info', array( &$this, 'wcal_abandoned_cart_info' ) );
 				add_action( 'wp_ajax_wcal_dismiss_admin_notice', array( &$this, 'wcal_dismiss_admin_notice' ) );
+				add_filter( 'pre_update_option_wcal_auto_login_users', array( &$this, 'wcal_update_admin_notice_value' ), 10, 2 );
 
 				add_filter( 'ts_tracker_data', array( 'wcal_common', 'ts_add_plugin_tracking_data' ), 10, 1 );
 				add_filter( 'ts_tracker_opt_out_data', array( 'wcal_common', 'ts_get_data_for_opt_out' ), 10, 1 );
@@ -258,6 +259,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_filter( 'admin_footer_text', array( $this, 'wcal_admin_footer_text' ), 1 );
 
 			add_action( 'admin_notices', array( 'Wcal_Admin_Notice', 'wcal_show_db_update_notice' ) );
+			add_action( 'admin_notices', array( 'Wcal_Admin_Notice', 'wcal_show_auto_loggin_notice' ) );
 
 			include_once 'includes/frontend/class-wcal-frontend.php';
 
@@ -279,6 +281,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 			// 5.15.0
 			add_action( 'wp_login', array( &$this, 'wcal_populate_wc_session' ) );
+			if ( '' === get_option( 'wcal_auto_login_users', 'on' ) ) {
+				add_filter( 'woocommerce_login_redirect', array( &$this, 'ts_redirect_login' ) );
+			}
 		}
 
 		/**
@@ -2027,9 +2032,18 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			$email_sent_id = get_transient( 'wcal_email_sent_id' );
 			$user_id       = get_transient( 'wcal_user_id' );
 			if ( $email_sent_id && $user_id && (int) $email_sent_id > 0 && (int) $user_id > 0 ) {
-				wcal_set_cart_session( 'wcal_email_sent_id', $email_sent_id );
-				wcal_set_cart_session( 'wcal_user_id', $user_id );
+				wcal_common::wcal_set_cart_session( 'wcal_email_sent_id', $email_sent_id );
+				wcal_common::wcal_set_cart_session( 'wcal_user_id', $user_id );
 			}
+		}
+		/**
+		 * Redirect on cart page after user logged in.
+		 *
+		 * @since 5.16.0
+		 */
+		public static function ts_redirect_login() {
+			$url = wc_get_cart_url();
+			return $url;
 		}
 
 		/**
@@ -4037,7 +4051,25 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( '' !== $notice_key ) {
 				update_option( $notice_key, true );
 			}
+			$notice_keys = isset( $_POST['notices'] ) ? sanitize_text_field( wp_unslash( $_POST['notices'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+			if ( '' !== $notice_keys ) {
+				update_option( $notice_keys, true );
+			}
 			die();
+		}
+		/**
+		 * Ajax function which will save the notice state in database.
+		 *
+		 * @param str $new_value - new value.
+		 * @param str $old_value - old value.
+		 * @since 5.16.0
+		 */
+		public static function wcal_update_admin_notice_value( $new_value, $old_value ) {
+			// Check test mode.
+			if ( $new_value !== $old_value && ! empty( $new_value ) && 'on' === $new_value ) {
+				update_option( 'wcal_auto_login_notice_dismiss', false );
+			}
+			return $new_value;
 		}
 
 		/**

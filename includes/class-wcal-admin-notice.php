@@ -77,4 +77,34 @@ class Wcal_Admin_Notice {
 			}
 		}
 	}
+	/**
+	 * Enabling this setting will allow users registered on the website to access it via reminder email links without needing to login
+	 *
+	 * @since 5.16.0
+	 *
+	 * @hook admin_notices
+	 */
+	public static function wcal_show_auto_loggin_notice() {
+
+		if ( isset( $_GET['page'] ) && 'woocommerce_ac_page' === $_GET['page'] && isset( $_GET['action'] ) && 'emailsettings' === $_GET['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification
+
+			if ( ! get_option( 'wcal_auto_login_notice_dismiss', false ) ) {
+				if ( 'on' === get_option( 'wcal_auto_login_users', 'on' ) ) {
+					?>
+						<div id='wcal_auto_login_notice' class='is-dismissible notice notice-info wcal-cron-notice'>
+							<p>
+							<?php
+							printf(
+							// Translators: Plugin Name and URL.
+								esc_html__( 'Enabling this setting will allow users registered on the website to access it via reminder email links without needing to login, which may be a security vulnerability.', 'woocommerce-abandoned-cart' ),
+								wp_kses_post( '<b>Abandoned Cart Lite for WooCommerce</b>' )
+							);
+							?>
+							</p>
+						</div>
+					<?php
+				}
+			}
+		}
+	}
 }
