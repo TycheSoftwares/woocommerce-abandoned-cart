@@ -782,6 +782,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				if ( ! get_blog_option( $blog_id, 'wcal_reply_email' ) ) {
 					add_blog_option( $blog_id, 'wcal_reply_email', $wcal_get_admin_email );
 				}
+				if ( ! get_blog_option( $blog_id, 'wcal_auto_login_users' ) ) {
+					add_blog_option( $blog_id, 'wcal_auto_login_users', '' );
+				}
 			}
 			do_action( 'wcal_activate' );
 		}
