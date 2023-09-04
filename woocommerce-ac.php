@@ -3,14 +3,14 @@
  * Plugin Name: Abandoned Cart Lite for WooCommerce
  * Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
  * Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
- * Version: 5.15.2
+ * Version: 5.16.0
  * Author: Tyche Softwares
  * Author URI: http://www.tychesoftwares.com/
  * Text Domain: woocommerce-abandoned-cart
  * Domain Path: /i18n/languages/
  * Requires PHP: 5.6
  * WC requires at least: 4.0.0
- * WC tested up to: 7.8.0
+ * WC tested up to: 8.0.3
  *
  * @package Abandoned-Cart-Lite-for-WooCommerce
  */
@@ -126,7 +126,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			if ( ! defined( 'WCAL_PLUGIN_VERSION' ) ) {
-				define( 'WCAL_PLUGIN_VERSION', '5.15.2' );
+				define( 'WCAL_PLUGIN_VERSION', '5.16.0' );
 			}
 
 			if ( ! defined( 'WCAL_PLUGIN_PATH' ) ) {
@@ -281,7 +281,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 			// 5.15.0
 			add_action( 'wp_login', array( &$this, 'wcal_populate_wc_session' ) );
-			if ( '' === get_option( 'wcal_auto_login_users', 'on' ) ) {
+			if ( '' === get_option( 'wcal_auto_login_users', '' ) ) {
 				add_filter( 'woocommerce_login_redirect', array( &$this, 'ts_redirect_login' ) );
 			}
 		}
@@ -755,6 +755,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				if ( ! get_option( 'wcal_reply_email' ) ) {
 					add_option( 'wcal_reply_email', $wcal_get_admin_email );
 				}
+				if ( ! get_option( 'wcal_auto_login_users' ) ) {
+					add_option( 'wcal_auto_login_users', '' );
+				}
 			} else {
 				if ( ! get_blog_option( $blog_id, 'wcal_new_default_templates' ) ) {
 					if ( 0 === $check_table_empty ) {
@@ -778,6 +781,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 				if ( ! get_blog_option( $blog_id, 'wcal_reply_email' ) ) {
 					add_blog_option( $blog_id, 'wcal_reply_email', $wcal_get_admin_email );
+				}
+				if ( ! get_blog_option( $blog_id, 'wcal_auto_login_users' ) ) {
+					add_blog_option( $blog_id, 'wcal_auto_login_users', '' );
 				}
 			}
 			do_action( 'wcal_activate' );
@@ -1996,7 +2002,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 				if ( $user_id < '63000000' ) {
 					$user_login = $user->data->user_login;
-					if ( 'on' === get_option( 'wcal_auto_login_users', 'on' ) ) {
+					if ( 'on' === get_option( 'wcal_auto_login_users', '' ) ) {
 						wp_set_auth_cookie( $user_id );
 						$my_temp = wc_load_persistent_cart( $user_login, $user );
 						do_action( 'wp_login', $user_login, $user );
