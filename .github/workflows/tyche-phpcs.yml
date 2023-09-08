@@ -3,16 +3,17 @@ on: pull_request
 name: Inspections
 jobs:
   runPHPCSInspection:
-    name: Run PHPCS inspection
+    name: PHPCS
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
+        fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
-    - name: Run PHPCS inspection
-      uses: rtCamp/action-phpcs-code-review@v2.0.2
+        
+    - name: Run PHPCS
+      uses: rtCamp/action-phpcs-code-review@v3
       env:
-        GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
-        SKIP_FOLDERS: "tests,.github,assets,i18n"
+        GH_BOT_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
       with:
         args: "WordPress,WordPress-Core,WordPress-Docs"
