@@ -2073,7 +2073,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$subtotal             = 0;
 				$subtotal_ex_tax      = 0;
 				$tax_total            = 0;
-				if ( isset( $saved_cart ) && ! is_null( $saved_cart ) && count( $saved_cart ) > 0 ) {
+				if ( ! is_null( $saved_cart ) && isset( $saved_cart ) && count( $saved_cart ) > 0 ) {
 					foreach ( $saved_cart as $key => $value ) {
 						if ( is_array( $value ) && count( $value ) > 0 ) {
 							foreach ( $value as $a => $b ) {
