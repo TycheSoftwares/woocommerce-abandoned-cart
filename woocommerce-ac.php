@@ -482,7 +482,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			if ( isset( $_GET['wcal_preview_woocommerce_mail'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-				if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'woocommerce-abandoned-cart' ) ) {
+				if ( ! current_user_can( 'manage_options' ) || ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'woocommerce-abandoned-cart' ) ) {
 					die( 'Security check' );
 				}
 				$message = '';
@@ -519,7 +519,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			if ( isset( $_GET['wcal_preview_mail'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-				if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'woocommerce-abandoned-cart' ) ) {
+				if ( ! current_user_can( 'manage_options' ) || ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'woocommerce-abandoned-cart' ) ) {
 					die( 'Security check' );
 				}
 				// get the preview email content.
@@ -4493,7 +4493,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_delete_expired_used_coupon_code() {
 
 			global $wpdb;
-			if ( ! current_user_can( 'manage_options' ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'delete_expired_used_coupon_code' ) ) { //phpcs:ignore
+			if ( ! current_user_can( 'manage_options' ) || ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'delete_expired_used_coupon_code' ) ) { //phpcs:ignore
 				wp_send_json_error();
 			}
 
