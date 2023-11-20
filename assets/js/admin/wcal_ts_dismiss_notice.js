@@ -33,7 +33,7 @@ jQuery(document).ready( function() {
 	});
 	
 	jQuery('#wcal_delete_coupons').click( function( event ) {
-		var msg 	= "Are you sure you want delete the expired and used coupons created by Abandonment Cart Pro for WooCommerce Plugin?";
+		var msg 	= wcal_dismiss_params.delete_coupon_confirmation_msg;
 		var status 	= confirm( msg );
 		if ( status == true ) {
 			// disable delete button and show loader

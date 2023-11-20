@@ -2516,8 +2516,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					'wcal_admin_notices',
 					'wcal_dismiss_params',
 					array(
-						'ajax_url'   => admin_url( 'admin-ajax.php' ),
-						'ajax_nonce' => wp_create_nonce( 'delete_expired_used_coupon_code' ),
+						'ajax_url'                       => admin_url( 'admin-ajax.php' ),
+						'ajax_nonce'                     => wp_create_nonce( 'delete_expired_used_coupon_code' ),
+						'delete_coupon_confirmation_msg' => __( 'Are you sure you want delete the expired and used coupons created by Abandonment Cart Lite for WooCommerce Plugin?', 'woocommerce-abandoned-cart' ),
 					)
 				);
 				wp_register_script( 'enhanced', plugins_url() . '/woocommerce/assets/js/admin/wc-enhanced-select.js', array( 'jquery', 'select2' ), WCAL_PLUGIN_VERSION, false );
