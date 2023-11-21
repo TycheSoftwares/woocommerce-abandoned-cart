@@ -8,7 +8,7 @@
  * Author URI: http://www.tychesoftwares.com/
  * Text Domain: woocommerce-abandoned-cart
  * Domain Path: /i18n/languages/
- * Requires PHP: 5.6
+ * Requires PHP: 7.4 or higher
  * WC requires at least: 4.0.0
  * WC tested up to: 8.3.0
  *
