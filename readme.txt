@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares,
 Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions, Best abandoned cart plugin for WooCommerce, WooCommerce abandoned cart plugin free, Abandoned cart WooCommerce plugin
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 1.3
-Tested up to: 6.3.1
+Tested up to: 6.4.1
 Stable tag: trunk
 Requires PHP: 5.6
 License: GPLv2 or late
@@ -155,6 +155,11 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+
+=  5.16.1 ( 21.11.2023 ) = 
+* Fix - Fixed some errors from the plugin with PHP 8.1
+* Fix - Fixed a vulnerability issue that allows users with lower access to run calls.
+* Tweak - Made the confirmaiton message for coupon deletion available for translation.
 
 =  5.16.0 ( 05.09.2023 ) =
 * Fix - Coupon merge tags not working when testing email templates.
