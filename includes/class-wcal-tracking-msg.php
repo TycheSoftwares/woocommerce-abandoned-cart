@@ -60,6 +60,7 @@ if ( ! class_exists( 'Wcal_Tracking_Msg' ) ) {
 					$vars = array(
 						'_gdpr_after_no_thanks_msg' => htmlspecialchars( $opt_out_confirmation_msg, ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
 						'ajax_url'                  => admin_url( 'admin-ajax.php' ),
+						'ajax_nonce'                => wp_create_nonce( 'wcal_gdpr_nonce' ),
 					);
 
 					wp_localize_script(

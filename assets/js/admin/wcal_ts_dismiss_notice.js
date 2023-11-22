@@ -5,7 +5,8 @@ jQuery(document).ready( function() {
 	jQuery( '#wcal_cron_notice' ).on( 'click', '.notice-dismiss', function() {
 		var data = {
 			notice: 'wcal_scheduler_update_dismiss',
-			action: "wcal_dismiss_admin_notice"
+			action: "wcal_dismiss_admin_notice",
+			ajax_nonce: wcal_dismiss_params.dismiss_notice_nonce,
 
 		};
 
@@ -20,8 +21,8 @@ jQuery(document).ready( function() {
 	jQuery( '#wcal_auto_login_notice' ).on( 'click', '.notice-dismiss', function() {
 		var data = {
 			notices: 'wcal_auto_login_notice_dismiss',
-			action: "wcal_dismiss_admin_notice"
-
+			action: "wcal_dismiss_admin_notice",
+			ajax_nonce: wcal_dismiss_params.dismiss_notice_nonce,
 		};
 
 		var admin_url = wcal_dismiss_params.ajax_url;

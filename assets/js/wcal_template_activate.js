@@ -23,7 +23,8 @@ jQuery(function( $ ) {
 		$.post( ajaxurl, {
 			action          : 'wcal_toggle_template_status',
 			wcal_template_id: $switch.attr( 'wcal-template-id' ),
-			current_state   : new_state
+			current_state   : new_state,
+			ajax_nonce      : wcal_templates_params.wcal_status_nonce,
 		}, function( wcal_template_response ) {
 			if ( wcal_template_response.indexOf('wcal-template-updated') > -1){
 				var wcal_template_response_array = wcal_template_response.split ( ':' );

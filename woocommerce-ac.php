@@ -2467,6 +2467,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					false
 				);
 
+				wp_localize_script(
+					'wcal_activate_template',
+					'wcal_templates_params',
+					array(
+						'wcal_status_nonce' => wp_create_nonce( 'wcal_update_template_status' ),
+					)
+				);
 				// Needed only on the dashboard page.
 				if ( 'woocommerce_ac_page' === $page && ( '' === $action || 'dashboard' === $action ) ) {
 					wp_register_script( 'jquery-ui-datepicker', WC()->plugin_url() . '/assets/js/admin/ui-datepicker.js', '', WCAL_PLUGIN_VERSION, false );
@@ -2505,6 +2512,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					false
 				);
 
+				wp_localize_script(
+					'wcal_abandoned_cart_details',
+					'wcal_details_modal_params',
+					array(
+						'wcal_details_modal_nonce' => wp_create_nonce( 'wcal_cart_details_nonce' ),
+					)
+				);
+
 				wp_enqueue_script(
 					'wcal_admin_notices',
 					plugins_url( '/assets/js/admin/wcal_ts_dismiss_notice.js', __FILE__ ),
@@ -2519,6 +2534,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						'ajax_url'                       => admin_url( 'admin-ajax.php' ),
 						'ajax_nonce'                     => wp_create_nonce( 'delete_expired_used_coupon_code' ),
 						'delete_coupon_confirmation_msg' => __( 'Are you sure you want delete the expired and used coupons created by Abandonment Cart Lite for WooCommerce Plugin?', 'woocommerce-abandoned-cart' ),
+						'dismiss_notice_nonce'           => wp_create_nonce( 'wcal_dismiss_notice' ),
 					)
 				);
 				wp_register_script( 'enhanced', plugins_url() . '/woocommerce/assets/js/admin/wc-enhanced-select.js', array( 'jquery', 'select2' ), WCAL_PLUGIN_VERSION, false );
@@ -4043,6 +4059,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * @since 5.6
 		 */
 		public static function wcal_abandoned_cart_info() {
+			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_cart_details_nonce' ) ) ) {
+				wp_send_json( 'Security check failed' );
+			}
 			Wcal_Abandoned_Cart_Details::wcal_get_cart_detail_view( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification
 			die();
 		}
@@ -4054,6 +4073,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public static function wcal_dismiss_admin_notice() {
 
+			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_dismiss_notice' ) ) ) {
+				wp_send_json( 'Security check failed' );
+			}
 			$notice_key = isset( $_POST['notice'] ) ? sanitize_text_field( wp_unslash( $_POST['notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 			if ( '' !== $notice_key ) {
 				update_option( $notice_key, true );
@@ -4087,6 +4109,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * @since 4.4
 		 */
 		public static function wcal_toggle_template_status() {
+
+			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_update_template_status' ) ) ) {
+				wp_send_json( 'Security check failed' );
+			}
 			global $wpdb;
 			$template_id             = isset( $_POST['wcal_template_id'] ) ? sanitize_text_field( wp_unslash( $_POST['wcal_template_id'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification
 			$current_template_status = isset( $_POST['current_state'] ) ? sanitize_text_field( wp_unslash( $_POST['current_state'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
@@ -4494,8 +4520,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_delete_expired_used_coupon_code() {
 
 			global $wpdb;
-			if ( ! current_user_can( 'manage_options' ) || ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'delete_expired_used_coupon_code' ) ) { //phpcs:ignore
-				wp_send_json_error();
+			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'delete_expired_used_coupon_code' ) ) ) {
+				wp_send_json_error( 'Security check failed' );
 			}
 
 			$expired_coupons = self::wcal_fetch_expired_coupons();

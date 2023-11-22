@@ -4,7 +4,8 @@ jQuery( document ).ready( function() {
         
         // run an ajax call and save the data that user did not give consent
         var data = {
-            action          : 'wcal_gdpr_refused'
+            action    : 'wcal_gdpr_refused',
+            ajax_nonce: wcal_registered_capture_params.ajax_nonce,
         };
         jQuery.post( wcal_registered_capture_params.ajax_url, data, function() {
             jQuery("#wcal_gdpr_message_block").empty().append("<span style='font-size: small'>" + 
