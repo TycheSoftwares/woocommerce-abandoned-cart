@@ -2443,13 +2443,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					// Also, we need above all parameters for the WooCoomerce js file. So we have taken it from the WooCommerce. @since: 5.1.2.
 					wp_localize_script( 'woocommerce_admin', 'woocommerce_admin', $params );
 				}
-				?>
-				<script type="text/javascript" >
-					function wcal_activate_email_template( template_id, active_state ) {
-						location.href = 'admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=activate_template&id='+template_id+'&active_state='+active_state ;
-					}
-				</script>
-				<?php
+
 				$js_src = includes_url( 'js/tinymce/' ) . 'tinymce.min.js';
 				wp_enqueue_script( 'tinyMce_ac', $js_src, '', WCAL_PLUGIN_VERSION, false );
 				wp_enqueue_script(
