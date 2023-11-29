@@ -109,7 +109,8 @@ jQuery(function($) {
                     wcal_cart_total       : $wcal_cart_total,
                     wcal_abandoned_date   : $wcal_abandoned_date,
                     wcal_abandoned_status : $wcal_cart_status,
-                    wcal_current_page     : current_page
+                    wcal_current_page     : current_page,
+                    ajax_nonce            : wcal_details_modal_params.wcal_details_modal_nonce,
                 }
 
                 $.post( ajaxurl, data , function( response ){

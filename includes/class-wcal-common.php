@@ -903,7 +903,9 @@ class wcal_common { // phpcs:ignore
 	 * @since 5.5
 	 */
 	public static function wcal_gdpr_refused() {
-
+		if ( ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_gdpr_nonce' ) ) ) {
+			wp_send_json( 'Security check failed' );
+		}
 		$abandoned_cart_id = self::wcal_get_cart_session( 'abandoned_cart_id_lite' );
 
 		global $wpdb;

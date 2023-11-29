@@ -234,8 +234,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			if ( is_admin() ) {
-				// Load "admin-only" scripts here.
-				add_action( 'admin_head', array( &$this, 'wcal_action_send_preview' ) );
 				add_action( 'wp_ajax_wcal_preview_email_sent', array( &$this, 'wcal_preview_email_sent' ) );
 				add_action( 'wp_ajax_wcal_toggle_template_status', array( &$this, 'wcal_toggle_template_status' ) );
 				add_action( 'wp_ajax_wcal_abandoned_cart_info', array( &$this, 'wcal_abandoned_cart_info' ) );
@@ -2443,13 +2441,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					// Also, we need above all parameters for the WooCoomerce js file. So we have taken it from the WooCommerce. @since: 5.1.2.
 					wp_localize_script( 'woocommerce_admin', 'woocommerce_admin', $params );
 				}
-				?>
-				<script type="text/javascript" >
-					function wcal_activate_email_template( template_id, active_state ) {
-						location.href = 'admin.php?page=woocommerce_ac_page&action=emailtemplates&mode=activate_template&id='+template_id+'&active_state='+active_state ;
-					}
-				</script>
-				<?php
+
 				$js_src = includes_url( 'js/tinymce/' ) . 'tinymce.min.js';
 				wp_enqueue_script( 'tinyMce_ac', $js_src, '', WCAL_PLUGIN_VERSION, false );
 				wp_enqueue_script(
@@ -2460,13 +2452,26 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					false
 				);
 				wp_enqueue_script(
-					'wcal_activate_template',
-					plugins_url( '/assets/js/wcal_template_activate.js', __FILE__ ),
+					'wcal_email_template',
+					plugins_url( '/assets/js/wcal_email_templates.js', __FILE__ ),
 					'',
 					WCAL_PLUGIN_VERSION,
 					false
 				);
 
+				wp_localize_script(
+					'wcal_email_template',
+					'wcal_templates_params',
+					array(
+						'wcal_status_nonce'              => wp_create_nonce( 'wcal_update_template_status' ),
+						'wcal_test_email_incorrect_input_msg' => __( 'Please enter a valid email.', 'woocommerce-abandoned-cart' ),
+						'wcal_test_email_default_header' => __( 'Abandoned Cart Reminder', 'woocommerce-abandoned-cart' ),
+						'wcal_test_email_empty_body_msg' => __( 'Test email is not sent as the email body is empty.', 'woocommerce-abandoned-cart' ),
+						'wcal_email_sent_image_path'     => WCAL_PLUGIN_URL . '/assets/images/check.jpg',
+						'wcal_test_email_success_msg'    => __( 'Email has been sent successfully.', 'woocommerce-abandoned-cart' ),
+						'wcal_test_email_nonce'          => wp_create_nonce( 'wcal_send_test_email' ),
+					)
+				);
 				// Needed only on the dashboard page.
 				if ( 'woocommerce_ac_page' === $page && ( '' === $action || 'dashboard' === $action ) ) {
 					wp_register_script( 'jquery-ui-datepicker', WC()->plugin_url() . '/assets/js/admin/ui-datepicker.js', '', WCAL_PLUGIN_VERSION, false );
@@ -2505,6 +2510,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					false
 				);
 
+				wp_localize_script(
+					'wcal_abandoned_cart_details',
+					'wcal_details_modal_params',
+					array(
+						'wcal_details_modal_nonce' => wp_create_nonce( 'wcal_cart_details_nonce' ),
+					)
+				);
+
 				wp_enqueue_script(
 					'wcal_admin_notices',
 					plugins_url( '/assets/js/admin/wcal_ts_dismiss_notice.js', __FILE__ ),
@@ -2519,6 +2532,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						'ajax_url'                       => admin_url( 'admin-ajax.php' ),
 						'ajax_nonce'                     => wp_create_nonce( 'delete_expired_used_coupon_code' ),
 						'delete_coupon_confirmation_msg' => __( 'Are you sure you want delete the expired and used coupons created by Abandonment Cart Lite for WooCommerce Plugin?', 'woocommerce-abandoned-cart' ),
+						'dismiss_notice_nonce'           => wp_create_nonce( 'wcal_dismiss_notice' ),
 					)
 				);
 				wp_register_script( 'enhanced', plugins_url() . '/woocommerce/assets/js/admin/wc-enhanced-select.js', array( 'jquery', 'select2' ), WCAL_PLUGIN_VERSION, false );
@@ -3940,109 +3954,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
-		 * It will be called when we send the test email from the email edit page.
-		 *
-		 * @hook wp_ajax_wcal_preview_email_sent
-		 * @since 1.0
-		 */
-		public function wcal_action_send_preview() {
-			?>
-			<script type="text/javascript" >
-				jQuery( document ).ready( function( $ )
-				{
-					$( "table#addedit_template input#preview_email" ).click( function()
-					{	
-						emailVal = jQuery( '#send_test_email' ).val();
-						const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;	
-						if ( !re.test( emailVal ) ) {	
-							jQuery( '#preview_email_sent_msg' ).html( '<?php echo esc_html__( 'Please enter a valid email.', 'woocommerce-abandoned-cart' ); ?>' );
-							jQuery( '#preview_email_sent_msg' ).show();
-							return false;		
-						}
-
-						jQuery( '#preview_email_sent_msg' ).hide();
-
-						$( '.ajax_img' ).show();
-						var email_body = '';
-						if ( jQuery("#wp-woocommerce_ac_email_body-wrap").hasClass( "tmce-active" ) ) {
-							email_body = tinyMCE.get('woocommerce_ac_email_body').getContent();
-						} else {
-							email_body = jQuery('#woocommerce_ac_email_body').val();
-						}
-						var subject_email_preview = $( '#woocommerce_ac_email_subject' ).val();
-						var body_email_preview    = email_body;
-						var send_email_id         = $( '#send_test_email' ).val();
-						var is_wc_template        = document.getElementById( "is_wc_template" ).checked;
-						var wc_template_header    = $( '#wcal_wc_email_header' ).val() != '' ? $( '#wcal_wc_email_header' ).val() : 'Abandoned cart reminder';
-						if ( $( '#unique_coupon' ).is( ":checked" ) )
-						{
-							var generate_unique_code   = '1';
-						} else {
-							var generate_unique_code   = '0';
-						}
-
-						if ( $( '#individual_use' ).is( ":checked" ) )
-						{
-							var individual_use   = '1';
-						} else {
-							var individual_use   = '0';
-						}
-
-						if ( $( '#wcal_allow_free_shipping' ).is( ":checked" ) )
-						{
-							var discount_shipping   = 'yes';
-						} else {
-							var discount_shipping   = 'no';
-						}
-
-						var coupon_code           = $( '#coupon_ids' ).val();
-						var discount_type         = $( '#wcal_discount_type').val();
-						var discount_amount       = $( '#wcal_coupon_amount').val();
-						var discount_expiry       = $( '#wcal_coupon_expiry').val();
-						var default_template      = '';
-						var data                  = {
-														subject_email_preview: subject_email_preview,
-														body_email_preview   : body_email_preview,
-														send_email_id        : send_email_id,
-														is_wc_template       : is_wc_template,
-														wc_template_header   : wc_template_header,
-														discount_expiry      : discount_expiry,
-														discount_type        : discount_type,
-														coupon_code          : coupon_code,
-														discount_shipping    : discount_shipping,
-														individual_use       : individual_use,
-														discount_amount      : discount_amount,
-														generate_unique_code : generate_unique_code,
-														default_template     : default_template,
-														action               : 'wcal_preview_email_sent'
-													};
-
-						// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-						$.post( ajaxurl, data, function( response ) {
-							$( '.ajax_img' ).hide();
-							if ( 'not sent' == response ) {
-								$( "#preview_email_sent_msg" ).html( "Test email is not sent as the Email body is empty." );
-								$( "#preview_email_sent_msg" ).fadeIn();
-									setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 4000 );
-							} else {
-								$( "#preview_email_sent_msg" ).html( "<img src='<?php echo esc_url( plugins_url( '/assets/images/check.jpg', __FILE__ ) ); ?>'>&nbsp;Email has been sent successfully." );
-									$( "#preview_email_sent_msg" ).fadeIn();
-									setTimeout( function(){$( "#preview_email_sent_msg" ).fadeOut();}, 3000 );
-							}
-						});
-					});
-				});
-				</script>
-				<?php
-		}
-
-		/**
 		 * Ajax function used to add the details in the abandoned order
 		 * popup view.
 		 *
 		 * @since 5.6
 		 */
 		public static function wcal_abandoned_cart_info() {
+			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_cart_details_nonce' ) ) ) {
+				wp_send_json( 'Security check failed' );
+			}
 			Wcal_Abandoned_Cart_Details::wcal_get_cart_detail_view( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification
 			die();
 		}
@@ -4054,6 +3974,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public static function wcal_dismiss_admin_notice() {
 
+			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_dismiss_notice' ) ) ) {
+				wp_send_json( 'Security check failed' );
+			}
 			$notice_key = isset( $_POST['notice'] ) ? sanitize_text_field( wp_unslash( $_POST['notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 			if ( '' !== $notice_key ) {
 				update_option( $notice_key, true );
@@ -4087,6 +4010,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * @since 4.4
 		 */
 		public static function wcal_toggle_template_status() {
+
+			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_update_template_status' ) ) ) {
+				wp_send_json( 'Security check failed' );
+			}
 			global $wpdb;
 			$template_id             = isset( $_POST['wcal_template_id'] ) ? sanitize_text_field( wp_unslash( $_POST['wcal_template_id'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification
 			$current_template_status = isset( $_POST['current_state'] ) ? sanitize_text_field( wp_unslash( $_POST['current_state'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
@@ -4181,23 +4108,27 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * @since 1.0
 		 */
 		public function wcal_preview_email_sent() {
-			if ( isset( $_POST['body_email_preview'] ) && '' !== $_POST['body_email_preview'] ) { // phpcs:ignore WordPress.Security.NonceVerification
+
+			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_send_test_email' ) ) ) {
+				wp_send_json_error( 'Security check failed' );
+			}
+			if ( isset( $_POST['body_email_preview'] ) && '' !== $_POST['body_email_preview'] ) {
 				$from_email_name       = get_option( 'wcal_from_name' );
 				$reply_name_preview    = get_option( 'wcal_from_email' );
 				$from_email_preview    = get_option( 'wcal_reply_email' );
-				$subject_email_preview = isset( $_POST['subject_email_preview'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_POST['subject_email_preview'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$subject_email_preview = isset( $_POST['subject_email_preview'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_POST['subject_email_preview'] ) ) ) : '';
 				$subject_email_preview = convert_smilies( $subject_email_preview );
 				$subject_email_preview = str_ireplace( '{{customer.firstname}}', apply_filters( 'wcal_abandoned_cart_email_content_customer_firstname', 'John', true, null ), $subject_email_preview );
 				$body_email_preview    = isset( $_POST['body_email_preview'] ) ? convert_smilies( wp_unslash( $_POST['body_email_preview'] ) ) : ''; // phpcs:ignore
-				$is_wc_template        = isset( $_POST['is_wc_template'] ) ? sanitize_text_field( wp_unslash( $_POST['is_wc_template'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				$wc_template_header    = isset( $_POST['wc_template_header'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_POST['wc_template_header'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				$discount_expiry       = isset( $_POST['discount_expiry'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_expiry'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				$discount_type         = isset( $_POST['discount_type'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_type'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				$discount_shipping     = isset( $_POST['discount_shipping'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_shipping'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				$individual_use        = isset( $_POST['individual_use'] ) ? sanitize_text_field( wp_unslash( $_POST['individual_use'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				$discount_amount       = isset( $_POST['discount_amount'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_amount'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				$generate_unique_code  = isset( $_POST['generate_unique_code'] ) ? sanitize_text_field( wp_unslash( $_POST['generate_unique_code'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				$coupon_code           = isset( $_POST['coupon_code'][0] ) ? sanitize_text_field( wp_unslash( $_POST['coupon_code'][0] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+				$is_wc_template        = isset( $_POST['is_wc_template'] ) ? sanitize_text_field( wp_unslash( $_POST['is_wc_template'] ) ) : '';
+				$wc_template_header    = isset( $_POST['wc_template_header'] ) ? stripslashes( sanitize_text_field( wp_unslash( $_POST['wc_template_header'] ) ) ) : '';
+				$discount_expiry       = isset( $_POST['discount_expiry'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_expiry'] ) ) : '';
+				$discount_type         = isset( $_POST['discount_type'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_type'] ) ) : '';
+				$discount_shipping     = isset( $_POST['discount_shipping'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_shipping'] ) ) : '';
+				$individual_use        = isset( $_POST['individual_use'] ) ? sanitize_text_field( wp_unslash( $_POST['individual_use'] ) ) : '';
+				$discount_amount       = isset( $_POST['discount_amount'] ) ? sanitize_text_field( wp_unslash( $_POST['discount_amount'] ) ) : '';
+				$generate_unique_code  = isset( $_POST['generate_unique_code'] ) ? sanitize_text_field( wp_unslash( $_POST['generate_unique_code'] ) ) : '';
+				$coupon_code           = isset( $_POST['coupon_code'][0] ) ? sanitize_text_field( wp_unslash( $_POST['coupon_code'][0] ) ) : '';
 				$discount_details      = array();
 				$coupon_code_to_apply  = '';
 				if ( stripos( $body_email_preview, '{{coupon.code}}' ) ) {
@@ -4305,8 +4236,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 										 </table>';
 				}
 				$body_email_preview = str_ireplace( '{{products.cart}}', apply_filters( 'wcal_abandoned_cart_email_content_products.cart', $var, true, null ), $body_email_preview );
-				if ( isset( $_POST['send_email_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-					$to_email_preview = sanitize_text_field( wp_unslash( $_POST['send_email_id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+				if ( isset( $_POST['send_email_id'] ) ) {
+					$to_email_preview = sanitize_text_field( wp_unslash( $_POST['send_email_id'] ) );
 				} else {
 					$to_email_preview = '';
 				}
@@ -4323,10 +4254,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					wc_get_template( 'emails/email-footer.php' );
 					$email_body_template_footer = ob_get_clean();
 
-					$final_email_body = $email_body_template_header . $body_email_final_preview . $email_body_template_footer;
-
 					$site_title                 = get_bloginfo( 'name' );
 					$email_body_template_footer = str_ireplace( '{site_title}', $site_title, $email_body_template_footer );
+
+					$final_email_body = $email_body_template_header . $body_email_final_preview . $email_body_template_footer;
 
 					wc_mail( $to_email_preview, $subject_email_preview, $final_email_body, $headers );
 				} else {
@@ -4494,8 +4425,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_delete_expired_used_coupon_code() {
 
 			global $wpdb;
-			if ( ! current_user_can( 'manage_options' ) || ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'delete_expired_used_coupon_code' ) ) { //phpcs:ignore
-				wp_send_json_error();
+			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'delete_expired_used_coupon_code' ) ) ) {
+				wp_send_json_error( 'Security check failed' );
 			}
 
 			$expired_coupons = self::wcal_fetch_expired_coupons();
