@@ -2453,7 +2453,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				);
 				wp_enqueue_script(
 					'wcal_email_template',
-					plugins_url( '/assets/js/wcal_email_templates.js', __FILE__ ),
+					plugins_url( '/assets/js/admin/wcal_email_templates.js', __FILE__ ),
 					'',
 					WCAL_PLUGIN_VERSION,
 					false
