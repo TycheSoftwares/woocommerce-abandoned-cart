@@ -80,7 +80,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 					}
 
 					if ( $placed_orders_amount > 0 && $recovered_amount_unformatted > 0 ) {
-						$percent_of_sales  = round( ( $recovered_amount_unformatted * 100 ) / ( $placed_orders_amount ), 2 );
+						$percent_of_sales = round( ( $recovered_amount_unformatted * 100 ) / ( $placed_orders_amount ), 2 );
 					}
 					$graph_data = self::get_abandoned_data();
 
