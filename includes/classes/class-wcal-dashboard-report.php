@@ -73,14 +73,15 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 					$abandoned_amount_unformatted = self::wcal_abandoned_orders_amount();
 					$placed_orders_amount         = self::wcal_placed_orders_amount();
 
+					$percent_recovered = 0;
+					$percent_of_sales  = 0;
 					if ( self::$recovered_count > 0 && self::$abandoned_count > 0 ) {
 						$percent_recovered = round( ( self::$recovered_count * 100 ) / ( self::$abandoned_count ), 2 );
-						$percent_of_sales  = round( ( $recovered_amount_unformatted * 100 ) / ( $placed_orders_amount ), 2 );
-					} else {
-						$percent_recovered = 0;
-						$percent_of_sales  = 0;
 					}
 
+					if ( $placed_orders_amount > 0 && $recovered_amount_unformatted > 0 ) {
+						$percent_of_sales = round( ( $recovered_amount_unformatted * 100 ) / ( $placed_orders_amount ), 2 );
+					}
 					$graph_data = self::get_abandoned_data();
 
 					wp_localize_script(
