@@ -156,6 +156,10 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 
 == Changelog ==
 
+= 5.16.2 ( 30.11.2023 ) = 
+* Fix - Add nonce checks in ajax calls.
+* Tweak - Bumped up minimum supported PHP version to match WooCommerce.
+
 =  5.16.1 ( 21.11.2023 ) = 
 * Fix - Fixed some errors from the plugin with PHP 8.1
 * Fix - Fixed a vulnerability issue that allows users with lower access to run calls.
