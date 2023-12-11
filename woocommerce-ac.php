@@ -480,7 +480,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			if ( isset( $_GET['wcal_preview_woocommerce_mail'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-				if ( ! current_user_can( 'manage_options' ) || ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'woocommerce-abandoned-cart' ) ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'woocommerce-abandoned-cart' ) ) {
 					die( 'Security check' );
 				}
 				$message = '';
@@ -517,7 +517,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			if ( isset( $_GET['wcal_preview_mail'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-				if ( ! current_user_can( 'manage_options' ) || ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'woocommerce-abandoned-cart' ) ) {
+				if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'woocommerce-abandoned-cart' ) ) {
 					die( 'Security check' );
 				}
 				// get the preview email content.
@@ -3960,7 +3960,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * @since 5.6
 		 */
 		public static function wcal_abandoned_cart_info() {
-			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_cart_details_nonce' ) ) ) {
+			if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_cart_details_nonce' ) ) ) {
 				wp_send_json( 'Security check failed' );
 			}
 			Wcal_Abandoned_Cart_Details::wcal_get_cart_detail_view( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification
@@ -3974,7 +3974,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public static function wcal_dismiss_admin_notice() {
 
-			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_dismiss_notice' ) ) ) {
+			if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_dismiss_notice' ) ) ) {
 				wp_send_json( 'Security check failed' );
 			}
 			$notice_key = isset( $_POST['notice'] ) ? sanitize_text_field( wp_unslash( $_POST['notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
@@ -4011,7 +4011,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public static function wcal_toggle_template_status() {
 
-			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_update_template_status' ) ) ) {
+			if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_update_template_status' ) ) ) {
 				wp_send_json( 'Security check failed' );
 			}
 			global $wpdb;
@@ -4109,7 +4109,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public function wcal_preview_email_sent() {
 
-			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_send_test_email' ) ) ) {
+			if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'wcal_send_test_email' ) ) ) {
 				wp_send_json_error( 'Security check failed' );
 			}
 			if ( isset( $_POST['body_email_preview'] ) && '' !== $_POST['body_email_preview'] ) {
@@ -4425,7 +4425,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_delete_expired_used_coupon_code() {
 
 			global $wpdb;
-			if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'delete_expired_used_coupon_code' ) ) ) {
+			if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'delete_expired_used_coupon_code' ) ) ) {
 				wp_send_json_error( 'Security check failed' );
 			}
 
