@@ -342,8 +342,8 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 																$show_taxes = apply_filters( 'wcal_show_taxes', true );
 																// Item subtotal is calculated as product total including taxes.
 																if ( isset( $wcal_include_tax ) && 'no' === $wcal_include_tax && isset( $wcal_include_tax_setting ) && 'yes' === $wcal_include_tax_setting ) {
-																	$item_subtotal       = $v->line_total; // Tax is excluded, it should not be displayed here.
-																	$line_subtotal_tax  += $v->line_tax;
+																	$item_subtotal      = $v->line_total; // Tax is excluded, it should not be displayed here.
+																	$line_subtotal_tax += $v->line_tax;
 																} elseif ( isset( $wcal_include_tax ) && 'yes' === $wcal_include_tax && isset( $wcal_include_tax_setting ) && 'yes' === $wcal_include_tax_setting ) {
 
 																	// Item subtotal is calculated as product total including taxes.
