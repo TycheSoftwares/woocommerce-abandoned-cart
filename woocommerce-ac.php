@@ -2013,7 +2013,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$my_temp = wc_load_persistent_cart( $user_login, $user );
 						set_transient( 'wcal_email_sent_id', $email_sent_id, 1800 );
 						set_transient( 'wcal_user_id', $user_id, 1800 );
-						$url = apply_filters( 'wcal_change_redirect_link', get_option( 'siteurl' ) . '/my-account/' );
+						$url = apply_filters( 'wcal_change_redirect_link', get_permalink( wc_get_page_id( 'myaccount' ) ) );
 					}
 				} else {
 					$my_temp = $this->wcal_load_guest_persistent_cart( $user_id );
