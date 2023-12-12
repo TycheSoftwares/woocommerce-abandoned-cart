@@ -280,7 +280,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			// 5.15.0
 			add_action( 'wp_login', array( &$this, 'wcal_populate_wc_session' ) );
 			if ( '' === get_option( 'wcal_auto_login_users', '' ) ) {
-				add_filter( 'woocommerce_login_redirect', array( &$this, 'ts_redirect_login' ) );
+				add_filter( 'woocommerce_login_redirect', array( &$this, 'ts_redirect_login' ), 10, 1 );
 			}
 		}
 
@@ -2013,7 +2013,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$my_temp = wc_load_persistent_cart( $user_login, $user );
 						set_transient( 'wcal_email_sent_id', $email_sent_id, 1800 );
 						set_transient( 'wcal_user_id', $user_id, 1800 );
-						$url = apply_filters( 'wcal_change_redirect_link', get_option( 'siteurl' ) . '/my-account/' );
+						$url = apply_filters( 'wcal_change_redirect_link', get_permalink( wc_get_page_id( 'myaccount' ) ) );
 					}
 				} else {
 					$my_temp = $this->wcal_load_guest_persistent_cart( $user_id );
@@ -2040,13 +2040,20 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				wcal_common::wcal_set_cart_session( 'wcal_user_id', $user_id );
 			}
 		}
+
 		/**
 		 * Redirect on cart page after user logged in.
 		 *
+		 * @param string $url - URL user is currently on.
+		 *
 		 * @since 5.16.0
 		 */
-		public static function ts_redirect_login() {
-			$url = wc_get_cart_url();
+		public static function ts_redirect_login( $url ) {
+
+			if ( get_transient( 'wcal_email_sent_id' ) ) {
+				$redirect_url = wc_get_cart_url();
+				return $redirect_url;
+			}
 			return $url;
 		}
 

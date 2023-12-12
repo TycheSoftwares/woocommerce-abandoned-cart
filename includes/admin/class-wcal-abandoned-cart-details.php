@@ -94,7 +94,7 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 
 			}
 
-			$wcal_get_abandoned_sent_result = $wpdb->get_results( $wpdb->prepare( 'SELECT wcet.`template_name`, wsht.`sent_time`, wsht.`id`, wsht.`sent_email_id` FROM `' . $wpdb->prefix . 'ac_sent_history_lite` as wsht LEFT JOIN `' . $wpdb->prefix . 'ac_email_templates_lite` AS wcet ON wsht.template_id = wcet.id WHERE abandoned_order_id = %d', $wcal_cart_id ) ); //phpcs:ignore
+			$wcal_get_abandoned_sent_result = $wpdb->get_results( $wpdb->prepare( 'SELECT wcet.`template_name`, wsht.`sent_time`, wsht.`id`, wsht.`sent_email_id` FROM `' . $wpdb->prefix . 'ac_sent_history_lite` as wsht LEFT JOIN `' . $wpdb->prefix . 'ac_email_templates_lite` AS wcet ON wsht.template_id = wcet.id WHERE abandoned_order_id = %d AND wsht.template_id > 0', $wcal_cart_id ) ); //phpcs:ignore
 
 			$shipping_charges         = 0;
 			$currency                 = '';
