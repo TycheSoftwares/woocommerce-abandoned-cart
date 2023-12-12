@@ -58,6 +58,9 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 					$utm = "?$utm";
 				}
 
+				$wcal_include_tax         = get_option( 'woocommerce_prices_include_tax', '' );
+				$wcal_include_tax_setting = get_option( 'woocommerce_calc_taxes', '' );
+
 				foreach ( $results as $key => $value ) {
 					$wc_email_template = $value;
 					if ( 'Minutes' === $value->day_or_hour ) {
@@ -335,11 +338,30 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 																	$wcap_sku      = apply_filters( 'wcal_email_sku', $wcap_sku, $product_id );
 																	$product_name .= $wcap_sku;
 																}
+
+																$show_taxes = apply_filters( 'wcal_show_taxes', true );
 																// Item subtotal is calculated as product total including taxes.
-																if ( $v->line_tax > 0 ) {
-																	$item_subtotal = $item_subtotal + $v->line_total + $v->line_tax;
+																if ( isset( $wcal_include_tax ) && 'no' === $wcal_include_tax && isset( $wcal_include_tax_setting ) && 'yes' === $wcal_include_tax_setting ) {
+																	$item_subtotal      = $v->line_total; // Tax is excluded, it should not be displayed here.
+																	$line_subtotal_tax += $v->line_tax;
+																} elseif ( isset( $wcal_include_tax ) && 'yes' === $wcal_include_tax && isset( $wcal_include_tax_setting ) && 'yes' === $wcal_include_tax_setting ) {
+
+																	// Item subtotal is calculated as product total including taxes.
+																	if ( $v->line_tax > 0 ) {
+																		$line_subtotal_tax_display += $v->line_tax;
+																		// Calculate the product price.
+																		$item_subtotal = $v->line_subtotal + $v->line_subtotal_tax;
+																	} else {
+																		$item_subtotal              = $v->line_total;
+																		$line_subtotal_tax_display += $v->line_tax;
+																	}
 																} else {
-																	$item_subtotal = $item_subtotal + $v->line_total;
+
+																	if ( $v->line_subtotal_tax > 0 ) {
+																		$item_subtotal = $v->line_subtotal + $v->line_subtotal_tax;
+																	} else {
+																		$item_subtotal = $v->line_total;
+																	}
 																}
 																// Line total.
 																$item_total         = $item_subtotal;
@@ -413,8 +435,21 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 														}
 
 														if ( $p_exists ) {
-															$cart_total       = wc_price( $cart_total );
-															$cart_total       = apply_filters( 'wcal_reminder_email_cart_total', $cart_total );
+															// Calculate the cart total.
+															if ( isset( $wcal_include_tax ) && 'no' === $wcal_include_tax && isset( $wcal_include_tax_setting ) && 'yes' === $wcal_include_tax_setting ) {
+																if ( $show_taxes ) {
+																	$formatted_tax = wc_price( $line_subtotal_tax );
+																	$var          .= '<tr><td style="text-align: right;" colspan="4">' . esc_html__( 'Tax:', 'woocommerce-ac' ) . '</td><td>' . $formatted_tax . '</td></tr>';
+																	$cart_total   += $line_subtotal_tax;
+																}
+															}
+															$cart_total = wc_price( $cart_total );
+															$cart_total = apply_filters( 'wcal_reminder_email_cart_total', $cart_total );
+															if ( isset( $wcal_include_tax ) && 'yes' === $wcal_include_tax && isset( $wcal_include_tax_setting ) && 'yes' === $wcal_include_tax_setting ) {
+																if ( $show_taxes ) {
+																	$cart_total = $cart_total . ' (' . __( 'includes Tax: ', 'woocommerce-ac' ) . $line_subtotal_tax_display . ')';
+																}
+															}
 															$cart_total_title = __( 'Cart Total:', 'woocommerce-abandoned-cart' );
 															$var             .= '<tr align="center">
                                                                 <td> </td>
