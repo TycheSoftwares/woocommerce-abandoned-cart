@@ -467,21 +467,20 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public function wcal_preview_emails() {
 			global $woocommerce;
 
-			if ( isset( $_GET['id'] ) && 0 < sanitize_text_field( wp_unslash( $_GET['id'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-				global $wpdb;
-				$id      = sanitize_text_field( wp_unslash( $_GET['id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
-				$content = $wpdb->get_var( // phpcs:ignore
-					$wpdb->prepare(
-						'SELECT body FROM `' . $wpdb->prefix . 'ac_email_templates_lite` WHERE id = %d',
-						absint( $id )
-					)
-				);
-				$content = $this->replace_mergetags( $content );
-			}
-
 			if ( isset( $_GET['wcal_preview_woocommerce_mail'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 				if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'woocommerce-abandoned-cart' ) ) {
 					die( 'Security check' );
+				}
+				if ( isset( $_GET['id'] ) && 0 < sanitize_text_field( wp_unslash( $_GET['id'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+					global $wpdb;
+					$id      = sanitize_text_field( wp_unslash( $_GET['id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+					$content = $wpdb->get_var( // phpcs:ignore
+						$wpdb->prepare(
+							'SELECT body FROM `' . $wpdb->prefix . 'ac_email_templates_lite` WHERE id = %d',
+							absint( $id )
+						)
+					);
+					$content = $this->replace_mergetags( $content );
 				}
 				$message = '';
 				// create a new email.
@@ -519,6 +518,17 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( isset( $_GET['wcal_preview_mail'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 				if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'woocommerce-abandoned-cart' ) ) {
 					die( 'Security check' );
+				}
+				if ( isset( $_GET['id'] ) && 0 < sanitize_text_field( wp_unslash( $_GET['id'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+					global $wpdb;
+					$id      = sanitize_text_field( wp_unslash( $_GET['id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+					$content = $wpdb->get_var( // phpcs:ignore
+						$wpdb->prepare(
+							'SELECT body FROM `' . $wpdb->prefix . 'ac_email_templates_lite` WHERE id = %d',
+							absint( $id )
+						)
+					);
+					$content = $this->replace_mergetags( $content );
 				}
 				// get the preview email content.
 				ob_start();
