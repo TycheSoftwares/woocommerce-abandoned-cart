@@ -322,6 +322,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 														$item_subtotal      = 0;
 														$item_total         = 0;
 														$sub_line_prod_name = '';
+														$line_subtotal_tax  = 0;
 														foreach ( $cart_details as $k => $v ) {
 															$quantity_total = $v->quantity;
 															$product_id     = $v->product_id;
