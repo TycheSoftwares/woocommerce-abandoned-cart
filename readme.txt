@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares,
 Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions, Best abandoned cart plugin for WooCommerce, WooCommerce abandoned cart plugin free, Abandoned cart WooCommerce plugin
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 6.3 or higher
-Tested up to: 6.4.1
+Tested up to: 6.4.2
 Stable tag: trunk
 Requires PHP: 7.4 or higher
 License: GPLv2 or late
@@ -155,6 +155,13 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+
+= 5.17.0 ( 19.12.2023 ) =
+* Tweak - The reminder email will display taxes based on WooCommerce tax settings.
+* Fix - Users with Shop Manager role will now be able to perform admin operations on the plugin page.
+* Fix - For non-english sites, when users access the site via reminder email links, they are not redirected to the My Account page.
+* Fix - Users are redirected to the Cart page after they login from the My Account page when the settings to auto login users is disabled.
+* Fix - Email sent notification is displayed in the cart details popup when all reminders are inactive and no reminder has been sent.
 
 = 5.16.2 ( 30.11.2023 ) = 
 * Fix - Add nonce checks in ajax calls.
