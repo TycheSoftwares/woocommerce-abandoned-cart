@@ -419,7 +419,10 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 			$start_time = self::$start_timestamp;
 			$end_time   = self::$end_timestamp;
 
-			$count_abandoned = $wpdb->get_var( $wpdb->prepare( 'SELECT count(id) FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE abandoned_cart_time >= %s AND abandoned_cart_time <= %s AND cart_ignored <> %s', $start_time, $end_time, '1' ) ); //phpcs:ignore
+			$blank_cart_info       = '{"cart":[]}';
+			$blank_cart_info_guest = '[]';
+
+			$count_abandoned = $wpdb->get_var( $wpdb->prepare( 'SELECT count(id) FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE abandoned_cart_time >= %s AND abandoned_cart_time <= %s AND cart_ignored <> %s AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s', $start_time, $end_time, '1', $blank_cart_info, $blank_cart_info_guest ) ); //phpcs:ignore
 			return $count_abandoned;
 		}
 
@@ -433,7 +436,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 			$start_time = date( 'Y-m-d H:i:s', self::$start_timestamp ); //phpcs:ignore
 			$end_time   = date( 'Y-m-d H:i:s', self::$end_timestamp ); //phpcs:ignore
 
-			$count_sent = $wpdb->get_var( $wpdb->prepare( 'SELECT count(id) FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_time >= %s AND sent_time <= %s', $start_time, $end_time ) ); //phpcs:ignore
+			$count_sent = $wpdb->get_var( $wpdb->prepare( 'SELECT count(id) FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE sent_time >= %s AND sent_time <= %s AND template_id > 0', $start_time, $end_time ) ); //phpcs:ignore
 
 			return $count_sent;
 		}
@@ -487,7 +490,10 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 			$start_time = self::$start_timestamp;
 			$end_time   = self::$end_timestamp;
 
-			$get_email_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(id) FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE abandoned_cart_time >= %s AND abandoned_cart_time <= %s AND user_id >= %d AND user_type = %s', $start_time, $end_time, 63000000, 'GUEST' ) ); //phpcs:ignore
+			$blank_cart_info       = '{"cart":[]}';
+			$blank_cart_info_guest = '[]';
+
+			$get_email_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(id) FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE abandoned_cart_time >= %s AND abandoned_cart_time <= %s AND user_id >= %d AND user_type = %s AND cart_ignored <> "1" AND abandoned_cart_info NOT LIKE %s AND abandoned_cart_info NOT LIKE %s', $start_time, $end_time, 63000000, 'GUEST', $blank_cart_info, $blank_cart_info_guest ) ); //phpcs:ignore
 
 			return $get_email_count;
 		}
