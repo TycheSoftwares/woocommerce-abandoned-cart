@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "woocommerce-abandoned-cart/wcal-gdpr-email",
+  "version": "1.0.0",
+  "title": "GDPR Email Compliance",
+  "category": "woocommerce",
+  "parent": [
+    "woocommerce/checkout-contact-information-block"
+  ],
+  "attributes": {
+    "lock": {
+      "type": "object",
+      "default": {
+        "remove": true,
+        "move": true
+      }
+    }
+  },
+  "textdomain": "woocommerce-abandoned-cart",
+  "editorScript": "file:./build/index.js"
+}
