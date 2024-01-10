@@ -268,7 +268,7 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 				// Insert record in abandoned cart table for the guest user.
 				$user_id = $wpdb->insert_id;
 			} else {
-				$wpdb->update( // phpcs: ignore
+				$wpdb->update( // phpcs:ignore
 					$wpdb->prefix . 'ac_guest_abandoned_cart_history_lite',
 					array(
 						'billing_first_name' => $billing_first_name,
@@ -363,8 +363,8 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 			if ( is_multisite() ) {
 				// get main site's table prefix.
 				$main_prefix = $wpdb->get_blog_prefix( 1 );
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-				$get_cart = $wpdb->get_results( $wpdb->prepare( "SELECT umeta_id FROM `" . $main_prefix . "usermeta` WHERE user_id = %d AND meta_key = '_woocommerce_persistent_cart' ORDER BY umeta_id DESC LIMIT 1", $user_id ) );
+
+				$get_cart = $wpdb->get_results( $wpdb->prepare( 'SELECT umeta_id FROM `' . $main_prefix . "usermeta` WHERE user_id = %d AND meta_key = '_woocommerce_persistent_cart' ORDER BY umeta_id DESC LIMIT 1", $user_id ) ); // phpcs:ignore
 				if ( isset( $get_cart ) && is_array( $get_cart ) && 1 === count( $get_cart ) ) {
 					$wpdb->update( // phpcs:ignore
 						$main_prefix . 'usermeta',
@@ -377,7 +377,7 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 						)
 					);
 				} else {
-					$wpdb->query(
+					$wpdb->query( // phpcs:ignore
 						$wpdb->prepare(
 							'INSERT INTO `' . $main_prefix . 'usermeta`( user_id, meta_key, meta_value ) VALUES ( %s, %s, %s )', // phpcs:ignore
 							$user_id,
