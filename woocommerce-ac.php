@@ -484,21 +484,21 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 				$message = '';
 				// create a new email.
-				if ( $woocommerce->version < '2.3' ) {
-					global $email_heading;
-					ob_start();
+				if ( version_compare( WC_VERSION, '3.0', '>' ) ) {
 
-					include 'views/wcal-wc-email-template-preview.php';
-					$mailer        = WC()->mailer();
-					$message       = ob_get_clean();
-					$email_heading = __( 'HTML Email Template', 'woocommerce-abandoned-cart' );
-					$message       = $mailer->wrap_message( $email_heading, $message );
-				} else {
-					// load the mailer class.
-					$mailer = WC()->mailer();
-					// get the preview email subject.
+					ob_start();
+					// Get email heading.
 					$email_heading = __( 'Abandoned cart Email Template', 'woocommerce-abandoned-cart' );
-					// get the preview email content.
+					wc_get_template( 'emails/email-header.php', array( 'email_heading' => $email_heading ) );
+					$email_body_template_header = ob_get_clean();
+
+					ob_start();
+					wc_get_template( 'emails/email-footer.php' );
+					$email_body_template_footer = ob_get_clean();
+
+					$site_title                 = get_bloginfo( 'name' );
+					$email_body_template_footer = str_ireplace( '{site_title}', $site_title, $email_body_template_footer );
+
 					ob_start();
 					if ( isset( $_GET['id'] ) && 0 < sanitize_text_field( wp_unslash( $_GET['id'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 						$message = stripslashes( $content );
@@ -506,10 +506,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						include 'views/wcal-wc-email-template-preview.php';
 						$message = ob_get_clean();
 					}
-					// create a new email.
-					$email = new WC_Email();
-					// wrap the content with the email template and then add styles.
-					$message = $email->style_inline( $mailer->wrap_message( $email_heading, $message ) );
+					$message = $email_body_template_header . $message . $email_body_template_footer;
 				}
 				echo $message; // phpcs:ignore
 				exit;
