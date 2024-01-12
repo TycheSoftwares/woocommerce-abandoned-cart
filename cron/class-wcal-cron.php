@@ -649,7 +649,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 
 				$order_status = $order_data['status'];
 				$order_id     = $order_data['id'];
-				if ( 'cancelled' !== $order_status && 'failed' !== $order_status && 'pending' !== $order_status ) {
+				if ( 'cancelled' !== $order_status && 'failed' !== $order_status && 'pending' !== $order_status && 'checkout-draft' !== $order_status ) { // checkout-draft - WC Blocks.
 
 					$order_date      = $order_data['date_created']->date( 'Y-m-d' );
 					$order_date_time = $order_data['date_created']->date( 'Y-m-d H:i:s' );
