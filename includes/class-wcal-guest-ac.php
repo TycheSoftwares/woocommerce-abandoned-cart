@@ -134,6 +134,7 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 
 			$vars['ajax_url']        = admin_url( 'admin-ajax.php' );
 			$vars['wcal_save_nonce'] = wp_create_nonce( 'save_data' );
+			$vars['wcal_gdpr_nonce'] = wp_create_nonce( 'wcal_gdpr_nonce' );
 			wp_localize_script( 'wcal-guest-user-blocks', 'wcal_guest_capture_blocks_params', $vars );
 			wp_enqueue_script( 'wcal-guest-user-blocks' );
 		}

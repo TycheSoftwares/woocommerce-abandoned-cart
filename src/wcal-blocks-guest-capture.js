@@ -31,7 +31,7 @@ const checkStorage = ( event ) => {
 			}
 			var data = {
 	            action : 'wcal_gdpr_refused',
-				ajax_nonce: wcal_guest_capture_blocks_params.ajax_nonce,
+				ajax_nonce: wcal_guest_capture_blocks_params.wcal_gdpr_nonce,
 	        };
 		}
 
@@ -59,26 +59,32 @@ const unsubscribe = subscribe( () => {
 		var page_billing_postcode = billingAddress.postcode;
 		var page_shipping_postcode = shippingAddress.postcode;
 
+		var data_updated = false;
 		if ( saved_email !== page_email ) {
+			data_updated = true;
 			localStorage.setItem( 'wcal_user_email', page_email );
 		}
 
 		if ( saved_firstname != page_firstname ) {
+			data_updated = true;
 			localStorage.setItem( 'wcal_user_firstname', page_firstname );
 		}
 
 		if ( saved_lastname != page_lastname ) {
+			data_updated = true;
 			localStorage.setItem( 'wcal_user_lastname', page_lastname );
 		}
 
 		if ( saved_billing_postcode != page_billing_postcode ) {
+			data_updated = true;
 			localStorage.setItem( 'wcal_billing_postcode', page_billing_postcode );
 		}
 
 		if ( saved_shipping_postcode != page_shipping_postcode ) {
+			data_updated = true;
 			localStorage.setItem( 'wcal_shipping_postcode', page_shipping_postcode );
 		}
-		if ( saved_email !== page_email ) {
+		if ( data_updated ) {
 
 			var data = {
 				billing_first_name  : localStorage.getItem( 'wcal_user_firstname' ),
