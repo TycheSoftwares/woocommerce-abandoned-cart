@@ -135,6 +135,16 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 			$vars['ajax_url']        = admin_url( 'admin-ajax.php' );
 			$vars['wcal_save_nonce'] = wp_create_nonce( 'save_data' );
 			$vars['wcal_gdpr_nonce'] = wp_create_nonce( 'wcal_gdpr_nonce' );
+			$vars['user_id']         = 0;
+			if ( wcal_common::wcal_get_cart_session( 'user_id' ) && wcal_common::wcal_get_cart_session( 'user_id' ) >= 63000000 ) {
+				$user_first_name    = wcal_common::wcal_get_cart_session( 'guest_first_name' ) ? wcal_common::wcal_get_cart_session( 'guest_first_name' ) : '';
+				$user_last_name     = wcal_common::wcal_get_cart_session( 'guest_last_name' ) ? wcal_common::wcal_get_cart_session( 'guest_last_name' ) : '';
+				$user_email         = wcal_common::wcal_get_cart_session( 'guest_email' ) ? wcal_common::wcal_get_cart_session( 'guest_email' ) : '';
+				$vars['first_name'] = $user_first_name;
+				$vars['last_name']  = $user_last_name;
+				$vars['email']      = $user_email;
+				$vars['user_id']    = wcal_common::wcal_get_cart_session( 'user_id' );
+			}
 			wp_localize_script( 'wcal-guest-user-blocks', 'wcal_guest_capture_blocks_params', $vars );
 			wp_enqueue_script( 'wcal-guest-user-blocks' );
 		}
@@ -222,14 +232,25 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 			if ( isset( $_POST['shipping_country'] ) && '' !== $_POST['shipping_country'] ) {
 				wcal_common::wcal_set_cart_session( 'shipping_country', sanitize_text_field( wp_unslash( $_POST['shipping_country'] ) ) );
 			}
-			$guest_session_key = wcal_get_guest_session_key();
-			// If a record is present in the guest cart history table for the same email id, then delete the previous records.
-			$results_guest = $wpdb->get_row( // phpcs:ignore
-				$wpdb->prepare(
-					'SELECT id, user_id, abandoned_cart_info FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE session_id = %s',
-					$guest_session_key
-				)
-			);
+			if ( ! wcal_common::wcal_get_cart_session( 'email_sent_id' ) ) {
+				$guest_session_key = wcal_get_guest_session_key();
+				// If a record is present in the guest cart history table for the same email id, then delete the previous records.
+				$results_guest = $wpdb->get_row( // phpcs:ignore
+					$wpdb->prepare(
+						'SELECT id, user_id, abandoned_cart_info FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE session_id = %s',
+						$guest_session_key
+					)
+				);
+			} else {
+				$abandoned_cart_id = wcal_common::wcal_get_cart_session( 'abandoned_cart_id_lite' );
+				$results_guest = $wpdb->get_row( // phpcs:ignore
+					$wpdb->prepare(
+						'SELECT id, user_id, abandoned_cart_info, session_id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE id = %d',
+						(int) $abandoned_cart_id
+					)
+				);
+				$guest_session_key = $results_guest->session_id ? $results_guest->session_id : '';
+			}
 
 			$user_id           = 0;
 			$abandoned_cart_id = 0;

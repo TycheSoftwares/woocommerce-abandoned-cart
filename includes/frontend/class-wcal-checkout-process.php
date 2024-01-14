@@ -30,6 +30,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 			add_action( 'woocommerce_order_status_changed', array( &$this, 'wcal_send_recovery_email' ), 10, 3 );
 
 			add_action( 'woocommerce_checkout_order_processed', array( &$this, 'wcal_order_placed' ), 10, 1 );
+			add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( &$this, 'wcal_order_placed_blocks' ), 10, 1 );
 			add_filter( 'woocommerce_payment_complete_order_status', array( &$this, 'wcal_order_complete_action' ), 10, 2 );
 		}
 
@@ -238,7 +239,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 		 */
 		public function wcal_update_cart_details( $order_id, $wc_old_status, $wc_new_status ) {
 
-			if ( 'pending' !== $wc_new_status && 'failed' !== $wc_new_status && 'cancelled' !== $wc_new_status && 'trash' !== $wc_new_status ) {
+			if ( 'pending' !== $wc_new_status && 'failed' !== $wc_new_status && 'cancelled' !== $wc_new_status && 'trash' !== $wc_new_status && 'checkout-draft' !== $wc_new_status ) {
 
 				global $wpdb;
 
@@ -411,7 +412,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 					$wcal_email_sent_history_table_name = $wpdb->prefix . 'ac_sent_history_lite';
 					$wcal_guest_ac_table_name           = $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite';
 
-					if ( 'pending' !== $order_status && 'failed' !== $order_status && 'cancelled' !== $order_status && 'trash' !== $order_status ) {
+					if ( 'pending' !== $order_status && 'failed' !== $order_status && 'cancelled' !== $order_status && 'trash' !== $order_status && 'checkout-draft' !== $order_status ) {
 						global $wpdb;
 
 						if ( isset( $get_abandoned_id_of_order ) && '' !== $get_abandoned_id_of_order ) {
@@ -452,7 +453,7 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 						}
 					}
 
-					if ( 'pending' !== $woo_order_status && 'failed' !== $woo_order_status && 'cancelled' !== $woo_order_status && 'trash' !== $woo_order_status ) {
+					if ( 'pending' !== $woo_order_status && 'failed' !== $woo_order_status && 'cancelled' !== $woo_order_status && 'trash' !== $woo_order_status && 'checkout-draft' !== $woo_order_status ) {
 
 						if ( isset( $get_sent_email_id_of_order ) && '' !== $get_sent_email_id_of_order ) {
 							$this->wcal_updated_recovered_cart( $get_abandoned_id_of_order, $order_id, $get_sent_email_id_of_order, $order );
@@ -462,6 +463,27 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 			}
 
 			return $woo_order_status;
+		}
+
+		/**
+		 * Order processing for orders in Checkout Blocks.
+		 *
+		 * @hook woocommerce_store_api_checkout_update_order_from_request
+		 * @param obj $order Order.
+		 *
+		 * @since 5.18.0
+		 */
+		public function wcal_order_placed_blocks( $order ) {
+
+			if ( ! $order ) {
+				return false;
+			}
+			$order_id = $order->get_id();
+
+			if ( $order_id > 0 ) {
+				$checkout_process = new Wcal_Checkout_Process();
+				$checkout_process->wcal_order_placed( $order_id );
+			}
 		}
 
 		/**
