@@ -46,6 +46,22 @@ const unsubscribe = subscribe( () => {
 	// Figure out a way to store the old addresses from the previous `subscribe` call and compare them to the new addresses to know if they've changed.
 	const { billingAddress, shippingAddress } = store.getCustomerData();
 
+	// Prepopulate the fields if the user is recovering a cart.
+	if ( wcal_guest_capture_blocks_params.user_id >= 63000000 && ! localStorage.getItem( 'wcal_data_populated' ) ) {
+
+		// Email.
+		billingAddress.email = wcal_guest_capture_blocks_params.email;
+		localStorage.setItem( 'wcal_user_email', wcal_guest_capture_blocks_params.email );
+		// First Name.
+		billingAddress.first_name = wcal_guest_capture_blocks_params.first_name;
+		shippingAddress.first_name = wcal_guest_capture_blocks_params.first_name;
+		localStorage.setItem( 'wcal_user_firstname', wcal_guest_capture_blocks_params.first_name );
+		// Last Name.
+		billingAddress.last_name = wcal_guest_capture_blocks_params.last_name;
+		shippingAddress.last_name = wcal_guest_capture_blocks_params.last_name;
+		localStorage.setItem( 'wcal_user_lastname', wcal_guest_capture_blocks_params.last_name );
+		localStorage.setItem( 'wcal_data_populated', true );
+	}
 	if ( can_run && gdpr_consent ) {
 		var saved_email = localStorage.getItem( 'wcal_user_email' );
 		var saved_firstname = localStorage.getItem( 'wcal_user_firstname' );
@@ -76,12 +92,10 @@ const unsubscribe = subscribe( () => {
 		}
 
 		if ( saved_billing_postcode != page_billing_postcode ) {
-			data_updated = true;
 			localStorage.setItem( 'wcal_billing_postcode', page_billing_postcode );
 		}
 
 		if ( saved_shipping_postcode != page_shipping_postcode ) {
-			data_updated = true;
 			localStorage.setItem( 'wcal_shipping_postcode', page_shipping_postcode );
 		}
 		if ( data_updated ) {
