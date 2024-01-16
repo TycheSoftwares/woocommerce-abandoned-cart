@@ -156,6 +156,11 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 
 == Changelog ==
 
+= 5.18.0 ( 16.01.2024 ) =
+* Tweak - Introduced compatibility with WooCommerce Checkout Blocks.
+* Fix - Incorrect stats are displayed in the plugin dashboard for number of emails sent & number of email addresses captured.
+* Fix - Preview reminder emails show WooCommerce standard header/footer hook data which is not the same as the actual reminder email.
+
 = 5.17.0 ( 19.12.2023 ) =
 * Tweak - The reminder email will display taxes based on WooCommerce tax settings.
 * Fix - Users with Shop Manager role will now be able to perform admin operations on the plugin page.
