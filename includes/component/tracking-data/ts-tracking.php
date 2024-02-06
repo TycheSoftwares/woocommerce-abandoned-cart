@@ -201,7 +201,7 @@ class Wcal_TS_tracking {
 	public static function ts_admin_notices_scripts() {
 
 		wp_enqueue_script(
-			self::$plugin_prefix . 'ts_dismiss_notice',
+			'wcal_ts_dismiss_notice',
 			self::$ts_file_path . '/assets/js/dismiss-notice.js',
 			'',
 			'',
@@ -209,11 +209,12 @@ class Wcal_TS_tracking {
 		);
 
 		wp_localize_script(
-			'ts_dismiss_notice',
-			'ts_dismiss_notice',
+			'wcal_ts_dismiss_notice',
+			'ts_notice_params',
 			array(
 				'ts_prefix_of_plugin' => self::$plugin_prefix,
 				'ts_admin_url'        => admin_url( 'admin-ajax.php' ),
+				'wcal_tracking_nonce' => wp_create_nonce( 'wcal_tracking' ),
 			)
 		);
 	}
@@ -226,6 +227,9 @@ class Wcal_TS_tracking {
 	 */
 
 	public static function ts_admin_notices() {
+		if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['security'] ) || ( isset( $_POST['security'] ) && ! wp_verify_nonce( sanitize_key( $_POST['security'] ), 'wcal_tracking' ) ) ) {
+			wp_send_json( 'Security check failed' );
+		}
 		update_option( self::$plugin_prefix . '_allow_tracking', 'dismissed' );
 		Wcal_TS_Tracker::ts_send_tracking_data( false );
 		die();

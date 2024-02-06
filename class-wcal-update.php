@@ -497,7 +497,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 			?>
 			<div class="notice notice-error">
 				<p>
-					<?php _e( 'There was an error creating the guest cart table for Abandoned Cart Lite for WooCommerce. Please contact the plugin author via <a href="mailto:support@tychesoftwares.freshdesk.com">email</a>', 'woocommerce-abandoned-cart' ); // phpcs:ignore?>
+					<?php _e( 'There was an error creating the guest cart table for Abandoned Cart Lite for WooCommerce. Please contact the plugin author via <a href="mailto:support@tychesoftwares.com">email</a>', 'woocommerce-abandoned-cart' ); // phpcs:ignore?>
 				</p>
 			</div>
 			<?php
