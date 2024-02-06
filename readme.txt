@@ -156,6 +156,11 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 
 == Changelog ==
 
+= 5.19.0 ( 06.02.2024 ) = 
+* Fix - The image in the default email template was broken. This has been fixed for fresh installations.
+* Fix - Added nonce check for the dismiss action in the tracking notification.
+* Tweak - Modified the support email address to connect to.
+
 = 5.18.0 ( 16.01.2024 ) =
 * Tweak - Introduced compatibility with WooCommerce Checkout Blocks.
 * Fix - Incorrect stats are displayed in the plugin dashboard for number of emails sent & number of email addresses captured.
