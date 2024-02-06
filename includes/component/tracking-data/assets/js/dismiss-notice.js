@@ -13,7 +13,8 @@ jQuery(document).ready( function() {
 		ajaxurl 		= admin_url + "admin-ajax.php";
 
 		var data = {
-			action: "wcal_admin_notices"
+			action: "wcal_admin_notices",
+			security: ts_notice_params.wcal_tracking_nonce
 		};
 
 		jQuery.post( ajaxurl, data, function( response ) {
