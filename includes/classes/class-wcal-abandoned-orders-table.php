@@ -71,6 +71,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	 * @since 2.5.2
 	 */
 	public function wcal_abandoned_order_prepare_items() {
+		$this->per_page        = (int) apply_filters( 'wcal_abandoned_orders_per_page_count', $this->per_page );
 		$columns               = $this->get_columns();
 		$hidden                = array(); // No hidden columns.
 		$sortable              = $this->get_sortable_columns();
