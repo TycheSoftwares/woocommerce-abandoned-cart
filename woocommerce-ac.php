@@ -240,10 +240,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				add_action( 'wp_ajax_wcal_dismiss_admin_notice', array( &$this, 'wcal_dismiss_admin_notice' ) );
 				add_filter( 'pre_update_option_wcal_auto_login_users', array( &$this, 'wcal_update_admin_notice_value' ), 10, 2 );
 
-				add_filter( 'ts_tracker_data', array( 'wcal_common', 'ts_add_plugin_tracking_data' ), 10, 1 );
-				add_filter( 'ts_tracker_opt_out_data', array( 'wcal_common', 'ts_get_data_for_opt_out' ), 10, 1 );
-				add_filter( 'ts_deativate_plugin_questions', array( &$this, 'wcal_deactivate_add_questions' ), 10, 1 );
-
 				add_action( 'wp_ajax_wcal_json_find_coupons', array( &$this, 'wcal_json_find_coupons' ) );
 			}
 
@@ -338,44 +334,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				require_once 'includes/class-wcal-all-component.php';
 
 			}
-		}
-		/**
-		 * It will add the Questions while admin deactivate the plugin.
-		 *
-		 * @hook ts_deativate_plugin_questions.
-		 * @param array $wcal_add_questions Blank array.
-		 * @return array $wcal_add_questions List of all questions.
-		 */
-		public static function wcal_deactivate_add_questions( $wcal_add_questions ) {
-
-			$wcal_add_questions = array(
-				0 => array(
-					'id'                => 4,
-					'text'              => __( 'Emails are not being sent to customers.', 'woocommerce-abandoned-cart' ),
-					'input_type'        => '',
-					'input_placeholder' => '',
-				),
-				1 => array(
-					'id'                => 5,
-					'text'              => __( 'Capturing of cart and other information was not satisfactory.', 'woocommerce-abandoned-cart' ),
-					'input_type'        => '',
-					'input_placeholder' => '',
-				),
-				2 => array(
-					'id'                => 6,
-					'text'              => __( 'I cannot see abandoned cart reminder emails records.', 'woocommerce-abandoned-cart' ),
-					'input_type'        => '',
-					'input_placeholder' => '',
-				),
-				3 => array(
-					'id'                => 7,
-					'text'              => __( 'I want to upgrade the plugin to the PRO version.', 'woocommerce-abandoned-cart' ),
-					'input_type'        => '',
-					'input_placeholder' => '',
-				),
-
-			);
-			return $wcal_add_questions;
 		}
 
 		/**
@@ -2411,6 +2369,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			$page   = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 			$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
+			// Tyche JS constructor - needed for deactivation survey.
+			wp_register_script(
+				'tyche',
+				WCAL_PLUGIN_URL . '/assets/js/tyche.js',
+				array( 'jquery' ),
+				1.1,
+				true
+			);
+			wp_enqueue_script( 'tyche' );
 			if ( '' === $page || 'woocommerce_ac_page' !== $page ) {
 				return;
 			} else {
