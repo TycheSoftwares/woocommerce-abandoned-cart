@@ -81,7 +81,7 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 						'blog_link'         => 'https://www.tychesoftwares.com/abandoned-cart-lite-usage-tracking/',
 					)
 				);
-				require_once WCAL_PLUGIN_PATH . '/includes/class-wcal-data-tracking.php';		
+				require_once WCAL_PLUGIN_PATH . '/includes/class-wcal-data-tracking.php';
 			}
 		}
 
