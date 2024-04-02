@@ -624,7 +624,7 @@ if ( ! class_exists( 'Wcal_Data_Tracking' ) ) :
 		 */
 		public static function ts_get_data_for_opt_out( $params ) {
 
-			$plugin_data['ts_meta_data_table_name'] = 'ts_tracking_wcal_meta_data';
+			$plugin_data['ts_meta_data_table_name'] = 'ts_wcal_tracking_meta_data';
 			$plugin_data['ts_plugin_name']          = 'Abandoned Cart Lite for WooCommerce';
 
 			$params['plugin_data'] = $plugin_data;
