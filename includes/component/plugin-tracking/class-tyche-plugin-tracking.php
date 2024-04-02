@@ -120,10 +120,6 @@ if ( ! class_exists( 'Tyche_Plugin_Tracking' ) ) {
 				'interval' => 604800,  // one week in seconds.
 				'display'  => __( 'Once in a Week', $this->plugin_locale ), // phpcs:ignore
 			);
-			$schedules['once_10_mins'] = array(
-				'interval' => 600,  // one week in seconds.
-				'display'  => __( 'Once in 10 minutes', $this->plugin_locale ), // phpcs:ignore
-			);
 
 			return $schedules;
 		}
@@ -133,7 +129,7 @@ if ( ! class_exists( 'Tyche_Plugin_Tracking' ) ) {
 		 */
 		public function schedule_cron_job() {
 			if ( ! wp_next_scheduled( $this->plugin_short_name . '_ts_tracker_send_event' ) ) {
-				wp_schedule_event( time() + 60, 'once_10_mins', $this->plugin_short_name . '_ts_tracker_send_event' );
+				wp_schedule_event( time() + 604800, 'once_in_week', $this->plugin_short_name . '_ts_tracker_send_event' );
 			}
 		}
 
