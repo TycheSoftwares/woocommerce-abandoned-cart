@@ -255,7 +255,7 @@ if ( ! class_exists( 'Tyche_Plugin_Tracking' ) ) {
 				<div class="<?php echo esc_attr( $this->plugin_short_name ); ?>-message <?php echo esc_attr( $this->plugin_short_name ); ?>-tracker notice notice-info is-dismissible" style="position: relative;">
 					<div style="position: absolute;"><img class="site-logo" src= "<?php echo esc_url( $this->api_url . '/assets/plugin-tracking/images/site-logo.jpg?v=' . $this->version ); ?> "></div>
 					<p style="margin: 10px 0 10px 130px; font-size: medium;">
-							<?php print( __( 'In the past two years, we’ve added <strong>two premium features</strong> to the Lite plugin with the help of users like you who shared plugin usage data anonymously. Help us improve the plugin and avail a super saver surprise gift. <a href="' . $this->blog_link . '"Learn more.</a>', $this->plugin_locale ) ); // phpcs:ignore ?>
+						<?php print( __( 'In the past two years, we’ve added <strong>two premium features</strong> to the Lite plugin with the help of users like you who shared plugin usage data anonymously. Help us improve the plugin and avail a super saver surprise gift. <a href="' . $this->blog_link . '">Learn more</a>', $this->plugin_locale ) ); // phpcs:ignore ?>
 					</p>
 					<p class="submit">
 						<a class="button-primary button button-large" href="<?php echo esc_url( wp_nonce_url( add_query_arg( $this->plugin_short_name . '_tracker_optin', 'true' ), $this->plugin_short_name . '_tracker_optin', $this->plugin_short_name . '_tracker_nonce' ) ); ?>"><?php esc_html_e( 'Allow', $this->plugin_locale ); //phpcs:ignore ?></a>
