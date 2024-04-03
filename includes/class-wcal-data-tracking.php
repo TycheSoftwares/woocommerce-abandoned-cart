@@ -390,8 +390,8 @@ if ( ! class_exists( 'Wcal_Data_Tracking' ) ) :
 					)
 				);
 
-				$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['is_activate']                 = ( 1 === $wcal_email_templates_results_value->is_active ) ? 'Active' : 'Deactive';
-				$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['is_wc_template']              = ( 1 === $wcal_email_templates_results_value->is_wc_template ) ? 'Yes' : 'No';
+				$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['is_activate']                 = ( '1' === $wcal_email_templates_results_value->is_active ) ? 'Active' : 'Deactive';
+				$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['is_wc_template']              = ( '1' === $wcal_email_templates_results_value->is_wc_template ) ? 'Yes' : 'No';
 				$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['template_time']               = $wcal_template_time;
 				$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['total_email_sent']            = $wcal_template_sent_count;
 				$wcal_templates_data [ 'template_id_' . $wcal_email_templates_results_value->id ] ['coupon_code']                 = $wcal_email_templates_results_value->coupon_code;
