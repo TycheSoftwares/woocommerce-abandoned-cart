@@ -592,6 +592,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( false !== as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) ) {
 				as_unschedule_action( 'woocommerce_ac_send_email_action' ); // Remove the scheduled action.
 			}
+			$next_scheduled = wp_next_scheduled( 'wcal_ts_tracker_send_event' );
+			if ( $next_scheduled ) {
+				wp_unschedule_event( $next_scheduled, 'wcal_ts_tracker_send_event' );
+			}
 			do_action( 'wcal_deactivate' );
 		}
 		/**

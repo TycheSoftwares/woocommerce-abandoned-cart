@@ -82,6 +82,7 @@ if ( is_multisite() ) { // Multisite.
 			delete_blog_option( $blog_id_number, 'wcal_gdpr_opt_out_message' );
 			delete_blog_option( $blog_id_number, 'wcal_guest_user_id_altered' );
 			delete_blog_option( $blog_id_number, 'wcal_guest_users_manual_reset_needed' );
+			delete_blog_option( $blog_id_number, 'wcal_auto_login_users' );
 		} else {
 
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -171,3 +172,4 @@ delete_option( 'wcal_gdpr_allow_opt_out' );
 delete_option( 'wcal_gdpr_opt_out_message' );
 delete_option( 'wcal_guest_user_id_altered' );
 delete_option( 'wcal_guest_users_manual_reset_needed' );
+delete_option( 'wcal_auto_login_users' );
