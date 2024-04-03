@@ -129,7 +129,7 @@ if ( ! class_exists( 'Tyche_Plugin_Tracking' ) ) {
 		 */
 		public function schedule_cron_job() {
 			if ( ! wp_next_scheduled( $this->plugin_short_name . '_ts_tracker_send_event' ) ) {
-				wp_schedule_event( time() + 604800, 'weekly', $this->plugin_short_name . '_ts_tracker_send_event' );
+				wp_schedule_event( time() + 604800, 'once_in_week', $this->plugin_short_name . '_ts_tracker_send_event' );
 			}
 		}
 
@@ -147,13 +147,15 @@ if ( ! class_exists( 'Tyche_Plugin_Tracking' ) ) {
 		 * Called when the dismiss icon is clicked on the notice.
 		 */
 		public function dismiss_notice() {
-			if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['security'] ) || ( isset( $_POST['security'] ) && ! wp_verify_nonce( sanitize_key( $_POST['security'] ), 'tracking_notice' ) ) ) {
+			if ( current_user_can( 'manage_woocommerce' ) && isset( $_POST['security'] ) && ( isset( $_POST['security'] ) && wp_verify_nonce( sanitize_key( $_POST['security'] ), 'tracking_notice' ) ) ) {
+				update_option( $this->plugin_short_name . '_allow_tracking', 'dismissed' );
+				$this->send_tracking_data();
+
+				return 'success';
+			} else {
 				die( 'Security check failed' );
 			}
-			update_option( $this->plugin_short_name . '_allow_tracking', 'dismissed' );
-			$this->send_tracking_data();
 
-			return 'success';
 		}
 
 		/**
