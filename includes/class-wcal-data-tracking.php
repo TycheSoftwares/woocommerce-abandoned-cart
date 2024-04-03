@@ -355,7 +355,7 @@ if ( ! class_exists( 'Wcal_Data_Tracking' ) ) :
 			global $wpdb;
 			$wcal_sent_emails_count = 0;
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wcal_sent_emails_count = $wpdb->get_var( 'SELECT COUNT(id) FROM `' . $wpdb->prefix . 'ac_sent_history_lite`' );
+			$wcal_sent_emails_count = $wpdb->get_var( 'SELECT COUNT(id) FROM `' . $wpdb->prefix . 'ac_sent_history_lite` WHERE tem[plate_id <> 0' );
 			return $wcal_sent_emails_count;
 		}
 
