@@ -278,8 +278,40 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( '' === get_option( 'wcal_auto_login_users', '' ) ) {
 				add_filter( 'woocommerce_login_redirect', array( &$this, 'ts_redirect_login' ), 10, 1 );
 			}
+
+			// 5.20.0 - Deactivation and Tracking v2.
+			add_action( 'init', array( &$this, 'wcal_include_files_tracking' ) );
 		}
 
+		/**
+		 * Include tracking & deactivation survey files.
+		 */
+		public static function wcal_include_files_tracking() {
+			require_once WCAL_PLUGIN_PATH . '/includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php';
+
+				new Tyche_Plugin_Deactivation(
+					array(
+						'plugin_name'       => 'Abandoned Cart Lite for WooCommerce',
+						'plugin_base'       => 'woocommerce-abandoned-cart/woocommerce-ac.php',
+						'script_file'       => WCAL_PLUGIN_URL . '/assets/js/admin/plugin-deactivation.js',
+						'plugin_short_name' => 'acp_lite',
+						'version'           => WCAL_PLUGIN_VERSION,
+						'plugin_locale'     => 'woocommerce-abandoned-cart',
+					)
+				);
+				// Tracking v2 files.
+				require_once WCAL_PLUGIN_PATH . '/includes/component/plugin-tracking/class-tyche-plugin-tracking.php';
+				new Tyche_Plugin_Tracking(
+					array(
+						'plugin_name'       => 'Abandoned Cart Lite for WooCommerce',
+						'plugin_locale'     => 'woocommerce-abandoned-cart',
+						'plugin_short_name' => 'wcal',
+						'version'           => WCAL_PLUGIN_VERSION,
+						'blog_link'         => 'https://www.tychesoftwares.com/abandoned-cart-lite-usage-tracking/',
+					)
+				);
+				require_once WCAL_PLUGIN_PATH . '/includes/class-wcal-data-tracking.php';
+		}
 		/**
 		 * Action Scheduler library load failed. So add an admin notice.
 		 *
