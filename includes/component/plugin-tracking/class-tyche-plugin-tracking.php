@@ -165,7 +165,7 @@ if ( ! class_exists( 'Tyche_Plugin_Tracking' ) ) {
 		 */
 		public function send_tracking_data() {
 
-			$allow_tracking = get_option( $this->plugin_short_name . '_allow_tracking' . '' ); // phpcs:ignore
+			$allow_tracking = get_option( $this->plugin_short_name . '_allow_tracking', '' ); // phpcs:ignore
 
 			if ( '' === $allow_tracking ) {
 				return;

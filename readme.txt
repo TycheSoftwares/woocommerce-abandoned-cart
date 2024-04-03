@@ -4,7 +4,7 @@ Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares,
 Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions, Best abandoned cart plugin for WooCommerce, WooCommerce abandoned cart plugin free, Abandoned cart WooCommerce plugin
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 6.3 or higher
-Tested up to: 6.4.2
+Tested up to: 6.5
 Stable tag: trunk
 Requires PHP: 7.4 or higher
 License: GPLv2 or late
@@ -155,6 +155,10 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+
+= 5.20.0 ( 03.04.2024 ) =
+* Tweak - Updated tracking of non sensitive diagnostic data code to v2.
+* Tweak - Added filter toc hange the number of carts displayed in the Abandoned Orders page.
 
 = 5.19.0 ( 06.02.2024 ) = 
 * Fix - The image in the default email template was broken. This has been fixed for fresh installations.

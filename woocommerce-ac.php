@@ -3,14 +3,14 @@
  * Plugin Name: Abandoned Cart Lite for WooCommerce
  * Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
  * Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
- * Version: 5.19.0
+ * Version: 5.20.0
  * Author: Tyche Softwares
  * Author URI: http://www.tychesoftwares.com/
  * Text Domain: woocommerce-abandoned-cart
  * Domain Path: /i18n/languages/
  * Requires PHP: 7.4 or higher
  * WC requires at least: 4.0.0
- * WC tested up to: 8.5.2
+ * WC tested up to: 8.7.0
  *
  * @package Abandoned-Cart-Lite-for-WooCommerce
  */
@@ -126,7 +126,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			if ( ! defined( 'WCAL_PLUGIN_VERSION' ) ) {
-				define( 'WCAL_PLUGIN_VERSION', '5.19.0' );
+				define( 'WCAL_PLUGIN_VERSION', '5.20.0' );
 			}
 
 			if ( ! defined( 'WCAL_PLUGIN_PATH' ) ) {
@@ -591,6 +591,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		public static function wcal_deactivate() {
 			if ( false !== as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) ) {
 				as_unschedule_action( 'woocommerce_ac_send_email_action' ); // Remove the scheduled action.
+			}
+			$next_scheduled = wp_next_scheduled( 'wcal_ts_tracker_send_event' );
+			if ( $next_scheduled ) {
+				wp_unschedule_event( $next_scheduled, 'wcal_ts_tracker_send_event' );
 			}
 			do_action( 'wcal_deactivate' );
 		}
