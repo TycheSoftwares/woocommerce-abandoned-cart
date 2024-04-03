@@ -280,7 +280,6 @@ class Wcal_Recover_Orders_Table extends WP_List_Table {
 			if ( 0 != $value->recovered_cart ) { // phpcs:ignore
 				$return_recovered_orders[ $i ] = new stdClass();
 				$recovered_id                  = $value->recovered_cart;
-				$rec_order                     = get_post_meta( $recovered_id );
 				$woo_order                     = array();
 				try {
 					$woo_order = wc_get_order( $recovered_id );
@@ -298,9 +297,6 @@ class Wcal_Recover_Orders_Table extends WP_List_Table {
 					}
 					$recovered_item++;
 
-					if ( isset( $rec_order ) && false !== $rec_order ) {
-						$recovered_total += $rec_order['_order_total'][0];
-					}
 					$date_format           = date_i18n( get_option( 'date_format' ), $value->abandoned_cart_time );
 					$time_format           = date_i18n( get_option( 'time_format' ), $value->abandoned_cart_time );
 					$abandoned_date        = $date_format . ' ' . $time_format;
@@ -310,21 +306,13 @@ class Wcal_Recover_Orders_Table extends WP_List_Table {
 					$billing_email         = '';
 					$recovered_order_total = 0;
 
-					if ( isset( $rec_order['_billing_first_name'][0] ) ) {
-						$billing_first_name = $rec_order['_billing_first_name'][0];
+					if ( $woo_order ) {
+						$billing_first_name    = $woo_order->get_billing_first_name() ? $woo_order->get_billing_first_name() : '';
+						$billing_last_name     = $woo_order->get_billing_last_name() ? $woo_order->get_billing_last_name() : '';
+						$billing_email         = $woo_order->get_billing_email() ? $woo_order->get_billing_email() : '';
+						$recovered_order_total = $woo_order->get_total() ? $woo_order->get_total() : 0;
 					}
-
-					if ( isset( $rec_order['_billing_last_name'][0] ) ) {
-						$billing_last_name = $rec_order['_billing_last_name'][0];
-					}
-
-					if ( isset( $rec_order['_billing_email'][0] ) ) {
-						$billing_email = $rec_order['_billing_email'][0];
-					}
-
-					if ( isset( $rec_order['_order_total'][0] ) ) {
-						$recovered_order_total = $rec_order['_order_total'][0];
-					}
+					$recovered_total += $recovered_order_total;
 
 					$return_recovered_orders[ $i ]->user_name          = $billing_first_name . ' ' . $billing_last_name;
 					$return_recovered_orders[ $i ]->user_email_id      = $billing_email;
