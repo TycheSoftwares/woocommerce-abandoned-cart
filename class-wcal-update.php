@@ -289,6 +289,10 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM `' . $db_prefix . "ac_sent_history_lite` LIKE 'encrypt_key';" ) ) { //phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_sent_history_lite ADD `encrypt_key` VARCHAR(500) NOT NULL AFTER `sent_email_id`;' ); //phpcs:ignore
 			}
+			// 5.20.1
+			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'email_type'" ) ) { //phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_email_templates_lite ADD COLUMN `email_type` ENUM("0","1") CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL AFTER `id`' ); //phpcs:ignore
+			}
 		}
 		/**
 		 * Add a new column email_reminder_status in the cart history lite table.
