@@ -2,8 +2,8 @@
 name: "✨ New Enhancement"
 about: Suggest an idea for this project
 title: ''
-labels: enhancement
-assignees: pinalj
+labels: 'type: enhancement'
+assignees: nidhitatosaniya
 
 ---
 
