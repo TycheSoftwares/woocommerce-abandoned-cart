@@ -118,6 +118,12 @@ $admin_phone = get_user_meta( $uid, 'billing_phone', true );
 				width: 100% !important;
 			}
 		}
+		@media screen and (max-device-width:450px),
+		screen and (max-width:450px) {
+			.main-wrapper {
+				width: 450px !important;
+			}
+		}
 		@import url(https://fonts.googleapis.com/css?family=Lato);
 		@import url(https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700);
 		@import url(https://fonts.googleapis.com/css?family=Cabin);
