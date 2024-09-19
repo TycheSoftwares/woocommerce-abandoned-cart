@@ -133,8 +133,15 @@ class Ts_Upgrade_To_Pro {
 		self::$template_base = $this->ts_get_template_path();
 	}
 
+	/**
+	 * Showing FB Settings page on Upgrade to Pro page.
+	 *
+	 * @access public
+	 * @since  7.7
+	 * @return void
+	 */
 	public function ts_upgrade_to_pro_content() {
-		if ( isset( $_GET['action'] ) && 'upgrade_to_pro_page' === $_GET['action'] ) {
+		if ( isset( $_GET['action'] ) && 'upgrade_to_pro_page' === $_GET['action'] ) { // phpcs:ignore.
 			WCAP_Pro_Settings::wcap_fb_settings();
 		}
 	}
@@ -158,7 +165,7 @@ class Ts_Upgrade_To_Pro {
 			}
 		}
 
-		if ( isset( $_GET['action'] ) && 'upgrade_to_pro_page' === $_GET['action'] ) {
+		if ( isset( $_GET['action'] ) && 'upgrade_to_pro_page' === $_GET['action'] ) { // phpcs:ignore.
 			$load_style = true;
 		}
 
