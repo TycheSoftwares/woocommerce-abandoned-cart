@@ -868,7 +868,11 @@ class wcal_common { // phpcs:ignore
 		}
 
 		if ( '' !== $coupon_code ) {
-			$existing_coupon        = get_user_meta( $user_id, '_woocommerce_ac_coupon', false );
+			$existing_coupon = get_user_meta( $user_id, '_woocommerce_ac_coupon', false );
+			// Ensure $existing_coupon is an array.
+			if ( false === $existing_coupon ) {
+				$existing_coupon = array(); // Initialize as an empty array if the meta doesn't exist.
+			}
 			$existing_coupon[]      = array(
 				'coupon_code'    => $coupon_code,
 				'coupon_message' => $valid,
