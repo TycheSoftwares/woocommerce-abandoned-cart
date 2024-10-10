@@ -28,6 +28,7 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 				require_once 'component/woocommerce-check/ts-woo-active.php';
 
 				require_once 'component/faq-support/ts-faq-support.php';
+				require_once 'component/upgrade-to-pro/ts-upgrade-to-pro.php';
 				require_once 'component/pro-notices-in-lite/ts-pro-notices.php';
 
 				$wcal_plugin_name        = 'Abandoned Cart Lite for WooCommerce';
@@ -56,6 +57,8 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 
 				$ts_pro_faq = self::wcal_get_faq();
 				new Wcal_TS_Faq_Support( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_plugins_page, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_slug, $ts_pro_faq );
+
+				new Ts_Upgrade_To_Pro( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_plugins_page, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_slug, $ts_pro_faq );
 			}
 		}
 

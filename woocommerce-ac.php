@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Abandoned Cart Lite for WooCommerce
  * Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
- * Description: This plugin captures abandoned carts by logged-in users & emails them about it. <strong><a href="http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro">Click here to get the PRO Version.</a></strong>
+ * Description: This plugin captures abandoned carts by logged-in users & emails them about it. Enjoy all the premium features at no extra cost for 2 months. Click <strong><a href="https://ww2.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial/">here</a></strong> to Upgrade to PRO for FREE.
  * Version: 5.20.0
  * Author: Tyche Softwares
  * Author URI: http://www.tychesoftwares.com/
@@ -32,12 +32,6 @@ require_once 'includes/admin/class-wcal-personal-data-export.php';
 require_once 'includes/admin/class-wcal-abandoned-cart-details.php';
 
 require_once 'includes/admin/class-wcap-pro-settings.php';
-require_once 'includes/admin/class-wcap-pro-settings-callbacks.php';
-require_once 'includes/admin/class-wcap-add-cart-popup-modal.php';
-require_once 'includes/connectors/class-wcap-connectors-common.php';
-require_once 'includes/connectors/class-wcap-connector.php';
-require_once 'includes/connectors/class-wcap-display-connectors.php';
-require_once 'includes/class-wcap-integrations.php';
 require_once 'includes/wcal-functions.php';
 require_once 'includes/class-wcal-webhooks.php';
 
@@ -132,6 +126,19 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			if ( ! defined( 'WCAL_PLUGIN_PATH' ) ) {
 				define( 'WCAL_PLUGIN_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 			}
+
+			if ( ! defined( 'WCAL_PLUGIN_UPGRADE_TO_PRO_TEMPLATE_PATH' ) ) {
+				define( 'WCAL_PLUGIN_UPGRADE_TO_PRO_TEMPLATE_PATH', WCAL_PLUGIN_PATH . '/includes/component/upgrade-to-pro/templates/' );
+			}
+
+			if ( ! defined( 'WCAL_TRIAL_NAME' ) ) {
+				define( 'WCAL_TRIAL_NAME', 'Abandoned Cart Pro for WooCommerce Trial' );
+			}
+
+			if ( ! defined( 'WCAL_TRIAL_URL' ) ) {
+				define( 'WCAL_TRIAL_URL', 'https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial/' );
+			}
+
 			$this->one_hour              = 60 * 60;
 			$this->three_hours           = 3 * $this->one_hour;
 			$this->six_hours             = 6 * $this->one_hour;
@@ -1422,7 +1429,21 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * @since 1.0
 		 */
 		public function wcal_admin_menu() {
-			$page = add_submenu_page( 'woocommerce', __( 'Abandoned Carts', 'woocommerce-abandoned-cart' ), __( 'Abandoned Carts', 'woocommerce-abandoned-cart' ), 'manage_woocommerce', 'woocommerce_ac_page', array( &$this, 'wcal_menu_page' ) );
+
+			$menu_title = sprintf(
+				'%s<span class="upgrade-to-pro-admin-menu">&nbsp;%s</span>',
+				__( 'Abandoned Carts', 'woocommerce-abandoned-cart' ),
+				__( 'Upgrade to Pro!', 'woocommerce-abandoned-cart' )
+			);
+
+			$page = add_submenu_page(
+				'woocommerce',
+				__( 'Abandoned Carts', 'woocommerce-abandoned-cart' ),
+				$menu_title,
+				'manage_woocommerce',
+				'woocommerce_ac_page',
+				array( &$this, 'wcal_menu_page' )
+			);
 		}
 
 		/**
@@ -2430,7 +2451,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				);
 				$mode         = isset( $_GET['mode'] ) ? sanitize_text_field( wp_unslash( $_GET['mode'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 				$wcal_section = isset( $_GET['wcal_section'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_section'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-				if ( ( 'emailtemplates' === $action && ( 'addnewtemplate' === $mode || 'edittemplate' === $mode ) ) || ( 'emailsettings' === $action && 'wcap_atc_settings' === $wcal_section ) ) {
+				if ( ( 'emailtemplates' === $action && ( 'addnewtemplate' === $mode || 'edittemplate' === $mode ) ) ) {
 					wp_register_script( 'woocommerce_admin', WC()->plugin_url() . '/assets/js/admin/woocommerce_admin.min.js', array( 'jquery', 'jquery-tiptip' ), WCAL_PLUGIN_VERSION, false );
 					wp_enqueue_script( 'woocommerce_admin' );
 					$locale  = localeconv();
@@ -2652,8 +2673,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				wp_enqueue_style( 'jquery-ui-style', plugins_url( '/assets/css/admin/jquery-ui-smoothness.css', __FILE__ ), '', WCAL_PLUGIN_VERSION );
 				wp_enqueue_style( 'wcal-reports', plugins_url( '/assets/css/admin/wcal_reports.min.css', __FILE__ ), '', WCAL_PLUGIN_VERSION );
 
-			} elseif ( 'woocommerce_ac_page' === $page && 'emailsettings' === $action && 'wcap_connectors' === $section ) {
-				wp_enqueue_style( 'wcap-connectors', plugins_url( 'assets/css/admin/wcap_integrations_main.min.css', __FILE__ ), '', WCAL_PLUGIN_VERSION );
 			} elseif ( 'woocommerce_ac_page' === $page ) {
 
 				wp_enqueue_style( 'jquery-ui', plugins_url( '/assets/css/admin/jquery-ui.css', __FILE__ ), '', WCAL_PLUGIN_VERSION, false );
@@ -3692,17 +3711,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							<div> <!-- <div class="postbox" > -->
 								<h3 class="hndle"><?php esc_html_e( $display_message, 'woocommerce-abandoned-cart' ); // phpcs:ignore?></h3>
 								<div>
-									<?php
-									wc_get_template(
-										'html-rules-engine.php',
-										array(
-											'rules' => array(),
-											'match' => 'all',
-										),
-										'woocommerce-abandoned-cart/',
-										WCAL_PLUGIN_PATH . '/includes/templates/rules/'
-									);
-									?>
 									<table class="form-table" id="addedit_template">
 									<tr>
 										<th>

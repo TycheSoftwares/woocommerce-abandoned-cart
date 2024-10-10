@@ -78,7 +78,7 @@ if ( ! class_exists( 'Tyche_Plugin_Tracking' ) ) {
 			add_action( $this->plugin_short_name . '_ts_tracker_send_event', array( &$this, 'send_tracking_data' ) );
 			add_action( $this->plugin_short_name . '_init_tracker', array( &$this, 'init_tracker' ) );
 			add_action( 'wp_ajax_' . $this->plugin_short_name . '_tracker_dismiss_notice', array( &$this, 'dismiss_notice' ) );
-			add_action( 'admin_notices', array( &$this, 'display_tracker_html_template' ) );
+			// add_action( 'admin_notices', array( &$this, 'display_tracker_html_template' ) );
 			add_filter( 'cron_schedules', array( &$this, 'cron_schedule' ) );
 			add_action( 'admin_init', array( &$this, 'init_tracker' ) );
 			$this->schedule_cron_job();
