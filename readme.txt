@@ -163,7 +163,7 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 == Changelog ==
 
 = 6.0.0 ( 10.10.2024 ) =
-* Fix - The test email was not display correctly on iPhone 12 Pro devices.
+* Fix - The test email was not displayed correctly on iPhone 12 Pro devices.
 * Fix - Resolved issues when creating new email templates.
 * Fix - Addressed PHP 8.x deprecated message to ensure compatibility.
 * Fix - Added a filter to restrict capturing abandoned carts from a specific email address.
