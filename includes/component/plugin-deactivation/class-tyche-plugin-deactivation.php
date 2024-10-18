@@ -184,7 +184,7 @@ if ( ! class_exists( 'Tyche_Plugin_Deactivation' ) ) {
 					'deactivation_data'    => $data,
 					'ajax_url'             => admin_url( 'admin-ajax.php' ),
 					'nonce'                => wp_create_nonce( 'tyche_plugin_deactivation_submit_action' ),
-					'deactivation_req_msg' => __( 'Please select a reason for deactivation!', 'order-delivery-date' ),
+					'deactivation_req_msg' => __( 'Please select a reason for deactivation!', 'woocommerce-abandoned-cart' ),
 				)
 			);
 
