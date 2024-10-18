@@ -288,7 +288,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * Include tracking & deactivation survey files.
 		 */
 		public static function wcal_include_files_tracking() {
-			if ( strpos( $_SERVER['REQUEST_URI'], 'plugins.php' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'action=deactivate' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'admin-ajax.php' ) !== false ) { //phpcs:ignore
+			if ( strpos( $_SERVER['REQUEST_URI'], 'plugins.php' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'action=deactivate' ) !== false || ( strpos( $_SERVER['REQUEST_URI'], 'admin-ajax.php' ) !== false && isset( $_POST['action'] ) && $_POST['action'] === 'tyche_plugin_deactivation_submit_action' ) ) { //phpcs:ignore
 				require_once WCAL_PLUGIN_PATH . '/includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php';
 
 				new Tyche_Plugin_Deactivation(
