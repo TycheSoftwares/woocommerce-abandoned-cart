@@ -26,7 +26,7 @@ if ( ! class_exists( 'Tyche_Plugin_Deactivation' ) ) {
 		 *
 		 * @var string $version
 		 */
-		private $version = '1.2';
+		private $version = '1.3';
 
 		/**
 		 * Plugin Version.

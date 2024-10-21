@@ -2410,13 +2410,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			// Tyche JS constructor - needed for deactivation survey.
 			wp_register_script(
-				'tyche',
+				'wcal_tyche',
 				WCAL_PLUGIN_URL . '/assets/js/tyche.js',
 				array( 'jquery' ),
 				1.1,
 				true
 			);
-			wp_enqueue_script( 'tyche' );
+			wp_enqueue_script( 'wcal_tyche' );
 			if ( '' === $page || 'woocommerce_ac_page' !== $page ) {
 				return;
 			} else {
