@@ -5,7 +5,7 @@ Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart 
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 6.3 or higher
 Tested up to: 6.6.2
-Stable tag: 6.0.0
+Stable tag: 6.0.1
 Requires PHP: 7.3
 License: GPLv2 or late
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -161,6 +161,9 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+
+= 6.0.1 ( 22.10.2024 ) =
+* Fix - Deactivation survey request was being sent even though 'Skip & deactivate' was selected while deactivating the plugin.
 
 = 6.0.0 ( 10.10.2024 ) =
 * Fix - The test email was not displayed correctly on iPhone 12 Pro devices.
