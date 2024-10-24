@@ -26,7 +26,14 @@ if ( ! class_exists( 'Tyche_Plugin_Deactivation' ) ) {
 		 *
 		 * @var string $version
 		 */
-		private $version = '';
+		private $version = '1.3';
+
+		/**
+		 * Plugin Version.
+		 *
+		 * @var string $plugin_version
+		 */
+		private $plugin_version = '';
 
 		/**
 		 * API Url.
@@ -108,7 +115,7 @@ if ( ! class_exists( 'Tyche_Plugin_Deactivation' ) ) {
 			$this->plugin_base       = $options['plugin_base'];
 			$this->script_file       = $options['script_file'];
 			$this->plugin_short_name = $options['plugin_short_name'];
-			$this->version           = $options['version'];
+			$this->plugin_version    = $options['version'];
 			$this->plugin_locale     = $options['plugin_locale'];
 
 			return true;
@@ -138,22 +145,27 @@ if ( ! class_exists( 'Tyche_Plugin_Deactivation' ) ) {
 		 */
 		public function enqueue_scripts() {
 
+			$current_screen = get_current_screen();
+			if ( isset( $current_screen->id ) && 'plugins' !== $current_screen->id ) {
+				return;
+			}
+
 			wp_enqueue_style(
 				'tyche_plugin_deactivation',
 				$this->api_url . '/assets/plugin-deactivation/css/style.css',
 				array(),
-				$this->version
+				$this->plugin_version
 			);
 
 			wp_register_script(
 				'tyche_plugin_deactivation_' . $this->plugin_short_name,
 				$this->script_file,
-				array( 'jquery', 'tyche' ),
-				$this->version,
+				array( 'jquery', 'wcal_tyche' ),
+				$this->plugin_version,
 				true
 			);
 
-			$request = wp_remote_get( $this->api_url . '?action=fetch-deactivation-data&plugin=' . $this->plugin_short_name . '&language=' . apply_filters( 'tyche_plugin_deactivation_language', 'en' ) );
+			$request = wp_remote_get( $this->api_url . '?action=fetch-deactivation-data&plugin=' . $this->plugin_short_name . '&language=' . apply_filters( 'tyche_plugin_deactivation_language', 'en' ) . '&version=' . $this->version );
 
 			if ( is_wp_error( $request ) || 200 !== wp_remote_retrieve_response_code( $request ) ) {
 				return false; // In case the user is offline or something else that could have probably caused an error.
@@ -172,12 +184,11 @@ if ( ! class_exists( 'Tyche_Plugin_Deactivation' ) ) {
 					'deactivation_data'    => $data,
 					'ajax_url'             => admin_url( 'admin-ajax.php' ),
 					'nonce'                => wp_create_nonce( 'tyche_plugin_deactivation_submit_action' ),
-					'deactivation_req_msg' => __( 'Please select a reason for deactivation!', $this->plugin_locale ),
+					'deactivation_req_msg' => __( 'Please select a reason for deactivation!', 'woocommerce-abandoned-cart' ),
 				)
 			);
 
 			wp_enqueue_script( 'tyche_plugin_deactivation_' . $this->plugin_short_name );
-
 		}
 
 		/**
@@ -189,6 +200,12 @@ if ( ! class_exists( 'Tyche_Plugin_Deactivation' ) ) {
 
 			if ( ! wp_verify_nonce( $_POST['nonce'], 'tyche_plugin_deactivation_submit_action' ) || ! isset( $_POST['reason_id'] ) || ! isset( $_POST['reason_text'] ) || ! isset( $_POST['plugin_short_name'] ) || ! isset( $_POST['plugin_name'] ) ) { // phpcs:ignore
 				wp_send_json_error( 0 );
+			}
+			$reason_id = isset( $_POST['reason_id'] ) ? sanitize_text_field( wp_unslash( $_POST['reason_id'] ) ) : '';
+
+			if ( 0 === (int) $reason_id ) {
+				wp_send_json_error( 0 );
+				exit;
 			}
 
 			wp_safe_remote_post(
@@ -203,6 +220,7 @@ if ( ! class_exists( 'Tyche_Plugin_Deactivation' ) ) {
 					'body'        => wp_json_encode(
 						array(
 							'action'      => 'plugin-deactivation',
+							'version'     => $this->version,
 							'plugin_slug' => isset( $_POST['plugin_short_name'] ) ? sanitize_text_field( wp_unslash( $_POST['plugin_short_name'] ) ) : '',
 							'url'         => home_url(),
 							'email'       => apply_filters( 'ts_tracker_admin_email', get_option( 'admin_email' ) ),

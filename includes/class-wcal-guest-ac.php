@@ -269,6 +269,10 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 
 			$shipping_zipcode = '';
 			$billing_zipcode  = '';
+			if ( $billing_email_restriction ) {
+				$wpdb->delete( $wpdb->prefix . 'ac_abandoned_cart_history_lite', array( 'session_id' => $guest_session_key ) );// phpcs:ignore
+				wcal_common::wcal_set_cart_session( 'wcal_cart_tracking_refused', 'yes' );
+			}
 			if ( ! $billing_email_restriction ) {
 				if ( '' != wcal_common::wcal_get_cart_session( 'shipping_postcode' ) ) { // phpcs:ignore
 					$shipping_zipcode = wcal_common::wcal_get_cart_session( 'shipping_postcode' );
