@@ -107,7 +107,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 															</table>
 														</div>
 														<div class="add-more-link">
-															<a id="add_product_availability" class="al-link add_new_template_range"><img src="https://fond-tern-bbc4d8.instawp.xyz/wp-content/plugins/woocommerce-abandon-cart-pro/assets/images/icon-plus.svg" alt="Icon"> Add Rule</a>
+															<a id="add_product_availability" class="al-link add_new_template_range"> Add Rule</a>
 														</div>
 													</div>
 												</div>
@@ -556,9 +556,9 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 													<div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
 														<div class="subscribe-body">
 															<div class="subscribe-head">
-																<div><img src="https://fond-tern-bbc4d8.instawp.xyz/wp-content/plugins/woocommerce-abandon-cart-pro/assets/images/popup-icon.svg" width="100" height="104" style="border-radius: 50%;">
-																	<div class="Cancel-icon"
-																	style="background-image: url(&quot;https://fond-tern-bbc4d8.instawp.xyz/wp-content/plugins/woocommerce-abandon-cart-pro/assets/images/cancel-icon.jpg&quot;);"></div>
+																<div>
+																	<div class="Cancel-icon">
+																	</div>
 																</div>
 																<h1 class="mb-0" style="color: rgb(115, 127, 151);">Please enter your email</h1>
 																<p style="color: rgb(187, 201, 210);"> To add this item to your cart, please enter your email address. </p>
@@ -719,9 +719,8 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 													<div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
 														<div class="subscribe-body">
 															<div class="subscribe-head">
-																<div><img src="https://fond-tern-bbc4d8.instawp.xyz/wp-content/plugins/woocommerce-abandon-cart-pro/assets/images/popup-icon.svg" width="100" height="104" style="border-radius: 50%;">
-																	<div class="Cancel-icon"
-																	style="background-image: url(&quot;https://fond-tern-bbc4d8.instawp.xyz/wp-content/plugins/woocommerce-abandon-cart-pro/assets/images/cancel-icon.jpg&quot;);"></div>
+																<div>
+																	<div class="Cancel-icon"></div>
 																</div>
 																<h1 class="mb-0" style="color: rgb(115, 127, 151);">Please enter your email</h1>
 																<p style="color: rgb(187, 201, 210);"> To add this item to your cart, please enter your email address. </p>
@@ -855,7 +854,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 																				<div class="rb1-right">
 																					<div class="rb1-row flx-center mb-2">
 																						<div class="rb-col mt-2">
-																							<input type="text" placeholder="https://fond-tern-bbc4d8.instawp.xyz/checkout/" id="wcap_quick_ck_redirect_to" name="wcap_quick_ck_redirect_to" class="ib-md">
+																							<input type="text" id="wcap_quick_ck_redirect_to" name="wcap_quick_ck_redirect_to" class="ib-md">
 																							<p class="mt-2 mb-0">URL of the page where the popup should redirect. Leaving blank here will take the user to the Checkout page.</p>
 																						</div>
 																					</div>
@@ -870,9 +869,8 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 													<div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
 														<div class="subscribe-body buy-subscribe-box text-center">
 															<div class="subscribe-head">
-																<div><img src="https://fond-tern-bbc4d8.instawp.xyz/wp-content/plugins/woocommerce-abandon-cart-pro/assets/images/popup-icon-1.svg" width="100" height="104" style="border-radius: 50%;">
-																	<div class="Cancel-icon"
-																	style="background-image: url(&quot;https://fond-tern-bbc4d8.instawp.xyz/wp-content/plugins/woocommerce-abandon-cart-pro/assets/images/cancel-icon.jpg&quot;);"></div>
+																<div>
+																	<div class="Cancel-icon"></div>
 																</div>
 																<h1 class="mb-0" style="color: rgb(115, 127, 151);">We are sad to see you leave</h1>
 																<p style="color: rgb(187, 201, 210);">There are some items in your cart. These will not last long. Please proceed to checkout to complete the purchase. </p>

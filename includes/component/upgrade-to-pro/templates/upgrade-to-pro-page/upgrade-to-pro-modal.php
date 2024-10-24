@@ -1,6 +1,6 @@
 <?php
 $ts_new_tab = $ts_upgrade_to_pro_images_path . '/icon-new-tab.png';
-if ( get_option( 'wcap_migrated_from_lite' ) ) {
+if ( '' === get_option( 'wcap_migrated_from_lite', '' ) ) {
 	$modal_heading      = __( 'Abandoned Cart Pro for WooCommerce is CHEAPER than you think', 'woocommerce-abandoned-cart' );
 	$modal_body_heading = __( 'Upgrade from Lite to PRO with our Super Saver PRO Access Deal!', 'woocommerce-abandoned-cart' );
 	$modal_body_desc    = __( 'Unlock all premium features of Abandoned Cart Pro for WooCommerce without restrictions — all while staying within budget. Your store\'s success is one click away, so don\'t miss the Super Saver PRO Access Deal that can skyrocket your sales today!', 'woocommerce-abandoned-cart' );

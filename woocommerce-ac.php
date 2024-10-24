@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Abandoned Cart Lite for WooCommerce
  * Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
- * Description: This plugin captures abandoned carts by logged-in users & emails them about it. Enjoy all the premium features at no extra cost for 2 months. Click <strong><a href="https://ww2.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial/">here</a></strong> to Upgrade to PRO for FREE.
+ * Description: This plugin captures abandoned carts by logged-in users & emails them about it. Enjoy all the premium features at no extra cost for 2 months. Click <strong><a href="https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial">here</a></strong> to Upgrade to PRO for FREE.
  * Version: 5.20.0
  * Author: Tyche Softwares
  * Author URI: http://www.tychesoftwares.com/
@@ -136,7 +136,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 
 			if ( ! defined( 'WCAL_TRIAL_URL' ) ) {
-				define( 'WCAL_TRIAL_URL', 'https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial/' );
+				define( 'WCAL_TRIAL_URL', 'https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial' );
 			}
 
 			$this->one_hour              = 60 * 60;

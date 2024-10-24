@@ -255,7 +255,7 @@ class Ts_Upgrade_To_Pro {
 			$message = sprintf( __( 'Your Woo store is losing its WOW factor. Your Abandoned Cart Pro for WooCommerce license has expired. <a href="%s" target="_blank" class="button">Renew Now</a>', 'woocommerce-abandoned-cart' ), $renew_link );
 		} else {
 			/* translators: %s: AC Trial Version Download page Link */
-			$message = sprintf( __( 'Upgrade to the PRO version of Abandoned Cart Pro for WooCommerce plugin for FREE! Enjoy pro features for 60 days at absolutely no cost. Limited time offer <a href="%s" class="button-primary button button-large" target="_blank"><b>Act now!</b></a>', 'woocommerce-abandoned-cart' ), WCAL_TRIAL_URL );
+			$message = sprintf( __( 'Upgrade to the PRO version of Abandoned Cart Pro for WooCommerce plugin for $1! Enjoy all Pro features for 30 days at this insane price. Limited time offer <a href="%s" class="button-primary button button-large" target="_blank"><b>Act now!</b></a>', 'woocommerce-abandoned-cart' ), WCAL_TRIAL_URL );
 		}
 
 		$show = ( isset( $_GET['action'] ) && 'upload-plugin' === $_GET['action'] ) ? false : true; // phpcs:ignore.
