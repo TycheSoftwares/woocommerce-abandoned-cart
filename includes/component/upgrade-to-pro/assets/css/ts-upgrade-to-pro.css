@@ -1,0 +1,153 @@
+.wcal-message {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    padding: 10px 0px 10px 20px; /* Adjust padding as needed */
+    height: auto; /* Adjust based on content height */
+    background-color: #6232C3; /* Optional background color */
+    border-left-width: 0px !important;
+	border: none !important;
+}
+
+.wcal-content {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap; /* Prevent wrapping of content */
+    gap: 16px; /* Space between logo and text */
+	font-size: 18px;
+    font-weight: 400;
+}
+
+.wcal-content p {
+    font-size: 16px !important;
+    color: white;
+}
+
+.wcal-content .button, .wcal-content .button:hover {
+    font-size: 16px !important;
+    background: white;
+    margin-left: 4px;
+    color: #6232c3;
+}
+
+.wcal-site-logo {
+    max-height: 50px; /* Adjust maximum height */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Adding Style to the Upgrade to Pro submenu */
+#toplevel_page_order_delivery_date_lite .wp-submenu li:nth-child(3) a, .orddd-upgrade-to-pro-additional-class {
+	color: white !important;
+	font-weight: bold !important;
+	background: #34c318 !important;
+}
+
+.ac-lite-fb-settings {
+	height: 1000px;
+}
+
+.ac-lite-sms-settings {
+    height: 1200px;
+}
+.ac-lite-container-section {
+    position: relative;
+	max-width: 1200px;
+	margin: 0 auto;
+    height: auto;
+}
+
+.ac-lite-settings-inner-section {
+    filter: blur(1.5px);
+	pointer-events: none;
+}
+
+.ts-upsell-overlay {
+	position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translate(-50%);
+    width: 750px;
+    max-width: 100%;
+    box-shadow: 0 5px 25px #00000026;
+    background-color: #fff;
+    border: 1px solid #d6e2ed;
+}
+
+.ts-upsell-top {
+	padding: 16px 40px;
+    display: flex;
+    gap: 16px;
+}
+
+.ts-upsell-content {
+	border-top: 1px solid #E2E4E9;
+    padding: 16px 40px;
+}
+
+.ts-upsell-content{
+	display: flex;
+   /*  gap: 32px; */
+}
+
+.ts-upsell-content__features {
+	margin-bottom: 46px;
+    flex: 1;
+}
+
+.ts-upsell-overlay .ts-upsell-content ul {
+	margin: 16px auto 24px;
+    display: grid;
+    grid-gap: 10px;
+}
+
+.ts-upsell-overlay .ts-upsell-content .ts-upgrade-button {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 140%;
+    background: #338EEF;
+    border: 1px solid #1177E3;
+    box-sizing: border-box;
+    border-radius: 4px;
+    padding: 12px 24px;
+    position: relative;
+	color: white;
+	text-decoration: none;
+}
+.ts-columns-2{
+	/* grid-template-columns: 1fr 1fr; */
+}
+
+.ts-upsell-content__features h3 {
+	font-size: 22px;
+    line-height: 120%;
+}
+
+.ts-upsell-overlay h4 {
+	font-size: 16px;
+    line-height: 140%;
+    color: #444;
+}
+
+.ts-upsell-overlay p {
+    margin: 24px 0;
+    font-size: 15px;
+    line-height: 140%;
+    color: #444;
+}
+
+.ts-columns-2 li img {
+	width: 16px;
+	margin-right: 4px;
+}
+
+.ts-columns-2 li {
+	display: flex;
+    align-items: center;
+}
+
+.upgrade-to-pro-admin-menu{
+    font-size: 9px;
+    margin-left: 3px;
+    color: #34c318 !important;
+}
