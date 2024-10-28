@@ -2430,14 +2430,16 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
 			// Tyche JS constructor - needed for deactivation survey.
-			wp_register_script(
-				'wcal_tyche',
-				WCAL_PLUGIN_URL . '/assets/js/tyche.js',
-				array( 'jquery' ),
-				1.1,
-				true
-			);
-			wp_enqueue_script( 'wcal_tyche' );
+			if ( 'plugins.php' === $pagenow ) {
+				wp_register_script(
+					'wcal_tyche',
+					WCAL_PLUGIN_URL . '/assets/js/tyche.js',
+					array( 'jquery' ),
+					WCAL_PLUGIN_VERSION,
+					true
+				);
+				wp_enqueue_script( 'wcal_tyche' );
+			}
 			if ( '' === $page || 'woocommerce_ac_page' !== $page ) {
 				return;
 			} else {
