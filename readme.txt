@@ -1,11 +1,10 @@
-﻿
 === Abandoned Cart Lite for WooCommerce ===
 Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares
 Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 6.3 or higher
 Tested up to: 6.6.2
-Stable tag: 6.0.1
+Stable tag: 6.1.0
 Requires PHP: 7.3
 License: GPLv2 or late
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -161,6 +160,10 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 6. Product Report Tab.
 
 == Changelog ==
+
+= 6.1.0 ( 29.10.2024 ) =
+* Fix - Guest carts were not being captured.
+* Supporting code changes for the Trial Version of Abandoned Cart Pro for WooCommerce.
 
 = 6.0.1 ( 22.10.2024 ) =
 * Fix - Deactivation survey request was being sent even though 'Skip & deactivate' was selected while deactivating the plugin.
