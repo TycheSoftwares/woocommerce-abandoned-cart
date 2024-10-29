@@ -1,4 +1,3 @@
-
 === Abandoned Cart Lite for WooCommerce ===
 Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares
 Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions
