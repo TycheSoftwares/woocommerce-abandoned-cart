@@ -275,7 +275,7 @@ class Ts_Upgrade_To_Pro_AC {
 			$message = sprintf( __( 'Upgrade to the PRO version of Abandoned Cart Pro for WooCommerce plugin for $1! Enjoy all Pro features for 30 days at this insane price. Limited time offer <a href="%s" class="button-primary button button-large" target="_blank"><b>Act now!</b></a>', 'woocommerce-abandoned-cart' ), WCAL_TRIAL_URL );
 		}
 
-		$show = isset( $_GET['page'] ) && 'woocommerce_ac_page' === $_GET['page'] ? true : false;
+		$show = isset( $_GET['page'] ) && 'woocommerce_ac_page' === $_GET['page'] ? true : false; // phpcs:ignore
 
 		if ( '' !== $message && $show ) { ?>
 			<div class="wcal-upgrade-to-pro-notice wcal-message notice is-dismissible">
