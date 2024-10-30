@@ -58,7 +58,7 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 				$ts_pro_faq = self::wcal_get_faq();
 				new Wcal_TS_Faq_Support( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_plugins_page, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_slug, $ts_pro_faq );
 
-				new Ts_Upgrade_To_Pro( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_plugins_page, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_slug, $ts_pro_faq );
+				new Ts_Upgrade_To_Pro_AC( $wcal_plugin_name, $wcal_plugin_prefix, $wcal_plugins_page, $wcal_locale, $wcal_plugin_folder_name, $wcal_plugin_slug, $ts_pro_faq );
 			}
 		}
 

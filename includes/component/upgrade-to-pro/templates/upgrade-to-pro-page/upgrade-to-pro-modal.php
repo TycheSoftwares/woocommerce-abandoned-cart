@@ -30,7 +30,7 @@ if ( '' === get_option( 'wcap_migrated_from_lite', '' ) ) {
 			<p>
 			<?php echo $modal_footer_desc; ?>
 			</p>
-			<a href="https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin/" target="_blank" class="ts-upgrade-button">Upgrade and Unlock<img height="24" width="24" src="<?php echo $ts_new_tab; ?>" style="margin-left: 10px;color: white;"></a>
+			<a href="https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial/" target="_blank" class="ts-upgrade-button">Upgrade and Unlock<img height="24" width="24" src="<?php echo $ts_new_tab; ?>" style="margin-left: 10px;color: white;"></a>
 		</div>
 	</div>
 </div>

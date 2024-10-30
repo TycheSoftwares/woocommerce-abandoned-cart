@@ -24,15 +24,23 @@ jQuery(document).ready( function() {
 		$button.on( 'click.notice-dismiss', function( event ) {
 			event.preventDefault();
 			$this.fadeTo( 100 , 0, function() {
-				//alert();
+				let data = {};
+				if ( $this.hasClass( 'wcal-upgrade-to-pro-notice' ) ) {
+					data = {
+						action: 'wcal_dismiss_upgrade_to_pro',
+						security: wcal_ts_dismiss_notice_params.tracking_notice
+					}
+				} else {
+					data = {
+						action: wcal_ts_dismiss_notice_params.ts_prefix_of_plugin + "_tracker_dismiss_notice",
+						tracking_notice : wcal_ts_dismiss_notice_params.tracking_notice,
+						security: wcal_ts_dismiss_notice_params.tracking_notice
+					}
+				}
 				jQuery(this).slideUp( 100, function() {
 					jQuery.post(
 						wcal_ts_dismiss_notice_params.ts_admin_url,
-						{
-							action: wcal_ts_dismiss_notice_params.ts_prefix_of_plugin + "_tracker_dismiss_notice",
-							tracking_notice : wcal_ts_dismiss_notice_params.tracking_notice,
-							security: wcal_ts_dismiss_notice_params.tracking_notice
-						},
+						data,
 						function( response ) {
 							if ( 'success' === response ) {
 								jQuery(this).remove();				
