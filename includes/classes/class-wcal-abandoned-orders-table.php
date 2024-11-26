@@ -659,7 +659,7 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 		$value_one          = $value1->date;
 		$value_two          = $value2->date;
 		$date_formatted_one = date_create_from_format( 'd M, Y h:i A', $value_one );
-		if ( isset( $date_formatted_one ) && '' !== $date_formatted_one ) {
+		if ( isset( $date_formatted_one ) && $date_formatted_one && '' !== $date_formatted_one ) {
 			$date_one = date_format( $date_formatted_one, 'Y-m-d h:i A' );
 		}
 
