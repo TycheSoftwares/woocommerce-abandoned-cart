@@ -306,7 +306,6 @@ if ( ! class_exists( 'Tyche_Plugin_Deactivation' ) ) {
 					),
 				)
 			);
-
 			wp_send_json_success();
 		}
 	}
