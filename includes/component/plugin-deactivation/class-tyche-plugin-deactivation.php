@@ -160,7 +160,7 @@ if ( ! class_exists( 'Tyche_Plugin_Deactivation' ) ) {
 			wp_register_script(
 				'tyche_plugin_deactivation_' . $this->plugin_short_name,
 				$this->script_file,
-				array( 'jquery', 'tyche' ),
+				array( 'jquery', 'wcal_tyche' ),
 				$this->plugin_version,
 				true
 			);
