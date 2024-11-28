@@ -1,5 +1,5 @@
 <?php
-$icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade-to-pro/assets/images/' ) . 'icon-info.svg';
+$icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade-to-pro/assets/images/' ) . 'icon-info.png';
 ?>
 
 <div class="container ac-lite-container-section ac-lite-fb-settings">

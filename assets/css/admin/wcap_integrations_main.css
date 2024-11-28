@@ -173,7 +173,7 @@ body.wcap-modal-loading .wcap-modal:before {
   -webkit-animation: spin .8s linear infinite;
           animation: spin .8s linear infinite;
   content: "";
-  background: url("../../images/loader.svg") center center;
+  background: url("../../images/loader.png") center center;
   background-size: cover;
   line-height: 1;
   text-align: center;
@@ -197,7 +197,7 @@ body.wcap-modal-success .wcap-modal:before {
   left: 45%;
   margin-left: -30px;
   content: "";
-  background: url("../../images/success.svg") center center;
+  background: url("../../images/success.png") center center;
   background-size: cover;
   line-height: 1;
   text-align: center;
@@ -215,7 +215,7 @@ body.wcap-modal-failure .wcap-modal:before {
   left: 45%;
   margin-left: -30px;
   content: "";
-  background: url("../../images/failure.svg") center center;
+  background: url("../../images/failure.png") center center;
   background-size: cover;
   line-height: 1;
   text-align: center;
@@ -392,7 +392,7 @@ select.form-control {
     left: 45%;
     margin-left: -30px;
     content: "";
-    background: url("../../images/success.svg") center center;
+    background: url("../../images/success.png") center center;
     background-size: cover;
     line-height: 1;
     text-align: center;
@@ -410,7 +410,7 @@ select.form-control {
     left: 45%;
     margin-left: -30px;
     content: "";
-    background: url("../../images/failure.svg") center center;
+    background: url("../../images/failure.png") center center;
     background-size: cover;
     line-height: 1;
     text-align: center;
