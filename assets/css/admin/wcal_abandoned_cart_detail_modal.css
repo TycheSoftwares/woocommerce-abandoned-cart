@@ -23,7 +23,7 @@ body.wcal-modal-loading .wcal-modal:before {
   -webkit-animation: spin .8s linear infinite;
           animation: spin .8s linear infinite;
   content: "";
-  background: url("../../images/loader.svg") center center;
+  background: url("../../images/loader.png") center center;
   background-size: cover;
   line-height: 1;
   text-align: center;

@@ -179,7 +179,7 @@
     padding: 9px;
     background-size: 18px;
     background-position: center;
-    background-image: url("../../images/atc_cancel_icon.svg");
+    background-image: url("../../images/atc_cancel_icon.png");
     background-repeat: no-repeat;
 }
 
@@ -212,7 +212,7 @@
 
 .wcap_container .wcap_popup_icon {
 
-    background-image: url("../../images/atc_popup_icon.svg");
+    background-image: url("../../images/atc_popup_icon.png");
     background-repeat: no-repeat;
     display: block;
     background-size: 65px;

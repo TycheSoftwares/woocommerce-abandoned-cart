@@ -159,6 +159,9 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 
 6. Product Report Tab.
 
+== External Services ==
+This plugin communicates with our tracking server to send usage data **only** if the user has explicitly opted in to usage tracking. For detailed information about what is tracked, please refer to our [usage tracking documentation](https://www.tychesoftwares.com/docs/woocommerce-abandoned-cart-lite/default-settings/#f-reset-usage-tracking).
+
 == Changelog ==
 
 = 6.1.1 ( 31.10.2024 ) =
