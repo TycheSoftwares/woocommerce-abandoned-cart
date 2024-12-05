@@ -373,8 +373,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 */
 		public static function wcal_add_component_file() {
 			if ( is_admin() ) {
-				require_once 'includes/class-wcal-all-component.php';
-
+				if ( file_exists( plugin_dir_path( __FILE__ ) . 'includes/class-wcal-all-component.php' ) ) {
+					require_once 'includes/class-wcal-all-component.php';
+				}
 			}
 		}
 
