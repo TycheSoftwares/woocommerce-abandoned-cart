@@ -275,8 +275,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_action( 'woocommerce_before_cart_table', array( 'wcal_common', 'wcal_apply_direct_coupon_code' ) );
 			// Add coupon when user views checkout page (would not be added otherwise, unless user views cart first).
 			add_action( 'woocommerce_before_checkout_form', array( 'wcal_common', 'wcal_apply_direct_coupon_code' ) );
-			add_filter( 'woocommerce_email_from_address', array( __CLASS__, 'wcal_from_address_for_emails' ), 10, 3 );
-			add_filter( 'woocommerce_email_from_name', array( __CLASS__, 'wcal_from_name_for_emails' ), 10, 3 );
+			add_filter( 'woocommerce_email_from_address', array( __CLASS__, 'wcal_from_address_for_emails' ), 10, 2 );
+			add_filter( 'woocommerce_email_from_name', array( __CLASS__, 'wcal_from_name_for_emails' ), 10, 2 );
 			// 5.14.0
 			if ( 'yes' === get_option( 'wcal_guest_users_manual_reset_needed', '' ) ) {
 				add_action( 'admin_notices', array( 'Wcal_Update', 'wcal_add_notice' ) );
@@ -4113,7 +4113,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 *
 		 * @since 5.13.0
 		 */
-		public static function wcal_from_address_for_emails( $wp_admin_address, $email, $from_email ) {
+		public static function wcal_from_address_for_emails( $wp_admin_address, $email ) {
 			$from_address = '' == $email->title ? get_option( 'wcal_from_email' ) : $wp_admin_address; // phpcs:ignore
 			return $from_address;
 		}
@@ -4127,7 +4127,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 *
 		 * @since 5.13.0
 		 */
-		public static function wcal_from_name_for_emails( $wp_admin_name, $email, $from_name_default ) {
+		public static function wcal_from_name_for_emails( $wp_admin_name, $email ) {
 			$from_name = '' == $email->title ? get_option( 'wcal_from_name' ) : $wp_admin_name; // phpcs:ignore
 			return $from_name;
 		}
