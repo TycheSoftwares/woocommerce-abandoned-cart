@@ -3,8 +3,8 @@ Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares
 Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 6.3 or higher
-Tested up to: 6.6.2
-Stable tag: 6.1.1
+Tested up to: 6.7.1
+Stable tag: 6.2.0
 Requires PHP: 7.3
 License: GPLv2 or late
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -163,6 +163,12 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 This plugin communicates with our tracking server to send usage data **only** if the user has explicitly opted in to usage tracking. For detailed information about what is tracked, please refer to our [usage tracking documentation](https://www.tychesoftwares.com/docs/woocommerce-abandoned-cart-lite/default-settings/#f-reset-usage-tracking).
 
 == Changelog ==
+
+= 6.2.0 ( 10.12.2024 ) =
+* Tweak: Removed the call to our tracking server to fetch the deactivation reasons and added them in the plugin itself.
+* Fix: Resolved a critical error encountered by users during the registration process.
+* Fix: Addressed an error occurring when loading the abandoned orders table.
+* Fix: Fixed an error where a file was not loading properly.
 
 = 6.1.1 ( 31.10.2024 ) =
 * Fix: Added a condition to display the Upgrade to Pro Trial notice only on the plugin's settings pages within the admin area.
