@@ -108,6 +108,60 @@
     <div class="panel">
         <p><?php echo $ts_faq[11]['answer'] ?></p>
     </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[12]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[12]['answer'] ?></p>
+    </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[13]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[13]['answer'] ?></p>
+    </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[14]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[14]['answer'] ?></p>
+    </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[15]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[15]['answer'] ?></p>
+         <pre><code>
+        function wcap_show_taxes() {
+            return false;
+        }
+        add_filter('wcap_show_taxes', 'wcap_show_taxes', 10, 1);
+    </code></pre>
+    </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[16]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[16]['answer'] ?></p>
+    </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[17]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[17]['answer'] ?></p>
+    </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[18]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[18]['answer'] ?></p>
+    </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[19]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[19]['answer'] ?></p>
+    </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[20]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[20]['answer'] ?></p>
+    </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[21]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[21]['answer'] ?></p>
+    </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[22]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[22]['answer'] ?></p>
+    </div>
+    <button class="faq-ts-accordion"><span class="dashicons dashicons-editor-help"></span><strong><?php echo $ts_faq[23]['question'] ?></strong></button>
+    <div class="panel">
+        <p><?php echo $ts_faq[23]['answer'] ?></p>
+    </div>
 </div>
 
 <div class="support-panel">
