@@ -276,6 +276,7 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 			if ( ! $billing_email_restriction ) {
 				if ( '' != wcal_common::wcal_get_cart_session( 'shipping_postcode' ) ) { // phpcs:ignore
 					$shipping_zipcode = wcal_common::wcal_get_cart_session( 'shipping_postcode' );
+					$billing_zipcode  = $shipping_zipcode;
 				} elseif ( '' != wcal_common::wcal_get_cart_session( 'billing_postcode' ) ) { // phpcs:ignore
 					$billing_zipcode  = wcal_common::wcal_get_cart_session( 'billing_postcode' );
 					$shipping_zipcode = $billing_zipcode;

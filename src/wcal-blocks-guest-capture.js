@@ -20,6 +20,7 @@ const checkKeyPress = debounce((ev) => {
 	can_run = true;
 }, 1000 );
 
+window.addEventListener('change', checkKeyPress );
 window.addEventListener('keypress', checkKeyPress );
 
 const checkStorage = ( event ) => {
