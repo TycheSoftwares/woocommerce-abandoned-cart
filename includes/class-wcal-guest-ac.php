@@ -106,11 +106,13 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 
 		$enable_gdpr = get_option( 'wcal_enable_gdpr_consent', '' );
 
-		$session_gdpr  = wcal_common::wcal_get_cart_session( 'wcal_cart_tracking_refused' );
-		$show_gdpr     = isset( $session_gdpr ) && 'yes' == $session_gdpr ? false : true; // phpcs:ignore
-		$block_enabled = has_block( 'woocommerce/checkout', wc_get_page_id( 'checkout' ) );
+		$session_gdpr         = wcal_common::wcal_get_cart_session( 'wcal_cart_tracking_refused' );
+		$show_gdpr            = isset( $session_gdpr ) && 'yes' == $session_gdpr ? false : true; // phpcs:ignore
+		$block_enabled        = has_block( 'woocommerce/checkout', wc_get_page_id( 'checkout' ) );
+		$theme                = wp_get_theme();
+		$is_theme_block_based = function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && $theme->get( 'TextDomain' ) === 'twentytwentyfour';
 
-		if ( ! is_user_logged_in() && is_checkout() && $show_gdpr && $block_enabled ) {
+		if ( ! is_user_logged_in() && is_checkout() && $show_gdpr && ( $block_enabled || $is_theme_block_based ) ) {
 
 			$script_path       = '/build/wcal-blocks-guest-capture.js';
 			$script_asset_path = WCAL_PLUGIN_URL . '/build/wcal-blocks-guest-capture.asset.php';
@@ -276,6 +278,7 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 			if ( ! $billing_email_restriction ) {
 				if ( '' != wcal_common::wcal_get_cart_session( 'shipping_postcode' ) ) { // phpcs:ignore
 					$shipping_zipcode = wcal_common::wcal_get_cart_session( 'shipping_postcode' );
+					$billing_zipcode  = $shipping_zipcode;
 				} elseif ( '' != wcal_common::wcal_get_cart_session( 'billing_postcode' ) ) { // phpcs:ignore
 					$billing_zipcode  = wcal_common::wcal_get_cart_session( 'billing_postcode' );
 					$shipping_zipcode = $billing_zipcode;
