@@ -46,7 +46,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['custom_smtp']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['custom_smtp'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -81,7 +81,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['activecampaign']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['activecampaign'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -117,7 +117,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['drip']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['drip'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -153,7 +153,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['fluentcrm']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['fluentcrm'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -189,7 +189,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['google_sheets']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['google_sheets'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -225,7 +225,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['hubspot']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['hubspot'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -261,7 +261,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['klaviyo']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['klaviyo'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -297,7 +297,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['mailchimp']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['mailchimp'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -333,7 +333,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['mailjet']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['mailjet'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -369,7 +369,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['salesforce_crm']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['salesforce_crm'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -405,7 +405,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['sendinblue']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['sendinblue'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -441,7 +441,7 @@ foreach ( $logos as $logo ) {
 							<div class="wcap-connector_card_outer">
 								<div class="wcap-connector-img-outer">
 									<div class="wcap-connector-img">
-										<div class="wcap-connector-img-section"><img src="<?php echo $logo_urls['wp_fusion']; ?>" class="wcap_connector_icon"></div>
+										<div class="wcap-connector-img-section"><img src="<?php echo esc_url( $logo_urls['wp_fusion'] ); ?>" class="wcap_connector_icon"></div>
 									</div>
 									<div class="clear"></div>
 								</div>

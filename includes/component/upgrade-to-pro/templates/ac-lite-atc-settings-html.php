@@ -522,7 +522,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 																	<div class="tm1-row partial_payment_div align-items-center" style="display: none;">
 																		<div class="col-left">
 																			<label>Phone placeholder:
-																				<label><img src=<?php echo $icon_info; ?> alt="Info" data-toggle="tooltip" data-placement="top"
+																				<label><img src=<?php echo esc_url( $icon_info ); ?> alt="Info" data-toggle="tooltip" data-placement="top"
 																					title="" data-original-title="Tooltip content goes here" class="tt-info"></label>
 																			</label>
 																		</div>
@@ -587,7 +587,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 													<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
 														<div class="configure-popup">
 															<div class="configure-head">
-																<h2>Configure popup for guest users													   <img src=<?php echo $icon_info; ?> alt="Info" data-toggle="tooltip" data-placement="top" title="These settings would show a popup to motivate the user to redirect to the Checkout page. Note: This popup would appear for guest users by default where email address has not been captured until then." class="tt-info"></h2></div>
+																<h2>Configure popup for guest users													   <img src=<?php echo esc_url( $icon_info ); ?> alt="Info" data-toggle="tooltip" data-placement="top" title="These settings would show a popup to motivate the user to redirect to the Checkout page. Note: This popup would appear for guest users by default where email address has not been captured until then." class="tt-info"></h2></div>
 															<div class="configure-body">
 																<div class="tbl-mod-1">
 																	<div class="tm1-row align-items-center border-top-0 pt-0">
@@ -749,21 +749,21 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 													<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
 														<div class="configure-popup">
 															<div class="configure-head">
-																<h2>Configure popup for logged-in users													  <img src=<?php echo $icon_info; ?> alt="Info" data-toggle="tooltip" data-placement="top" title="These settings would show a popup to force the user to redirect to the Checkout page. Note: This popup would appear for logged in users by default and can be forced for Guest users without email address as well." class="tt-info"></h2></div>
+																<h2>Configure popup for logged-in users													  <img src=<?php echo esc_url( $icon_info ); ?> alt="Info" data-toggle="tooltip" data-placement="top" title="These settings would show a popup to force the user to redirect to the Checkout page. Note: This popup would appear for logged in users by default and can be forced for Guest users without email address as well." class="tt-info"></h2></div>
 															<div class="configure-body">
 																<div class="tbl-mod-1">
 																	<div class="tm1-row align-items-center">
 																		<div class="col-left">
 																			<label>Enable Exit Intent popup for logged-in users</label>
 																			<label class="el-switch el-switch-green ml-1">
-																				<input type="checkbox" id="wcap_enable_ei_for_registered_users" name="wcap_enable_ei_for_registered_users" true-value="on" false-value=""> <span class="el-switch-style"></span></label> <img src=<?php echo $icon_info; ?> alt="Info"
+																				<input type="checkbox" id="wcap_enable_ei_for_registered_users" name="wcap_enable_ei_for_registered_users" true-value="on" false-value=""> <span class="el-switch-style"></span></label> <img src=<?php echo esc_url( $icon_info ); ?> alt="Info"
 																			data-toggle="tooltip" data-placement="top" title="Please note that if this setting is disabled, the popup will not appear for logged-in users." class="tt-info"></div>
 																	</div>
 																	<div class="tm1-row align-items-center">
 																		<div class="col-left">
 																			<label>Allow all users (including guest users) to checkout without capturing email</label>
 																			<label class="el-switch el-switch-green ml-1">
-																				<input type="checkbox" id="wcap_quick_ck_force_user_to_checkout" name="wcap_quick_ck_force_user_to_checkout" true-value="on" false-value=""> <span class="el-switch-style"></span></label> <img src=<?php echo $icon_info; ?> alt="Info"
+																				<input type="checkbox" id="wcap_quick_ck_force_user_to_checkout" name="wcap_quick_ck_force_user_to_checkout" true-value="on" false-value=""> <span class="el-switch-style"></span></label> <img src=<?php echo esc_url( $icon_info ); ?> alt="Info"
 																			data-toggle="tooltip" data-placement="top" title="Please note that if this setting is enabled, then the email address capture popup will not appear for Guest users." class="tt-info"></div>
 																	</div>
 																	<div class="tm1-row align-items-center border-top-0 pt-0">

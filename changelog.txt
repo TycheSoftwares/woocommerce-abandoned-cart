@@ -1,0 +1,115 @@
+*** Abandoned Cart Lite for WooCommerce ***
+2025-01-14 - version 6.3.0
+* Fix - Updated the FAQs under the "FAQ & Support" tab.
+* Fix - Resolved fatal error occurring on the Abandoned Orders tab when clicking the "Abandoned Date" column title.
+
+2024-12-10 - version 6.2.0
+* Tweak: Removed the call to our tracking server to fetch the deactivation reasons and added them in the plugin itself.
+* Fix: Resolved a critical error encountered by users during the registration process.
+* Fix: Addressed an error occurring when loading the abandoned orders table.
+* Fix: Fixed an error where a file was not loading properly.
+
+2024-10-31 - version 6.1.1
+* Fix: Added a condition to display the Upgrade to Pro Trial notice only on the plugin's settings pages within the admin area.
+
+2024-10-29 - version 6.1.0
+* Fix - Guest carts were not being captured.
+* Supporting code changes for the Trial Version of Abandoned Cart Pro for WooCommerce.
+
+2024-10-22 - version 6.0.1
+* Fix - Deactivation survey request was being sent even though 'Skip & deactivate' was selected while deactivating the plugin.
+
+2024-10-10 - version 6.0.0
+* Fix - The test email was not displayed correctly on iPhone 12 Pro devices.
+* Fix - Resolved issues when creating new email templates.
+* Fix - Addressed PHP 8.x deprecated message to ensure compatibility.
+* Fix - Added a filter to restrict capturing abandoned carts from a specific email address.
+
+2024-04-03 - version 5.20.0
+* Tweak - Updated tracking of non sensitive diagnostic data code to v2.
+* Tweak - Added filter toc hange the number of carts displayed in the Abandoned Orders page.
+
+2024-02-06 - version 5.19.0
+* Fix - The image in the default email template was broken. This has been fixed for fresh installations.
+* Fix - Added nonce check for the dismiss action in the tracking notification.
+* Tweak - Modified the support email address to connect to.
+
+2024-01-16 - version 5.18.0
+* Tweak - Introduced compatibility with WooCommerce Checkout Blocks.
+* Fix - Incorrect stats are displayed in the plugin dashboard for number of emails sent & number of email addresses captured.
+* Fix - Preview reminder emails show WooCommerce standard header/footer hook data which is not the same as the actual reminder email.
+
+2023-12-19 - version 5.17.0
+* Tweak - The reminder email will display taxes based on WooCommerce tax settings.
+* Fix - Users with Shop Manager role will now be able to perform admin operations on the plugin page.
+* Fix - For non-english sites, when users access the site via reminder email links, they are not redirected to the My Account page.
+* Fix - Users are redirected to the Cart page after they login from the My Account page when the settings to auto login users is disabled.
+* Fix - Email sent notification is displayed in the cart details popup when all reminders are inactive and no reminder has been sent.
+
+2023-11-30 - version 5.16.2
+* Fix - Add nonce checks in ajax calls.
+* Tweak - Bumped up minimum supported PHP version to match WooCommerce.
+
+2023-11-21 - version 5.16.1
+* Fix - Fixed some errors from the plugin with PHP 8.1
+* Fix - Fixed a vulnerability issue that allows users with lower access to run calls.
+* Tweak - Made the confirmation message for coupon deletion available for translation.
+
+2023-09-05 - version 5.16.0
+* Fix - Coupon merge tags not working when testing email templates.
+* Fix - Cross site scripting (XSS) vulnerability.
+* Fix - Fixed Compatibility with Kadence WooCommerce Email Designer plugin.
+* Fix - Added filters so that the mail tag replacements can be overridden with code, which allows better customization of the mail contents.
+* Tweak - Added a new setting to allow the site admin to choose whether a user should be auto logged in when a link in the reminder email is clicked.
+
+2023-06-21 - version 5.15.2
+* Fix - Fixed an issue where coupons are not being added to test emails.
+* Fix - Enhanced encryption key check.
+
+2023-06-13 - version 5.15.1
+* Fix - Removed backward compatibility for old reminder email links.
+
+2023-06-06 - version 5.15.0
+* Fix - A fatal error received when clicked on checkout link from webhook.
+* Fix - Vulnerability fix for hardcoded encryption key.
+* Enhancement - Introduced compatibility with WooCommerce High Performance Order Storage.
+
+2023-05-23 - version 5.14.2
+* Fix - Customers are receiving abandoned cart emails even after they purchased.
+* Fix - An error is displaying on cart page with PHP 8.1.
+* Fix - Cross-Site Request Forgery vulnerability in the plugin.
+* Tweak - Modified the Action Scheduler setting description to remove references to manual cron jobs. This has been done as the plugin now uses the Action Scheduler library.
+
+2023-03-28 - version 5.14.1
+* Fix - Added a fix which corrects the notice display for guest tables when the plugin is successful in fixing the table ID.
+
+2023-02-21 - version 5.14.0
+* Tweak - Added a filter to allow the user to add CSS styles to product table in reminder email.
+* Tweak - Added the ability to auto fix the guest cart history table auto_increment ID.
+
+2022-08-23 - version 5.13.0
+* Tweak - The plugin will now delete carts older than 365 days to ensure performance is not affected.
+* Tweak - Added a email type column in email templates database table. This will not result in any frontend changes for reminder email templates.
+* Tweak - Added hooks to change the sender and recipient email address for order recovery notifications.
+* Tweak - Added a hook to allow the site admin to change the cart recovery URL in reminder emails.
+* Tweak - Added hooks to modify the cart table in reminder emails.
+* Tweak - Performance improvements have been added in the action scheduler code run every 15 mins.
+* Tweak - Added a hook to change the URL the user is redirected to when unsubscribing from reminder emails.
+* Tweak - Updated the data tracked and sent from user sites for better data analysis and user behaviour.
+* Fix - From email address and user name is taken from WP Settings instead of plugin when WC template style headers are enabled.
+* Fix - WP Multisite installation compatibility.
+* Fix - An extra https:// was being added to cart recovery links in reminder emails occassionaly.
+* Fix - A fatal error was observed on rare occassions on the plugin dashboard.
+* Fix - A fatal error was observed on the Product Report tab.
+* Fix - Orphan record were being left by the plugin in the options table on uninstalling.
+
+2022-02-08 - version 5.12.0
+* Enhancement - Introduced 2 new webhooks that allows the admin to send cart abandonment and recovery data to delivery URLs.
+* Tweak - Introduced the ability to enable/disable GDPR consent.
+* Tweak - Introduced new Pro version features & settings.
+* Fix - Fixed compatibility with WP Better Emails plugin.
+* Fix - Made the default email template responsive.
+
+
+
+

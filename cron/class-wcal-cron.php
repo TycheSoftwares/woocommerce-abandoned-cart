@@ -404,10 +404,10 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 																			$explode_many_varaition = explode( ',', $pro_name_variation_value );
 																			if ( ! empty( $explode_many_varaition ) ) {
 																				foreach ( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
-																					$product_name_with_variable = $product_name_with_variable . html_entity_decode( $explode_many_varaition_value ) . '<br>';
+																					$product_name_with_variable = $product_name_with_variable . html_entity_decode( $explode_many_varaition_value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ) . '<br>';
 																				}
 																			} else {
-																				$product_name_with_variable = $product_name_with_variable . html_entity_decode( $explode_many_varaition_value ) . '<br>';
+																				$product_name_with_variable = $product_name_with_variable . html_entity_decode( $explode_many_varaition_value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ) . '<br>';
 																			}
 																		}
 																	}
@@ -461,7 +461,8 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
                                                             </tr>';
 															$var             .= '</table>';
 															$email_body       = str_ireplace( '{{products.cart}}', apply_filters( 'wcal_abandoned_cart_email_content_products.cart', $var, false, $value ), $email_body );
-															$email_subject    = str_ireplace( '{{product.name}}', apply_filters( 'wcal_abandoned_cart_email_content_product.name', $sub_line_prod_name, false, $value ), $email_subject );
+
+															$email_subject = str_ireplace( '{{product.name}}', apply_filters( 'wcal_abandoned_cart_email_content_product.name', $sub_line_prod_name, false, $value ), $email_subject );
 														} else {
 															$email_body    = str_ireplace( '{{products.cart}}', apply_filters( 'wcal_abandoned_cart_email_content_products.cart', __( 'Product no longer exists', 'woocommerce-abandoned-cart' ), false, $value ), $email_body );
 															$email_subject = str_ireplace( '{{product.name}}', apply_filters( 'wcal_abandoned_cart_email_content_product.name', $sub_line_prod_name, false, $value ), $email_subject );
@@ -566,8 +567,8 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 			}
 			$cart_ignored = 0;
 			$unsubscribe  = 0;
-
-			$results = $wpdb->get_results( // phpcs:ignore
+			// phpcs:disable
+			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT wpac . * , wpu.user_login, wpu.user_email
 					FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` AS wpac
@@ -581,7 +582,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 					$cart_time
 				)
 			);
-			return $results;
+			return $results;// phpcs:enable
 		}
 
 		/**
