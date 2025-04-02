@@ -47,3 +47,6 @@
     cursor: default;
     opacity: 0.5; 
   }
+  input#preview_email {
+    cursor: pointer;
+  }
