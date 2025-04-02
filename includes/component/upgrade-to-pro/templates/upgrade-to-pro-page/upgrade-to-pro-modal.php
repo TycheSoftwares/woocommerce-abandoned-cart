@@ -15,22 +15,22 @@ if ( '' === get_option( 'wcap_migrated_from_lite', '' ) ) {
 ?>
 
 <div class="ts-upsell-overlay">
-	<div class="ts-upsell-top"><h2 style="font-size: 20px;"><?php echo $modal_heading; ?></h2></div>
+	<div class="ts-upsell-top"><h2 style="font-size: 20px;"><?php echo esc_html( $modal_heading ); ?></h2></div>
 	<div class="ts-upsell-content">
 		<div class="ts-upsell-content__features">
-			<h3><?php echo $modal_body_heading; ?></h3>
-			<h4><?php echo $modal_body_desc; ?></h4>
+			<h3><?php echo esc_html( $modal_body_heading ); ?></h3>
+			<h4><?php echo esc_html( $modal_body_desc ); ?></h4>
 			<ul class="ts-columns-2">
-				<li><img src="<?php echo $ts_add_image; ?>">Access all the premium features (Add to cart & exit intent popups, recovery incentives like timed coupons, 3rd party integrations and much more)</li>
-				<li><img src="<?php echo $ts_add_image; ?>">Early access to new features</li>
-				<li><img src="<?php echo $ts_add_image; ?>">Dedicated Customer Support</li>
-				<li><img src="<?php echo $ts_add_image; ?>">Priority access to our other offers/services</li>
+				<li><img src="<?php echo esc_url ( $ts_add_image ); ?>">Access all the premium features (Add to cart & exit intent popups, recovery incentives like timed coupons, 3rd party integrations and much more)</li>
+				<li><img src="<?php echo esc_url ( $ts_add_image ); ?>">Early access to new features</li>
+				<li><img src="<?php echo esc_url ( $ts_add_image ); ?>">Dedicated Customer Support</li>
+				<li><img src="<?php echo esc_url ( $ts_add_image ); ?>">Priority access to our other offers/services</li>
 			</ul>
 			<div class="ts-upsell-content__features-cliff"><p>And more!</p></div>
 			<p>
-			<?php echo $modal_footer_desc; ?>
+			<?php echo wp_kses_post( $modal_footer_desc ); ?>
 			</p>
-			<a href="https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial/" target="_blank" class="ts-upgrade-button">Upgrade and Unlock<img height="24" width="24" src="<?php echo $ts_new_tab; ?>" style="margin-left: 10px;color: white;"></a>
+			<a href="https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial/" target="_blank" class="ts-upgrade-button">Upgrade and Unlock<img height="24" width="24" src="<?php echo esc_url ( $ts_new_tab ); ?>" style="margin-left: 10px;color: white;"></a>
 		</div>
 	</div>
 </div>

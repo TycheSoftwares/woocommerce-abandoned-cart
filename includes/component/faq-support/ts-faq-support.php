@@ -105,7 +105,7 @@ class Wcal_TS_Faq_Support {
 		
 		<tr> 
 			<td colspan="2">
-				You have any queries? Please check our <a href=<?php echo admin_url( 'index.php?page='.self::$plugin_prefix .'_faq_page' ) ; ?> >FAQ</a> page.
+				You have any queries? Please check our <a href=<?php echo esc_url( admin_url( 'index.php?page='.self::$plugin_prefix .'_faq_page' ) ) ; ?> >FAQ</a> page.
 			</td>
 		<tr>
 		<?php
@@ -167,12 +167,12 @@ class Wcal_TS_Faq_Support {
 	*/
 	public function ts_add_new_settings_tab() {
 		$faq_support_page = '';
-		if( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'faq_support_page' ) {
+		if( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'faq_support_page' ) {//phpcs:ignore
 		    $faq_support_page = "nav-tab-active";
 		}
 		$ts_plugins_page_url = self::$plugin_page . "&action=faq_support_page" ;
 		?>
-		<a href="<?php echo $ts_plugins_page_url; ?>" class="nav-tab <?php echo $faq_support_page; ?>"> <?php _e( 'FAQ & Support', self::$plugin_locale ); ?> </a>
+		<a href="<?php echo esc_url( $ts_plugins_page_url ); ?>" class="nav-tab <?php echo esc_html( $faq_support_page ); ?>"> <?php esc_html_e( 'FAQ & Support', self::$plugin_locale ); ?> </a>
 		<?php
 
 		
@@ -185,7 +185,7 @@ class Wcal_TS_Faq_Support {
 	*/
 
 	public function ts_add_tab_content() {
-		if( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'faq_support_page' ) {
+		if( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'faq_support_page' ) {//phpcs:ignore
 			$this->ts_faq_support_page();
 		}
 	}
@@ -204,7 +204,7 @@ class Wcal_TS_Faq_Support {
 						 ), 
 						 self::$plugin_folder, 
 						 self::$template_base );
-        echo ob_get_clean();
+        echo ob_get_clean();//phpcs:ignore
 	}
 
 	/**

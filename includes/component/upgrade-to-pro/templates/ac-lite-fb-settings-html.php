@@ -29,7 +29,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label>Enable Facebook Messenger Reminders:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="By enabling this a check box will be shown after the Add to Cart button to get the user’s concern about connecting their Facebook account. Note: Enabling or disabling this option won’t affect the cart abandonment tracking."
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="By enabling this a check box will be shown after the Add to Cart button to get the user’s concern about connecting their Facebook account. Note: Enabling or disabling this option won’t affect the cart abandonment tracking."
 													class="tt-info">
 													<label class="el-switch el-switch-green">
 														<input type="checkbox" id="wcap_enable_fb_reminders" name="wcap_enable_fb_reminders" true-value="on" false-value=""> <span class="el-switch-style"></span></label>
@@ -41,7 +41,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label>Facebook Messenger On Add To Cart Pop-Up Modal:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="This option will display a checkbox on the pop-up modal to connect with Facebook."
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="This option will display a checkbox on the pop-up modal to connect with Facebook."
 													class="tt-info">
 													<label class="el-switch el-switch-green">
 														<input type="checkbox" id="wcap_enable_fb_reminders_popup" name="wcap_enable_fb_reminders_popup" true-value="on" false-value=""> <span class="el-switch-style"></span></label>
@@ -53,7 +53,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label>Icon Size Of User:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Select the size of the user icon which shall be displayed below the checkbox in case the user is logged in to their Facebook account."
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Select the size of the user icon which shall be displayed below the checkbox in case the user is logged in to their Facebook account."
 													class="tt-info">
 													<select id="wcap_fb_user_icon" name="wcap_fb_user_icon" class="ib-md">
 														<option value="small">Small</option>
@@ -70,7 +70,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label>Consent Text:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Text that will appear above the consent checkbox. HTML tags are also allowed."
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Text that will appear above the consent checkbox. HTML tags are also allowed."
 													class="tt-info">
 													<input type="text" id="wcap_fb_consent_text" name="wcap_fb_consent_text" placeholder="Allow Order Status to be sent to Facebook Messanger" class="ib-md">
 												</div>
@@ -81,7 +81,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label>Facebook Page ID:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Facebook Page ID in numberic format."
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Facebook Page ID in numberic format."
 													class="tt-info">
 													<input type="text" placeholder="Enter Your Facebook ID" id="wcap_fb_page_id" name="wcap_fb_page_id" class="ib-md">
 												</div>
@@ -92,7 +92,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label>Messenger App ID:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Enter your Messenger App ID"
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Enter your Messenger App ID"
 													class="tt-info">
 													<input type="text" placeholder="Enter your Messanger App ID" id="wcap_fb_app_id" name="wcap_fb_app_id" class="ib-md">
 												</div>
@@ -103,7 +103,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label>Facebook Page Token:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Enter your Facebook Page Token"
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Enter your Facebook Page Token"
 													class="tt-info">
 													<input type="text" placeholder="Enter Your Facebook Token" id="wcap_fb_page_token" name="wcap_fb_page_token" class="ib-md">
 												</div>
@@ -114,7 +114,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label>Verify Token:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Enter your Verify Token"
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Enter your Verify Token"
 													class="tt-info">
 													<input type="text" name="timefrom" placeholder="Enter your verify token here." id="wcap_fb_verify_token" class="ib-md">
 												</div>

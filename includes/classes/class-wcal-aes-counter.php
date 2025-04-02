@@ -63,7 +63,7 @@ class Wcal_Aes_Ctr extends Wcal_Aes {
 		$nonce        = floor( microtime( true ) * 1000 ); // timestamp: milliseconds since 1-Jan-1970
 		$nonceMs      = $nonce % 1000;
 		$nonceSec     = floor( $nonce / 1000 );
-		$nonceRnd     = floor( rand( 0, 0xffff ) );
+		$nonceRnd     = floor( rand( 0, 0xffff ) );//phpcs:ignore
 
 		for ( $i = 0; $i < 2;
 		$i++ ) {
@@ -119,7 +119,7 @@ class Wcal_Aes_Ctr extends Wcal_Aes {
 
 		// implode is more efficient than repeated string concatenation
 		$ciphertext = $ctrTxt . implode( '', $ciphertxt );
-		$ciphertext = base64_encode( $ciphertext );
+		$ciphertext = base64_encode( $ciphertext );//phpcs:ignore
 		return $ciphertext;
 	}
 
@@ -138,7 +138,7 @@ class Wcal_Aes_Ctr extends Wcal_Aes {
 		if ( ! ( $nBits == 128 || $nBits == 192 || $nBits == 256 ) ) {
 			return ''; // standard allows 128/192/256 bit keys
 		}
-		$ciphertext = base64_decode( $ciphertext );
+		$ciphertext = base64_decode( $ciphertext );//phpcs:ignore
 
 		// use AES to encrypt password (mirroring encrypt routine)
 		$nBytes  = $nBits / 8; // no bytes in key

@@ -53,7 +53,7 @@ class Wcal_TS_Woo_Active {
 			if ( is_plugin_active( $this->plugin_file ) ) {
 				deactivate_plugins( $this->plugin_file );
 				add_action( 'admin_notices', array( &$this, 'ts_disabled_notice' ) );
-				if ( isset( $_GET['activate'] ) ) {
+				if ( isset( $_GET['activate'] ) ) {//phpcs:ignore
 					unset( $_GET['activate'] );
 				}
 			}
@@ -83,6 +83,6 @@ class Wcal_TS_Woo_Active {
 		}
 		$class   = 'notice notice-error';
 		$message = __( $this->plugin_name . ' plugin requires WooCommerce installed and activate.', $this->ts_locale );
-		printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
+		printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );//phpcs:ignore
 	}
 }

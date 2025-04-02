@@ -23,7 +23,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label>Enable SMS:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="SMS notifications of the abandoned cart will be sent to the users. Note: Enabling or disabling this option will not affect the cart abandonment tracking. "
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="SMS notifications of the abandoned cart will be sent to the users. Note: Enabling or disabling this option will not affect the cart abandonment tracking. "
 													class="tt-info">
 													<label class="el-switch el-switch-green">
 														<input type="checkbox" id="wcap_enable_sms_reminders" name="wcap_enable_sms_reminders" true-value="on" false-value=""> <span class="el-switch-style"></span></label>
@@ -35,7 +35,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label style="padding-top: 10px;">From:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Must be a Twilio phone number (in E.164 format) or alphanumeric sender ID."
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="Must be a Twilio phone number (in E.164 format) or alphanumeric sender ID."
 													class="tt-info">
 													<input type="text" id="wcap_sms_from_phone" name="wcap_sms_from_phone" class="ib-md">
 												</div>
@@ -46,7 +46,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label>Account SID:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="" class="tt-info">
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="" class="tt-info">
 													<input type="text" placeholder="DS5164" id="wcap_sms_account_sid" name="wcap_sms_account_sid" class="ib-xl">
 												</div>
 											</div>
@@ -56,7 +56,7 @@ $icon_info = plugins_url( 'woocommerce-abandoned-cart/includes/component/upgrade
 												<label>Auth Token:</label>
 											</div>
 											<div class="col-right">
-												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo $icon_info; ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="" class="tt-info">
+												<div class="rc-flx-wrap flx-aln-center"><img src="<?php echo esc_url( $icon_info ); ?>" alt="Info" data-toggle="tooltip" data-placement="top" title="" class="tt-info">
 													<input type="text" placeholder="DS5164" id="wcap_sms_auth_token" name="wcap_sms_auth_token" class="ib-xl">
 												</div>
 											</div>

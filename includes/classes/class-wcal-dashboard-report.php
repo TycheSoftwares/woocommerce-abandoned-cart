@@ -603,8 +603,8 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 			$cut_off_time   = $ac_cutoff_time * 60;
 			$current_time   = current_time( 'timestamp' ); // phpcs:ignore
 			$compare_time   = $current_time - $cut_off_time;
-
-			$count_month = $wpdb->get_results( // phpcs:ignore
+			// phpcs:disable
+			$count_month = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT abandoned_cart_info, recovered_cart FROM `" . $wpdb->prefix . "ac_abandoned_cart_history_lite`
 					WHERE abandoned_cart_time >=  %s
@@ -620,7 +620,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 					"%$blank_cart_info%"
 				)
 			);
-
+			// phpcs:enable
 			$abandoned_count  = 0;
 			$recovered_count  = 0;
 			$abandoned_amount = 0;

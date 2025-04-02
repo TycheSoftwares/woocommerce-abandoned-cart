@@ -212,7 +212,7 @@ class WCAL_Templates_Table extends WP_List_Table {
 			$return_templates_data[ $i ]->sr            = $i + 1;
 			$return_templates_data[ $i ]->id            = $id;
 			$return_templates_data[ $i ]->template_name = $value->template_name;
-			$return_templates_data[ $i ]->sent_time     = "$frequency $day_or_hour" .' '. __( 'After Abandonment', 'woocommerce-abandoned-cart' );
+			$return_templates_data[ $i ]->sent_time     = "$frequency $day_or_hour" . ' ' . __( 'After Abandonment', 'woocommerce-abandoned-cart' );
 			$return_templates_data[ $i ]->activate      = $active;
 			$return_templates_data[ $i ]->is_active     = $is_active;
 			$i++;

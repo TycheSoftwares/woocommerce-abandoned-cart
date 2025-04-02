@@ -687,10 +687,10 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 								$explode_many_varaition = explode( ',', $pro_name_variation_value );
 								if ( ! empty( $explode_many_varaition ) ) {
 									foreach ( $explode_many_varaition as $explode_many_varaition_key => $explode_many_varaition_value ) {
-										$product_name_with_variable = $product_name_with_variable . html_entity_decode( $explode_many_varaition_value ) . '<br>';
+										$product_name_with_variable = $product_name_with_variable . html_entity_decode( $explode_many_varaition_value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ) . '<br>';
 									}
 								} else {
-									$product_name_with_variable = $product_name_with_variable . html_entity_decode( $explode_many_varaition_value ) . '<br>';
+									$product_name_with_variable = $product_name_with_variable . html_entity_decode( $explode_many_varaition_value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ) . '<br>';
 								}
 							}
 							$product_name = apply_filters( 'wcal_after_variable_product_name', $product_name_with_variable, $v->product_id );

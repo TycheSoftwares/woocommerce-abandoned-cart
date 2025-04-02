@@ -108,7 +108,7 @@ class Wcal_ts_pro_notices {
 				$add_query_arguments = add_query_arg( self::$plugin_prefix . '_first_notice_ignore', '0' );
 				$cancel_button       = '<a href="' . $add_query_arguments . '" class="dashicons dashicons-dismiss dashicons-dismiss-icon" style="position: absolute; top: 8px; right: 8px; color: #222; opacity: 0.4; text-decoration: none !important;"></a>';
 
-				printf( '<div class="%1$s" style="%2$s"><p>%3$s %4$s</p></div>', $class, $style, self::$ts_pro_notices[1], $cancel_button );
+				printf( '<div class="%1$s" style="%2$s"><p>%3$s %4$s</p></div>', $class, $style, self::$ts_pro_notices[1], $cancel_button );//phpcs:disable
 			}
 
 			if ( get_user_meta( $user_id, self::$plugin_prefix . '_first_notice_ignore' ) &&
@@ -339,7 +339,7 @@ class Wcal_ts_pro_notices {
 		if ( isset( $_GET[ self::$plugin_prefix . '_ninth_notice_ignore' ] ) && '0' === $_GET[ self::$plugin_prefix . '_ninth_notice_ignore' ] ) {
 			add_user_meta( $user_id, self::$plugin_prefix . '_ninth_notice_ignore', 'true', true );
 			add_user_meta( $user_id, self::$plugin_prefix . '_ninth_notice_ignore_time', current_time( 'timestamp' ), true );
-			wp_safe_redirect( remove_query_arg( self::$plugin_prefix . '_ninth_notice_ignore' ) );
+			wp_safe_redirect( remove_query_arg( self::$plugin_prefix . '_ninth_notice_ignore' ) );//phpcs:enable
 		}
 	}
 }

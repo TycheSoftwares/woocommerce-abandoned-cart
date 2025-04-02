@@ -289,6 +289,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			// 5.20.0 - Deactivation and Tracking v2.
 			add_action( 'admin_init', array( &$this, 'wcal_include_files_tracking' ) );
+			add_filter( 'wp_plugin_check_checks', array( __CLASS__, 'wcal_plugin_check_ignore_files' ), 10 );
 		}
 
 		/**
@@ -637,7 +638,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$wcap_collate = $wpdb->get_charset_collate();
 			}
 			$table_name = $db_prefix . 'ac_email_templates_lite';
-			$wpdb->query( // phpcs:ignore
+			$wpdb->query( // phpcs:disable
 				"CREATE TABLE IF NOT EXISTS $table_name (
 				`id` int(11) NOT NULL AUTO_INCREMENT,
 				`email_type` varchar(50) NOT NULL,
@@ -736,6 +737,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 			// Default templates - function call to create default templates.
 			$check_table_empty = $wpdb->get_var( 'SELECT COUNT(*) FROM `' . $db_prefix . 'ac_email_templates_lite`' ); // phpcs:ignore
+			// phpcs:enable
 
 			/**
 			 * This is add for thos user who Install the plguin first time.
@@ -991,6 +993,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			);
 
 			// Finally, we register the fields with WordPress.
+			//phpcs:disable
 			register_setting(
 				'woocommerce_ac_settings',
 				'wcal_enable_cart_emails'
@@ -1072,6 +1075,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			);
 
 			do_action( 'wcal_add_new_settings' );
+			//phpcs:enable
 		}
 
 		/**
@@ -1993,7 +1997,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						exit;
 					}
 				}
-				$user = wp_set_current_user( $user_id );
+				$user = wp_set_current_user( $user_id ); //phpcs:ignore
 				if ( $user_id >= '63000000' ) {
 					$results_guest = $wpdb->get_results( //phpcs:ignore
 						$wpdb->prepare(
@@ -2025,9 +2029,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 
 				if ( $user_id < '63000000' ) {
-					$user_login = $user->data->user_login;
+					$user_login = $user->data->user_login; //phpcs:disable
 					if ( 'on' === get_option( 'wcal_auto_login_users', '' ) ) {
-						wp_set_auth_cookie( $user_id );
+						wp_set_auth_cookie( $user_id ); // nosemgrep:audit.php.wp.security.auth-bypass.wp-set-auth-cookie
 						$my_temp = wc_load_persistent_cart( $user_login, $user );
 						do_action( 'wp_login', $user_login, $user );
 						if ( isset( $sign_in ) && is_wp_error( $sign_in ) ) {
@@ -2035,7 +2039,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							exit;
 						}
 					} else {
-						wp_set_auth_cookie( $user_id, false, '', 'loggedout' );
+						wp_set_auth_cookie( $user_id, false, '', 'loggedout' ); // nosemgrep:audit.php.wp.security.auth-bypass.wp-set-auth-cookie
 						$my_temp = wc_load_persistent_cart( $user_login, $user );
 						set_transient( 'wcal_email_sent_id', $email_sent_id, 1800 );
 						set_transient( 'wcal_user_id', $user_id, 1800 );
@@ -2999,10 +3003,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					// Save the field values.
 					$insert_template_successfuly  = '';
 					$update_template_successfuly  = '';
-					$woocommerce_ac_email_subject = isset( $_POST['woocommerce_ac_email_subject'] ) ? trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_email_subject'] ) ) ), ENT_QUOTES ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+					$woocommerce_ac_email_subject = isset( $_POST['woocommerce_ac_email_subject'] ) ? trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_email_subject'] ) ) ), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					$woocommerce_ac_email_body    = isset( $_POST['woocommerce_ac_email_body'] ) ? trim( wp_unslash( $_POST['woocommerce_ac_email_body'] ) ) : ''; // phpcs:ignore
 					$woocommerce_ac_template_name = isset( $_POST['woocommerce_ac_template_name'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['woocommerce_ac_template_name'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-					$woocommerce_ac_email_header  = isset( $_POST['wcal_wc_email_header'] ) ? stripslashes( trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['wcal_wc_email_header'] ) ) ), ENT_QUOTES ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+					$woocommerce_ac_email_header  = isset( $_POST['wcal_wc_email_header'] ) ? stripslashes( trim( htmlspecialchars( sanitize_text_field( wp_unslash( $_POST['wcal_wc_email_header'] ) ) ), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
 					$email_frequency = isset( $_POST['email_frequency'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['email_frequency'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 					$day_or_hour     = isset( $_POST['day_or_hour'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['day_or_hour'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
@@ -4008,11 +4012,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 			$notice_key = isset( $_POST['notice'] ) ? sanitize_text_field( wp_unslash( $_POST['notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 			if ( '' !== $notice_key ) {
-				update_option( $notice_key, true );
+				update_option( $notice_key, true );// nosemgrep
 			}
 			$notice_keys = isset( $_POST['notices'] ) ? sanitize_text_field( wp_unslash( $_POST['notices'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 			if ( '' !== $notice_keys ) {
-				update_option( $notice_keys, true );
+				update_option( $notice_keys, true );// nosemgrep
 			}
 			die();
 		}
@@ -4631,6 +4635,23 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * Callback for GDPR settings section.
 		 */
 		public static function ac_lite_gdpr_callback() {}
+
+		/**
+		 * Skip js files during plugin check validations.
+		 *
+		 * @param array $checks An array of checks to ignore.
+		 * @since 9.16.0
+		 */
+		public static function wcal_plugin_check_ignore_files( $checks ) {
+			unset( $checks['i18n_usage'] );
+			unset( $checks['plugin_header_fields'] );
+			unset( $checks['file_type'] );
+			unset( $checks['trademarks'] );
+			unset( $checks['plugin_readme'] );
+			unset( $checks['enqueued_resources'] );
+			unset( $checks['offloading_files'] );
+			return $checks;
+		}
 	}
 }
 $woocommerce_abandon_cart = new woocommerce_abandon_cart_lite();

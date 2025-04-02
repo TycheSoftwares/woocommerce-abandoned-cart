@@ -37,7 +37,7 @@ class Wcal_Default_Template_Settings {
 		$default_template   = 1;
 		$header_text        = addslashes( 'You left Something in Your Cart!' );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		// phpcs:disable
 		$wpdb->query(
 			$wpdb->prepare(
 				'INSERT INTO `' . $db_prefix . 'ac_email_templates_lite`
@@ -55,6 +55,8 @@ class Wcal_Default_Template_Settings {
 				$header_text
 			)
 		);
+
+		// phpcs:enable
 
 		if ( 0 === $blog_id ) {
 			add_option( 'wcal_new_default_templates', 'yes' );

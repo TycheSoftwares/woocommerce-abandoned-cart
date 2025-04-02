@@ -654,11 +654,11 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	 * @since 2.5.2
 	 */
 	public function wcal_class_order_date_asc( $value1, $value2 ) {
-		$date_two   = '';
-		$date_one   = '';
-		$value_one  = $value1->date;
-		$value_two  = $value2->date;
-		$order_date = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+		$date_two           = '';
+		$date_one           = '';
+		$value_one          = $value1->date;
+		$value_two          = $value2->date;
+		$order_date         = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
 		$date_formatted_one = date_create_from_format( $order_date, $value_one );
 		if ( isset( $date_formatted_one ) && $date_formatted_one && '' !== $date_formatted_one ) {
 			$date_one = date_format( $date_formatted_one, 'Y-m-d h:i A' );
@@ -680,11 +680,11 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 	 * @since 2.5.2
 	 */
 	public function wcal_class_order_date_dsc( $value1, $value2 ) {
-		$date_two   = '';
-		$date_one   = '';
-		$value_one  = $value1->date;
-		$value_two  = $value2->date;
-		$order_date = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+		$date_two           = '';
+		$date_one           = '';
+		$value_one          = $value1->date;
+		$value_two          = $value2->date;
+		$order_date         = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
 		$date_formatted_one = date_create_from_format( $order_date, $value_one );
 		if ( isset( $date_formatted_one ) && '' !== $date_formatted_one ) {
 			$date_one = date_format( $date_formatted_one, 'Y-m-d h:i A' );
