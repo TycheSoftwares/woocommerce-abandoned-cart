@@ -285,7 +285,7 @@ class Wcal_Recover_Orders_Table extends WP_List_Table {
 					$woo_order = wc_get_order( $recovered_id );
 					if ( version_compare( $woocommerce->version, '3.0.0', '>=' ) ) {
 						$order                 = wc_get_order( $recovered_id );
-						$recovered_date        = strtotime( $order->get_date_created()->date( 'Y-m-d H:i:s' ) );
+						$recovered_date        = $order ? strtotime( $order->get_date_created()->date( 'Y-m-d H:i:s' ) ) : $value->abandoned_cart_time;
 						$recovered_date_format = date_i18n( get_option( 'date_format' ), $recovered_date );
 						$recovered_time_format = date_i18n( get_option( 'time_format' ), $recovered_date );
 						$recovered_date_new    = $recovered_date_format . ' ' . $recovered_time_format;
