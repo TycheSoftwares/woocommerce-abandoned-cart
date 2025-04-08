@@ -1,4 +1,9 @@
 *** Abandoned Cart Lite for WooCommerce ***
+2025-04-08 - version 6.4.0
+* Fix - Resolved an error triggered when clicking the Recovered Orders tab.
+* Fix - Guest user information was not properly tracked from the Cart and Checkout Block pages.
+* Fix - Resolved all PHPCS warnings and aligned the code with WordPress Coding Standards to improve quality and maintainability.
+
 2025-01-14 - version 6.3.0
 * Fix - Updated the FAQs under the "FAQ & Support" tab.
 * Fix - Resolved fatal error occurring on the Abandoned Orders tab when clicking the "Abandoned Date" column title.
