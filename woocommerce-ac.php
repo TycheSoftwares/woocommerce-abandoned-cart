@@ -1634,7 +1634,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$get_cookie = WC()->session->get_customer_id();
 
 					if ( function_exists( 'WC' ) ) {
-						$cart['cart'] = WC()->session->cart;
+						$wc_version = defined( 'WC_VERSION' ) ? WC_VERSION : null;
+						if ( $wc_version && version_compare( $wc_version, '10.0.0', '>=' ) ) {
+							$cart['cart'] = WC()->cart->get_cart();
+						} else {
+							$cart['cart'] = WC()->session->cart;
+						}
 					} else {
 						$cart['cart'] = $woocommerce->session->cart;
 					}
