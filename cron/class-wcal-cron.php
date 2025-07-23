@@ -259,7 +259,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 
 												if ( $email_sent_id > 0 ) {
 
-													if ( $woocommerce->version < '2.3' ) {
+													if ( version_compare( $woocommerce->version, '2.3.0', '<' ) ) {
 														$cart_page_link = $woocommerce->cart->get_cart_url();
 													} else {
 														$cart_page_id   = wc_get_page_id( 'cart' );
