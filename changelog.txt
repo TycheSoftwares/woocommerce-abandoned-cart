@@ -1,4 +1,8 @@
 *** Abandoned Cart Lite for WooCommerce ***
+2025-07-23 - version 6.5.0
+* Fix - Reminder emails not being sent with WooCommerce version 10.0 and above.
+* Fix - Visitor cart information not displaying on the Abandoned Orders tab with WooCommerce version 10.0 and above.
+
 2025-04-08 - version 6.4.0
 * Fix - Resolved an error triggered when clicking the Recovered Orders tab.
 * Fix - Guest user information was not properly tracked from the Cart and Checkout Block pages.
