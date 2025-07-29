@@ -24,6 +24,8 @@ According to experts, the average cart abandonment rate is around 70% to 75%. Th
 
 The FREE Abandoned Cart Lite for WooCommerce is bundled with all the essential features you need for abandoned cart recovery. 
 
+**What if you can get better features for less money? -[Try Abandoned Cart Pro for just $1](http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite)**
+
 ### Abandoned Cart Lite for WooCommerce Features 
 
 * Check if the cart is abandoned by the guest client or logged in user
