@@ -3272,7 +3272,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$duration_range = 'last_seven';
 					}
 
-					echo esc_html_e( 'The Report below shows how many Abandoned Carts we were able to recover for you by sending automatic emails to encourage shoppers.', 'woocommerce-abandoned-cart' );
+					esc_html_e( 'The Report below shows how many Abandoned Carts we were able to recover for you by sending automatic emails to encourage shoppers.', 'woocommerce-abandoned-cart' );
 					?>
 					<div id="recovered_stats" class="postbox" style="display:block">
 						<div class="inside">
@@ -3641,7 +3641,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 												'' === $user_shipping_postcode &&
 												'' === $user_shipping_state &&
 												'' === $user_shipping_country ) {
-												echo esc_html_e( 'Shipping Address same as Billing Address', 'woocommerce-abandoned-cart' );
+												esc_html_e( 'Shipping Address same as Billing Address', 'woocommerce-abandoned-cart' );
 											} else {
 												?>
 												<?php
