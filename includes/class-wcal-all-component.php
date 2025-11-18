@@ -163,105 +163,50 @@ if ( ! class_exists( 'Wcal_All_Component' ) ) {
 
 			$ts_faq = array(
 				1  => array(
-					'question' => 'Why abandoned cart reminder emails are not being sent?',
-					'answer'   => 'Please ensure you have at least one Email template "Active". As only active email templates are sent to recover the abandoned carts.
-                        <br/><br/>
-                        For sending the abandoned cart notification emails automatically, we use WP-Cron. If you have Email templates activated and still notification are not sent, then you can debug the issue by following this <a href = "https://www.tychesoftwares.com/docs/docs/abandoned-cart-pro-for-woocommerce/wp_alternate_cron/?utm_source=userwebsite&utm_medium=link&utm_campaign=AbandonedCartProFAQTab" target="_blank" >post</a>.',
-				),
-				2  => array(
-					'question' => 'How is the email address of the customers captured?',
-					'answer'   => 'Our plugin captures visitor emails in real-time as they are typing it in to the email address field on the checkout page, so you don\'t need to worry about them changing their mind at the last second.
-                        <br/><br/>
-                        When logged-in user add the product to the cart we capture the email address from the user’s profile.',
-				),
-				3  => array(
-					'question' => 'I want to know if it is possible to exclude tax from product price for abandoned order.',
-					'answer'   => 'Currently it is not possible to exclude tax from the product price from the abandoned order view if tax is applicable for the product.',
-				),
-				4  => array(
-					'question' => 'Is it possible to delete thousands of or all abandoned cart records at a once?',
-					'answer'   => 'No, it is not possible to delete thousands of abandoned cart records in bulk. Our plugin does have the Bulk action functionality. But you can delete upto 30 Abandoned Carts in bulk. You can run a SQL query in the Database to delete those carts. For detailed steps please contact us via Support.',
-				),
-				5  => array(
-					'question' => 'Is there any way to not capture the visitors carts?',
-					'answer'   => 'You can uncheck the “Start tracking from Cart Page” setting under the General Settings menu of the Settings tab.',
-				),
-				6  => array(
-					'question' => 'How can I know that abandoned cart reminders are being sent to customers?',
-					'answer'   => 'It is not possible in the Abandoned Cart LITE plugin to check the records of the Abandoned Cart Reminder email whether email notifications are being sent or not. However you can upgrade to PRO version of our plugin to enable this feature.',
-				),
-				7  => array(
-					'question' => 'Is there an alternate way to send the abandon cart emails automatically at regular intervals? As the WP-Cron is not running on my site.',
-					'answer'   => 'Yes, you can setup a manual cron in your server’s administration panel.
-                        <br/><br/>
-                        For example, if you are using cPanel, it has a section Named as "Cron Jobs" which allows you to create the cron job.
-                        <br/><br/>
-                        /usr/bin/wget -q -c {your_site_path}/wp-content/plugins/woocommerce-abandoned-cart/cron/class-wcal-cron.php
-                        <br/><br/>
-                        You can refer to this document for creating a <a href="https://documentation.cpanel.net/display/68Docs/Cron+Jobs">cron job</a> in cPanel.',
-				),
-				8  => array(
-					'question' => 'Does the plugin consider the cart as abandoned for Pending and Failed order status?',
-					'answer'   => 'No, our plugin does not consider such carts (Pending Payment and Failed orders) as abandoned. It will not send the abandoned cart reminder email to the customers if they fail to proceed with the payment.',
-				),
-				9  => array(
-					'question' => 'How can we translate the strings of {{products.cart}} merge tag in the email?',
-					'answer'   => 'To translate the strings, you need to generate ".po" and ".mo" files in your respective language. These files then need to be added to the following path: "woocommerce-abandoned-cart/i18n/languages"',
-				),
-				10 => array(
-					'question' => 'There was a problem creating an email template on Multisite.',
-					'answer'   => 'On Multisite, if you have activated the plugin from Network site then please deactivate it and activate the Abandoned Cart Lite plugin from an Individual site. So, one default email template will be created on the activation of the plugin and you can create new email template.',
-				),
-				11 => array(
-					'question' => 'Abnormal amount of carts are being logged by the plugin.',
-					'answer'   => "This might be due to a bot executing 'Add to Cart' urls on the site. Adding a few lines in the robots.txt file can stop the bots from actually adding products to the cart.
-                    Please follow the instructions mentioned <a href='https://www.tychesoftwares.com/docs/docs/abandoned-cart-for-woocommerce-lite/track-only-genuine-visitor-carts/' target='_blank'>here.</a>",
-				),
-				12 => array(
 					'question' => 'What qualifies as an abandoned cart?',
 					'answer'   => 'A cart is deemed abandoned when a user adds items but leaves the website without completing the purchase. We capture email addresses in real-time during checkout for guest users and use logged-in users emails from their profiles as soon as they add a product to the shopping cart. The cart is marked abandoned once a designated cut-off time has elapsed.',
 				),
-				13 => array(
+				2  => array(
 					'question' => 'How can I check if reminder emails for abandoned carts have been sent?',
 					'answer'   => 'To verify, you can click the "View Order" link under the Abandoned Orders tab for details on specific emails.',
 				),
-				14 => array(
+				3  => array(
 					'question' => 'Why aren\'t my abandoned cart reminder emails being sent?',
 					'answer'   => 'Ensure you have at least one active email template; only active templates trigger abandoned cart recovery. If active and still not sending, check out our troubleshooting guide <a href="https://www.tychesoftwares.com/docs/docs/abandoned-cart-pro-for-woocommerce-new/templates/wp-cron/" target="_blank">here.</a>"',
 				),
-				15 => array(
+				4  => array(
 					'question' => 'Can I hide tax from product prices in abandoned orders?',
 					'answer'   => 'Our plugin doesn’t directly hide tax, but you can use this below custom code in your theme’s "functions.php" file to hide tax details:',
 				),
-				16 => array(
+				5  => array(
 					'question' => 'Can I delete all abandoned cart records at once?',
 					'answer'   => 'Yes, you can use the "Bulk actions" dropdown on the Abandoned Orders tab to delete all carts. You can also delete only the visitor, registered, or guest carts using that option.',
 				),
-				17 => array(
+				6  => array(
 					'question' => 'How do I stop tracking visitor carts?',
 					'answer'   => 'You can disable the "Start tracking from Cart Page" setting present at Abandoned Carts -> Settings -> General Settings to stop capturing the visitor carts where no email address is entered.',
 				),
-				18 => array(
+				7  => array(
 					'question' => 'Are Pending and Failed orders treated as abandoned?',
 					'answer'   => 'No, orders that are Pending Payment or Failed are not considered abandoned, and no reminder emails will be sent.',
 				),
-				19 => array(
+				8  => array(
 					'question' => 'How can I translate the {{products.cart}} tag in emails?',
-					'answer'   => 'Create and upload ".po" and ".mo" files in your desired language to "woocommerce-abandoned-cart/i18n/languages".',
+					'answer'   => 'You can translate the strings of our plugin to another language using the .po and .mo files we provide in our plugin. To translate the abandoned cart email, create ".po" and ".mo" files using PoEdit translation editor:',
 				),
-				20 => array(
+				9  => array(
 					'question' => 'Why are there so many logged carts?',
 					'answer'   => 'If you notice a high number of logged carts without names and email addresses, it may be due to bots. In that case, please update your <a href="https://www.tychesoftwares.com/docs/woocommerce-abandoned-cart-lite/track-only-genuine-visitor-carts/" target="_blank">robots.txt</a> file to prevent bot interactions with your cart.',
 				),
-				21 => array(
+				10 => array(
 					'question' => 'Is your plugin GDPR compliant?',
 					'answer'   => 'Yes, our Abandoned Cart Lite plugin complies with GDPR. We collect user data only with consent, and all data stays on your site, accessible under the Abandoned Orders tab. GDPR settings can be found in the plugin\'s General Settings.',
 				),
-				22 => array(
+				11 => array(
 					'question' => 'Can I offer discounts in reminder emails?',
 					'answer'   => 'Yes, the Lite version includes a Coupon Code feature, allowing you to offer discounts in reminder emails. You will find the Coupon settings in the Email template.',
 				),
-				23 => array(
+				12 => array(
 					'question' => 'Do I need to manually set up a cron job in cPanel?',
 					'answer'   => 'No, you don\'t need to set up the cron job manually in cPanel. We have introduced the Action Scheduler Library instead of WP-Cron to send reminders automatically. Action Scheduler will reduce the dependency on the WP-Cron and if the WP-Cron is disabled, it will still run the actions on admin page requests. You can check out <a href="https://www.tychesoftwares.com/moving-to-the-action-scheduler-library/" target="_blank">this</a> help guide to know more about the Action Scheduler Library.',
 				),
