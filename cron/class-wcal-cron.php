@@ -491,6 +491,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 														wc_mail( $user_email, $email_subject, $final_email_body, $headers );
 
 													} else {
+														$email_subject = wp_specialchars_decode( $email_subject );
 														wp_mail( $user_email, $email_subject, $email_body_final, $headers );
 													}
 												}
