@@ -28,7 +28,7 @@
 class Wcal_Aes {
 
 	/**
-	 * AES Cipher function [§5.1]: encrypt 'input' with Rijndael algorithm
+	 * AES Cipher function [ï¿½5.1]: encrypt 'input' with Rijndael algorithm
 	 *
 	 * @param input message as byte-array (16 bytes)
 	 * @param w     key schedule as 2D byte-array (Nr+1 x Nb bytes) -
@@ -39,7 +39,7 @@ class Wcal_Aes {
 	public static function cipher( $input, $w ) {
 		$Nb    = 4; // block size (in words): no of columns in state (fixed at 4 for AES)
 		$Nr    = count( $w ) / $Nb - 1; // no of rounds: 10/12/14 for 128/192/256-bit keys
-		$state = array(); // initialise 4xNb byte-array 'state' with input [§3.4]
+		$state = array(); // initialise 4xNb byte-array 'state' with input [ï¿½3.4]
 		for ( $i = 0; $i < 4 * $Nb;
 		$i++ ) {
 			$state[ $i % 4 ][ floor( $i / 4 ) ] = $input[ $i ];
@@ -58,7 +58,7 @@ class Wcal_Aes {
 		$state = self::shiftRows( $state, $Nb );
 		$state = self::addRoundKey( $state, $w, $Nr, $Nb );
 
-		$output = array( 4 * $Nb ); // convert state to 1-d array before returning [§3.4]
+		$output = array( 4 * $Nb ); // convert state to 1-d array before returning [ï¿½3.4]
 		for ( $i = 0; $i < 4 * $Nb;
 		$i++ ) {
 			$output[ $i ] = $state[ $i % 4 ][ floor( $i / 4 ) ];
@@ -66,7 +66,7 @@ class Wcal_Aes {
 		return $output;
 	}
 	/**
-	 * Xor Round Key into state S [§5.1.4].
+	 * Xor Round Key into state S [ï¿½5.1.4].
 	 *
 	 * @since 2.8
 	 */
@@ -81,7 +81,7 @@ class Wcal_Aes {
 	}
 
 	/**
-	 * Apply SBox to state S [§5.1.1].
+	 * Apply SBox to state S [ï¿½5.1.1].
 	 *
 	 * @since 2.8
 	 */
@@ -96,7 +96,7 @@ class Wcal_Aes {
 	}
 
 	/**
-	 * Shift row r of state S left by r bytes [§5.1.2].
+	 * Shift row r of state S left by r bytes [ï¿½5.1.2].
 	 *
 	 * @since 2.8
 	 */
@@ -116,19 +116,19 @@ class Wcal_Aes {
 	}
 
 	/**
-	 * Combine bytes of each col of state S [§5.1.3].
+	 * Combine bytes of each col of state S [ï¿½5.1.3].
 	 *
 	 * @since 2.8
 	 */
 	private static function mixColumns( $s, $Nb ) {
 		for ( $c = 0; $c < 4; $c++ ) {
 			$a = array( 4 ); // 'a' is a copy of the current column from 's'
-			$b = array( 4 ); // 'b' is a•{02} in GF(2^8)
+			$b = array( 4 ); // 'b' is aï¿½{02} in GF(2^8)
 			for ( $i = 0; $i < 4; $i++ ) {
 				$a[ $i ] = $s[ $i ][ $c ];
 				$b[ $i ] = $s[ $i ][ $c ] & 0x80 ? $s[ $i ][ $c ] << 1 ^ 0x011b : $s[ $i ][ $c ] << 1;
 			}
-			// a[n] ^ b[n] is a•{03} in GF(2^8)
+			// a[n] ^ b[n] is aï¿½{03} in GF(2^8)
 			$s[0][ $c ] = $b[0] ^ $a[1] ^ $b[1] ^ $a[2] ^ $a[3]; // 2*a0 + 3*a1 + a2 + a3
 			$s[1][ $c ] = $a[0] ^ $b[1] ^ $a[2] ^ $b[2] ^ $a[3]; // a0 * 2*a1 + 3*a2 + a3
 			$s[2][ $c ] = $a[0] ^ $a[1] ^ $b[2] ^ $a[3] ^ $b[3]; // a0 + a1 + 2*a2 + 3*a3
@@ -138,7 +138,7 @@ class Wcal_Aes {
 	}
 
 	/**
-	 * Generate Key Schedule from Cipher Key [§5.2].
+	 * Generate Key Schedule from Cipher Key [ï¿½5.2].
 	 *
 	 * Perform key expansion on cipher key to generate a key schedule.
 	 *
@@ -210,7 +210,7 @@ class Wcal_Aes {
 		return $w;
 	}
 
-	// sBox is pre-computed multiplicative inverse in GF(2^8) used in subBytes and keyExpansion [§5.1.1]
+	// sBox is pre-computed multiplicative inverse in GF(2^8) used in subBytes and keyExpansion [ï¿½5.1.1]
 	private static $sBox = array(
 		0x63,
 		0x7c,
@@ -470,7 +470,7 @@ class Wcal_Aes {
 		0x16,
 	);
 
-	// rCon is Round Constant used for the Key Expansion [1st col is 2^(r-1) in GF(2^8)] [§5.2]
+	// rCon is Round Constant used for the Key Expansion [1st col is 2^(r-1) in GF(2^8)] [ï¿½5.2]
 	private static $rCon = array(
 		array( 0x00, 0x00, 0x00, 0x00 ),
 		array( 0x01, 0x00, 0x00, 0x00 ),
