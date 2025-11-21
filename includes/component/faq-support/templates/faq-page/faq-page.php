@@ -101,6 +101,7 @@
                 <li>Save with your language code (e.g., fr_FR.po) to generate the .mo file.</li>
                 <li>Upload both files to "woocommerce-abandoned-cart/i18n/languages" and "wp-content/languages" folder via FTP.</li>
             </ol>
+            <p>You can also use the Loco Translate or any other translation plugin for this string's translation.</p>
         </p>
     </div>
 
