@@ -4281,6 +4281,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 				$user_email_from          = get_option( 'admin_email' );
 				$body_email_final_preview = stripslashes( $body_email_preview );
+				$subject_email_preview    = str_replace('!', '', $subject_email_preview);
 
 				if ( isset( $is_wc_template ) && 'true' === $is_wc_template ) {
 					ob_start();
