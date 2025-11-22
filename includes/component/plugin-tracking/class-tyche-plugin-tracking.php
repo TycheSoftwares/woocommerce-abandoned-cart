@@ -78,7 +78,7 @@ if ( ! class_exists( 'Tyche_Plugin_Tracking' ) ) {
 			add_action( $this->plugin_short_name . '_ts_tracker_send_event', array( &$this, 'send_tracking_data' ) );
 			add_action( $this->plugin_short_name . '_init_tracker', array( &$this, 'init_tracker' ) );
 			add_action( 'wp_ajax_' . $this->plugin_short_name . '_tracker_dismiss_notice', array( &$this, 'dismiss_notice' ) );
-			// add_action( 'admin_notices', array( &$this, 'display_tracker_html_template' ) );
+			add_action( 'admin_notices', array( &$this, 'display_tracker_html_template' ) );
 			add_filter( 'cron_schedules', array( &$this, 'cron_schedule' ) );
 			add_action( 'admin_init', array( &$this, 'init_tracker' ) );
 			$this->schedule_cron_job();
@@ -251,18 +251,34 @@ if ( ! class_exists( 'Tyche_Plugin_Tracking' ) ) {
 				return;
 			}
 
+			if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'woocommerce_ac_page' ) { //phpcs:ignore
+				return;
+			}
+
 			echo '<input type="hidden" id="admin_url" value="' . esc_url( get_admin_url() ) . '"/>';
 
 			if ( '' === get_option( $this->plugin_short_name . '_allow_tracking', '' ) ) { ?>
-				<div class="<?php echo esc_attr( $this->plugin_short_name ); ?>-message <?php echo esc_attr( $this->plugin_short_name ); ?>-tracker notice notice-info is-dismissible" style="position: relative;">
-					<div style="position: absolute;"><img class="site-logo" src= "<?php echo esc_url( $this->api_url . '/assets/plugin-tracking/images/site-logo.jpg?v=' . $this->version ); ?> "></div>
+				<div class="<?php echo esc_attr( $this->plugin_short_name ); ?>-message <?php echo esc_attr( $this->plugin_short_name ); ?>-tracker notice notice-info is-dismissible" style="position: relative;background-color: #ffff;">
+					<div style="position: absolute;bottom: 60px;"><img width="100" class="site-logo" src= "<?php echo esc_url( $this->api_url . '/assets/plugin-tracking/images/site-logo.jpg?v=' . $this->version ); ?> "></div>
+					<div style="overflow: hidden;">
 					<p style="margin: 10px 0 10px 130px; font-size: medium;">
-						<?php print( __( 'In the past two years, we’ve added <strong>two premium features</strong> to the Lite plugin with the help of users like you who shared plugin usage data anonymously. Help us improve the plugin and avail a super saver surprise gift. <a href="' . $this->blog_link . '" target="_blank">Learn more</a>', $this->plugin_locale ) ); // phpcs:ignore ?>
+							<?php printf( 
+								    __( 
+								        'Want to help make %1$s even more awesome? Allow %1$s to collect non-sensitive diagnostic data and usage information and get 20%% off on your next purchase. <a href="%2$s">Find out more</a>.', 
+								        $this->plugin_locale 
+								    ), 
+								    $this->plugin_name, 
+								    $this->blog_link 
+								);
+								// phpcs:ignore 
+								?>
+
 					</p>
-					<p class="submit">
+					<p class="submit" style="margin-top: 10px;">
 						<a class="button-primary button button-large" href="<?php echo esc_url( wp_nonce_url( add_query_arg( $this->plugin_short_name . '_tracker_optin', 'true' ), $this->plugin_short_name . '_tracker_optin', $this->plugin_short_name . '_tracker_nonce' ) ); ?>"><?php esc_html_e( 'Allow', $this->plugin_locale ); //phpcs:ignore ?></a>
 						<a class="button-secondary button button-large skip"  href="<?php echo esc_url( wp_nonce_url( add_query_arg( $this->plugin_short_name . '_tracker_optout', 'true' ), $this->plugin_short_name . '_tracker_optout', $this->plugin_short_name . '_tracker_nonce' ) ); ?>"><?php esc_html_e( 'No thanks', $this->plugin_locale ); //phpcs:ignore ?></a>
 					</p>
+				</div>
 				</div>
 					<?php
 			}
