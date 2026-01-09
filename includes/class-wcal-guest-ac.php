@@ -168,6 +168,24 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 			}
 
 			global $wpdb, $woocommerce;
+
+			$billing_email = isset( $_POST['billing_email'] ) && '' !== $_POST['billing_email'] ? sanitize_text_field( wp_unslash( $_POST['billing_email'] ) ) : '';
+			$country       = isset( $_POST['billing_country'] ) && '' !== $_POST['billing_country'] ? sanitize_text_field( wp_unslash( $_POST['billing_country'] ) ) : '';
+
+			/* Check if the Rule to exlude the capturing the cart abandonment */
+			$wcal_exclude_cart_abandonment = wcal_common::wcal_exclude_cart_abandonment( $billing_email, $country );
+			if ( $wcal_exclude_cart_abandonment ) {
+				return;
+			}
+
+			if ( '' !== $billing_email ) {
+				wcal_common::wcal_set_cart_session( 'billing_email', $billing_email );
+			}
+
+			if ( '' !== $country ) {
+				wcal_common::wcal_set_cart_session( 'billing_country', $country );
+			}
+
 			if ( isset( $_POST['billing_first_name'] ) && '' !== $_POST['billing_first_name'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_first_name', sanitize_text_field( wp_unslash( $_POST['billing_first_name'] ) ) );
 			}
@@ -191,12 +209,6 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 			}
 			if ( isset( $_POST['billing_postcode'] ) && '' !== $_POST['billing_postcode'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_postcode', sanitize_text_field( wp_unslash( $_POST['billing_postcode'] ) ) );
-			}
-			if ( isset( $_POST['billing_country'] ) && '' !== $_POST['billing_country'] ) {
-				wcal_common::wcal_set_cart_session( 'billing_country', sanitize_text_field( wp_unslash( $_POST['billing_country'] ) ) );
-			}
-			if ( isset( $_POST['billing_email'] ) && '' !== $_POST['billing_email'] ) {
-				wcal_common::wcal_set_cart_session( 'billing_email', sanitize_text_field( wp_unslash( $_POST['billing_email'] ) ) );
 			}
 			if ( isset( $_POST['billing_phone'] ) && '' !== $_POST['billing_phone'] ) {
 				wcal_common::wcal_set_cart_session( 'billing_phone', sanitize_text_field( wp_unslash( $_POST['billing_phone'] ) ) );

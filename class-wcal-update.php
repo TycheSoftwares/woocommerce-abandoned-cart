@@ -343,12 +343,14 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				$cart_time                    = isset( $woocommerce_ac_settings[0]->cart_time ) ? $wcal_settings[0]->cart_time : '10';
 				$delete_order_days            = isset( $woocommerce_ac_settings[0]->delete_order_days ) ? $woocommerce_ac_settings[0]->delete_order_days : '';
 				$admin_email                  = isset( $woocommerce_ac_settings[0]->email_admin ) ? $woocommerce_ac_settings[0]->email_admin : '';
+				$admin_email_on_abandonment   = isset( $woocommerce_ac_settings[0]->admin_email_on_abandonment ) ? $woocommerce_ac_settings[0]->admin_email_on_abandonment : '';
 				$disable_guest_from_cart_page = isset( $woocommerce_ac_settings[0]->disable_guest_cart_from_cart_page ) ? $woocommerce_ac_settings[0]->disable_guest_cart_from_cart_page : '';
 
 				if ( 0 === $blog_id ) {
 					add_option( 'ac_lite_cart_abandoned_time', $cart_time );
 					add_option( 'ac_lite_delete_abandoned_order_days', $delete_order_days );
 					add_option( 'ac_lite_email_admin_on_recovery', $admin_email );
+					add_option( 'wcap_email_admin_on_abandonment', $admin_email_on_abandonment );
 					add_option( 'ac_lite_track_guest_cart_from_cart_page', $disable_guest_from_cart_page );
 
 					update_option( 'ac_lite_settings_status', 'INDIVIDUAL' );
@@ -361,6 +363,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 					add_blog_option( $blog_id, 'ac_lite_cart_abandoned_time', $cart_time );
 					add_blog_option( $blog_id, 'ac_lite_delete_abandoned_order_days', $delete_order_days );
 					add_blog_option( $blog_id, 'ac_lite_email_admin_on_recovery', $admin_email );
+					add_blog_option( $blog_id, 'wcap_email_admin_on_abandonment', $admin_email_on_abandonment );
 					add_blog_option( $blog_id, 'ac_lite_track_guest_cart_from_cart_page', $disable_guest_from_cart_page );
 
 					update_blog_option( $blog_id, 'ac_lite_settings_status', 'INDIVIDUAL' );
