@@ -1007,6 +1007,8 @@ class wcal_common { // phpcs:ignore
 				}
 			}
 		}
+
+		do_action( 'wcal_webhook_initiated', $cart_id );
 	}
 
 	/**
@@ -1038,7 +1040,7 @@ class wcal_common { // phpcs:ignore
 		if ( '' !== $user_email ) {
 			$crypt_key         = wcal_get_crypt_key( $user_email, true, $cart_id );
 			$encoding_checkout = $cart_id . '&url=' . $checkout_page_link;
-			$validate_checkout = Wcal_Common::wcal_encrypt_validate( $encoding_checkout, $crypt_key );
+			$validate_checkout = wcal_common::wcal_encrypt_validate( $encoding_checkout, $crypt_key );
 
 			$checkout_link = get_option( 'siteurl' ) . '/?wcal_action=checkout_link&user_email=' . $user_email . '&validate=' . $validate_checkout;
 			$wpdb->update( // phpcs:ignore
@@ -1069,5 +1071,239 @@ class wcal_common { // phpcs:ignore
 			return( $validate_encoded );
 		}
 		return false;
+	}
+
+	/**
+	 * We will return the customers IP address. We are using the WooCommerce geoloctaion.
+	 *
+	 * @return string User IP address
+	 * @since 5.0
+	 */
+	public static function wcal_get_client_ip() {
+		$ipaddress = WC_Geolocation::get_ip_address();
+		return $ipaddress;
+	}
+
+	/**
+	 * We are checking if the customer IP addres is blocked by the admin.
+	 *
+	 * @param string $wcap_user_ip_address User IP address.
+	 * @return true|false $wcap_restricted_ip_data_exists IP address restricted | IP address not restricted
+	 * @since 6.7.0
+	 */
+	public static function wcal_is_ip_restricted( $wcap_user_ip_address ) {
+
+		$wcap_restricted_ip_data_exists = false;
+		$wcap_restricted_ip_records     = get_option( 'wcap_restrict_ip_address' );
+		if ( false != $wcap_restricted_ip_records ) {
+			$explode_on_new_line_data_ip_records = explode( PHP_EOL, $wcap_restricted_ip_records );
+
+			$implode_ip_address = '';
+			$explode_ip_address = array();
+
+			if ( count( $explode_on_new_line_data_ip_records ) > 1 ) {
+				$implode_ip_address = implode( ',', $explode_on_new_line_data_ip_records );
+				$explode_ip_address = explode( ',', $implode_ip_address );
+			} else {
+				$explode_ip_address = explode( ',', $wcap_restricted_ip_records );
+			}
+
+			$trimmed_explode_ip_address = array_map(
+				function( $v ) {
+					return trim( str_replace( array( '*.', '*' ), '', $v ) );
+				},
+				$explode_ip_address
+			);
+
+			foreach ( $trimmed_explode_ip_address as $restricted_ip ) {
+				if ( $restricted_ip === $wcap_user_ip_address || strpos( $wcap_user_ip_address, $restricted_ip ) !== false ) {
+					$wcap_restricted_ip_data_exists = true;
+				}
+			}
+
+			$block_ip_address = self::block_users( $trimmed_explode_ip_address, $wcap_user_ip_address );
+
+			if ( $block_ip_address == 1 ) {
+				$wcap_restricted_ip_data_exists = true;
+			}
+		}
+
+		return $wcap_restricted_ip_data_exists;
+	}
+
+	/**
+	 * It will break the bulk of the IP address and verify each email IP is blocked or not.
+	 *
+	 * @param array  $user_inputs All blocked IP
+	 * @param string $customer_ip_address User IP address
+	 * @return true|false $block IP blocked | IP not blocked
+	 */
+	public static function block_users( $user_inputs, $customer_ip_address ) {
+
+		$userOctets      = explode( '.', $customer_ip_address ); // get the client's IP address and split it by the period character
+		$userOctetsCount = count( $userOctets );  // Number of octets we found, should always be four
+
+		$block = false; // boolean that says whether or not we should block this user
+
+		foreach ( $user_inputs as $ipAddress ) { // iterate through the list of IP addresses
+			$octets = explode( '.', $ipAddress );
+			if ( count( $octets ) != $userOctetsCount ) {
+				continue;
+			}
+
+			for ( $i = 0; $i < $userOctetsCount; $i++ ) {
+				if ( $userOctets[ $i ] == $octets[ $i ] || $octets[ $i ] == '*' ) {
+					continue;
+				} else {
+					break;
+				}
+			}
+
+			if ( $i == $userOctetsCount ) { // if we looked at every single octet and there is a match, we should block the user
+				$block = true;
+				break;
+			}
+		}
+
+		return $block;
+	}
+
+	/**
+	 * We are checking if the customer Email addres is blocked by the admin.
+	 *
+	 * @param string $current_user_email_address User Email address.
+	 * @return true|false $wcap_restricted_email_data_exists Email address restricted | Email address not restricted
+	 * @since 6.7.0
+	 */
+	public static function wcal_is_email_address_restricted( $current_user_email_address ) {
+
+		$wcap_restricted_email_data_exists = false;
+
+		$wcap_restricted_email_records = get_option( 'wcap_restrict_email_address' );
+		if ( false != $wcap_restricted_email_records ) {
+			$explode_on_new_line_data_email_records = explode( PHP_EOL, $wcap_restricted_email_records );
+
+			$implode_email_address = '';
+			$explode_email_address = array();
+
+			if ( count( $explode_on_new_line_data_email_records ) > 1 ) {
+				$implode_email_address = implode( ',', $explode_on_new_line_data_email_records );
+				$explode_email_address = explode( ',', $implode_email_address );
+			} else {
+				$explode_email_address = explode( ',', $wcap_restricted_email_records );
+			}
+
+			$trimmed_explode_email_address = array_map( 'trim', $explode_email_address );
+			$trimmed_explode_email_address = array_map( 'strtolower', $explode_email_address );
+
+			$current_user_email_address = strtolower( $current_user_email_address );
+
+			if ( in_array( $current_user_email_address, $trimmed_explode_email_address ) && '' != $current_user_email_address ) {
+				$wcap_restricted_email_data_exists = true;
+			}
+		}
+		return $wcap_restricted_email_data_exists;
+	}
+
+	/**
+	 * We are checking if the customer Domain name is blocked by the admin.
+	 *
+	 * @param string $current_user_email_address User Email address.
+	 * @return true|false $wcap_restricted_domain_data_exists Domain restricted | Domain not restricted
+	 * @since 6.7.0
+	 */
+	public static function wcal_is_domain_restricted( $current_user_email_address ) {
+
+		$wcap_restricted_domain_data_exists = false;
+
+		$wcap_restricted_domain_records = get_option( 'wcap_restrict_domain_address' );
+		if ( false != $wcap_restricted_domain_records ) {
+			$explode_on_new_line_data_domain_records = explode( ' ', $wcap_restricted_domain_records );
+
+			$implode_domain_address = '';
+			$explode_domain_address = array();
+
+			if ( count( $explode_on_new_line_data_domain_records ) > 1 ) {
+				$implode_domain_address = implode( ',', $explode_on_new_line_data_domain_records );
+				$explode_domain_address = explode( ',', $implode_domain_address );
+			} else {
+				$explode_domain_address = explode( ',', $wcap_restricted_domain_records );
+			}
+			$get_domain                      = '';
+			$explode_user_email_addresson_at = array();
+
+			$explode_user_email_addresson_at = explode( '@', $current_user_email_address );
+
+			if ( isset( $explode_user_email_addresson_at [1] ) && '' != $explode_user_email_addresson_at [1] ) {
+				$get_domain = $explode_user_email_addresson_at [1];
+			}
+
+			$trimmed_explode_domain_address = array_map( 'trim', $explode_domain_address );
+			$trimmed_explode_domain_address = array_map( 'strtolower', $explode_domain_address );
+			$get_domain                     = strtolower( $get_domain );
+
+			if ( in_array( $get_domain, $trimmed_explode_domain_address ) ) {
+				$wcap_restricted_domain_data_exists = true;
+			}
+		}
+		return $wcap_restricted_domain_data_exists;
+	}
+
+	/**
+	 * We are checking if the customer country is blocked by the admin.
+	 *
+	 * @param string $country User Country.
+	 * @return true|false $wcap_restricted_country_exists Country restricted | Country not restricted
+	 * @since 6.7.0
+	 */
+	public static function wcal_is_country_restricted( $country ) {
+
+		$wcap_restricted_country_exists = false;
+		$wcap_restrict_countries        = get_option( 'wcap_restrict_countries' );
+		$wcap_restrict_countries        = explode( ',', $wcap_restrict_countries );
+		if ( ! empty( $wcap_restrict_countries ) && is_array( $wcap_restrict_countries ) ) {
+			if ( ! empty( $country ) && in_array( $country, $wcap_restrict_countries ) ) {
+				$wcap_restricted_country_exists = true;
+			}
+		}
+		return apply_filters( 'wcap_restricted_country_exists', $wcap_restricted_country_exists, $country );
+	}
+
+	/**
+	 * Exclude the Cart Abandonment According to set Rules.
+	 *
+	 * @param string $email User Email.
+	 * @param string $country User Country.
+	 *
+	 * @return true|false $exclude True of any rule matches.
+	 *
+	 * @since 6.7.0
+	 */
+	public static function wcal_exclude_cart_abandonment( $email, $country ) {
+
+		$exclude                   = false;
+		$current_user_ip_address   = self::wcal_get_client_ip();
+		$get_restricted_ip_address = self::wcal_is_ip_restricted( $current_user_ip_address );
+
+		if ( $get_restricted_ip_address ) {
+			return true;
+		}
+
+		$get_restricted_email_address = self::wcal_is_email_address_restricted( $email );
+		if ( $get_restricted_email_address ) {
+			return true;
+		}
+
+		$get_restricted_domain_address = self::wcal_is_domain_restricted( $email );
+		if ( $get_restricted_domain_address ) {
+			return true;
+		}
+
+		$wcap_is_country_restricted = self::wcal_is_country_restricted( $country );
+		if ( $wcap_is_country_restricted ) {
+			return true;
+		}
+
+		return $exclude;
 	}
 }

@@ -199,6 +199,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 			add_action( 'init', array( &$this, 'wcal_add_scheduled_action' ) );
 			require_once 'cron/class-wcal-cron.php';
+			require_once 'cron/class-wcal-admin-notification.php';
 			require_once 'includes/class-wcal-process-base.php';
 
 			// WordPress Administration Menu.
@@ -854,6 +855,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			);
 
 			add_settings_field(
+				'wcap_email_admin_on_abandonment',
+				__( 'Email admin on cart abandonment', 'woocommerce-abandoned-cart' ),
+				array( $this, 'wcap_email_admin_on_abandonment' ),
+				'woocommerce_ac_page',
+				'ac_lite_general_settings_section',
+				array( __( 'Enable this option to notify the store administrator when a cart is abandoned', 'woocommerce-abandoned-cart' ) )
+			);
+
+			add_settings_field(
 				'ac_lite_track_guest_cart_from_cart_page',
 				__( 'Start tracking from Cart Page', 'woocommerce-abandoned-cart' ),
 				array( $this, 'wcal_track_guest_cart_from_cart_page_callback' ),
@@ -935,6 +945,50 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				'ac_lite_coupon_settings',
 				array( __( 'If you want to completely remove the expired and used coupon code now then click on "Delete" button.', 'woocommerce-abandoned-cart' ) )
 			);
+
+			add_settings_section(
+				'ac_lite_rules_settings',                 // ID used to identify this section and with which to register options.
+				__( 'Rules to exclude capturing abandoned carts', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
+				array( $this, 'ac_lite_rules_callback' ), // Callback used to render the description of the section.
+				'woocommerce_ac_page'                               // Page on which to add this section of options.
+			);
+
+			add_settings_field(
+				'wcap_restrict_ip_address',
+				__( 'Do not capture abandoned carts for these IP Addresses:', 'woocommerce-abandoned-cart' ),
+				array( $this, 'wcap_restrict_ip_address_callback' ),
+				'woocommerce_ac_page',
+				'ac_lite_rules_settings',
+				array( __( '<br>The carts abandoned from these IP addresses will not be tracked by the plugin. Accepts wildcards, e.g 192.168.* will block all IP addresses which starts from &quot;192.168&quot;. Separate IP addresses with commas.', 'woocommerce-abandoned-cart' ) )
+			);
+
+			add_settings_field(
+				'wcap_restrict_email_address',
+				__( 'Do not capture abandoned carts for these email addresses:', 'woocommerce-abandoned-cart' ),
+				array( $this, 'wcap_restrict_email_address_callback' ),
+				'woocommerce_ac_page',
+				'ac_lite_rules_settings',
+				array( __( '<br>Carts that are abandoned using these email addresses will not be tracked by the plugin. *Separate email addresses with commas.', 'woocommerce-abandoned-cart' ) )
+			);
+
+			add_settings_field(
+				'wcap_restrict_domain_address',
+				__( 'Do not capture abandoned carts for email addresses from these domains:', 'woocommerce-abandoned-cart' ),
+				array( $this, 'wcap_restrict_domain_address_callback' ),
+				'woocommerce_ac_page',
+				'ac_lite_rules_settings',
+				array( __( '<br>The carts abandoned from email addresses with these domains will not be tracked by the plugin.', 'woocommerce-abandoned-cart' ) )
+			);
+
+			add_settings_field(
+				'restriced_countries',
+				__( 'Do not capture carts from countries:', 'woocommerce-abandoned-cart' ),
+				array( $this, 'restriced_countries_callback' ),
+				'woocommerce_ac_page',
+				'ac_lite_rules_settings',
+				array( __( '<br>The carts abandoned from these countries will not be tracked by the plugin.', 'woocommerce-abandoned-cart' ) )
+			);
+
 			/**
 			 * New section for the Adding the abandoned cart setting.
 			 *
@@ -1018,6 +1072,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			register_setting(
 				'woocommerce_ac_settings',
+				'wcap_email_admin_on_abandonment'
+			);
+
+			register_setting(
+				'woocommerce_ac_settings',
 				'ac_lite_track_guest_cart_from_cart_page'
 			);
 
@@ -1072,6 +1131,26 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			register_setting(
 				'woocommerce_ac_settings',
 				'wcal_delete_coupon_data'
+			);
+
+			register_setting(
+				'woocommerce_ac_settings',
+				'wcap_restrict_ip_address'
+			);
+
+			register_setting(
+				'woocommerce_ac_settings',
+				'wcap_restrict_email_address'
+			);
+
+			register_setting(
+				'woocommerce_ac_settings',
+				'wcap_restrict_domain_address'
+			);
+
+			register_setting(
+				'woocommerce_ac_settings',
+				'restriced_countries'
 			);
 
 			do_action( 'wcal_add_new_settings' );
@@ -1208,6 +1287,33 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
 			$html .= '<label for="ac_lite_email_admin_on_recovery"> ' . $args[0] . '</label>';
+			echo wp_kses_post( $html );
+		}
+
+		/**
+		 * Settings API callback for email admin on cart abaondonment.
+		 *
+		 * @param array $args Arguments.
+		 * @since 2.5
+		 */
+		public function wcap_email_admin_on_abandonment( $args ) {
+			// First, we read the option.
+			$wcap_email_admin_on_abandonment = get_option( 'wcap_email_admin_on_abandonment', '' );
+
+			// This condition added to avoid the notie displyed while Check box is unchecked.
+			if ( isset( $wcap_email_admin_on_abandonment ) && '' === $wcap_email_admin_on_abandonment ) {
+				$wcap_email_admin_on_abandonment = 'off';
+			}
+			// Next, we update the name attribute to access this element's ID in the context of the display options array.
+			// We also access the show_header element of the options collection in the call to the checked() helper function.
+			$html = '';
+			printf(
+				'<input type="checkbox" id="wcap_email_admin_on_abandonment" name="wcap_email_admin_on_abandonment" value="on"
+			' . checked( 'on', $wcap_email_admin_on_abandonment, false ) . ' />'
+			);
+
+			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
+			$html .= '<label for="wcap_email_admin_on_abandonment"> ' . $args[0] . '</label>';
 			echo wp_kses_post( $html );
 		}
 
@@ -1479,7 +1585,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				delete_transient( 'wcal_abandoned_id' );
 			}
 
-			global $wpdb,$woocommerce;
+			if ( isset( $_POST['country'] ) && '' !== $_POST['country'] ) { //phpcs:disable
+	                $wcap_is_country_restricted = wcal_common::wcal_is_country_restricted( $_POST['country'] );
+	                if ( $wcap_is_country_restricted ) {
+	                    return;
+	                }
+	            }
+
+			global $wpdb, $woocommerce;
 			$current_time                    = current_time( 'timestamp' ); // phpcs:ignore
 			$cut_off_time                    = get_option( 'ac_lite_cart_abandoned_time' );
 			$track_guest_cart_from_cart_page = get_option( 'ac_lite_track_guest_cart_from_cart_page' );
@@ -1511,6 +1624,24 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$wcal_user_restricted = apply_filters( 'wcal_restrict_user', $wcal_user_restricted, $user_id );
 
 				if ( $gdpr_consent && ! $wcal_user_restricted ) {
+
+					/* Rule for excluding the capturing cart abandonment. */
+
+					$user_email_biiling = get_user_meta( $user_id, 'billing_email', true );
+					$current_user_email = '';
+					if ( '' === $user_email_biiling && isset( $user_email_biiling )  ) {
+						$current_user_data  = get_userdata( $user_id );
+						$current_user_email = $current_user_data->user_email;
+					} else {
+						$current_user_email = $user_email_biiling;
+					}
+
+					$billing_country = get_user_meta( $user_id, 'billing_country', true );
+
+					$wcal_exclude_cart_abandonment = wcal_common::wcal_exclude_cart_abandonment( $current_user_email, $billing_country );
+					if ( $wcal_exclude_cart_abandonment ) {
+						return;
+					}
 
 					$results = $wpdb->get_results( // phpcs:ignore
 						$wpdb->prepare(
@@ -1620,6 +1751,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				}
 
 				if ( $gdpr_consent ) {
+
+					/* Rule for excluding the cart abandonment */
+					$wcal_exclude_cart_abandonment = wcal_common::wcal_exclude_cart_abandonment( '', '' );
+					if ( $wcal_exclude_cart_abandonment ) {
+						return;
+					}
+
 					$results = $wpdb->get_results( //phpcs:ignore
 						$wpdb->prepare(
 							'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d AND cart_ignored = %s AND recovered_cart = %s AND user_id != %s',
@@ -4635,6 +4773,75 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * Callback for Abandoned cart Coupon settings.
 		 */
 		public static function wcal_coupon_callback() {
+		}
+
+		/**
+		 * Callback for Coupon settings section.
+		 */
+		public static function ac_lite_rules_callback() {}
+
+		public static function wcap_restrict_ip_address_callback( $args ) {
+
+			$guest_msg = get_option( 'wcap_restrict_ip_address' );
+
+			printf(
+				"<textarea rows='4' cols='80' id='wcap_restrict_ip_address' name='wcap_restrict_ip_address'>" . htmlspecialchars( $guest_msg, ENT_QUOTES ) . '</textarea>' // phpcs:ignore
+			);
+
+			$html = '<label for="wcap_restrict_ip_address"> ' . $args[0] . '</label>';
+			echo wp_kses_post( $html );
+		}
+
+		public static function wcap_restrict_email_address_callback( $args ) {
+
+			$guest_msg = get_option( 'wcap_restrict_email_address' );
+
+			printf(
+				"<textarea rows='4' cols='80' id='wcap_restrict_email_address' name='wcap_restrict_email_address'>" . htmlspecialchars( $guest_msg, ENT_QUOTES ) . '</textarea>' // phpcs:ignore
+			);
+
+			$html = '<label for="wcap_restrict_email_address"> ' . $args[0] . '</label>';
+			echo wp_kses_post( $html );
+		}
+
+		public static function wcap_restrict_domain_address_callback( $args ) {
+
+			$guest_msg = get_option( 'wcap_restrict_domain_address' );
+
+			printf(
+				"<textarea rows='4' cols='80' id='wcap_restrict_domain_address' name='wcap_restrict_domain_address'>" . htmlspecialchars( $guest_msg, ENT_QUOTES ) . '</textarea>' // phpcs:ignore
+			);
+
+			$html = '<label for="wcap_restrict_domain_address"> ' . $args[0] . '</label>';
+			echo wp_kses_post( $html );
+		}
+
+		public static function restriced_countries_callback( $args ) {
+
+			$guest_msg = (array) get_option( 'restriced_countries', array() );
+
+			$wc_countries_object = new WC_Countries();
+			$all_countries_list  = $wc_countries_object->get_countries();
+			?>
+			
+			<select
+				class="select2 wcap_restrict_countries"
+				id="wcap_restrict_countries"
+				name="restriced_countries[]"
+				multiple="multiple"
+				data-placeholder="<?php esc_attr_e( 'Select countries', 'woocommerce-abandoned-cart' ); ?>"
+			>
+				<?php foreach ( $all_countries_list as $code => $name ) : ?>
+					<option
+						value="<?php echo esc_attr( $code ); ?>"
+						<?php selected( in_array( $code, $guest_msg, true ), true ); ?>
+					>
+						<?php echo esc_html( $name ); ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+			<label for="wcap_restrict_countries"><?php echo wp_kses_post( $args[0] ); ?></label>
+			<?php
 		}
 
 		/**

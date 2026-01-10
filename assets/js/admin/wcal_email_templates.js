@@ -5,6 +5,8 @@
  */
 jQuery(function( $ ) {
 
+	jQuery('#wcap_restrict_countries').selectWoo();
+
 	$('.wcal-switch.wcal-toggle-template-status').click(function(){
 
 		var $switch, state, new_state;

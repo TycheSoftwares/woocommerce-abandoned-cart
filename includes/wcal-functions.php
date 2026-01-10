@@ -80,6 +80,7 @@ function wcal_get_product_details( $cart_data ) {
 				'variation_id'  => $product_data->variation_id,
 				'product_name'  => get_the_title( $product_id ),
 				'line_subtotal' => $product_data->line_subtotal,
+				'quantity'      => $product_data->quantity,
 			);
 			array_push( $product_details, $details );
 		}
