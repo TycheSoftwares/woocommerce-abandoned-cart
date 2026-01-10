@@ -1932,6 +1932,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				'baiduspider',
 				'sogou',
 				'ia_archiver',
+				'crawler',
+				'spider',
+				'ahrefs',
+				'semrush',
+				'mj12bot',
+				'dotbot',
+				'bingpreview',
+				'facebookexternalhit',
 			);
 
 			foreach ( $bot_agents as $url ) {
