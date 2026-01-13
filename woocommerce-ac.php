@@ -981,7 +981,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			);
 
 			add_settings_field(
-				'restriced_countries',
+				'wcap_restrict_countries',
 				__( 'Do not capture carts from countries:', 'woocommerce-abandoned-cart' ),
 				array( $this, 'restriced_countries_callback' ),
 				'woocommerce_ac_page',
@@ -1150,11 +1150,32 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 			register_setting(
 				'woocommerce_ac_settings',
-				'restriced_countries'
+				'wcap_restrict_countries',
+				[
+					'sanitize_callback' => array( __CLASS__, 'sanitize_restrict_countries' ),
+				]
 			);
 
 			do_action( 'wcal_add_new_settings' );
 			//phpcs:enable
+		}
+
+		/**
+		 * Sanitizing the Countries data and also converting to string separated by comma.
+		 *
+		 * @param array $value Value of Countries.
+		 */
+		public static function sanitize_restrict_countries( $value ) {
+
+			if ( empty( $value ) || ! is_array( $value ) ) {
+				return '';
+			}
+
+			$value = array_map( 'sanitize_text_field', $value );
+
+			$value = array_filter( $value );
+
+			return implode( ',', $value );
 		}
 
 		/**
@@ -4826,7 +4847,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 
 		public static function restriced_countries_callback( $args ) {
 
-			$guest_msg = (array) get_option( 'restriced_countries', array() );
+			$stored_value = get_option( 'wcap_restrict_countries', '' );
+    		$guest_msg    = ! empty( $stored_value ) ? explode( ',', $stored_value ) : array();
 
 			$wc_countries_object = new WC_Countries();
 			$all_countries_list  = $wc_countries_object->get_countries();
@@ -4835,7 +4857,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			<select
 				class="select2 wcap_restrict_countries"
 				id="wcap_restrict_countries"
-				name="restriced_countries[]"
+				name="wcap_restrict_countries[]"
 				multiple="multiple"
 				data-placeholder="<?php esc_attr_e( 'Select countries', 'woocommerce-abandoned-cart' ); ?>"
 			>

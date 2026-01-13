@@ -1259,7 +1259,7 @@ class wcal_common { // phpcs:ignore
 	public static function wcal_is_country_restricted( $country ) {
 
 		$wcap_restricted_country_exists = false;
-		$wcap_restrict_countries        = get_option( 'wcap_restrict_countries' );
+		$wcap_restrict_countries        = get_option( 'wcap_restrict_countries', '' );
 		$wcap_restrict_countries        = explode( ',', $wcap_restrict_countries );
 		if ( ! empty( $wcap_restrict_countries ) && is_array( $wcap_restrict_countries ) ) {
 			if ( ! empty( $country ) && in_array( $country, $wcap_restrict_countries ) ) {
