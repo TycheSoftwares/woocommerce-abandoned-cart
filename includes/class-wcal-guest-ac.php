@@ -172,12 +172,6 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 			$billing_email = isset( $_POST['billing_email'] ) && '' !== $_POST['billing_email'] ? sanitize_text_field( wp_unslash( $_POST['billing_email'] ) ) : '';
 			$country       = isset( $_POST['billing_country'] ) && '' !== $_POST['billing_country'] ? sanitize_text_field( wp_unslash( $_POST['billing_country'] ) ) : '';
 
-			/* Check if the Rule to exlude the capturing the cart abandonment */
-			$wcal_exclude_cart_abandonment = wcal_common::wcal_exclude_cart_abandonment( $billing_email, $country );
-			if ( $wcal_exclude_cart_abandonment ) {
-				return;
-			}
-
 			if ( '' !== $billing_email ) {
 				wcal_common::wcal_set_cart_session( 'billing_email', $billing_email );
 			}
@@ -264,6 +258,14 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 					)
 				);
 				$guest_session_key = $results_guest->session_id ? $results_guest->session_id : '';
+			}
+
+			/* Check if the Rule to exlude the capturing the cart abandonment */
+			$wcal_exclude_cart_abandonment = wcal_common::wcal_exclude_cart_abandonment( $billing_email, $country );
+			if ( $wcal_exclude_cart_abandonment ) {
+				$wpdb->delete( $wpdb->prefix . 'ac_abandoned_cart_history_lite', array( 'session_id' => $guest_session_key ) );// phpcs:ignore
+				wcal_common::wcal_set_cart_session( 'wcal_cart_tracking_refused', 'yes' );
+				return;
 			}
 
 			$user_id           = 0;

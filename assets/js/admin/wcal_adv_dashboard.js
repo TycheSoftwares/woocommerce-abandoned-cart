@@ -70,7 +70,7 @@ var svg = d3.select(".chartgraph").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var data = wcal_graph_data.data;
-console.log( data );
+
 var dataset = [];
 
 var keyNames = ['abandoned_amount','recovered_amount'];
