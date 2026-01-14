@@ -1,9 +1,15 @@
 *** Abandoned Cart Lite for WooCommerce ***
+
+2026-01-14 - version 6.7.0
+* Enhancement - Added the “Email admin on cart abandonment” option to notify the store administrator when a cart is abandoned.
+* Enhancement - Added exclusion rules to prevent capturing abandoned carts based on IP address, email, domain, or country.
+
 2025-12-02 - version 6.6.0
 * Fix – Abandoned cart reminder emails, including test emails, were not being sent when the email subject contained the '!' character.
 * Fix – Corrected CRLF line endings in plugin files.
 * Fix – Reminder email subject was displaying "A&amp;A" instead of "A&A".
 * Fix – Updated FAQs in the "FAQ & Support" tab.
+
 2025-07-23 - version 6.5.0
 * Fix - Reminder emails not being sent with WooCommerce version 10.0 and above.
 * Fix - Visitor cart information not displaying on the Abandoned Orders tab with WooCommerce version 10.0 and above.
@@ -123,7 +129,3 @@
 * Tweak - Introduced new Pro version features & settings.
 * Fix - Fixed compatibility with WP Better Emails plugin.
 * Fix - Made the default email template responsive.
-
-
-
-
