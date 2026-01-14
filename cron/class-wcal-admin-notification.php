@@ -115,7 +115,7 @@ if ( ! class_exists( 'Wcal_Admin_Notification' ) ) {
 									$email_body_template_header = self::wcap_get_wc_header( $heading );
 									$email_body_template_footer = self::wcap_get_wc_footer( $blogname );
 
-									$cart_link = esc_url( admin_url() ) . '?page=woocommerce_ac_page&action=listcart';
+									$cart_link = esc_url( admin_url() ) . 'admin.php?page=woocommerce_ac_page&action=listcart';
 
 									ob_start();
 									wc_get_template(
