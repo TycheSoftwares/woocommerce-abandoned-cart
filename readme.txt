@@ -31,6 +31,8 @@ The FREE Abandoned Cart Lite for WooCommerce is bundled with all the essential f
 * Check if the cart is abandoned by the guest client or logged in user
 * Tracking percentage of recovery done
 * Send a reminder email within a few minutes after the cart gets abandoned
+* Send an email notification to the store admin when a cart is abandoned, so the admin is informed whenever cart abandonment happens
+* Exclude abandoned carts from being tracked based on IP address, email, domain, or country, allowing admins to control which carts are captured
 * Abandoned cart templates for quick setup
 * Copy HTML from anywhere & create templates using the powerful Rich Text Editor
 * A handy report showing the number of times a product was abandoned and recovered
