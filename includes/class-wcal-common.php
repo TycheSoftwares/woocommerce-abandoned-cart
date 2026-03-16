@@ -998,6 +998,8 @@ class wcal_common { // phpcs:ignore
 			$user_id   = isset( $cart_data[0]->user_id ) ? $cart_data[0]->user_id : 0;
 			$user_type = isset( $cart_data[0]->user_type ) ? $cart_data[0]->user_type : '';
 
+			// Allow modifying user_id and user_type via filter.
+			$user_id = apply_filters( 'ac_lite_abandoned_cart_user_id', $user_id );
 			if ( $user_id > 0 && '' != $user_type && '0' == $cart_data[0]->cart_ignored && $cart_data[0]->recovered_cart <= 0 ) { // phpcs:ignore
 				$cut_off = is_numeric( get_option( 'ac_lite_cart_abandoned_time', 10 ) ) ? get_option( 'ac_lite_cart_abandoned_time', 10 ) * 60 : 10 * 60;
 
