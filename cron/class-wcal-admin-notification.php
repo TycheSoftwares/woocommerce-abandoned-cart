@@ -24,16 +24,6 @@ if ( ! class_exists( 'Wcal_Admin_Notification' ) ) {
 		 */
 		public function __construct() {
 			add_action( 'wcap_send_admin_notification', array( &$this, 'wcap_send_admin_email' ), 10, 1 );
-			add_action( 'plugins_loaded', array( $this, 'wcap_load_email_file' ) );
-		}
-
-		/**
-		 * Load WC Email Class file
-		 *
-		 * @since 6.7.0
-		 */
-		public function wcap_load_email_file() {
-			require_once WP_PLUGIN_DIR . '/woocommerce/includes/emails/class-wc-email.php';
 		}
 
 		/**
@@ -383,6 +373,26 @@ if ( ! class_exists( 'Wcal_Admin_Notification' ) ) {
 		 * @since 9.3.0
 		 */
 		public static function wcap_apply_wc_email_style( $message ) {
+			if ( ! class_exists( 'WC_Email' ) ) {
+				$wc_email_path = '';
+
+				if ( function_exists( 'WC' ) && is_object( WC() ) ) {
+					$wc_email_path = trailingslashit( WC()->plugin_path() ) . 'includes/emails/class-wc-email.php';
+				} elseif ( defined( 'WC_ABSPATH' ) ) {
+					$wc_email_path = trailingslashit( WC_ABSPATH ) . 'includes/emails/class-wc-email.php';
+				}
+
+				if ( $wc_email_path && file_exists( $wc_email_path ) ) {
+					require_once $wc_email_path; // phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
+				} else {
+					return $message;
+				}
+			}
+
+			if ( ! class_exists( 'WC_Email' ) ) {
+				return $message;
+			}
+
 			$email   = new WC_Email();
 			$message = apply_filters( 'woocommerce_mail_content', $email->style_inline( $message ) );
 
