@@ -3,8 +3,8 @@ Contributors: ashokrane, pinal.shah, chetnapatel, tychesoftwares
 Tags: woocommerce cart abandonment, woocommerce cart abandonment recovery, Cart abandonment recovery, Cart abandonment rate, Cart abandonment solutions
 Author URI: https://www.tychesoftwares.com/
 Requires at least: 6.3 or higher
-Tested up to: 6.9
-Stable tag: 6.7.0
+Tested up to: 7.0
+Stable tag: 6.8.0
 Requires PHP: 7.3
 License: GPLv2 or late
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -167,6 +167,13 @@ The admin can use the merge code `{{cart.unsubscribe}}' in the email templates. 
 This plugin communicates with our tracking server to send usage data **only** if the user has explicitly opted in to usage tracking. For detailed information about what is tracked, please refer to our [usage tracking documentation](https://www.tychesoftwares.com/docs/woocommerce-abandoned-cart-lite/default-settings/#f-reset-usage-tracking).
 
 == Changelog ==
+
+= 6.8.0 (15.05.2026) =
+* Tweak - Added ac_lite_abandoned_cart_user_id filter to enable webhook for guest carts without user ID.
+* Fix - Addressed deprecated notice by replacing wc_enqueue_js with wp_add_inline_script, ensuring compatibility with newer WooCommerce versions.
+* Fix - Prevented fatal error on WooCommerce settings pages by ensuring WC_Settings_API is loaded before including email classes.
+* Fix - Corrected email template layout issue that caused the cart total to render outside the cart details structure, particularly when switching between Pro and Lite versions.
+* Fix - Fixed issue where abandoned cart emails showed raw merge tags instead of actual cart data due to template mismatch between Pro and Lite versions.
 
 = 6.7.0 (14.01.2026) =
 * Enhancement - Added the “Email admin on cart abandonment” option to notify the store administrator when a cart is abandoned.
