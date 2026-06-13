@@ -2907,6 +2907,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				'bulk-abandoned_order_ids',  // Bulk dropdown on abandoned orders list (auto by WP_List_Table).
 				'bulk-template_ids',         // Bulk dropdown on email templates list (auto by WP_List_Table).
 				'wcal_email_template_form',  // Create / update email template form.
+				'wcal_update_email_templates',
 			);
 
 			if ( '' !== $nonce ) {

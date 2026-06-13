@@ -61,6 +61,11 @@ class Wcal_Admin_Notice {
 			'SHOW FULL COLUMNS FROM `' . $wpdb->prefix . 'ac_email_templates_lite` WHERE Field = "subject" OR Field = "body"'
 		);
 
+		$update_url = wp_nonce_url(
+			admin_url( 'admin.php?page=woocommerce_ac_page&action=listcart&ac_update=email_templates' ),
+			'wcal_update_email_templates'
+		);
+
 		foreach ( $results as $key => $value ) {
 			if ( 'utf8mb4_unicode_ci' !== $value->Collation ) { // phpcs:ignore
 				?>
@@ -69,7 +74,7 @@ class Wcal_Admin_Notice {
 						<?php echo esc_html__( 'We need to update your email template database for some improvements. Please take a backup of your databases for your piece of mind.', 'woocommerce-abandoned-cart' ); ?>
 					</span>
 					<span class="submit">
-						<a href="<?php echo esc_url( 'admin.php?page=woocommerce_ac_page&action=listcart&ac_update=email_templates' ); ?>" class="button-primary" style="float:right;"><?php echo esc_html__( 'Update', 'woocommerce-abandoned-cart' ); ?></a>
+						<a href="<?php echo esc_url( $update_url ); ?>" class="button-primary" style="float:right;"><?php echo esc_html__( 'Update', 'woocommerce-abandoned-cart' ); ?></a>
 					</span>
 				</div>
 				<?php
