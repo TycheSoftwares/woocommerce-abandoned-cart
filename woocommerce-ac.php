@@ -511,7 +511,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					}
 					$message = $email_body_template_header . $message . $email_body_template_footer;
 				}
-				echo $message; // phpcs:ignore
+				header( 'Content-Security-Policy: sandbox' );
+				echo wp_unslash( $message ); // phpcs:ignore
 				exit;
 			}
 
@@ -539,7 +540,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$message = ob_get_clean();
 				}
 				// print the preview email.
-				echo $message; // phpcs:ignore
+				header( 'Content-Security-Policy: sandbox' );
+				echo wp_unslash( $message ); // phpcs:ignore
 				exit;
 			}
 		}
