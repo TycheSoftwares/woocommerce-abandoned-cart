@@ -1,5 +1,9 @@
 *** Abandoned Cart Lite for WooCommerce ***
 
+2026-06-13 - version 6.8.1 
+* Fix - Resolved a stored XSS vulnerability in the email template preview by sanitizing the template body on save and escaping its output during preview rendering.
+* Fix - Resolved a CSRF vulnerability in the Abandoned Cart admin handler by enforcing nonce verification in `wcal_menu_page()` across abandoned cart deletion actions and email template create, update, activate, deactivate, and delete actions.
+
 2026-05-15 - version 6.8.0
 * Tweak - Added ac_lite_abandoned_cart_user_id filter to enable webhook for guest carts without user ID.
 * Fix - Addressed deprecated notice by replacing wc_enqueue_js with wp_add_inline_script, ensuring compatibility with newer WooCommerce versions.
