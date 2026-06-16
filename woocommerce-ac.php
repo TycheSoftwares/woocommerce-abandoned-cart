@@ -692,7 +692,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				`session_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				`email_reminder_status` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				`checkout_link` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
-				PRIMARY KEY (`id`)
+				PRIMARY KEY (`id`),
+				KEY `session_id` (`session_id`)
 				) $wcap_collate" // phpcs:ignore
 			);
 
@@ -1851,7 +1852,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						if ( 'on' === $track_guest_user_cart_from_cart && isset( $get_cookie ) && '' !== $get_cookie ) {
 							$results = $wpdb->get_results( //phpcs:ignore
 								$wpdb->prepare(
-									'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE session_id LIKE %s AND cart_ignored = %s AND recovered_cart = %s',
+									'SELECT * FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE session_id = %s AND cart_ignored = %s AND recovered_cart = %s',
 									$get_cookie,
 									0,
 									0
