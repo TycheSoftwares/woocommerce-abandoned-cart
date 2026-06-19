@@ -267,7 +267,7 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 													}
 													$cart_page_link  = apply_filters( 'wcal_cart_link_email_before_encoding', $cart_page_link, $value->id );
 													$encoding_cart   = $email_sent_id . '&url=' . $cart_page_link . $utm;
-													$validate_cart   = wcal_common::wcal_encrypt_validate( $encoding_cart, $crypt_key );
+													$validate_cart   = wcal_common::wcal_encrypt_validate_hmac( $encoding_cart, $crypt_key ); // v6.8.2: HMAC-tagged token for recovery link
 													$cart_link_track = get_option( 'siteurl' ) . '/?wcal_action=track_links&user_email=' . $value->user_email . '&validate=' . $validate_cart;
 
 													list( $email_body , $coupon_code_to_apply ) = wcal_common::wcal_check_and_replace_email_tag( $email_body, $wc_email_template );

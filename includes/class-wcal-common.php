@@ -1042,7 +1042,7 @@ class wcal_common { // phpcs:ignore
 		if ( '' !== $user_email ) {
 			$crypt_key         = wcal_get_crypt_key( $user_email, true, $cart_id );
 			$encoding_checkout = $cart_id . '&url=' . $checkout_page_link;
-			$validate_checkout = wcal_common::wcal_encrypt_validate( $encoding_checkout, $crypt_key );
+			$validate_checkout = wcal_common::wcal_encrypt_validate_hmac( $encoding_checkout, $crypt_key ); // v6.8.2: HMAC-tagged token for checkout link
 
 			$checkout_link = get_option( 'siteurl' ) . '/?wcal_action=checkout_link&user_email=' . $user_email . '&validate=' . $validate_checkout;
 			$wpdb->update( // phpcs:ignore
@@ -1071,6 +1071,32 @@ class wcal_common { // phpcs:ignore
 		if ( '' !== $crypt_key ) {
 			$validate_encoded = Wcal_Aes_Ctr::encrypt( $validate, $crypt_key, 256 );
 			return( $validate_encoded );
+		}
+		return false;
+	}
+
+	/**
+	 * Encrypt a value and append an HMAC-SHA256 integrity tag.
+	 *
+	 * Use this instead of wcal_encrypt_validate() only for tokens verified by
+	 * wcal_verify_and_strip_hmac() on receipt (recovery & checkout cart links).
+	 * Do NOT use for coupon or unsubscribe tokens — those handlers call
+	 * Wcal_Aes_Ctr::decrypt() directly and would receive corrupt plaintext.
+	 *
+	 * Output format: <base64-ciphertext>.<hex-hmac>
+	 *
+	 * Security fix for unauthenticated account takeover (Shivamani Vastrala / v6.8.2).
+	 *
+	 * @param string $validate  Plaintext to encrypt.
+	 * @param string $crypt_key Per-email encryption key.
+	 * @return string|false     HMAC-tagged token, or false if key is empty.
+	 * @since 6.8.2
+	 */
+	public static function wcal_encrypt_validate_hmac( $validate, $crypt_key ) {
+		if ( '' !== $crypt_key ) {
+			$ciphertext = Wcal_Aes_Ctr::encrypt( $validate, $crypt_key, 256 );
+			$hmac       = hash_hmac( 'sha256', $ciphertext, $crypt_key );
+			return $ciphertext . '.' . $hmac;
 		}
 		return false;
 	}
