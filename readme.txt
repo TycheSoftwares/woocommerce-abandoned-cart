@@ -169,8 +169,8 @@ This plugin communicates with our tracking server to send usage data **only** if
 == Changelog ==
 
 = 6.8.1 (13.06.2026) =
-* Fix - Resolved a stored XSS vulnerability in the email template preview by sanitizing the template body on save and escaping its output during preview rendering.
-* Fix - Resolved a CSRF vulnerability in the Abandoned Cart admin handler by enforcing nonce verification in `wcal_menu_page()` across abandoned cart deletion actions and email template create, update, activate, deactivate, and delete actions.
+* Fix - Resolved a stored Cross-Site Scripting vulnerability in the email template preview by sanitizing the template body on save and escaping its output during preview rendering.
+* Fix - Resolved a Cross-Site Request Forgery vulnerability in the Abandoned Cart admin handler by enforcing nonce verification in `wcal_menu_page()` across abandoned cart deletion actions and email template create, update, activate, deactivate, and delete all actions.
 
 = 6.8.0 (15.05.2026) =
 * Tweak - Added ac_lite_abandoned_cart_user_id filter to enable webhook for guest carts without user ID.

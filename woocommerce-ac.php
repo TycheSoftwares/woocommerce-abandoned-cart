@@ -2105,7 +2105,24 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					}
 				}
 				if ( ! empty( $crypt_key ) && null !== $crypt_key && '' !== $crypt_key ) {
-					$link_decode       = Wcal_Aes_Ctr::decrypt( $validate_encoded_string, $crypt_key, 256 );
+
+					// ── SECURITY FIX #1081.1 (Shivamani Vastrala / v6.8.2) ───
+					$hmac_result = self::wcal_verify_and_strip_hmac( $validate_encoded_string, $crypt_key );
+					if ( 'tampered' === $hmac_result['status'] ) {
+						// Tag present but invalid — hard reject, do not decrypt.
+						if ( version_compare( $woocommerce->version, '3.0.0', '>=' ) ) {
+							wp_safe_redirect( get_permalink( wc_get_page_id( 'shop' ) ) );
+						} else {
+							wp_safe_redirect( get_permalink( woocommerce_get_page_id( 'shop' ) ) );
+						}
+						exit;
+					}
+					// 'valid'  → HMAC verified, use stripped ciphertext.
+					// 'legacy' → no tag (pre-6.8.2 email), token used as-is.
+					$verified_ciphertext = $hmac_result['ciphertext'];
+					// ── END FIX #1081.1 ──
+
+					$link_decode       = Wcal_Aes_Ctr::decrypt( $verified_ciphertext, $crypt_key, 256 );
 					$sent_email_id_pos = strpos( $link_decode, '&' );
 					$email_sent_id     = substr( $link_decode, 0, $sent_email_id_pos );
 
@@ -2138,9 +2155,32 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					} elseif ( 'checkout_link' === $track_link ) {
 						$abandoned_id     = 0;
 						$abandoned_id_pos = strpos( $link_decode, '&' );
-						$abandoned_id     = substr( $link_decode, 0, $abandoned_id_pos );
+						$abandoned_id     = (int) substr( $link_decode, 0, $abandoned_id_pos );
 						wcal_common::wcal_set_cart_session( 'wcal_recovered_cart', true );
 					}
+
+					// ── SECURITY FIX #1081.2 (Shivamani Vastrala / v6.8.2).
+					// Verify the decrypted abandoned_id belongs to the supplied user_email before proceeding. This prevents malicious users from manipulating the URL to access other users' carts.
+					if ( $abandoned_id > 0 ) {
+						$binding_check = $wpdb->get_var( // phpcs:ignore
+							$wpdb->prepare(
+								'SELECT COUNT(*) FROM `' . $wpdb->prefix . 'ac_sent_history_lite`
+								 WHERE abandoned_order_id = %d
+								   AND sent_email_id      = %s',
+								$abandoned_id,
+								$sent_email
+							)
+						);
+						if ( ! $binding_check || intval( $binding_check ) < 1 ) {
+							if ( version_compare( $woocommerce->version, '3.0.0', '>=' ) ) {
+								wp_safe_redirect( get_permalink( wc_get_page_id( 'shop' ) ) );
+							} else {
+								wp_safe_redirect( get_permalink( woocommerce_get_page_id( 'shop' ) ) );
+							}
+							exit;
+						}
+					}
+					// ── END FIX #1081.2 ──
 
 					$url_pos = strpos( $link_decode, '=' );
 					++$url_pos;
@@ -2231,6 +2271,58 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				return $template;
 			}
 		}
+		/**
+		 * Append an HMAC-SHA256 tag to an AES-CTR ciphertext token.
+		 *
+		 * The HMAC key is derived from the per-email encrypt_key already stored in
+		 * ac_sent_history_lite, so no new secret needs to be introduced.
+		 * Output format: <base64-ciphertext>.<hex-hmac>
+		 *
+		 * Security fix for CVE / coordinated disclosure by Shivamani Vastrala.
+		 *
+		 * @param string $ciphertext  Base64-encoded AES-CTR output.
+		 * @param string $crypt_key   Per-email encryption key.
+		 * @return string             Integrity-protected token.
+		 * @since 6.8.2
+		 */
+		private static function wcal_append_hmac( $ciphertext, $crypt_key ) {
+			$hmac = hash_hmac( 'sha256', $ciphertext, $crypt_key );
+			return $ciphertext . '.' . $hmac;
+		}
+
+		/**
+		 * Verify the HMAC tag on a recovery token and return the bare ciphertext.
+		 *
+		 * Uses hash_equals() for constant-time comparison to prevent timing oracles.
+		 * Returns false for tokens with no tag (legacy tokens are rejected to avoid
+		 * downgrade attacks) and for tokens whose tag does not match.
+		 *
+		 * Security fix for CVE / coordinated disclosure by Shivamani Vastrala.
+		 *
+		 * @param string $token      Full token (<ciphertext>.<hmac>).
+		 * @param string $crypt_key  Per-email encryption key.
+		 * @return string|false      Bare ciphertext on success; false on failure.
+		 * @since 6.8.2
+		 */
+		private static function wcal_verify_and_strip_hmac( $token, $crypt_key ) {
+			$dot = strrpos( $token, '.' );
+			if ( false === $dot ) {
+				// No dot separator — pre-6.8.2 legacy token with no HMAC tag.
+				// Return the token as-is so the caller can decrypt it via the
+				// legacy path and keep old recovery emails working.
+				return array( 'status' => 'legacy', 'ciphertext' => $token );
+			}
+			$ciphertext    = substr( $token, 0, $dot );
+			$provided_hmac = substr( $token, $dot + 1 );
+			$expected_hmac = hash_hmac( 'sha256', $ciphertext, $crypt_key );
+			// Constant-time comparison prevents timing-based HMAC oracle attacks.
+			if ( ! hash_equals( $expected_hmac, $provided_hmac ) ) {
+				// Tag present but wrong — genuine tampering attempt; reject hard.
+				return array( 'status' => 'tampered', 'ciphertext' => false );
+			}
+			return array( 'status' => 'valid', 'ciphertext' => $ciphertext );
+		}
+
 		/**
 		 * Populate WC Session with values on user login.
 		 *
