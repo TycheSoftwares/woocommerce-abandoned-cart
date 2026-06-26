@@ -124,6 +124,23 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				define( 'WCAL_PLUGIN_VERSION', '6.8.2' );
 			}
 
+			/**
+			 * Defense-in-depth (Issue #1084): date after which untagged (pre-6.8.2)
+			 * recovery tokens are hard-rejected to prevent HMAC-tag-stripping downgrade
+			 * attacks. Any store that upgraded before this date will have no valid
+			 * legacy tokens still in circulation (typical recovery-email TTL <= 30 days).
+			 *
+			 * Override in wp-config.php before the plugin loads if you upgraded later:
+			 *   define( 'WCAL_REJECT_LEGACY_TOKENS_AFTER', '2025-09-01' );
+			 *
+			 * Set to '2099-01-01' to keep the legacy path open indefinitely (not recommended).
+			 *
+			 * @since 6.8.3
+			 */
+			if ( ! defined( 'WCAL_REJECT_LEGACY_TOKENS_AFTER' ) ) {
+				define( 'WCAL_REJECT_LEGACY_TOKENS_AFTER', '2025-07-01' );
+			}
+
 			if ( ! defined( 'WCAL_PLUGIN_PATH' ) ) {
 				define( 'WCAL_PLUGIN_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 			}
@@ -2308,8 +2325,19 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			$dot = strrpos( $token, '.' );
 			if ( false === $dot ) {
 				// No dot separator — pre-6.8.2 legacy token with no HMAC tag.
-				// Return the token as-is so the caller can decrypt it via the
-				// legacy path and keep old recovery emails working.
+				// Defense-in-depth (Issue #1084): after the configured grace-period
+				// date, reject untagged tokens outright so that stripping the HMAC
+				// suffix from a v6.8.2 token cannot be used as a downgrade attack.
+				// Before that date, allow the legacy path so that recovery emails
+				// sent before the 6.8.2 upgrade continue to work for customers.
+				if ( defined( 'WCAL_REJECT_LEGACY_TOKENS_AFTER' ) &&
+					strtotime( WCAL_REJECT_LEGACY_TOKENS_AFTER ) !== false &&
+					time() >= strtotime( WCAL_REJECT_LEGACY_TOKENS_AFTER )
+				) {
+					// Grace period over — hard-reject untagged tokens.
+					return array( 'status' => 'tampered', 'ciphertext' => false );
+				}
+				// Still within grace period — allow legacy path.
 				return array( 'status' => 'legacy', 'ciphertext' => $token );
 			}
 			$ciphertext    = substr( $token, 0, $dot );
