@@ -14,79 +14,143 @@ Track abandoned carts and send automated, customizable abandoned cart recovery e
 
 == Description ==
 
-> ###🚀&nbsp;&nbsp;New Launch: Flexi BOGO for WooCommerce
->
-> The only BOGO plugin with a revenue tracking feature. **Now, at an attractive introductory price**. [Check out our new plugin here](https://www.tychesoftwares.com/products/woocommerce-flexi-bogo-plugin/?utm_source=wprepo&utm_medium=pluginpagetop&utm_campaign=AbandonedCartLite).
+Cart abandonment is one of the biggest challenges for any WooCommerce store. While customers leave their carts for different reasons, a well-timed reminder can often bring them back to complete their purchase.
 
-###  Best FREE abandoned cart WooCommerce plugin
+**Abandoned Cart Lite for WooCommerce** helps you recover lost sales by automatically tracking abandoned carts and sending reminder emails to customers who leave without checking out. It includes everything you need to start recovering abandoned carts, including customizable email templates, recovery reports, and support for both guest and logged-in shoppers.
 
-According to experts, the average cart abandonment rate is around 70% to 75%. The reason for cart abandonment is different for each industry. If you want a rock-solid WooCommerce cart abandonment plugin that ticks all boxes in your [cart abandonment strategy](https://www.tychesoftwares.com/abandoned-cart-strategy/), the Abandoned Cart Lite for WooCommerce is the one for you. 
+**[What if you can get better features for less money? - Try Abandoned Cart Pro for just $1](https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite)**
 
-The FREE Abandoned Cart Lite for WooCommerce is bundled with all the essential features you need for abandoned cart recovery. 
+= Key Features =
 
-**What if you can get better features for less money? -[Try Abandoned Cart Pro for just $1](https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite)**
+### Automatically Capture Abandoned Carts
+The plugin automatically detects when customers leave products in their cart without completing checkout.
+* Track abandoned carts for both guest shoppers and logged-in users.
+* Set the timing that decides when a cart should be considered abandoned.
+* View all abandoned carts from a centralized dashboard.
 
-### Abandoned Cart Lite for WooCommerce Features 
+### Recover Lost Sales with Automated Reminder Emails
+Bring customers back by sending personalized reminder emails after they abandon their cart.
+* Schedule reminder emails after a cart is abandoned.
+* Choose from ready-to-use email templates for faster setup.
+* Customize email content using the built-in rich text editor.
+* Personalize emails with merge tags such as customer information and cart details.
+* Notify store administrators whenever a cart is abandoned.
 
-* Check if the cart is abandoned by the guest client or logged in user
-* Tracking percentage of recovery done
-* Send a reminder email within a few minutes after the cart gets abandoned
-* Send an email notification to the store admin when a cart is abandoned, so the admin is informed whenever cart abandonment happens
-* Exclude abandoned carts from being tracked based on IP address, email, domain, or country, allowing admins to control which carts are captured
-* Abandoned cart templates for quick setup
-* Copy HTML from anywhere & create templates using the powerful Rich Text Editor
-* A handy report showing the number of times a product was abandoned and recovered
-* Seven merge codes are available to help you send PERSONALIZED reminder emails
+### Measure Your Recovery Performance
+Understand how well your recovery campaigns are performing with built-in reporting.
+* Track recovered orders and recovery percentage.
+* View reports showing which products are abandoned most often.
+* See which abandoned carts have been successfully recovered.
 
-> **This plugin works as described: the lite version doesn’t cut down in functionality. You can have your orders recovered and save on sales. Depending on what you are selling, this can be a few orders to justify ordering the full package – I’m only a few away!**
+### Control Which Carts Are Tracked
+Avoid collecting unnecessary or unwanted abandoned carts by defining exclusion rules.
+* Exclude carts based on IP address.
+* Exclude specific email addresses or email domains.
+* Exclude carts from selected countries.
+* Maintain cleaner reports by preventing unwanted cart tracking.
 
-> **Very recommended!**
-> **- [jaysnl](https://wordpress.org/support/topic/great-support-and-value-buy-it/)**
+### Quick Setup with WooCommerce
+Get started quickly without a complicated configuration process.
+* Ready-made email templates.
+* Simple settings for cart recovery timing.
+* Works seamlessly with WooCommerce.
+* Easy-to-use WordPress admin interface.
 
-The FREE WooCommerce abandoned cart plugin gives you the essential options to recover the customers. But if you want more powerful Abandoned cart plugin options for **WooCommerce cart abandonment recovery**, the Abandoned Cart Pro for WooCommerce will be the best option for you.
+= Common Use Cases =
 
-### Abandoned Cart Pro for WooCommerce Features
+Abandoned Cart Lite for WooCommerce is ideal for:
+* WooCommerce stores looking to recover lost sales with automated reminder emails.
+* Stores that want to track abandoned carts from both guest and logged-in customers.
+* Businesses that want to identify products with high cart abandonment rates.
+* Merchants looking for a simple abandoned cart recovery solution without relying on external marketing platforms.
+* Store owners who want better visibility into abandoned and recovered carts through built-in reports.
 
-The [Abandoned Cart Pro for WooCommerce](http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite) gives 25+ features to have a better insight on cart abandonment and options to bring in the customers. 
+= Documentation & Support =
 
-Experience how the Abandoned Cart WooCommerce recovery plugin works - [Live Demo](https://demo.tychesoftwares.com/woo_ac_demo/?post_type=product)
-Experience the user-friendly WordPress admin dashboard feature of the plugin - [Admin Demo](https://demo.tychesoftwares.com/woo_ac_demo/wp-admin/)
+Need help getting started?
+* Visit the [WordPress support forums](https://wordpress.org/support/plugin/woocommerce-abandoned-cart/)
+* Check the [documentation](https://www.tychesoftwares.com/docs/woocommerce-abandoned-cart-pro-new/) for common answers
+* Try the [live demo](https://app.instawp.io/launch?d=v2&t=abandoned-cart-pro-for-woocommerce-demo) to see how the plugin works on the storefront.
+* [Developer Documentation](https://www.tychesoftwares.com/docs/acl-apidocs/index.html "Developer Documentation")
+* [Github Repository](https://github.com/TycheSoftwares/Woocommerce-abandon-cart-lite "Github Repository")
 
-* Capture emails when Add to Cart is clicked
-* Neat Dashboard to have a quick overview of the number of abandoned and recovered orders
-* Automatically delete abandoned orders after a particular number of days	
-* Generating and assigning coupon codes to abandoned cart reminder emails
-* Tracking Coupon Code Used & Coupon Status
-* Exit-Intent popup to prevent customers from abandoning the cart before they leave the site
+If the plugin helps your business, consider leaving a ⭐⭐⭐⭐⭐ review. Your feedback helps other WooCommerce merchants discover the plugin.
+
+= Looking for More Advanced Features? =
+
+Abandoned Cart Lite includes everything you need to start recovering abandoned WooCommerce carts with automated reminder emails, recovery tracking, reporting, and customizable email templates.
+
+If you're looking for additional recovery tools, [Abandoned Cart Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin/) adds advanced features such as:
+* Email capture when Add to Cart is clicked
+* Exit-intent and Add to Cart popups
 * Send automated abandoned cart notifications via Messenger, SMS, and Email in a set time interval for better results.
+* Send WhatsApp, SMS, and Facebook Messenger reminders
+* Advanced recovery workflows and rules
+* CRM and email marketing integrations
+* Google Sheets integration
+* Detailed recovery analytics and email performance reports
 
-[youtube https://youtu.be/BemNllbQW1c]
+See the complete Lite vs Pro comparison: [https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/](https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/)
 
-Take a look at our complete [Abandoned cart Lite Vs Abandoned Cart Pro comparison](https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/?utm_source=wprepo&utm_medium=prolink&utm_campaign=AbandonedCartLite) to get a clear idea of which version best suits your needs. The pro version of the **Abandoned cart WooCommerce plugin** is equipped with all **cart abandonment solutions** to make it a perfect plugin that you all need
+= About Tyche Softwares =
 
-> **I’m using the plugin on my shop. Installation is very easy and it works great. I’ve already recovered some orders, it doesn’t cost any effort.**
+At Tyche Softwares, we build WooCommerce plugins that help store owners simplify store management and increase sales. Our plugins are trusted by thousands of WooCommerce businesses worldwide and are designed to solve real eCommerce challenges while remaining easy to use and reliable.
 
-> **Support is fast and extensive**.
+From order management and pricing to delivery scheduling and abandoned cart recovery, our solutions help merchants create a better shopping experience and grow their business.
 
-> -[bertkat](https://wordpress.org/support/topic/easy-money/)
-
-
-### Abandoned Cart for WooCommerce Team Promise. 
-
-Whether you are an Abandoned Cart free version user or a pro user, our support team is always there to help you. Feel free to contact us, and also, please share your review & rate us a **FIVE STAR rating** to help fellow WordPress users try our plugins. 
-
-### About Us
-
-We build WordPress plugins for WooCommerce that help store owners increase their sales. We have a portfolio of **12+ Premium WooCommerce plugins with a highly focused niche**. We are committed to providing top-notch services to our customers through our products & team.
+We continuously improve our plugins based on customer feedback and WooCommerce best practices, while providing comprehensive documentation and responsive support.
 
 [Get Access To All Our Plugins](https://www.tychesoftwares.com/store/premium-plugins/all-pass-access/)
 
+= Explore More WooCommerce Plugins =
 
-**[Documentation](https://www.tychesoftwares.com/docs/docs/abandoned-cart-for-woocommerce-lite/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite "Documentation")**
+Tyche Softwares also develops plugins for abandoned cart recovery, order delivery scheduling, bookings, invoices and packing slips, custom order numbers, product input fields, BOGO offers, payment gateway fees, call for price, role-based pricing, currency management, and other WooCommerce enhancements.
 
-**[Developer Documentation](https://www.tychesoftwares.com/docs/acl-apidocs/index.html "Developer Documentation")**
+**Some of our Pro plugins:**
 
-**[Github Repository](https://github.com/TycheSoftwares/Woocommerce-abandon-cart-lite "Github Repository")**
+1. **[Flexi BOGO for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-flexi-bogo-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Flexi BOGO for WooCommerce")**
+
+2. **[Abandoned Cart Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Abandoned Cart Pro for WooCommerce")**
+
+3. **[Booking & Appointment Plugin for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-booking-and-appointment-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Booking & Appointment Plugin for WooCommerce")**
+
+4. **[Order Delivery Date Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-order-delivery-date-pro-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Order Delivery Date Pro for WooCommerce")**
+
+5. **[Product Delivery Date Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-product-delivery-date-pro-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Product Delivery Date Pro for WooCommerce")**
+
+6. **[Deposits For WooCommerce](https://www.tychesoftwares.com/products/woocommerce-deposit-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Deposits For WooCommerce")**
+
+7. **[Payment Gateway Based Fees and Discounts for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-payment-gateway-based-fees-and-discounts-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Payment Gateway Based Fees and Discounts for WooCommerce - Pro")**
+
+8. **[Custom Order Numbers for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-custom-order-numbers-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Custom Order Numbers for WooCommerce - Pro")**
+
+9. **[Product Input Fields for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-product-input-fields-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Product Input Fields for WooCommerce - Pro")**
+
+10. **[Call for Price for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-call-for-price-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Call for Price for WooCommerce - Pro")**
+
+11. **[Price based on User Role for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-price-user-role-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Price based on User Role for WooCommerce - Pro")**
+
+12. **[Currency per Product for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-currency-per-product-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Currency per Product for WooCommerce - Pro")**
+
+**Some of our other free plugins:**
+
+1. **[Order Delivery Date for WooCommerce - Lite](https://wordpress.org/plugins/order-delivery-date-for-woocommerce/ "Order Delivery Date for WooCommerce - Lite")**
+
+2. **[Product Delivery Date for WooCommerce - Lite](https://wordpress.org/plugins/product-delivery-date-for-woocommerce-lite/ "Product Delivery Date for WooCommerce")**
+
+3. **[Payment Gateway Based Fees and Discounts for WooCommerce](https://wordpress.org/plugins/checkout-fees-for-woocommerce/ "Payment Gateway Based Fees and Discounts for WooCommerce")**
+
+4. **[Custom Order Status for WooCommerce](https://wordpress.org/plugins/custom-order-statuses-woocommerce/ "Custom Order Status for WooCommerce")**
+
+5. **[Custom Order Numbers for WooCommerce](https://wordpress.org/plugins/custom-order-numbers-for-woocommerce/ "Custom Order Numbers for WooCommerce")**
+
+6. **[Product Input Fields for WooCommerce](https://wordpress.org/plugins/product-input-fields-for-woocommerce/ "Product Input Fields for WooCommerce")**
+
+7. **[Call for Price for WooCommerce](https://wordpress.org/plugins/woocommerce-call-for-price/ "Call for Price for WooCommerce")**
+
+8. **[Price based on User Role for WooCommerce](https://wordpress.org/plugins/price-by-user-role-for-woocommerce/ "Price based on User Role for WooCommerce")**
+
+9. **[Currency per Product for WooCommerce](https://wordpress.org/plugins/currency-per-product-for-woocommerce/ "Currency per Product for WooCommerce")**
 
 == Installation ==
 
@@ -118,6 +182,42 @@ Method 3:
 
 == Frequently Asked Questions ==
 
+= How does Abandoned Cart Lite for WooCommerce work? =
+
+The plugin monitors WooCommerce shopping carts and identifies when a customer leaves your store without completing checkout. Once a cart meets the configured abandonment criteria, the plugin automatically sends reminder emails to encourage the customer to return and complete their purchase.
+
+= Does the plugin work for guest users? =
+
+Yes. Abandoned Cart Lite tracks abandoned carts for both guest shoppers and logged-in customers, helping you recover more lost sales regardless of how customers shop on your store.
+
+= Can I customize the reminder emails? =
+
+Yes. The plugin includes ready-to-use email templates that you can edit using the built-in rich text editor. You can also personalize your emails using merge tags to include customer and cart information.
+
+= When is a cart considered abandoned? =
+
+You can configure the cart abandonment cut-off time from the plugin settings. Once a customer leaves your store without completing checkout for the specified period, the cart is marked as abandoned and becomes eligible for reminder emails.
+
+= Can I exclude certain carts from being tracked? =
+
+Yes. You can exclude abandoned carts based on IP address, email address, email domain, or country. This helps prevent unwanted or irrelevant carts from appearing in your reports and recovery campaigns.
+
+= Can I see which abandoned carts were recovered? =
+
+Yes. The plugin tracks recovered orders and provides reports that show your recovery rate, recovered carts, and products that were successfully recovered through reminder emails.
+
+= Why do I see abandoned carts from unknown visitors or bots? =
+
+Some abandoned carts may be created by bots, crawlers, or automated traffic that adds products to the cart without completing checkout. To help reduce this, the plugin allows you to exclude carts using IP addresses, email addresses, email domains, or countries, keeping your reports cleaner and more accurate.
+
+= Is the plugin compatible with WooCommerce HPOS? =
+
+Yes. Abandoned Cart Lite for WooCommerce is compatible with WooCommerce High-Performance Order Storage (HPOS).
+
+= Where can I find the plugin documentation? =
+
+You can find detailed setup guides, feature documentation, troubleshooting articles, and developer resources in our online documentation.
+
 = What is the difference between Lite and Pro version of the plugin? =
 
 To see how the PRO version can help you recover more abandoned carts compared to Lite, you can refer **[here](https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/?utm_source=wprepo&utm_medium=faqlink&utm_campaign=AbandonedCartLite "Lite and Pro version Difference")**
@@ -128,21 +228,11 @@ Our plugin captures visitor emails in real-time as they're typing it in to the e
 
 When logged-in user add the product to the cart we capture the email address from the user's profile.
 
-= Can the plugin track carts abandoned by guest users? =
-
-Yes, it captures the carts of the guest users from the checkout page. We capture the guest user's abandoned cart only after the customer enters the "Email Address" on the checkout page.
-
-Also, plugin does capture the cart from the cart page, these carts do not have any personal information of the customers. It will contain only the cart details. To capture, this information guest customer should reach the cart page of the website.
-
 = Why are abandoned cart notification emails not getting sent? =
 
 Please ensure you have at least one Email template "Active". As only active email templates are sent to recover the abandoned carts. 
 
 For sending the abandoned cart notification emails automatically, we use WP-Cron. If you have Email templates activated and still notification are not sent, then you can debug the issue by following this **[post](https://www.tychesoftwares.com/using-wp_alternate_cron-to-overcome-the-problem-of-emails-not-being-sent-in-abandoned-cart-pro-plugin-for-woocommerce/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite "WooCommerce Abandoned Cart Pro")**.
-
-= When is the cart considered as an abandoned cart? =
-
-When the products in the cart is not purchased within the set 'Cart abandoned cut-off time' then the cart is considered as an abandoned cart.
 
 = How to unsubscribe the abandoned cart notification emails? =
 
