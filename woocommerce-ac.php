@@ -511,7 +511,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					}
 					$message = $email_body_template_header . $message . $email_body_template_footer;
 				}
-				header( 'Content-Security-Policy: sandbox' );
+				header(
+					"Content-Security-Policy: sandbox; " .
+					"default-src 'self'; " .
+					"style-src 'self' 'unsafe-inline' https:; " .
+					"font-src 'self' https:; " .
+					"img-src 'self' data: https:;"
+				);
 				echo wp_unslash( $message ); // phpcs:ignore
 				exit;
 			}
@@ -540,7 +546,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$message = ob_get_clean();
 				}
 				// print the preview email.
-				header( 'Content-Security-Policy: sandbox' );
+				header(
+					"Content-Security-Policy: sandbox; " .
+					"default-src 'self'; " .
+					"style-src 'self' 'unsafe-inline' https:; " .
+					"font-src 'self' https:; " .
+					"img-src 'self' data: https:;"
+				);
 				echo wp_unslash( $message ); // phpcs:ignore
 				exit;
 			}
