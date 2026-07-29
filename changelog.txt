@@ -1,4 +1,6 @@
 *** Abandoned Cart Lite for WooCommerce ***
+2026-07-29 - version 6.8.3
+* Fix - Resolved a stored XSS vulnerability in the email template preview by sanitizing the template body on save and escaping its output during preview rendering.
 
 2026-06-23 - version 6.8.2
 * Security - Fixed a vulnerability in cart recovery links that could allow unauthorized user account access through a forged recovery link.
