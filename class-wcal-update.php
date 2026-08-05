@@ -126,6 +126,7 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 			}
 
 			self::wcal_alter_tables( $db_prefix, $blog_id );
+			self::wcal_add_session_id_index( $db_prefix, $blog_id );
 			self::wcal_individual_settings( $blog_id );
 			self::wcal_cleanup( $db_prefix, $blog_id );
 
@@ -293,6 +294,42 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 			if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . "ac_email_templates_lite LIKE 'email_type'" ) ) { //phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_email_templates_lite ADD COLUMN `email_type` ENUM("0","1") CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL AFTER `id`' ); //phpcs:ignore
 			}
+		}
+		/**
+		 * Add an index on session_id to the abandoned cart history table.
+		 *
+		 * The hot-path lookup in wcal_store_cart_timestamp() previously full-scanned
+		 * this table because no index existed on session_id. On large stores this
+		 * caused significant DB load.
+		 *
+		 * @param string $db_prefix - DB Prefix.
+		 * @param int    $blog_id   - Blog ID (needed for multisites).
+		 *
+		 * @since 6.8.2
+		 */
+		public static function wcal_add_session_id_index( $db_prefix, $blog_id ) {
+
+			global $wpdb;
+
+			if ( 0 === $blog_id ) {
+				$index_added = get_option( 'wcal_session_id_index_added' );
+			} else {
+				$index_added = get_blog_option( $blog_id, 'wcal_session_id_index_added' );
+			}
+
+			if ( 'yes' === $index_added ) {
+				return;
+			}
+
+			$table = $db_prefix . 'ac_abandoned_cart_history_lite';
+
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table}'" ) ) { // phpcs:ignore
+				$exists = $wpdb->get_var( "SHOW INDEX FROM `{$table}` WHERE Key_name = 'session_id'" ); // phpcs:ignore
+				if ( ! $exists ) {
+					$wpdb->query( "ALTER TABLE `{$table}` ADD INDEX `session_id` (`session_id`)" ); // phpcs:ignore
+				}
+			}
+			self::wcal_update_option( $blog_id, 'wcal_session_id_index_added', 'yes' );
 		}
 		/**
 		 * Add a new column email_reminder_status in the cart history lite table.
