@@ -503,26 +503,10 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 
 			if ( 'GUEST' === $value->user_type ) {
 				
-			$ip_address         = $results_guest[0]->ip_address; 
-			$user_agent         = $results_guest[0]->user_agent;				
+				$ip_address         = "<a href=https://www.abuseipdb.com/check/".$ip_address." target='_blank'>".$ip_address."</a>"; 
+				$user_agent         = $user_agent;				
 				
-				/*
-				if ( isset( $results_guest[0]->ip_address) ) {
-					$ip_address = $results_guest[0]->ip_address;
-				} elseif ( '0' === $value->user_id ) {
-					$ip_address = 'NA';
-				} else {
-					$ip_address = '';
-				}
 
-				if ( isset( $results_guest[0]->user_agent) ) {
-					$user_agent = $results_guest[0]->user_agent;
-				} elseif ( '0' === $value->user_id ) {
-					$user_agent = 'NA';
-				} else {
-					$user_agent = '';
-				}
-				*/
 
 				if ( isset( $results_guest[0]->email_id ) ) {
 					$user_email = $results_guest[0]->email_id;
