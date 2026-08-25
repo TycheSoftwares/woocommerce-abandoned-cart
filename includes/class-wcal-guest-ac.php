@@ -171,7 +171,7 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 
 			$billing_email = isset( $_POST['billing_email'] ) && '' !== $_POST['billing_email'] ? sanitize_text_field( wp_unslash( $_POST['billing_email'] ) ) : '';
 			$country       = isset( $_POST['billing_country'] ) && '' !== $_POST['billing_country'] ? sanitize_text_field( wp_unslash( $_POST['billing_country'] ) ) : '';
-
+							
 			if ( '' !== $billing_email ) {
 				wcal_common::wcal_set_cart_session( 'billing_email', $billing_email );
 			}
@@ -285,6 +285,10 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 
 			$shipping_zipcode = '';
 			$billing_zipcode  = '';
+			
+			$ip_address        = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+			$user_agent        = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
+			
 			if ( $billing_email_restriction ) {
 				$wpdb->delete( $wpdb->prefix . 'ac_abandoned_cart_history_lite', array( 'session_id' => $guest_session_key ) );// phpcs:ignore
 				wcal_common::wcal_set_cart_session( 'wcal_cart_tracking_refused', 'yes' );
@@ -301,10 +305,12 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 				if ( 0 === $user_id ) {
 					$wpdb->query( // phpcs:ignore
 						$wpdb->prepare(
-							'INSERT INTO `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite`( billing_first_name, billing_last_name, email_id, billing_zipcode, shipping_zipcode, shipping_charges ) VALUES ( %s, %s, %s, %s, %s, %s )',
+							'INSERT INTO `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite`( billing_first_name, billing_last_name, email_id, ip_address, user_agent, billing_zipcode, shipping_zipcode, shipping_charges ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s )',
 							$billing_first_name,
 							$billing_last_name,
 							$billing_email,
+							$ip_address,
+							$user_agent,
 							$billing_zipcode,
 							$shipping_zipcode,
 							$shipping_charges
@@ -319,6 +325,8 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 							'billing_first_name' => $billing_first_name,
 							'billing_last_name'  => $billing_last_name,
 							'email_id'           => $billing_email,
+							'ip_address'		 => $ip_address,
+							'user_agent'         => $user_agent,
 							'billing_zipcode'    => $billing_zipcode,
 							'shipping_zipcode'   => $shipping_zipcode,
 							'shipping_charges'   => $shipping_charges,
@@ -342,13 +350,19 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 				} else {
 					$cart['cart'] = $woocommerce->session->cart;
 				}
+				
+				$ip_address        = "guest";//isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+				$user_agent        = "guest";//isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
+			
 				$cart_info = wp_json_encode( $cart );
 				if ( 0 === $abandoned_cart_id ) {
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 					$wpdb->query(
 						$wpdb->prepare(
-							'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type, session_id ) VALUES ( %s, %s, %s, %s, %s, %s, %s )',
+							'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`( user_id, ip_address, user_agent, abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type, session_id ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s )',
 							$user_id,
+							$ip_address,
+							$user_agent,
 							$cart_info,
 							$current_time,
 							0,

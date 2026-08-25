@@ -1140,7 +1140,7 @@ class wcal_common { // phpcs:ignore
 				function( $v ) {
 					return trim( str_replace( array( '*.', '*' ), '', $v ) );
 				},
-				$explode_ip_address
+				$explode_ip_address33
 			);
 
 			foreach ( $trimmed_explode_ip_address as $restricted_ip ) {

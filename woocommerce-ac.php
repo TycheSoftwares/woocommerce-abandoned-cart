@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Abandoned Cart Lite for WooCommerce
+ * Plugin Name: Abandoned Cart Lite for WooCommerce - elys mod
  * Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
  * Description: Track abandoned carts and send automated, customizable abandoned cart recovery emails. Reduce cart abandonment, recover lost revenue & increase sales.
  * Version: 6.8.3
@@ -695,6 +695,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				"CREATE TABLE IF NOT EXISTS $ac_history_table_name (
 				`id` int(11) NOT NULL AUTO_INCREMENT,
 				`user_id` int(11) NOT NULL,
+				`ip_address` text,
+				`user_agent` text,
 				`abandoned_cart_info` text COLLATE utf8_unicode_ci NOT NULL,
 				`abandoned_cart_time` int(11) NOT NULL,
 				`cart_ignored` enum('0','1') COLLATE utf8_unicode_ci NOT NULL,
@@ -728,6 +730,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					`billing_zipcode` text,
 					`email_id` text,
 					`phone` text,
+					`ip_address` text,
+					`user_agent` text,
 					`ship_to_billing` text,
 					`order_notes` text,
 					`shipping_first_name` text,
@@ -1692,12 +1696,16 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$cart_info_meta         = wp_json_encode( $cart_info_meta );
 
 						if ( '' !== $cart_info_meta && '{"cart":[]}' !== $cart_info_meta && '""' !== $cart_info_meta ) {
+						    $ip_address = wcal_common::wcal_get_client_ip(); //isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+							$user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
 							$cart_info = $cart_info_meta;
 							$user_type = 'REGISTERED';
 							$wpdb->query( //phpcs:ignore
 								$wpdb->prepare(
-									'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` ( user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type ) VALUES ( %d, %s, %d, %s, %s )',
+									'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` ( user_id, ip_address, user_agent, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type ) VALUES ( %d, %s, %s, %s, %d, %s, %s )',
 									$user_id,
+									$ip_address,
+									$user_agent,
 									$cart_info,
 									$current_time,
 									$cart_ignored,
@@ -1713,6 +1721,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$updated_cart_info         = array();
 						$updated_cart_info['cart'] = WC()->session->cart;
 						$updated_cart_info         = wp_json_encode( $updated_cart_info );
+						$ip_address = wcal_common::wcal_get_client_ip(); //isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+						$user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
 
 						if ( ! $this->wcal_compare_carts( $user_id, $results[0]->abandoned_cart_info ) ) {
 							$updated_cart_ignored = 1;
@@ -1726,8 +1736,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							$user_type = 'REGISTERED';
 							$wpdb->query( //phpcs:ignore
 								$wpdb->prepare(
-									'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` (user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type) VALUES (%d, %s, %d, %s, %s)',
+									'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` (user_id, ip_address, user_agent, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type) VALUES (%d, %s, %s, %s, %d, %s, %s)',
 									$user_id,
+									$ip_address,
+									$user_agent,									
 									$updated_cart_info,
 									$current_time,
 									$cart_ignored,
@@ -1831,10 +1843,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 									)
 								);
 								$user_type = 'GUEST';
+								$ip_address = wcal_common::wcal_get_client_ip(); //isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+								$user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
 								$wpdb->query( //phpcs:ignore
 									$wpdb->prepare(
-										'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` (user_id, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type, session_id, checkout_link) VALUES (%d, %s, %d, %s, %s, %s, %s)',
+										'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` (user_id, ip_address, user_agent, abandoned_cart_info, abandoned_cart_time, cart_ignored, user_type, session_id, checkout_link) VALUES (%d, %s, %s, %s, %d, %s, %s, %s, %s)',
 										$user_id,
+										$ip_address,
+										$user_agent,
 										$updated_cart_info,
 										$current_time,
 										$cart_ignored,
@@ -3756,6 +3772,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 									$user_billing_postcode  = $results_guest[0]->billing_zipcode;
 									$user_shipping_postcode = $results_guest[0]->shipping_zipcode;
 									$shipping_charges       = $results_guest[0]->shipping_charges;
+								    $ip_address             = $results_guest[0]->ip_address;
+									$user_agent             = $results_guest[0]->user_agent;
 								}
 								$user_billing_company   = '';
 								$user_billing_address_1 = '';
@@ -3771,6 +3789,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$user_shipping_city      = '';
 								$user_shipping_state     = '';
 								$user_shipping_country   = '';
+								$ip_address              = '';
+								$user_agent              = '';
 							} elseif ( 'GUEST' === $results[0]->user_type && $results[0]->user_id > 0 ) {
 								$user_email              = '';
 								$user_first_name         = 'Visitor';
@@ -3791,6 +3811,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$user_shipping_city      = '';
 								$user_shipping_state     = '';
 								$user_shipping_country   = '';
+								$ip_address              = '';
+								$user_agent              = '';
 							} else {
 								$user_id = $results[0]->user_id;
 								if ( isset( $results[0]->user_login ) ) {
@@ -3901,6 +3923,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 									}
 								}
 							}
+							
+						    $ip_address        = wcal_common::wcal_get_client_ip(); //isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+							$user_agent        = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
 
 							$cart_details  = array();
 							$cart_info     = json_decode( $results[0]->abandoned_cart_info );

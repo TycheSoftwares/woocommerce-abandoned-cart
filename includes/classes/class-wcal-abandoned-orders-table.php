@@ -107,6 +107,8 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 			'id'          => __( 'Id', 'woocommerce-abandoned-cart' ),
 			'email'       => __( 'Email Address', 'woocommerce-abandoned-cart' ),
 			'customer'    => __( 'Customer', 'woocommerce-abandoned-cart' ),
+			'ip_address'  => __( 'IP Address', 'woocommerce-abandoned-cart' ),
+			'user_agent'  => __( 'User Agent', 'woocommerce-abandoned-cart' ),
 			'order_total' => __( 'Order Total', 'woocommerce-abandoned-cart' ),
 			'date'        => __( 'Abandoned Date', 'woocommerce-abandoned-cart' ),
 			'status'      => __( 'Status of Cart', 'woocommerce-abandoned-cart' ),
@@ -496,8 +498,31 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 			$abandoned_order_id = $value->id;
 			$user_id            = $value->user_id;
 			$user_login         = $value->user_login;
+			$ip_address         = $value->ip_address; 
+			$user_agent         = $value->user_agent;
 
 			if ( 'GUEST' === $value->user_type ) {
+				
+			$ip_address         = $results_guest[0]->ip_address; 
+			$user_agent         = $results_guest[0]->user_agent;				
+				
+				/*
+				if ( isset( $results_guest[0]->ip_address) ) {
+					$ip_address = $results_guest[0]->ip_address;
+				} elseif ( '0' === $value->user_id ) {
+					$ip_address = 'NA';
+				} else {
+					$ip_address = '';
+				}
+
+				if ( isset( $results_guest[0]->user_agent) ) {
+					$user_agent = $results_guest[0]->user_agent;
+				} elseif ( '0' === $value->user_id ) {
+					$user_agent = 'NA';
+				} else {
+					$user_agent = '';
+				}
+				*/
 
 				if ( isset( $results_guest[0]->email_id ) ) {
 					$user_email = $results_guest[0]->email_id;
@@ -615,12 +640,16 @@ class WCAL_Abandoned_Orders_Table extends WP_List_Table {
 					$return_abandoned_orders[ $i ]->id          = $abandoned_order_id;
 					$return_abandoned_orders[ $i ]->email       = $user_email;
 					$return_abandoned_orders[ $i ]->customer    = $customer_information;
+					$return_abandoned_orders[ $i ]->ip_address  = $ip_address;
+					$return_abandoned_orders[ $i ]->user_agent  = $user_agent;
 					$return_abandoned_orders[ $i ]->order_total = $line_total;
 					$return_abandoned_orders[ $i ]->date        = $order_date;
 					$return_abandoned_orders[ $i ]->status      = $ac_status;
 				} else {
 					$abandoned_order_id                    = $abandoned_order_id;
 					$return_abandoned_orders[ $i ]->id     = $abandoned_order_id;
+					$return_abandoned_orders[ $i ]->ip_address  = $ip_address;
+					$return_abandoned_orders[ $i ]->user_agent  = $user_agent;
 					$return_abandoned_orders[ $i ]->date   = $order_date;
 					$return_abandoned_orders[ $i ]->status = $ac_status;
 				}
