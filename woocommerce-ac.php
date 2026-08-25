@@ -1887,13 +1887,17 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							);
 							if ( 0 === count( $results ) ) {
 								$cart_info       = $updated_cart_info;
+								$ip_address = wcal_common::wcal_get_client_ip(); //isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+								$user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
 								$blank_cart_info = '[]';
 								if ( $blank_cart_info !== $cart_info && '{"cart":[]}' !== $cart_info ) {
 									$wpdb->query( //phpcs:ignore
 										$wpdb->prepare(
-											'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` ( abandoned_cart_info , abandoned_cart_time , cart_ignored , recovered_cart, user_type, session_id  ) VALUES ( %s, %s, %s, %s, %s, %s )',
+											'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` ( abandoned_cart_info, abandoned_cart_time, ip_address, user_agent, cart_ignored , recovered_cart, user_type, session_id  ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s )',
 											$cart_info,
 											$current_time,
+											$ip_address,
+											$user_agent,
 											0,
 											0,
 											'GUEST',
@@ -1906,6 +1910,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 								$blank_cart_info = '[]';
 								if ( $blank_cart_info !== $updated_cart_info && '{"cart":[]}' !== $updated_cart_info ) {
 									if ( ! $this->wcal_compare_only_guest_carts( $updated_cart_info, $results[0]->abandoned_cart_info ) ) {
+										
+										$ip_address = wcal_common::wcal_get_client_ip(); //isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+										$user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
+								
 										$wpdb->query( // phpcs:ignore
 											$wpdb->prepare(
 												'UPDATE `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` SET cart_ignored = %s WHERE session_id = %s',
@@ -1915,9 +1923,11 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 										);
 										$wpdb->query( //phpcs:ignore
 											$wpdb->prepare(
-												'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` ( abandoned_cart_info, abandoned_cart_time, cart_ignored, recovered_cart, user_type, session_id ) VALUES ( %s, %s, %s, %s, %s, %s )',
+												'INSERT INTO `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` ( abandoned_cart_info, abandoned_cart_time, ip_address, user_agent, cart_ignored, recovered_cart, user_type, session_id ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s )',
 												$updated_cart_info,
 												$current_time,
+												$ip_address,
+												$user_agent,
 												0,
 												0,
 												'GUEST',

@@ -351,8 +351,8 @@ if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 					$cart['cart'] = $woocommerce->session->cart;
 				}
 				
-				$ip_address        = "guest";//isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
-				$user_agent        = "guest";//isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
+				$ip_address        = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+				$user_agent        = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
 			
 				$cart_info = wp_json_encode( $cart );
 				if ( 0 === $abandoned_cart_id ) {
