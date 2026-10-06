@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Abandoned Cart Lite for WooCommerce - elys mod
+ * Plugin Name: Abandoned Cart Lite for WooCommerce
  * Plugin URI: http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro
  * Description: Track abandoned carts and send automated, customizable abandoned cart recovery emails. Reduce cart abandonment, recover lost revenue & increase sales.
  * Version: 6.8.3

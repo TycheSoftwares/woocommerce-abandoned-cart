@@ -10,14 +10,6 @@ License: GPLv2 or late
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.paypal.me/TycheSoftwares
 
-=====================================================================
-
-Ely's Changes:  
-
-Added IP Address and User Agents logging.    
-
-=====================================================================
-
 Track abandoned carts and send automated, customizable abandoned cart recovery emails. Reduce cart abandonment, recover lost revenue & increase sales.
 
 == Description ==
