@@ -50,11 +50,15 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 
 			$user_role = '';
 			$user_id   = 0;
+			$ip_address = ''; 
+			$user_agent = '';
 			$user_type = '';
 
 			if ( isset( $wcal_get_abandoned_cart_result[0]->user_id ) ) {
 				$user_id   = $wcal_get_abandoned_cart_result[0]->user_id;
 				$user_type = $wcal_get_abandoned_cart_result[0]->user_type;
+				$ip_address = $wcal_get_abandoned_cart_result[0]->ip_address;
+				$user_agent = $wcal_get_abandoned_cart_result[0]->user_agent;
 				if ( $wcal_get_abandoned_cart_result[0]->user_id > 0 && $wcal_get_abandoned_cart_result[0]->user_id < 63000000 ) {
 					$user_role = wcal_common::wcal_get_user_role( $user_id );
 				} else {
@@ -102,9 +106,12 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 			$billing_field_display    = 'block';
 			$email_field_display      = 'block';
 			$phone_field_display      = 'block';
+			$phone_field_display      = 'block';
 			$shipping_field_display   = 'block';
 			$shipping_charges_display = 'none';
 
+			$ip_address              = '';
+			$user_agent              = '';
 			$user_billing_company    = '';
 			$user_billing_address_1  = '';
 			$user_billing_address_2  = '';
@@ -145,6 +152,11 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 					$wcal_customer_details = '' === $user_billing_phone ? $customer_information . '<br>' . $user_role : $customer_information . '<br>' . $user_billing_phone . '<br>' . $user_role;
 
 				}
+				$ip_address        = ( isset( $results_guest[0]->ip_address) && '' !== $results_guest[0]->ip_address) ? $results_guest[0]->ip_address : '';
+				$user_agent        = ( isset( $results_guest[0]->user_agent) && '' !== $results_guest[0]->user_agent) ? $results_guest[0]->user_agent : '';
+				
+				
+				
 			} elseif ( isset( $wcal_get_abandoned_cart_result[0] ) && 'GUEST' === $user_type && 0 === $user_id ) {
 				$user_email             = '';
 				$user_first_name        = 'Visitor';
@@ -155,6 +167,9 @@ if ( ! class_exists( 'Wcal_Abandoned_Cart_Details' ) ) {
 				$user_billing_phone     = '';
 				$email_field_display    = 'none';
 				$phone_field_display    = 'none';
+				$ip_address             = '';
+				$user_agent             = '';
+				
 			} else {
 
 				$user_email = '';
