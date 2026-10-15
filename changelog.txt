@@ -1,4 +1,7 @@
 *** Abandoned Cart Lite for WooCommerce ***
+2026-10-15 – version 6.9.0
+* Fix - Security : Hardened cart recovery link validation. All recovery link tokens must now carry a valid integrity tag; older untagged tokens are rejected after the cutoff date.
+
 2026-07-29 - version 6.8.3
 * Fix - Resolved a stored XSS vulnerability in the email template preview by sanitizing the template body on save and escaping its output during preview rendering.
 
