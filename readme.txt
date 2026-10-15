@@ -259,10 +259,10 @@ This plugin communicates with our tracking server to send usage data **only** if
 == Changelog ==
 
 = 6.9.0 (15.10.2026) =
-* Fix - Security: Closed a token downgrade path in wcal_verify_and_strip_hmac() where stripping the HMAC suffix from a recovery link token bypassed integrity verification. Legacy (untagged) tokens are now rejected.
+* Fix - Security : Hardened cart recovery link validation. All recovery link tokens must now carry a valid integrity tag; older untagged tokens are rejected after the cutoff date.
 
 = 6.8.3 (29.07.2026) =
-* Fix - Security : Hardened cart recovery link validation. All recovery link tokens must now carry a valid integrity tag; older untagged tokens are rejected after the cutoff date.
+* Fix - Resolved a stored XSS vulnerability in the email template preview by sanitizing the template body on save and escaping its output during preview rendering.
 
 = 6.8.2 (23.06.2026) =
 * Security - Fixed a vulnerability in cart recovery links that could allow unauthorized user account access through a forged recovery link.
