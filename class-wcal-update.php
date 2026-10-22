@@ -152,6 +152,23 @@ if ( ! class_exists( 'Wcal_Update' ) ) {
 				if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . 'ac_abandoned_cart_history_lite LIKE "user_type"' ) ) { //phpcs:ignore
 					$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_abandoned_cart_history_lite ADD `user_type` text AFTER  `recovered_cart`' ); //phpcs:ignore
 				}
+				
+				if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . 'ac_abandoned_cart_history_lite LIKE "ip_address"' ) ) { //phpcs:ignore
+					$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_abandoned_cart_history_lite ADD `ip_address` text AFTER  `user_id`' ); //phpcs:ignore
+				}
+				
+				if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . 'ac_abandoned_cart_history_lite LIKE "user_agent"' ) ) { //phpcs:ignore
+					$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'ac_abandoned_cart_history_lite ADD `user_agent` text BEFORE  `abandoned_cart_info`' ); //phpcs:ignore
+				}
+				
+				if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . 'wp_ac_guest_abandoned_cart_history_lite LIKE "ip_address"' ) ) { //phpcs:ignore
+					$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'wp_ac_guest_abandoned_cart_history_lite ADD `ip_address` text AFTER  `phone`' ); //phpcs:ignore
+				}
+				
+				if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . 'wp_ac_guest_abandoned_cart_history_lite LIKE "user_agent"' ) ) { //phpcs:ignore
+					$wpdb->query( 'ALTER TABLE ' . $db_prefix . 'wp_ac_guest_abandoned_cart_history_lite ADD `user_agent` text BEFORE  `ship_to_billing`' ); //phpcs:ignore
+				}
+				
 
 				if ( ! $wpdb->get_var( 'SHOW COLUMNS FROM ' . $db_prefix . 'ac_email_templates_lite LIKE "is_wc_template"' ) ) { //phpcs:ignore 
 					$wpdb->query( 'ALTER TABLE ' . $db_prefix . "ac_email_templates_lite ADD COLUMN `is_wc_template` enum('0','1') COLLATE utf8_unicode_ci NOT NULL AFTER `template_name`, ADD COLUMN `default_template` int(11) NOT NULL AFTER `is_wc_template`" ); //phpcs:ignore
