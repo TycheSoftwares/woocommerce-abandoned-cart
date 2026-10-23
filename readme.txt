@@ -16,7 +16,7 @@ Track abandoned carts and send automated, customizable abandoned cart recovery e
 
 Cart abandonment is one of the biggest challenges for any WooCommerce store. While customers leave their carts for different reasons, a well-timed reminder can often bring them back to complete their purchase.
 
-**Abandoned Cart Lite for WooCommerce** helps you recover lost sales by automatically tracking abandoned carts and sending reminder emails to customers who leave without checking out. It includes everything you need to start recovering abandoned carts, including customizable email templates, recovery reports, and support for both guest and logged-in shoppers.
+**[Abandoned Cart for WooCommerce](https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite)** helps you recover lost sales by automatically tracking abandoned carts and sending reminder emails to customers who leave without checking out. It includes everything you need to start recovering abandoned carts, including customizable email templates, recovery reports, and support for both guest and logged-in shoppers.
 
 **[What if you can get better features for less money? - Try Abandoned Cart Pro for just $1](https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite)**
 
@@ -80,7 +80,7 @@ If the plugin helps your business, consider leaving a ⭐⭐⭐⭐⭐ review. Yo
 
 Abandoned Cart Lite includes everything you need to start recovering abandoned WooCommerce carts with automated reminder emails, recovery tracking, reporting, and customizable email templates.
 
-If you're looking for additional recovery tools, [Abandoned Cart Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin/) adds advanced features such as:
+If you're looking for additional recovery tools, [Abandoned Cart Pro for WooCommerce](https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wprepo&utm_medium=topprolink&utm_campaign=AbandonedCartLite) adds advanced features such as:
 * Email capture when Add to Cart is clicked
 * Exit-intent and Add to Cart popups
 * Send automated abandoned cart notifications via Messenger, SMS, and Email in a set time interval for better results.
@@ -90,7 +90,7 @@ If you're looking for additional recovery tools, [Abandoned Cart Pro for WooComm
 * Google Sheets integration
 * Detailed recovery analytics and email performance reports
 
-See the complete Lite vs Pro comparison: [https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/](https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/)
+See the complete Lite vs Pro comparison: [https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/](https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/?utm_source=wprepo&utm_medium=faqlink&utm_campaign=AbandonedCartLite)
 
 = About Tyche Softwares =
 
@@ -108,29 +108,29 @@ Tyche Softwares also develops plugins for abandoned cart recovery, order deliver
 
 **Some of our Pro plugins:**
 
-1. **[Flexi BOGO for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-flexi-bogo-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Flexi BOGO for WooCommerce")**
+1. **[Flexi BOGO for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-flexi-bogo-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=FlexiBOGO "Flexi BOGO for WooCommerce")**
 
-2. **[Abandoned Cart Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Abandoned Cart Pro for WooCommerce")**
+2. **[Abandoned Cart Pro for WooCommerce](https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite "Abandoned Cart Pro for WooCommerce")**
 
-3. **[Booking & Appointment Plugin for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-booking-and-appointment-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Booking & Appointment Plugin for WooCommerce")**
+3. **[Booking & Appointment Plugin for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-booking-and-appointment-plugin/?utm_source=wprepo&utm_medium=prolink&utm_campaign=BookingAppointmentLite "Booking & Appointment Plugin for WooCommerce")**
 
-4. **[Order Delivery Date Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-order-delivery-date-pro-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Order Delivery Date Pro for WooCommerce")**
+4. **[Order Delivery Date Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-order-delivery-date-pro-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=OrderDeliveryDateLite "Order Delivery Date Pro for WooCommerce")**
 
-5. **[Product Delivery Date Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-product-delivery-date-pro-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Product Delivery Date Pro for WooCommerce")**
+5. **[Product Delivery Date Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-product-delivery-date-pro-plugin/?utm_source=wprepo&utm_medium=topprolink&utm_campaign=ProductDeliveryDateLite "Product Delivery Date Pro for WooCommerce")**
 
-6. **[Deposits For WooCommerce](https://www.tychesoftwares.com/products/woocommerce-deposit-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Deposits For WooCommerce")**
+6. **[Deposits For WooCommerce](https://www.tychesoftwares.com/products/woocommerce-deposit-plugin/?utm_source=wprepo&utm_medium=prolink&utm_campaign=DepositsLite "Deposits For WooCommerce")**
 
-7. **[Payment Gateway Based Fees and Discounts for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-payment-gateway-based-fees-and-discounts-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Payment Gateway Based Fees and Discounts for WooCommerce - Pro")**
+7. **[Payment Gateway Based Fees and Discounts for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-payment-gateway-based-fees-and-discounts-plugin/?utm_source=wprepo&utm_medium=prolink2&utm_campaign=WCPGBasedFees "Payment Gateway Based Fees and Discounts for WooCommerce - Pro")**
 
-8. **[Custom Order Numbers for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-custom-order-numbers-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Custom Order Numbers for WooCommerce - Pro")**
+8. **[Custom Order Numbers for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-custom-order-numbers-plugin/?utm_source=wprepo&utm_medium=prolink&utm_campaign=CustomNumbers "Custom Order Numbers for WooCommerce - Pro")**
 
-9. **[Product Input Fields for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-product-input-fields-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Product Input Fields for WooCommerce - Pro")**
+9. **[Product Input Fields for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-product-input-fields-plugin/?utm_source=wprepo&utm_medium=topprolink&utm_campaign=ProductInputFields "Product Input Fields for WooCommerce - Pro")**
 
-10. **[Call for Price for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-call-for-price-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Call for Price for WooCommerce - Pro")**
+10. **[Call for Price for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-call-for-price-plugin/?utm_source=wprepo&utm_medium=topprolink&utm_campaign=CallForPrice "Call for Price for WooCommerce - Pro")**
 
-11. **[Price based on User Role for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-price-user-role-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Price based on User Role for WooCommerce - Pro")**
+11. **[Price based on User Role for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-price-user-role-plugin/?utm_source=wprepo&utm_medium=prolink&utm_campaign=ProductPricesByUserRoles "Price based on User Role for WooCommerce - Pro")**
 
-12. **[Currency per Product for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-currency-per-product-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=WCDeliveryNotes "Currency per Product for WooCommerce - Pro")**
+12. **[Currency per Product for WooCommerce - Pro](https://www.tychesoftwares.com/store/premium-plugins/currency-per-product-for-woocommerce/?utm_source=wprepo&utm_medium=topprolink&utm_campaign=CurrencyProductLite "Currency per Product for WooCommerce - Pro")**
 
 **Some of our other free plugins:**
 
@@ -220,7 +220,7 @@ You can find detailed setup guides, feature documentation, troubleshooting artic
 
 = What is the difference between Lite and Pro version of the plugin? =
 
-To see how the PRO version can help you recover more abandoned carts compared to Lite, you can refer **[here](https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/?utm_source=wprepo&utm_medium=faqlink&utm_campaign=AbandonedCartLite "Lite and Pro version Difference")**
+To see how the PRO version can help you recover more abandoned carts compared to Lite, you can refer **[here](https://www.tychesoftwares.com/differences-between-pro-and-lite-versions-of-abandoned-cart-for-woocommerce-plugin/?utm_source=wprepo&utm_medium=faqlink&utm_campaign=AbandonedCartLite?utm_source=wprepo&utm_medium=faqlink&utm_campaign=AbandonedCartLite "Lite and Pro version Difference")**
 
 = How is the email address of the customers captured? =
 
