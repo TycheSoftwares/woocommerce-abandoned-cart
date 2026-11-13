@@ -8,6 +8,10 @@
  * @package abandoned-cart-lite
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 if ( ! class_exists( 'Wcal_Guest_Ac' ) ) {
 
 	/**

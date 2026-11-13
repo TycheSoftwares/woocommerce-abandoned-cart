@@ -1,0 +1,2438 @@
+# Copyright (C) 2026 Tyche Softwares
+# This file is distributed under the same license as the Abandoned Cart Lite for WooCommerce plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Abandoned Cart Lite for WooCommerce 6.9.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-"
+"abandoned-cart\n"
+"POT-Creation-Date: 2026-11-12T11:15:56+00:00\n"
+"PO-Revision-Date: 2026-11-12 09:42+0000\n"
+"Last-Translator: \n"
+"Language-Team: Hindi\n"
+"Language: hi_IN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Domain: woocommerce-abandoned-cart\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Loco-Version: 2.8.8; wp-7.1.4; php-8.3.0\n"
+
+#. Plugin Name of the plugin
+#: woocommerce-ac.php
+msgid "Abandoned Cart Lite for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: woocommerce-ac.php
+msgid ""
+"http://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-"
+"cart-pro"
+msgstr ""
+
+#. Description of the plugin
+#: woocommerce-ac.php
+msgid ""
+"Track abandoned carts and send automated, customizable abandoned cart "
+"recovery emails. Reduce cart abandonment, recover lost revenue & increase "
+"sales."
+msgstr ""
+
+#. Author of the plugin
+#: woocommerce-ac.php build/admin/admin.js:1
+msgid "Tyche Softwares"
+msgstr ""
+
+#. Author URI of the plugin
+#: woocommerce-ac.php
+msgid "http://www.tychesoftwares.com/"
+msgstr ""
+
+#: class-wcal-update.php:544
+msgid ""
+"There was an error creating the guest cart table for Abandoned Cart Lite for "
+"WooCommerce. Please contact the plugin author via <a "
+"href=\"mailto:support@tychesoftwares.com\">email</a>"
+msgstr ""
+
+#: cron/class-wcal-cron.php:102 build/admin/admin.js:1
+msgid "Abandoned cart reminder"
+msgstr ""
+
+#: cron/class-wcal-cron.php:293 woocommerce-ac.php:3080 woocommerce-ac.php:3115
+#: build/admin/admin.js:1
+msgid "Item"
+msgstr ""
+
+#: cron/class-wcal-cron.php:294 woocommerce-ac.php:3081 woocommerce-ac.php:3116
+msgid "Name"
+msgstr ""
+
+#: cron/class-wcal-cron.php:295
+#: includes/templates/emails/abandonment-notification.php:47
+#: woocommerce-ac.php:3082 woocommerce-ac.php:3117
+msgid "Quantity"
+msgstr ""
+
+#: cron/class-wcal-cron.php:296
+#: includes/templates/emails/abandonment-notification.php:48
+#: woocommerce-ac.php:3083 woocommerce-ac.php:3118
+msgid "Price"
+msgstr ""
+
+#: cron/class-wcal-cron.php:297 woocommerce-ac.php:3084 woocommerce-ac.php:3119
+msgid "Line Subtotal"
+msgstr ""
+
+#: cron/class-wcal-cron.php:304 cron/class-wcal-cron.php:315
+#: woocommerce-ac.php:3078 woocommerce-ac.php:3112
+msgid "Your Shopping Cart"
+msgstr ""
+
+#: cron/class-wcal-cron.php:343 cron/class-wcal-cron.php:394
+msgid "SKU: "
+msgstr ""
+
+#: cron/class-wcal-cron.php:459 woocommerce-ac.php:3104 woocommerce-ac.php:3139
+msgid "Cart Total:"
+msgstr ""
+
+#: cron/class-wcal-cron.php:472
+msgid "Product no longer exists"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-eraser.php:46
+#: includes/admin/class-wcal-personal-data-export.php:45
+msgid "Abandoned & Recovered Carts"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-eraser.php:99
+msgid "No personal data found for any abandoned carts."
+msgstr ""
+
+#. Translators: %s Abandoned Cart ID.
+#: includes/admin/class-wcal-personal-data-eraser.php:133
+msgid "Removed personal data from cart %s."
+msgstr ""
+
+#. Translators: %s Abandoned Cart ID.
+#: includes/admin/class-wcal-personal-data-eraser.php:137
+msgid "Personal data within cart %s has been retained."
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-eraser.php:222
+msgid "ANONYMIZED"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:137
+#: woocommerce-ac.php:1828 woocommerce-ac.php:1834
+msgid "Abandoned Carts"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:186
+#: includes/admin/class-wcal-personal-data-export.php:202
+msgid "Abandoned Cart ID"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:187
+#: includes/admin/class-wcal-personal-data-export.php:203
+#: build/admin/admin.js:1
+msgid "Abandoned Date"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:188
+#: includes/admin/class-wcal-personal-data-export.php:204
+msgid "Abandoned Cart Status"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:189
+#: includes/admin/class-wcal-personal-data-export.php:205
+#: build/admin/admin.js:1
+msgid "Cart Total"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:190
+#: includes/admin/class-wcal-personal-data-export.php:206
+msgid "Items Present"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:191
+msgid "Session ID"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:192
+#: includes/admin/class-wcal-personal-data-export.php:207
+msgid "Billing Address"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:193
+#: includes/admin/class-wcal-personal-data-export.php:208
+#: build/admin/admin.js:1
+msgid "Email Address"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:239
+#: includes/admin/class-wcal-personal-data-export.php:242
+msgid "Cart Recovered - Order #"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:239
+#: includes/api/class-wcal-rest-carts-controller.php:534 build/admin/admin.js:1
+msgid "Abandoned"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:242
+#: includes/api/class-wcal-rest-carts-controller.php:534 build/admin/admin.js:1
+msgid "Abandoned but new cart created"
+msgstr ""
+
+#: includes/admin/class-wcal-personal-data-export.php:245
+msgid "Abandoned - Unpaid Order #"
+msgstr ""
+
+#: includes/api/class-wcal-rest-carts-controller.php:272
+msgid "Cart not found."
+msgstr ""
+
+#: includes/api/class-wcal-rest-carts-controller.php:377
+msgid "Select at least one cart."
+msgstr ""
+
+#: includes/api/class-wcal-rest-carts-controller.php:494
+msgid "Visitor"
+msgstr ""
+
+#: includes/api/class-wcal-rest-carts-controller.php:511
+msgid "User Deleted"
+msgstr ""
+
+#: includes/api/class-wcal-rest-carts-controller.php:532 build/admin/admin.js:1
+msgid "Recovered"
+msgstr ""
+
+#. translators: %s: tax amount
+#: includes/api/class-wcal-rest-carts-controller.php:658
+msgid "Tax: %s"
+msgstr ""
+
+#. translators: %s: tax amount
+#: includes/api/class-wcal-rest-carts-controller.php:661
+msgid "includes Tax: %s"
+msgstr ""
+
+#: includes/api/class-wcal-rest-settings-controller.php:179
+msgid "You do not have permission to access this resource."
+msgstr ""
+
+#: includes/api/class-wcal-rest-settings-controller.php:213
+msgid "Request body must be a non-empty JSON object."
+msgstr ""
+
+#. translators: %s: Option name
+#: includes/api/class-wcal-rest-settings-controller.php:226
+msgid "Invalid value for %s."
+msgstr ""
+
+#: includes/api/class-wcal-rest-templates-controller.php:469
+msgid "Template not found."
+msgstr ""
+
+#: includes/api/class-wcal-rest-templates-controller.php:478
+msgid "The Email Template could not be saved."
+msgstr ""
+
+#: includes/blocks/class-wcal-gdpr-emails-blocks-integration.php:107
+#: includes/class-wcal-guest-ac.php:77 includes/class-wcal-tracking-msg.php:72
+msgid ""
+"Saving your email and cart details helps us keep you up to date with this "
+"order."
+msgstr ""
+
+#. Translators: Plugin Name and URL.
+#: includes/class-wcal-admin-notice.php:42
+msgid ""
+"The %1$s now uses the Action Scheduler library to send reminders. For "
+"further details, please visit <a href=\"%2$s\" target=\"_blank\">here</a>."
+msgstr ""
+
+#: includes/class-wcal-admin-notice.php:74
+msgid ""
+"We need to update your email template database for some improvements. Please "
+"take a backup of your databases for your piece of mind."
+msgstr ""
+
+#: includes/class-wcal-admin-notice.php:77
+msgid "Update"
+msgstr ""
+
+#. Translators: Plugin Name and URL.
+#: includes/class-wcal-admin-notice.php:104
+msgid ""
+"Enabling this setting will allow users registered on the website to access "
+"it via reminder email links without needing to login, which may be a "
+"security vulnerability."
+msgstr ""
+
+#. translators: %1$s Link to Differences article, %2$s link to pro version
+#: includes/class-wcal-all-component.php:76
+msgid ""
+"Now that you are all set with the Lite version, you can upgrade to Pro "
+"version to take your abandoned cart recovery to the next level. You can "
+"capture  customer’s email address when they click Add to Cart, get access to "
+"11 unique, fully responsive email templates, send text messages for recovery "
+"& <strong><a target=\"_blank\" href= \"%1$s\">much more</a></strong>. "
+"<strong><a target=\"_blank\" href= \"%2$s\">Purchase now</a></strong>."
+msgstr ""
+
+#. translators: %s Link to Abandoned Cart Pro
+#: includes/class-wcal-all-component.php:80
+msgid ""
+"Boost your sales by recovering up to 60% of the abandoned carts with our "
+"Abandoned Cart Pro for WooCommerce plugin. You can capture customer email "
+"addresses right when they click the Add To Cart button. <strong><a "
+"target=\"_blank\" href= \"%s\"> Grab your copy of Abandon Cart Pro plugin "
+"now!</a></strong>"
+msgstr ""
+
+#. translators: %s Link to Abandoned Cart Pro
+#: includes/class-wcal-all-component.php:84
+msgid ""
+"Don't loose your sales to abandoned carts. Use our Abandon Cart Pro plugin & "
+"start recovering your lost sales in less then 60 seconds. <strong><a "
+"target=\"_blank\" href= \"%s\">Grab it now!</a></strong>."
+msgstr ""
+
+#. translators: %s Link to Abandoned Cart Pro
+#: includes/class-wcal-all-component.php:88
+msgid ""
+"Send Abandoned Cart reminders that actually convert. Take advantage of our "
+"fully responsive email templates designed specially with an intent to "
+"trigger conversion. <strong><a target=\"_blank\" href= \"%s\">Purchase now</"
+"a></strong>."
+msgstr ""
+
+#. translators: Pro version link.
+#: includes/class-wcal-all-component.php:95
+msgid ""
+"Increase your store sales by recovering your abandoned carts for just $119. "
+"No profit sharing, no monthly fees. Our Abandoned Cart Pro plugin comes with "
+"a 30 day money back guarantee as well. :) Use coupon code ACPRO20 & save $24!"
+"<br>\n"
+"            <strong><a target=\"_blank\" href= \"%s\">Grab your copy now!</"
+"a></strong>"
+msgstr ""
+
+#. translators: %s Link to Order Delivery Date Pro
+#: includes/class-wcal-all-component.php:106
+msgid ""
+"Reduce cart abandonment rate by 57% with our Order Delivery Date Pro "
+"WooCommerce plugin. You can Create Delivery Settings by Shipping Zones & "
+"Shipping Classes. <br>Use discount code \"ORDPRO20\" and grab 20% discount "
+"on the purchase of the plugin. The discount code is valid only for the first "
+"20 customers. <strong><a target=\"_blank\" href= \"%s\">Purchase now</a></"
+"strong>"
+msgstr ""
+
+#. translators: Order Delivery Date Pro link.
+#: includes/class-wcal-all-component.php:113
+msgid ""
+"Allow your customers to select the Delivery Date on Single Product Page "
+"using our Product Delivery Date pro for WooCommerce Plugin. <br>\n"
+"            <strong><a target=\"_blank\" href= \"%s\">Shop now</a></strong> "
+"& be one of the 20 customers to get 20% discount on the plugin price. Use "
+"the code \"PRDPRO20\". Hurry!!"
+msgstr ""
+
+#. translators: %s Link to WooCommerce Booking Plugin
+#: includes/class-wcal-all-component.php:124
+msgid ""
+"Allow your customers to book an appointment or rent an apartment with our "
+"Booking and Appointment for WooCommerce plugin. You can also sell your "
+"product as a resource or integrate with a few Vendor plugins. <br>Shop now & "
+"Save 20% on the plugin with the code \"BKAP20\". Only for first 20 "
+"customers. <strong><a target=\"_blank\" href= \"%s\">Have it now!</a></"
+"strong>"
+msgstr ""
+
+#. translators: Deposits for WC pro plugin link.
+#: includes/class-wcal-all-component.php:131
+msgid ""
+" Allow your customers to pay deposits on products using our Deposits for "
+"WooCommerce plugin. <br>\n"
+"            <strong><a target=\"_blank\" href= \"%s\">Purchase now</a></"
+"strong> & Grab 20% discount with the code \"DFWP20\". The discount code is "
+"valid only for the first 20 customers."
+msgstr ""
+
+#: includes/class-wcal-common.php:168
+msgid "Database Updated Successfully"
+msgstr ""
+
+#: includes/class-wcal-common.php:183
+msgid "Database Update Failed. Please try again after sometime"
+msgstr ""
+
+#: includes/class-wcal-common.php:343
+msgid "This product no longer exists"
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:172
+msgid "I only needed the plugin for a short period."
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:178
+msgid "I found a better plugin."
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:180
+msgid "Please let us have the plugin's name so that we can make improvements"
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:184
+msgid "The plugin is not working."
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:186
+msgid ""
+"Please share what was faulty with the plugin so that we may get the issue "
+"fixed."
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:190
+msgid "Emails are not being sent to customers"
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:196
+msgid "I cannot see abandoned cart reminder emails records"
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:202
+msgid "I want to upgrade the plugin to the Pro version"
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:208
+msgid ""
+"The plugin is great, but I need specific feature(s) that is not supported."
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:210
+msgid "What feature?"
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:214
+msgid "I don't like to share my information with you."
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:220
+msgid "Other"
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:234
+msgid "If you have a moment, please let us know why you are deactivating:"
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:245
+msgid "Skip & Deactivate"
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:246
+msgid "Submit & Deactivate"
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:247
+msgid "Cancel"
+msgstr ""
+
+#: includes/component/plugin-deactivation/class-tyche-plugin-deactivation.php:260
+msgid "Please select a reason for deactivation!"
+msgstr ""
+
+#: includes/component/upgrade-to-pro/templates/upgrade-to-pro-page/upgrade-to-pro-modal.php:7
+msgid "Abandoned Cart Pro for WooCommerce is CHEAPER than you think"
+msgstr ""
+
+#: includes/component/upgrade-to-pro/templates/upgrade-to-pro-page/upgrade-to-pro-modal.php:8
+msgid "Upgrade from Lite to PRO with our Super Saver PRO Access Deal!"
+msgstr ""
+
+#: includes/component/upgrade-to-pro/templates/upgrade-to-pro-page/upgrade-to-pro-modal.php:9
+msgid ""
+"Unlock all premium features of Abandoned Cart Pro for WooCommerce without "
+"restrictions — all while staying within budget. Your store's success is one "
+"click away, so don't miss the Super Saver PRO Access Deal that can skyrocket "
+"your sales today!"
+msgstr ""
+
+#: includes/component/upgrade-to-pro/templates/upgrade-to-pro-page/upgrade-to-pro-modal.php:10
+msgid ""
+"Upgrade from lite to PRO at special pricing. Click the button below to "
+"<i>access the latest deals.</i>"
+msgstr ""
+
+#: includes/component/upgrade-to-pro/templates/upgrade-to-pro-page/upgrade-to-pro-modal.php:13
+msgid "Your store was thriving with PRO - Why stop now?"
+msgstr ""
+
+#: includes/component/upgrade-to-pro/templates/upgrade-to-pro-page/upgrade-to-pro-modal.php:14
+msgid "Upgrade to Abandoned Cart Pro for WooCommerce"
+msgstr ""
+
+#: includes/component/upgrade-to-pro/templates/upgrade-to-pro-page/upgrade-to-pro-modal.php:15
+msgid ""
+"Reclaim the 20+ powerful features that were driving your growth. Upgrade to "
+"PRO again and continue unlocking your store's full potential. Without PRO "
+"you are missing out on -"
+msgstr ""
+
+#: includes/component/upgrade-to-pro/templates/upgrade-to-pro-page/upgrade-to-pro-modal.php:16
+msgid ""
+"<b><i>Don't miss out on what you were achieving - take action today! Click "
+"the button below to Upgrade to PRO.</i></b>"
+msgstr ""
+
+#: includes/component/upgrade-to-pro/ts-upgrade-to-pro.php:204
+#: includes/component/upgrade-to-pro/ts-upgrade-to-pro.php:205
+#: build/admin/admin.js:1
+msgid "Upgrade to Pro"
+msgstr ""
+
+#. translators: %s: Renew Link
+#: includes/component/upgrade-to-pro/ts-upgrade-to-pro.php:250
+msgid ""
+"Your Woo store is losing its WOW factor. Your Abandoned Cart Pro for "
+"WooCommerce license has expired. <a href=\"%s\" target=\"_blank\" "
+"class=\"button\">Renew Now</a>"
+msgstr ""
+
+#. translators: %s: AC Trial Version Download page Link
+#: includes/component/upgrade-to-pro/ts-upgrade-to-pro.php:257
+msgid ""
+"Upgrade to the PRO version of Abandoned Cart Pro for WooCommerce plugin for "
+"$1! Enjoy all Pro features for 30 days at this insane price. Limited time "
+"offer <a href=\"%s\" class=\"button-primary button button-large\" "
+"target=\"_blank\"><b>Act now!</b></a>"
+msgstr ""
+
+#: includes/frontend/class-wcal-checkout-process.php:219
+msgid "This order was abandoned & subsequently recovered."
+msgstr ""
+
+#: includes/templates/emails/abandonment-notification.php:8
+msgid "Hi"
+msgstr ""
+
+#. Translators: Site Name.
+#: includes/templates/emails/abandonment-notification.php:15
+msgid "We are writing to let you know that a cart has been abandoned on %s"
+msgstr ""
+
+#. Translators: cart ID & Cart Abandonment Time.
+#: includes/templates/emails/abandonment-notification.php:26
+msgid "Cart #%1$s (%2$s)"
+msgstr ""
+
+#. Translators: Cart Source.
+#: includes/templates/emails/abandonment-notification.php:36
+msgid "The cart was captured by %1$s"
+msgstr ""
+
+#: includes/templates/emails/abandonment-notification.php:46
+msgid "Product"
+msgstr ""
+
+#: includes/templates/emails/abandonment-notification.php:127
+#: build/admin/admin.js:1
+msgid "Customer Details"
+msgstr ""
+
+#. Translators: Phone.
+#: includes/templates/emails/abandonment-notification.php:138
+msgid "Phone: %s"
+msgstr ""
+
+#. Translators: Email.
+#: includes/templates/emails/abandonment-notification.php:143
+msgid "Email: %s"
+msgstr ""
+
+#. translators: link to the WP admin dashboard.
+#: includes/templates/emails/abandonment-notification.php:152
+msgid "You can check the cart details %s"
+msgstr ""
+
+#. translators: link to the WP admin dashboard.
+#: includes/templates/emails/abandonment-notification.php:152
+msgid "here"
+msgstr ""
+
+#: woocommerce-ac.php:390 build/admin/admin.js:1
+msgid "Settings"
+msgstr ""
+
+#: woocommerce-ac.php:519
+msgid "Abandoned cart Email Template"
+msgstr ""
+
+#: woocommerce-ac.php:856
+msgid "Cart Abandonment Settings"
+msgstr ""
+
+#: woocommerce-ac.php:863
+msgid "Enable abandoned cart emails"
+msgstr ""
+
+#: woocommerce-ac.php:867
+msgid "Yes, enable the abandoned cart emails."
+msgstr ""
+
+#: woocommerce-ac.php:872
+msgid "Cart abandoned cut-off time"
+msgstr ""
+
+#: woocommerce-ac.php:876
+msgid ""
+"Consider cart abandoned after X minutes of item being added to cart & order "
+"not placed."
+msgstr ""
+
+#: woocommerce-ac.php:881
+msgid "Automatically Delete Abandoned Orders after X days"
+msgstr ""
+
+#: woocommerce-ac.php:885
+msgid "Automatically delete abandoned cart orders after X days."
+msgstr ""
+
+#: woocommerce-ac.php:890
+msgid "Email admin On Order Recovery"
+msgstr ""
+
+#: woocommerce-ac.php:894
+msgid "Sends email to Admin if an Abandoned Cart Order is recovered."
+msgstr ""
+
+#: woocommerce-ac.php:899
+msgid "Email admin on cart abandonment"
+msgstr ""
+
+#: woocommerce-ac.php:903
+msgid ""
+"Enable this option to notify the store administrator when a cart is abandoned"
+msgstr ""
+
+#: woocommerce-ac.php:908
+msgid "Start tracking from Cart Page"
+msgstr ""
+
+#: woocommerce-ac.php:912
+msgid ""
+"Enable tracking of abandoned products & carts even if customer does not "
+"visit the checkout page or does not enter any details on the checkout page "
+"like Name or Email. Tracking will begin as soon as a visitor adds a product "
+"to their cart and visits the cart page."
+msgstr ""
+
+#: woocommerce-ac.php:917
+msgid "GDPR Settings"
+msgstr ""
+
+#: woocommerce-ac.php:924
+msgid "Enable GDPR Notice"
+msgstr ""
+
+#: woocommerce-ac.php:928
+msgid ""
+"Enable this setting to display a notice informing customers that their email "
+"and cart data are saved to send abandonment reminders."
+msgstr ""
+
+#: woocommerce-ac.php:933
+msgid "Message to be displayed for Guest users when tracking their carts"
+msgstr ""
+
+#: woocommerce-ac.php:937
+msgid ""
+"<br>In compliance with GDPR, add a message on the Checkout page to inform "
+"Guest users of how their data is being used.<br><i>For example: Your email "
+"address will help us support your shopping experience throughout the site. "
+"Please check our Privacy Policy to see how we use your personal data.</i>"
+msgstr ""
+
+#: woocommerce-ac.php:942
+msgid "Message to be displayed for registered users when tracking their carts."
+msgstr ""
+
+#: woocommerce-ac.php:946
+msgid ""
+"<br>In compliance with GDPR, add a message on the Shop & Product pages to "
+"inform Registered users of how their data is being used.<br><i>For example: "
+"Please check our Privacy Policy to see how we use your personal data.</i>"
+msgstr ""
+
+#: woocommerce-ac.php:951
+msgid "Allow the visitor to opt out of cart tracking."
+msgstr ""
+
+#: woocommerce-ac.php:955
+msgid ""
+"<br>In compliance with GDPR, allow the site visitor (guests & registered "
+"users) to opt out from cart tracking. This message will be displayed in "
+"conjunction with the GDPR message above.</i>"
+msgstr ""
+
+#: woocommerce-ac.php:960
+msgid ""
+"Message to be displayed when the user chooses to opt out of cart tracking."
+msgstr ""
+
+#: woocommerce-ac.php:964
+msgid ""
+"<br>Message to be displayed when the user chooses to opt out of cart "
+"tracking.</i>"
+msgstr ""
+
+#: woocommerce-ac.php:968 build/admin/admin.js:1
+msgid "Coupon Settings"
+msgstr ""
+
+#: woocommerce-ac.php:974
+msgid "Delete Coupons Automatically"
+msgstr ""
+
+#: woocommerce-ac.php:978
+msgid ""
+"Enable this setting if you want to completely remove the expired and used "
+"coupon code automatically every 15 days."
+msgstr ""
+
+#: woocommerce-ac.php:982
+msgid "Delete Coupons Manually"
+msgstr ""
+
+#: woocommerce-ac.php:986
+msgid ""
+"If you want to completely remove the expired and used coupon code now then "
+"click on \"Delete\" button."
+msgstr ""
+
+#: woocommerce-ac.php:991
+msgid "Rules to exclude capturing abandoned carts"
+msgstr ""
+
+#: woocommerce-ac.php:998
+msgid "Do not capture abandoned carts for these IP Addresses:"
+msgstr ""
+
+#: woocommerce-ac.php:1002
+msgid ""
+"<br>The carts abandoned from these IP addresses will not be tracked by the "
+"plugin. Accepts wildcards, e.g 192.168.* will block all IP addresses which "
+"starts from &quot;192.168&quot;. Separate IP addresses with commas."
+msgstr ""
+
+#: woocommerce-ac.php:1007
+msgid "Do not capture abandoned carts for these email addresses:"
+msgstr ""
+
+#: woocommerce-ac.php:1011
+msgid ""
+"<br>Carts that are abandoned using these email addresses will not be tracked "
+"by the plugin. *Separate email addresses with commas."
+msgstr ""
+
+#: woocommerce-ac.php:1016
+msgid "Do not capture abandoned carts for email addresses from these domains:"
+msgstr ""
+
+#: woocommerce-ac.php:1020
+msgid ""
+"<br>The carts abandoned from email addresses with these domains will not be "
+"tracked by the plugin."
+msgstr ""
+
+#: woocommerce-ac.php:1025
+msgid "Do not capture carts from countries:"
+msgstr ""
+
+#: woocommerce-ac.php:1029
+msgid ""
+"<br>The carts abandoned from these countries will not be tracked by the "
+"plugin."
+msgstr ""
+
+#: woocommerce-ac.php:1039 build/admin/admin.js:1
+msgid "Settings for abandoned cart recovery emails"
+msgstr ""
+
+#: woocommerce-ac.php:1046
+msgid "\"From\" Name"
+msgstr ""
+
+#: woocommerce-ac.php:1055
+msgid "\"From\" Address"
+msgstr ""
+
+#: woocommerce-ac.php:1064
+msgid "Send Reply Emails to"
+msgstr ""
+
+#: woocommerce-ac.php:1073
+msgid "UTM parameters to be added to all the links in reminder emails"
+msgstr ""
+
+#: woocommerce-ac.php:1077
+msgid ""
+"UTM parameters that should be added to all the links in reminder emails."
+msgstr ""
+
+#: woocommerce-ac.php:1082
+msgid ""
+"Auto login WordPress users coming to the site using reminder email links"
+msgstr ""
+
+#: woocommerce-ac.php:1086
+msgid ""
+"Should users registered on the site be auto logged in when they click a link "
+"in the reminder emails?"
+msgstr ""
+
+#: woocommerce-ac.php:1332 woocommerce-ac.php:2895
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: woocommerce-ac.php:1347
+msgid "Unknown section."
+msgstr ""
+
+#: woocommerce-ac.php:1395
+msgid ""
+"Change settings for sending email notifications to Customers, to Admin etc."
+msgstr ""
+
+#: woocommerce-ac.php:1429
+msgid "Download the \"woocommerce-abandoned-cart.po\" file."
+msgstr ""
+
+#: woocommerce-ac.php:1430
+msgid "Open it in PoEdit translation editor, and translate the strings."
+msgstr ""
+
+#: woocommerce-ac.php:1431
+msgid "Save with your language code (e.g., fr_FR.po) to generate the .mo file."
+msgstr ""
+
+#: woocommerce-ac.php:1432
+msgid ""
+"Upload both files to \"woocommerce-abandoned-cart/languages\" and \"wp-"
+"content/languages\" folder via FTP."
+msgstr ""
+
+#: woocommerce-ac.php:1434
+msgid ""
+"You can also use the Loco Translate or any other translation plugin for this "
+"string's translation."
+msgstr ""
+
+#: woocommerce-ac.php:1499
+msgid ""
+"Abandoned cart cut off time should be numeric and has to be greater than 0."
+msgstr ""
+
+#: woocommerce-ac.php:1517
+msgid ""
+"Automatically Delete Abandoned Orders after X days has to be greater than 0."
+msgstr ""
+
+#: woocommerce-ac.php:1829
+msgid "Upgrade to Pro!"
+msgstr ""
+
+#: woocommerce-ac.php:2848
+msgid ""
+"Are you sure you want delete the expired and used coupons created by "
+"Abandonment Cart Lite for WooCommerce Plugin?"
+msgstr ""
+
+#: woocommerce-ac.php:2880
+msgid ""
+"The link you followed has expired. Please refresh the page and try again."
+msgstr ""
+
+#: woocommerce-ac.php:2881
+msgid "Security check failed"
+msgstr ""
+
+#: woocommerce-ac.php:2918
+msgid "JavaScript is required to use this page."
+msgstr ""
+
+#: woocommerce-ac.php:2936
+msgid ""
+"If you love <strong>Abandoned Cart Lite for WooCommerce</strong>, then "
+"please leave us a <a href=\"https://wordpress.org/support/plugin/woocommerce-"
+"abandoned-cart/reviews/?rate=5#new-post\" target=\"_blank\" class=\"ac-"
+"rating-link\" data-rated=\"Thanks :)\">★★★★★</a> rating. Thank you in "
+"advance. :)"
+msgstr ""
+
+#: woocommerce-ac.php:3088 woocommerce-ac.php:3123
+msgid "Men's Formal Shoes"
+msgstr ""
+
+#: woocommerce-ac.php:3095 woocommerce-ac.php:3130
+msgid "Woman's Hand Bags"
+msgstr ""
+
+#: woocommerce-ac.php:3455
+msgid "Select countries"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Dashboard"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned Orders"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Templates"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Reminders Sent"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Product Report"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "FAQ & Support"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Toggle navigation"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned Cart Lite"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Browse the full documentation"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid " to get the most out of Abandoned Cart Lite for WooCommerce."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Need Support?"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "We're always happy to help you."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "If this plugin helped you,"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "please rate it"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Save Settings"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "PRO"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "This Month"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Last Month"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "This Quarter"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Last Quarter"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "This Year"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Last Year"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Custom"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned Revenue"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Recovered Revenue"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "No data for selected period."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Product Name"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Number of Times Abandoned"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Number of Times Recovered"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "No data found."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Unsubscribed"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned Cart Details"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned Date / Time"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Cart Status"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Guest"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "item(s)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to load dashboard data."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Start date"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "to"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "End date"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Loading…"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Apply filters"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Recovered Amount"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Recovered Orders"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "of Abandoned Carts Recovered"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "of Total Revenue"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned Amount"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Number of Emails Sent"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Upgrade to <a>Abandoned Cart Pro for WooCommerce</a> to view the number of "
+"emails opened and links clicked."
+msgstr ""
+"Hindi - Upgrade to <a>Abandoned Cart Pro for WooCommerce</a> to view the "
+"number of emails opened and links clicked."
+
+#: build/admin/admin.js:1
+msgid "Emails Captured"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Guest emails captured."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Upgrade to <a>Abandoned Cart Pro for WooCommerce</a> to capture more guest "
+"carts."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned Cart"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "items"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "First page"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Previous page"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Current page"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "of"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Next page"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Last page"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Yesterday"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Today"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Last 7 days"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Last 15 days"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Last 30 days"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Last 90 days"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Last 365"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Custom Range"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "All Statuses"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned - Pending Payment (PRO)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned - Order Received (PRO)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned - Order Cancelled (PRO)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Bulk Action"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Delete"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Delete All Registered User Carts"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Delete All Guest User Carts"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Delete All Visitor Carts"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Delete All Carts"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Send Custom Email (PRO)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Sync Manually (PRO)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Move to Trash (PRO)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Order"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Phone:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to load cart details."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Cart #"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Close"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Recovered on"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Order Total"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Hide Details"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Show Details"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Shipping Charges:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Billing Address:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Shipping Address:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Shipping Address same as Billing Address"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "item"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Item Cost"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Item Quantity"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email template"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "was sent to"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "on"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Send Custom Email"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Unsubscribe"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Id"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned Date/ Time"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Coupon Used/ Status"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Captured By"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "No abandoned orders found."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "View"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Mark As Recovered"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Order Total:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Apply"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "All"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Registered Users"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Carts without Customer Details"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Trash"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to load abandoned orders. Please try again."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "This cannot be undone."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Permanently delete the selected carts? This cannot be undone."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Bulk action failed."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"The list below shows all the carts that were abandoned and subsequently "
+"recovered."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "All Sources"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Apply Filter"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "CSV"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Print"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "carts worth"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "were recovered during the selected range."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "No carts were recovered during the selected range"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Permanently delete this cart? This cannot be undone."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to delete cart."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "No records found."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Select all"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Actions"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Select row"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to load this section. Please try again."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Search for a Coupon…"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Cart and checkout buttons are available in the Pro version"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Preview WooCommerce Email"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Preview Custom Email"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "you@example.com"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Send a test email to"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Send a test email"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Rules"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Rule Type"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Conditions"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Values"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Add Rule"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to load template."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "The Email Template has been successfully updated."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"The Email Template has been successfully added. In order to start sending "
+"this email to your customers, please activate it."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to save template."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Please enter a valid email."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Test email is not sent as the email body is empty."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned Cart Reminder"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to send test email."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email has been sent successfully."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Edit Template"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Add Template"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Match Rules"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Whether the cart must match all rules or any rule."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Match all rules"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Match any rule(s)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Template Name"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Enter a template name for reference"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Enter template name…"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Send this Email"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Minutes"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Hours"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Days"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "after cart is abandoned."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Subject"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Enter the subject that should appear in the email sent"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email subject…"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Add the shortcode {{customer.firstname}} or {{product.name}} to include the "
+"Customer First Name and Product name ( first in the cart ) to the Subject "
+"Line. For e.g. Hi John!! You left some Protein Bread in your cart"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email Body"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Message to be sent in the reminder email."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Insert Template"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Import Template"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"1. You can add customer & cart information in the template using this icon"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "in top left of the editor."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"2. The product information/cart contents table will be added in emails using "
+"the {{products.cart}} merge field."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"3. Insert/Remove any of the new shortcodes that have been included for the "
+"default template."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"4. Change the look and feel of the table by modifying the table style "
+"properties using CSS in \"Text\" mode."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"5. Change the text color of the table rows by using the Toolbar of the "
+"editor."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Use WooCommerce Template Style"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Use WooCommerce default style template for abandoned cart reminder emails."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Note: When this setting is enabled, then \"Send From This Name:\" & \"Send "
+"From This Email Address:\" will be overwritten with WooCommerce -> Settings "
+"-> Email -> Email Sender Options."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email Template Header Text"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Enter the header which will appear in the abandoned WooCommerce email sent. "
+"This is only applicable when only used when \"Use WooCommerce Template Style:"
+"\" is checked."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Generate unique coupon codes"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Replace this coupon with unique coupon codes for each customer"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Discount Type"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Percentage discount"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Fixed cart discount"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Coupon amount"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Value of the coupon."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Allow free shipping"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Check this box if the coupon grants free shipping. A free shipping method "
+"must be enabled in your shipping zone and be set to require \"a valid free "
+"shipping coupon\" (see the \"Free Shipping Requires\" setting)."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Coupon validity"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"The coupon code which will be sent in the reminder emails will be expired "
+"based the validity set here. E.g if the coupon code sent in the reminder "
+"email should be expired after 7 days then set 7 Day(s) for this option."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Hour(s)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Day(s)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Individual use only"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Check this box if the coupon cannot be used in conjunction with other "
+"coupons."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "OR"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Enter a coupon code to add into email"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Search & select one coupon code that customers should use to get a discount. "
+"Generated coupon code which will be sent in email reminder will have the "
+"settings of coupon selected in this option."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Enter the email id to which the test email needs to be sent."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Back"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email Templates"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "SMS Notifications"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "WhatsApp Notifications"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to load email templates."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "ID"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Name Of Template"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "(untitled)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Edit"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Duplicate"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Delete this email template?"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Template deleted."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to delete template."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Sent After Set Time"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "After Abandonment"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Send To Segment(s)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "No.of Emails Sent"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Open Rate(%)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Link Click Rate(%)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Coupon Redemption Rate(%)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Conversion Rate(%)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Start Sending"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to update template status."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Add email templates at different intervals to maximize the possibility of "
+"recovering your abandoned carts."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "+ Add New Template"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "No email templates found. Create your first one!"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "email template(s)?"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "deleted,"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "failed."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "template(s) deleted."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Open Rate :"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Number of emails opened versus number of emails sent."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Link Click Rate :"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Number of links clicked versus number of emails sent. In cases where coupons "
+"are present for the template, the coupon application rate will be same as "
+"Link Click Rate, since coupons are auto applied when a link is clicked."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Coupon Redemption Rate :"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Number of Coupons applied (i.e. number of links clicked) versus number of "
+"emails opened."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Conversion Rate :"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Number of carts recovered versus number of emails sent."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "User Email Address"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email Sent"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email Opened"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Links Clicked"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email Sent Time"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Date / Time Email Opened"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Sent Email Template"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "SMS Sent"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "WhatsApp Sent"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to load data. Please try again."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Link Clicked"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"The Report below shows emails sent, emails opened and other related stats "
+"for the selected date range"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "No records found for the selected filters."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to load product reports. Please try again."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"The below list shows the products which have been abandoned and also the "
+"number of times they have been recovered."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "No product reports found."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"If your queries are not answered here, you can send an email directly to "
+"support@tychesoftwares.com for some additional requirements."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Still have questions?"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Browse the documentation or reach out to our support team."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Documentation"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Contact Support"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Settings saved successfully."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to save settings."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Failed to load settings."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email Settings"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email address to send abandonment notifications:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Comma-separated email addresses to notify. Leave blank to use the site admin "
+"email."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Select cart sources to send abandonment notifications for:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Select the cart sources for which the abandonment notifications should be "
+"sent. Enable \"All\" to include every source."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Exit Intent Popup"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Checkout Page"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "URLs"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Product Page"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Custom Forms"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Add to Cart Popup"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Send reminder emails for newly abandoned carts after X days of order "
+"placement:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Reminder emails will be sent for newly abandoned carts only after X days of "
+"a previously placed order for a user with the same email address as that of "
+"the abandoned cart"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Capture email address from custom fields:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Enable this setting to capture email address from other form fields."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Class Names Of The Form Fields:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Enter class names of fields separated by commas from where email needs to be "
+"captured."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Capture Email address from URL:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"If your site URL contains the same key, the plugin will capture the value as "
+"an email address of the customer."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Enable Email Verification:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Enable this checkbox to allow email verification to be done via DeBounce API "
+"services."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Enter DeBounce API Key:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Your Debounce.io API key."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Cart Settings"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Cart abandonment cut-off time for guest users (minutes):"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"For guest users & visitors consider cart abandoned after X minutes of item "
+"being added to cart & order not placed."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Do not track carts of guest users:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned carts of guest users will not be tracked."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Do not track carts of logged-in users:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Abandoned carts of logged-in users will not be tracked."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Add product to cart when popup close icon is clicked"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Enable this setting if you want the product to the added to cart when the "
+"user clicks on the Close Icon in the Add to Cart Popup Window."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Plugin Settings"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Remove all data on uninstall:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Enable this setting if you want to completely remove Abandoned Cart data "
+"when plugin is deleted."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Enable AI Reporting Abilities (lets AI assistants query your abandoned-cart "
+"reports):"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Lets AI assistants (e.g. Claude, connected via MCP) query abandoned-cart "
+"reporting data such as top abandoned products, recovered revenue, and "
+"template performance. Read-only, requires the same admin capability as this "
+"settings screen, and exposes no customer data."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Reset Usage Tracking:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"This will reset your usage tracking settings, causing it to show the opt-in "
+"banner and not send any data."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Reset"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "GDPR Consent"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "GDPR Compliance Type:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"In compliance with GDPR, allow site visitors (guests) to opt in to cart "
+"tracking. This message will be displayed alongside the GDPR message above."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Opt Out of Cart Tracking"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Opt In to Cart Tracking"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Allow the visitor to opt in to cart tracking:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"In compliance with GDPR, allow the site visitor (guests & registered users) "
+"to opt in to cart tracking. This message will be displayed in conjunction "
+"with the GDPR message above."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Enable SMS Consent:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Enable this setting to display a notice informing customers that their phone "
+"number and cart data are saved to send abandonment reminders."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "SMS Consent Message:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Message to be displayed below the Phone field at Checkout informing users "
+"that their phone number and cart data are saved to send abandonment "
+"reminders."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Something went wrong. Please try deleting again."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Setting for sending Emails & SMS using Action Scheduler"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Send Abandoned cart reminders automatically using Action Scheduler:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Enabling this setting will send the abandoned cart reminders to the customer "
+"after the set time. If disabled, automated abandoned cart reminders will not "
+"be sent by the plugin. Carts will be tracked based on the settings, but no "
+"reminders will be sent."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Run automated scheduler action after X minutes:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"The duration in minutes after which an action should be automatically "
+"scheduled to send email, SMS & FB reminders to customers."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Rules to exclude capturing abandoned carts:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Search and add countries…"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Unsubscribe Emails Settings"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Unsubscribe Landing Page:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Select a source where the user must be redirected when an Unsubscribe link "
+"is clicked from reminders sent. For details, please check the documentation."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Default unsubscribe page"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Custom text"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Custom WordPress page"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Allow customers to unsubscribe from all future Abandoned Cart Reminders:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"This will give an option to the customers whether they want to unsubscribe "
+"from the current abandoned cart reminders or from all future abandoned cart "
+"reminders also when they click on the unsubscribe link in the email."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Product image size (px)"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"This setting affects the dimension of the product image in the abandoned "
+"cart reminder email."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Width"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "×"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Height"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Product Name Redirects to:"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"Select the page where product name in reminder emails should redirect to."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Select…"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Settings marked PRO are available in the Pro version."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Some settings could not be saved. Please check each panel for details."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "All settings saved."
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Save All"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "General"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Popup Templates"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "SMS"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "WhatsApp"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Connectors"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Email Report"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid "Import/Export"
+msgstr ""
+
+#: build/admin/admin.js:1
+msgid ""
+"You can view these settings, but only users who can manage the site options "
+"can change them."
+msgstr ""
+
+#: build/index.js:1
+msgid "Your email address will be saved for sending abandoned cart reminders."
+msgstr ""
+
+#: build/index.js:1
+msgid "No thanks"
+msgstr ""
+
+#: build/wcal-blocks-gdpr-email-compliance/block.json
+msgctxt "block title"
+msgid "GDPR Email Compliance"
+msgstr ""

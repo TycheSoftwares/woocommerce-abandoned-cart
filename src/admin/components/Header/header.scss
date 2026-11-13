@@ -1,0 +1,157 @@
+// ── WCAP Admin Header ─────────────────────────────────────────────────────────
+// Brand purple: #41278D  |  Active tab bg: #fff
+
+.wcap-header {
+	background: #41278d;
+	color: #fff;
+	position: relative;
+	z-index: 100;
+
+	&__wrap {
+		display: flex;
+		align-items: center;
+		padding: 15px 10px 0;
+	}
+
+	// ── Logo ──────────────────────────────────────────────────────────────────
+	&__branding {
+		display: flex;
+		align-items: center;
+		margin: 10px 10px 10px 0;
+		flex-shrink: 0;
+
+		img {
+			height: 40px;
+			width: auto;
+			display: block;
+		}
+	}
+
+	// ── Nav ───────────────────────────────────────────────────────────────────
+	&__nav {
+		flex-grow: 1;
+		padding: 0;
+	}
+
+	// ── Hamburger toggle (hidden on desktop) ──────────────────────────────────
+	&__toggler {
+		display: none;
+		border: none;
+		color: #fff;
+		padding: 0;
+		margin-left: 10px;
+		background: none;
+		box-shadow: none;
+
+		&:hover,
+		&:active,
+		&:focus {
+			background: none !important;
+			box-shadow: none !important;
+		}
+
+		&-icon {
+			display: block;
+			width: 24px;
+			height: 24px;
+		}
+	}
+
+	// ── Menu list ─────────────────────────────────────────────────────────────
+	&__collapse {
+		display: block;
+	}
+
+	&__menu {
+		display: flex;
+		align-items: center;
+		list-style: none;
+		padding: 0 0 0 10px;
+		margin: 0;
+
+		li {
+			padding: 0;
+			margin-bottom: 0;
+		}
+	}
+
+	// ── Nav links ─────────────────────────────────────────────────────────────
+	&__link {
+		display: block;
+		font-size: 15px;
+		color: #fff;
+		font-weight: 600;
+		padding: 19px 13px 18px;
+		text-decoration: none;
+		white-space: nowrap;
+
+		&:hover,
+		&:focus {
+			background: rgba( 255, 255, 255, 0.12 );
+			color: #fff;
+		}
+
+		&.active {
+			background: #fff;
+			color: #41278d;
+		}
+	}
+
+	// ── Version badge ─────────────────────────────────────────────────────────
+	&__version {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-end;
+		padding: 0 10px;
+		margin-left: auto;
+		color: #fff;
+		font-size: 12px;
+		line-height: 1.5;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	// ── Mobile ────────────────────────────────────────────────────────────────
+	@media ( max-width: 992px ) {
+		&__toggler {
+			display: block;
+		}
+
+		&__collapse {
+			display: none;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			background: #fbfcfa;
+			z-index: 200;
+
+			&--open {
+				display: block;
+			}
+		}
+
+		&__menu {
+			flex-direction: column;
+			align-items: flex-start;
+			padding: 0;
+		}
+
+		&__link {
+			color: #41278d;
+			width: 100%;
+
+			&:hover,
+			&:focus {
+				background: rgba( 65, 39, 141, 0.08 );
+				color: #41278d;
+			}
+
+			&.active {
+				background: rgba( 65, 39, 141, 0.12 );
+				color: #41278d;
+			}
+		}
+	}
+}

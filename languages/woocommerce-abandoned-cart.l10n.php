@@ -1,0 +1,2 @@
+<?php
+return ['domain'=>'woocommerce-abandoned-cart','plural-forms'=>NULL,'language'=>'','project-id-version'=>'Abandoned Cart Lite for WooCommerce 6.7.0','pot-creation-date'=>'2026-11-12T11:15:56+00:00','po-revision-date'=>'YEAR-MO-DA HO:MI+ZONE','x-generator'=>'WP-CLI 2.11.0','messages'=>[]];

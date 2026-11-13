@@ -1,0 +1,64 @@
+$primary: #41278D;
+
+.wcap-pagination {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 0;
+
+	&__count {
+		font-size: 13px;
+		color: #1d2327;
+		margin-right: 6px;
+	}
+
+	&__btn {
+		width: 38px;
+		height: 38px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background: #f6f7f7;
+		border: 1px solid #dcdcde;
+		border-radius: 4px;
+		font-size: 15px;
+		color: #a0aab4;
+		cursor: default;
+		padding: 0;
+		transition: border-color 0.15s, color 0.15s, background 0.15s;
+
+		&:not( :disabled ) {
+			background: #fff;
+			border-color: $primary;
+			color: $primary;
+			cursor: pointer;
+
+			&:hover {
+				background: lighten( $primary, 52% );
+			}
+		}
+	}
+
+	&__input {
+		width: 38px;
+		height: 38px;
+		text-align: center;
+		border: 1px solid #dcdcde;
+		border-radius: 4px;
+		font-size: 13px;
+		color: #1d2327;
+		background: #fff;
+
+		&:focus {
+			outline: none;
+			border-color: $primary;
+			box-shadow: 0 0 0 1px $primary;
+		}
+	}
+
+	&__of {
+		font-size: 13px;
+		color: #50575e;
+		white-space: nowrap;
+	}
+}
