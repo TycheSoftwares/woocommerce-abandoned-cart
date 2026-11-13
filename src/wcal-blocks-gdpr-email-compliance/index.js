@@ -7,7 +7,7 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-// import { Edit, Save } from './edit';
+import { Edit } from './edit';
 import metadata from './block.json';
 registerBlockType(metadata, {
 	icon: {
@@ -28,6 +28,5 @@ registerBlockType(metadata, {
 		),
 		foreground: '#874FB9',
 	},
-//	edit: Edit,
-//	save: Save,
+	edit: Edit,
 });

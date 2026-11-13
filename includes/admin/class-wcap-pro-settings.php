@@ -63,6 +63,33 @@ if ( ! class_exists( 'WCAP_Pro_Settings' ) ) {
 		public static function wcap_sms_settings() {
 			self::wcap_show_settings_modal( 'ac-lite-sms-settings-html.php' );
 		}
+
+		/**
+		 * WhatsApp Settings for AC Pro.
+		 *
+		 * @since 6.10.0
+		 */
+		public static function wcap_whatsapp_settings() {
+			self::wcap_show_settings_modal( 'ac-lite-whatsapp-settings-html.php' );
+		}
+
+		/**
+		 * Email Report Settings for AC Pro.
+		 *
+		 * @since 6.10.0
+		 */
+		public static function wcap_email_report_settings() {
+			self::wcap_show_settings_modal( 'ac-lite-email-report-settings-html.php' );
+		}
+
+		/**
+		 * Import/Export Settings for AC Pro.
+		 *
+		 * @since 6.10.0
+		 */
+		public static function wcap_import_export_settings() {
+			self::wcap_show_settings_modal( 'ac-lite-import-export-settings-html.php' );
+		}
 	} // end of class.
 
 	$wcap_pro_settings = new WCAP_Pro_Settings();

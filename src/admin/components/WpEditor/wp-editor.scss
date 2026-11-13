@@ -1,0 +1,15 @@
+// ── WpEditor — TinyMCE custom toolbar icon sprites ────────────────────────────
+// These rules target the <i class="mce-i-*"> elements TinyMCE 4 renders for
+// toolbar buttons registered via editor.addButton( id, { icon: '...' } ).
+
+i.mce-i-abandoncart_email_variables_css_pro {
+	background-image: url( '../../../../assets/images/buttons_editor_icon_final.png' );
+	width: 50px !important;
+	height: 30px;
+}
+
+i.mce-i-abandoncart_email_variables_pro {
+	background-image: url( '../../../../assets/images/ac_editor_icon.png' );
+	width: 30px;
+	height: 30px;
+}

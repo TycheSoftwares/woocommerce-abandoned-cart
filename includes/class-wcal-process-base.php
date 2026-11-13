@@ -7,6 +7,10 @@
  * @since    4.9
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * This class will help run automated scheduler actions to send reminders.
  */

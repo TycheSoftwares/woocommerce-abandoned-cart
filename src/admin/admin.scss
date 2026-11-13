@@ -1,0 +1,183 @@
+// =============================================================================
+// WCAP Admin — Global Styles
+// Brand purple: #41278D
+// =============================================================================
+
+body {
+	background: #f6f5fb;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	font-size: 13px;
+	color: #424242;
+	font-weight: 400;
+	line-height: 1.7;
+}
+
+.wcap-admin-app {
+	margin-top: 30px;
+	// ── Sub-page TabPanel (inside pages) ─────────────────────────────────────
+	.components-tab-panel__tabs {
+		display: flex;
+		flex-wrap: wrap;
+		padding-left: 20px;
+		margin: 0;
+		border-bottom: 2px solid rgba( 167, 172, 177, 0.3 );
+		padding-top: 10px;
+	}
+
+	.components-tab-panel__tabs-item {
+		margin: 0 20px -2px 0;
+		font-size: 15px;
+		color: #1d2327;
+		padding: 14px 10px;
+		border: none;
+		border-bottom: 1px solid transparent;
+		border-radius: 0;
+		background: none;
+		box-shadow: none;
+		cursor: pointer;
+
+		&:hover:not( .is-active ) {
+			border-bottom-color: rgba( 65, 39, 141, 0.4 );
+			background: none;
+			box-shadow: none;
+		}
+
+		&.is-active {
+			border-bottom-color: #41278d;
+			font-weight: 500;
+			background: none;
+			box-shadow: none;
+		}
+	}
+
+	// ── WP Card divider ───────────────────────────────────────────────────────
+	.components-divider.components-card__divider {
+		border-color: #e3e4e4;
+	}
+
+	// ── Input / Select controls ───────────────────────────────────────────────
+	.components-input-control__input,
+	.components-text-control__input,
+	.components-select-control__input {
+		min-height: 38px;
+		border-radius: 4px;
+	}
+
+	.components-input-control__backdrop {
+		border-radius: 4px;
+	}
+
+	.components-button.add-new-button {
+		color: #41278D;
+		font-weight: 600;
+		margin-left: 5px;
+		background: transparent;
+		border-color: #41278D;
+		border-radius: 5px;
+
+		&:hover {
+			background: #41278D;
+			color: #fff;
+		}
+	}
+}
+
+// ── Page content wrapper ──────────────────────────────────────────────────────
+.wcap-page-content {
+	min-height: calc( 100vh - 56px );
+}
+
+.wcap-page {
+
+	.components-tab-panel__tab-content {
+		padding: 10px 20px;
+		margin-top: 20px;
+	}
+
+	.wcap-template-list {
+		padding: 10px 20px;
+
+		&__legend {
+			margin-top: 16px;
+			font-size: 13px;
+			color: #3c434a;
+
+			p {
+				margin: 0 0 12px;
+				line-height: 1.6;
+
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+		}
+	}
+}
+
+// ── Responsive — global ───────────────────────────────────────────────────────
+
+@media ( max-width: 782px ) {
+	.wcap-admin-app {
+		margin-top: 0;
+	}
+}
+
+@media ( max-width: 600px ) {
+	.wcap-admin-app {
+		.components-tab-panel__tabs-item {
+			font-size: 13px;
+			padding: 10px 8px;
+			margin-right: 8px;
+		}
+	}
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+.wcap-footer {
+	padding: 24px 20px;
+	border-top: 1px solid #e0e0e0;
+	margin-top: 40px;
+	text-align: center;
+	
+	.components-notice {
+		margin-bottom: 16px;
+	}
+
+	.wcap-footer__notice-icon {
+		vertical-align: middle;
+		margin-right: 6px;
+	}
+
+	.wcap-footer__support,
+	.wcap-footer__rate {
+		font-size: 13px;
+		color: #424242;
+		margin: 0 0 10px;
+		text-align: center;
+
+		a {
+			color: #41278d;
+			text-decoration: underline;
+
+			&:hover {
+				color: darken( #41278d, 10% );
+			}
+		}
+	}
+
+	.wcap-footer__stars {
+		color: #f0b429;
+		letter-spacing: 2px;
+	}
+}
+
+// PRO pills under the header text of narrow columns.
+.wcap-template-list .wcap-tbl-th-inner {
+	flex-wrap: wrap;
+	word-break: normal;
+
+	.wcal-pro-badge {
+		white-space: nowrap;
+		word-break: keep-all;
+	}
+}

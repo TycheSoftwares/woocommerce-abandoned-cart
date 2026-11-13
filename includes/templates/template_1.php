@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 $site_title = get_bloginfo( 'name' );
 $site_url   = get_option( 'siteurl' );

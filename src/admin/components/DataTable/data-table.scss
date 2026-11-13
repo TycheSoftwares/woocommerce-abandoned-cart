@@ -1,0 +1,277 @@
+// ── DataTable component ──────────────────────────────────────────────────────
+//
+// BEM-like namespace: .wcap-dt-  (woocommerce abandon cart — data table)
+// WP Card handles: border, border-radius, box-shadow, background, overflow.
+// Primary brand colour: #41278D
+
+// ── Filter bar ───────────────────────────────────────────────────────────────
+
+.wcap-dt-filter-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-bottom: 12px;
+
+	// Keep SelectControl tight (WP makes it 100% wide by default)
+	.wcap-dt-filter-select {
+		margin: 0;
+
+		.components-select-control__input {
+			min-width: 140px;
+			width: auto;
+			height: 36px;
+		}
+	}
+
+	.wcap-dt-filter-date {
+		padding: 4px 8px;
+		height: 36px;
+		border: 1px solid #757575;
+		border-radius: 2px;
+		font-size: 13px;
+		color: #1d2327;
+		background: #fff;
+
+		&:focus {
+			outline: 2px solid #41278d;
+			outline-offset: 0;
+			border-color: transparent;
+		}
+	}
+
+	// Apply Filter button — outlined purple
+	.wcap-dt-apply-btn.components-button {
+		height: 36px;
+		border: 2px solid #41278d;
+		color: #41278d;
+		border-radius: 4px;
+		font-weight: 600;
+		background: transparent;
+
+		&:hover:not( :disabled ) {
+			background: #41278d;
+			color: #fff;
+		}
+	}
+
+	.wcap-dt-item-count {
+		margin-left: auto;
+		color: #757575;
+		font-size: 13px;
+	}
+}
+
+// ── Card wrapper ──────────────────────────────────────────────────────────────
+
+.wcap-dt-wrap {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+// ── Header row ────────────────────────────────────────────────────────────────
+
+.wcap-dt-header {
+	display: grid;
+	background: linear-gradient( 90deg, #e8e5f3 0%, #ddd9ef 100% );
+	padding: 0 8px;
+	align-items: center;
+}
+
+// ── Data rows ─────────────────────────────────────────────────────────────────
+
+.wcap-dt-row {
+	display: grid;
+	padding: 0 8px;
+	align-items: center;
+	background: #fafafa;
+	transition: background 0.15s;
+
+	&:hover {
+		background: #f5f3fb;
+	}
+
+	&--selected {
+		background: #f0edf8;
+	}
+}
+
+// ── Shared cell ───────────────────────────────────────────────────────────────
+
+.wcap-dt-cell {
+	padding: 14px 12px;
+	font-size: 14px;
+	color: #1d2327;
+	min-width: 0;
+	word-break: break-word;
+
+	&--heading {
+		font-weight: 700;
+	}
+
+	&--sortable {
+		cursor: pointer;
+		user-select: none;
+
+		&:hover {
+			background: rgba( 65, 39, 141, 0.08 );
+		}
+	}
+
+	&--sorted {
+		color: #41278d;
+	}
+}
+
+// ── Sort icon ─────────────────────────────────────────────────────────────────
+
+.wcap-dt-sort-icon {
+	margin-left: 4px;
+	font-size: 11px;
+	opacity: 0.4;
+
+	&--active {
+		opacity: 1;
+		color: #41278d;
+	}
+}
+
+// ── Tooltip icon ──────────────────────────────────────────────────────────────
+
+.wcap-dt-col-tooltip {
+	margin-left: 4px;
+	cursor: help;
+	color: #757575;
+	font-style: normal;
+}
+
+// ── Checkbox ──────────────────────────────────────────────────────────────────
+
+.wcap-dt-checkbox {
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	accent-color: #41278d;
+}
+
+// ── Empty / Loading ───────────────────────────────────────────────────────────
+
+.wcap-dt-empty {
+	text-align: center;
+	color: #757575;
+	font-size: 14px;
+	padding: 24px 20px !important;
+}
+
+.wcap-dt-loading {
+	text-align: center;
+	padding: 24px 20px !important;
+}
+
+// ── Inline form slot ──────────────────────────────────────────────────────────
+
+.wcap-dt-form-slot {
+	background: #fff;
+}
+
+// ── Add More row ──────────────────────────────────────────────────────────────
+
+.wcap-dt-add-more-row {
+	display: flex;
+	align-items: center;
+}
+
+.wcap-dt-add-more-link.components-button {
+	color: #41278d;
+	text-decoration: none;
+	gap: 6px;
+	font-weight: 500;
+	font-size: 14px;
+
+	&:hover:not( :disabled ) {
+		color: darken( #41278d, 10% );
+	}
+
+	.wcap-dt-add-more-label {
+		text-decoration: underline;
+	}
+}
+
+.wcap-dt-cancel-link.components-button {
+	color: #757575;
+	text-decoration: underline;
+	font-size: 14px;
+
+	&:hover:not( :disabled ) {
+		color: #1d2327;
+	}
+}
+
+.wcap-dt-add-more-plus {
+	font-size: 18px;
+	line-height: 1;
+	text-decoration: none;
+	display: inline-block;
+}
+
+// ── Scroll wrapper (wraps header + rows inside the Card) ─────────────────────
+
+.wcap-dt-scroll {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+// Keep header and rows at a minimum width so columns stay readable;
+// the wcap-dt-scroll wrapper provides the horizontal scroll.
+.wcap-dt-header,
+.wcap-dt-row {
+	min-width: 560px;
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+
+@media ( max-width: 768px ) {
+	// Filter bar items wrap and take full width
+	.wcap-dt-filter-bar {
+		gap: 6px;
+
+		.wcap-dt-filter-select .components-select-control__input {
+			min-width: 120px;
+		}
+
+		.wcap-dt-item-count {
+			margin-left: 0;
+			width: 100%;
+		}
+	}
+
+	// Footer bulk bar wraps
+	.wcap-dt-footer {
+		flex-wrap: wrap;
+	}
+}
+
+// ── Footer: bulk actions ──────────────────────────────────────────────────────
+
+.wcap-dt-footer {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-top: 16px;
+
+	.wcap-dt-bulk-select .components-select-control__input {
+		min-width: 140px;
+		width: auto;
+	}
+
+	.wcap-dt-apply-btn.components-button {
+		border: 2px solid #41278d;
+		color: #41278d;
+		border-radius: 4px;
+		font-weight: 600;
+
+		&:hover:not( :disabled ) {
+			background: #41278d;
+			color: #fff;
+		}
+	}
+}

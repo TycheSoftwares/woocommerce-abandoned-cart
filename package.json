@@ -6,26 +6,39 @@
   "license": "GPL-2.0-or-later",
   "main": "build/index.js",
   "scripts": {
-		"build": "wp-scripts build",
-		"format": "wp-scripts format",
-		"lint:css": "wp-scripts lint-style",
-		"lint:js": "wp-scripts lint-js",
-		"packages-update": "wp-scripts packages-update",
-		"plugin-zip": "wp-scripts plugin-zip",
-		"start": "wp-scripts start"
-	},
-	"files": [ 
-		"src"
-	],
-	"devDependencies": {
-		"@woocommerce/block-library": "^2.3.0",
-		"@woocommerce/dependency-extraction-webpack-plugin": "^2.2.0",
-		"@woocommerce/eslint-plugin": "^2.2.0",
-		"@wordpress/blocks": "^12.6.0",
-		"@wordpress/scripts": "^26.0.0",
-		"@wordpress/components": "^23.8.0"
-	},
-	"dependencies": {
-		"classnames": "2.3.1"
-	}
+    "build": "wp-scripts build && npm run i18n",
+    "i18n": "npm run i18n:pot && npm run i18n:po && npm run i18n:json && npm run i18n:php",
+    "i18n:php": "wp i18n make-php languages",
+    "i18n:pot": "wp i18n make-pot . languages/woocommerce-abandoned-cart.pot --domain=woocommerce-abandoned-cart --exclude=node_modules,vendor,src,languages --headers='{\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/woocommerce-abandoned-cart\"}'",
+    "i18n:po": "cd languages && for f in *.po; do msgmerge --quiet --update --backup=none --no-fuzzy-matching \"$f\" woocommerce-abandoned-cart.pot && msgfmt -o \"${f%.po}.mo\" \"$f\" || exit 1; done",
+    "i18n:json": "wp i18n make-json languages --no-purge && rm -f languages/woocommerce-abandoned-cart-????????????????????????????????.json",
+    "format": "wp-scripts format",
+    "lint:css": "wp-scripts lint-style",
+    "lint:js": "wp-scripts lint-js",
+    "packages-update": "wp-scripts packages-update",
+    "plugin-zip": "wp-scripts plugin-zip",
+    "start": "wp-scripts start"
+  },
+  "files": [
+    "src"
+  ],
+  "devDependencies": {
+    "@woocommerce/block-library": "^2.3.0",
+    "@woocommerce/dependency-extraction-webpack-plugin": "^2.2.0",
+    "@woocommerce/eslint-plugin": "^2.2.0",
+    "@wordpress/api-fetch": "^7.2.0",
+    "@wordpress/blocks": "^12.6.0",
+    "@wordpress/components": "^23.8.0",
+    "@wordpress/element": "^6.2.0",
+    "@wordpress/i18n": "^5.2.0",
+    "@wordpress/icons": "^10.2.0",
+    "@wordpress/scripts": "^26.0.0"
+  },
+  "dependencies": {
+    "chart.js": "^4.6.1",
+    "classnames": "2.3.1",
+    "react-chartjs-2": "^5.3.1",
+    "react-hook-form": "^7.52.1",
+    "react-router-dom": "^6.30.6"
+  }
 }

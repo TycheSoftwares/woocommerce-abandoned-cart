@@ -1,0 +1,2 @@
+<?php
+return ['domain'=>'woocommerce-abandoned-cart','plural-forms'=>'nplurals=2; plural=n != 1;','language'=>'hi_IN','project-id-version'=>'Abandoned Cart Lite for WooCommerce 6.9.0','pot-creation-date'=>'2026-11-12T11:15:56+00:00','po-revision-date'=>'2026-11-12 09:42+0000','x-generator'=>'Loco https://localise.biz/','messages'=>['Upgrade to <a>Abandoned Cart Pro for WooCommerce</a> to view the number of emails opened and links clicked.'=>'Hindi - Upgrade to <a>Abandoned Cart Pro for WooCommerce</a> to view the number of emails opened and links clicked.']];
