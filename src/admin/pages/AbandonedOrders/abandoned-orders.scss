@@ -1,0 +1,869 @@
+// Abandoned Orders page
+
+$primary:  #41278d;
+$purple-bg: #f0eefa;
+
+.wcap-ao {
+	padding: 16px 20px 48px;
+	background: #f6f6fb;
+	min-height: 100%;
+}
+
+// ── Tab links ─────────────────────────────────────────────────────────────────
+
+.wcap-ao-tabs {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin-bottom: 12px;
+	flex-wrap: wrap;
+
+	&__sep {
+		color: #bbb;
+		margin: 0 4px;
+	}
+
+	&__btn {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 13px;
+		color: $primary;
+		padding: 0;
+		text-decoration: none;
+
+		&:hover { text-decoration: underline; }
+
+		&--active {
+			font-weight: 700;
+			text-decoration: none;
+			cursor: default;
+		}
+	}
+
+	&__count {
+		font-size: 13px;
+		font-weight: 400;
+	}
+}
+
+// ── Description ───────────────────────────────────────────────────────────────
+
+.wcap-ao-desc {
+	font-size: 13px;
+	color: #50575e;
+	margin: 0 0 14px;
+	line-height: 1.5;
+}
+
+// ── Filter bar ────────────────────────────────────────────────────────────────
+
+.wcap-ao-filterbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 16px;
+	flex-wrap: wrap;
+
+	&__left {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex-wrap: wrap;
+	}
+
+	&__right {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+}
+
+.wcap-ao-select,
+.wcap-ao-date {
+	height: 36px;
+	border: 1px solid #c8c8c8;
+	border-radius: 5px;
+	font-size: 13px;
+	color: #1d2327;
+	background: #fff;
+	padding: 0 10px;
+
+	&:focus { outline: none; border-color: $primary; }
+}
+
+.wcap-ao-select { min-width: 130px; }
+.wcap-ao-date   { min-width: 130px; }
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+
+.wcap-ao-btn {
+	border-radius: 5px;
+	font-size: 13px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background 0.15s, border-color 0.15s;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+
+	&--primary {
+		background: $primary;
+		color: #fff;
+		border: none;
+		height: 36px;
+		padding: 0 18px;
+		font-weight: 600;
+
+		&:hover:not( :disabled ) { background: darken( $primary, 10% ); }
+		&:disabled { opacity: 0.6; cursor: not-allowed; }
+	}
+
+	&--outline {
+		background: #fff;
+		color: $primary;
+		border: 1px solid $primary;
+		height: 34px;
+		padding: 0 16px;
+
+		&:hover:not( :disabled ) { background: $purple-bg; }
+		&:disabled { opacity: 0.5; cursor: not-allowed; }
+	}
+
+	&--secondary {
+		background: #f6f7f7;
+		color: #1d2327;
+		border: 1px solid #ddd;
+		height: 34px;
+		padding: 0 14px;
+
+		&:hover { background: #eee; }
+	}
+
+	&--link {
+		background: none;
+		border: none;
+		color: $primary;
+		font-size: 13px;
+		font-weight: 600;
+		padding: 0;
+
+		&:hover { text-decoration: underline; }
+	}
+
+	&--pager {
+		background: #fff;
+		border: 1px solid #ddd;
+		color: #50575e;
+		width: 30px;
+		height: 30px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 4px;
+		font-size: 16px;
+		padding: 0;
+
+		&:disabled { opacity: 0.4; cursor: not-allowed; }
+		&:not( :disabled ):hover { border-color: $primary; color: $primary; }
+	}
+}
+
+// ── Error ─────────────────────────────────────────────────────────────────────
+
+.wcap-ao-error {
+	background: #fce8e8;
+	border: 1px solid #f5a0a0;
+	border-radius: 6px;
+	padding: 10px 14px;
+	font-size: 13px;
+	color: #8c1c1c;
+	margin-bottom: 12px;
+}
+
+// ── Recovery banner ───────────────────────────────────────────────────────────
+
+.wcap-ao-banner {
+	background: #edfaef;
+	border: 1px solid #b8e8bc;
+	border-radius: 6px;
+	padding: 14px 20px;
+	font-size: 15px;
+	color: #1a6636;
+	text-align: center;
+	margin-bottom: 16px;
+
+	&--none {
+		background: #f9f9f9;
+		border-color: #dcdcde;
+		color: #6b6b6b;
+		font-size: 14px;
+	}
+
+	&__count,
+	&__value {
+		color: #3a30c8;
+		font-size: 16px;
+	}
+}
+
+// ── Spinner ───────────────────────────────────────────────────────────────────
+
+.wcap-ao-spinner {
+	display: flex;
+	justify-content: center;
+	padding: 40px 0;
+}
+
+// ── Bulk bar ──────────────────────────────────────────────────────────────────
+
+.wcap-ao-bulk {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 0;
+
+	&__left {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	&__select {
+		height: 34px;
+		min-width: 180px;
+		border: 1px solid #c8c8c8;
+		border-radius: 5px;
+		font-size: 13px;
+		color: #1d2327;
+		background: #fff;
+		padding: 0 10px;
+	}
+
+}
+
+// ── Main table ────────────────────────────────────────────────────────────────
+
+.wcap-ao-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: #fff;
+	border: 1px solid #e4e4f0;
+	border-radius: 8px;
+	overflow: hidden;
+	font-size: 13px;
+	margin-bottom: 2px;
+
+	thead tr {
+		background: $purple-bg;
+	}
+
+	th {
+		text-align: left;
+		padding: 12px 12px;
+		font-size: 12px;
+		font-weight: 700;
+		color: #1d2327;
+		vertical-align: middle;
+	}
+
+	td {
+		padding: 12px 12px;
+		color: #1d2327;
+		border-top: 1px solid #f0f0f0;
+		vertical-align: top;
+	}
+
+	tbody tr:hover td { background: #fafbff; }
+
+	tbody tr:hover,
+	tbody tr:focus-within {
+		.wcap-ao-table__actions,
+		.wcap-ao-table__edit-icon {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
+
+	&__check {
+		width: 36px;
+		text-align: center !important;
+	}
+
+	&__empty {
+		text-align: center !important;
+		padding: 32px !important;
+		color: #9ca3af;
+		font-style: italic;
+	}
+
+	&__link {
+		color: $primary;
+		cursor: pointer;
+		font-weight: 500;
+		text-decoration: none;
+
+		&:hover { text-decoration: underline; }
+	}
+
+	&__edit-icon {
+		background: none;
+		border: none;
+		cursor: pointer;
+		color: $primary;
+		font-size: 13px;
+		padding: 0 0 0 4px;
+		display: inline-block;
+		vertical-align: middle;
+		visibility: hidden;
+		opacity: 0;
+		transition: opacity 0.15s ease, visibility 0.15s ease;
+	}
+
+	&__email-line {
+		display: flex;
+		align-items: center;
+		gap: 2px;
+		margin-bottom: 4px;
+	}
+
+	&__actions {
+		font-size: 12px;
+		color: #50575e;
+		line-height: 1.8;
+		visibility: hidden;
+		opacity: 0;
+		transition: opacity 0.15s ease, visibility 0.15s ease;
+	}
+
+	&__action-link {
+		color: $primary;
+		cursor: pointer;
+		text-decoration: none;
+		font-size: 12px;
+
+		&:hover { text-decoration: underline; }
+
+		&--trash {
+			color: #d63638;
+			&:hover { text-decoration: underline; }
+		}
+	}
+
+	&__foot-row {
+		background: $purple-bg;
+
+		th {
+			font-size: 12px;
+			font-weight: 700;
+			color: #1d2327;
+			padding: 10px 12px;
+			text-align: left;
+			border-top: 1px solid #e4e4f0;
+		}
+	}
+
+	&__sub {
+		font-size: 11px;
+		color: #757575;
+	}
+}
+
+// ── Status badge ──────────────────────────────────────────────────────────────
+
+.wcap-ao-status {
+	font-size: 12px;
+	font-weight: 600;
+
+	&--abandoned     { color: #f0940b; }
+	&--recovered     { color: #00a32a; }
+	&--unpaid        { color: #3858e9; }
+	&--received      { color: #007cba; }
+	&--cancelled     { color: #757575; }
+	&--unsubscribed  { color: #b32d2e; }
+}
+
+
+// ── Connector icons ───────────────────────────────────────────────────────────
+
+.wcap-ao-connector-icons {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin-top: 4px;
+
+	img.wcap-connector-status {
+		width: 18px;
+		height: 18px;
+		object-fit: contain;
+
+		&.wcap-failed {
+			opacity: 0.35;
+			filter: grayscale( 100% );
+		}
+	}
+}
+
+// ── Cart detail modal ─────────────────────────────────────────────────────────
+
+.wcap-cd-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba( 0, 0, 0, 0.55 );
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+.wcap-cd-modal {
+	background: #fff;
+	border-radius: 4px;
+	width: 100%;
+	max-width: 940px;
+	max-height: 90vh;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	box-shadow: 0 8px 40px rgba( 0, 0, 0, 0.25 );
+
+	&__header {
+		background: $primary;
+		color: #fff;
+		font-size: 18px;
+		font-weight: 700;
+		padding: 18px 24px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-shrink: 0;
+	}
+
+	&__status {
+		font-weight: 400;
+		font-size: 16px;
+	}
+
+	&__close {
+		background: none;
+		border: none;
+		color: #fff;
+		font-size: 20px;
+		cursor: pointer;
+		line-height: 1;
+		padding: 0;
+		opacity: 0.85;
+
+		&:hover { opacity: 1; }
+	}
+
+	&__body {
+		overflow-y: auto;
+		flex: 1;
+		padding: 24px;
+	}
+
+	&__footer {
+		padding: 16px 24px;
+		border-top: 1px solid #e8e8e8;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		flex-shrink: 0;
+	}
+
+	&__footer-btn {
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+	}
+}
+
+// Summary table inside cart detail modal
+.wcap-cd-summary {
+	width: 100%;
+	border-collapse: collapse;
+	border: 1px solid #ddd;
+	font-size: 13px;
+	margin-bottom: 24px;
+
+	th {
+		background: #f9f9f9;
+		font-weight: 700;
+		padding: 12px 16px;
+		text-align: left;
+		border: 1px solid #ddd;
+		color: #1d2327;
+	}
+
+	td {
+		padding: 16px;
+		border: 1px solid #ddd;
+		vertical-align: top;
+		color: #1d2327;
+		line-height: 1.6;
+	}
+}
+
+.wcap-cd-toggle {
+	background: none;
+	border: none;
+	color: $primary;
+	cursor: pointer;
+	font-size: 13px;
+	padding: 6px 0 0;
+	display: block;
+
+	&:hover { text-decoration: underline; }
+}
+
+.wcap-cd-extra {
+	margin-top: 10px;
+	font-size: 13px;
+	line-height: 1.8;
+
+	p { margin: 0; }
+
+	strong { font-weight: 600; }
+}
+
+// Products table inside cart detail modal
+.wcap-cd-products {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+
+	th {
+		font-weight: 700;
+		padding: 10px 16px;
+		text-align: left;
+		color: #1d2327;
+		border-bottom: 2px solid #ddd;
+	}
+
+	td {
+		padding: 14px 16px;
+		border-top: 1px solid #eee;
+		vertical-align: middle;
+		color: #1d2327;
+	}
+}
+
+.wcap-cd-product {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+
+	&__thumb {
+		width: 52px;
+		height: 52px;
+		object-fit: cover;
+		border-radius: 4px;
+		border: 1px solid #eee;
+		flex-shrink: 0;
+	}
+
+	&__name {
+		color: $primary;
+		font-weight: 500;
+		font-size: 13px;
+		text-decoration: none;
+		display: block;
+
+		&:hover { text-decoration: underline; }
+	}
+
+	&__sku {
+		color: $primary;
+		font-size: 12px;
+		margin-top: 4px;
+	}
+
+	&__original-price {
+		color: #999;
+		font-size: 12px;
+		margin-left: 4px;
+	}
+}
+
+// ── Table scroll wrapper ──────────────────────────────────────────────────────
+
+.wcap-ao-table-wrap {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.wcap-ao-table {
+	min-width: 700px; // keep columns readable; wrapper handles horizontal scroll
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+
+@media ( max-width: 768px ) {
+	.wcap-ao {
+		padding: 12px 12px 48px;
+	}
+
+	// Stack filter bar sections
+	.wcap-ao-filterbar {
+		flex-direction: column;
+		align-items: flex-start;
+
+		&__right {
+			width: 100%;
+			justify-content: flex-start;
+		}
+	}
+
+	// Stack bulk bar
+	.wcap-ao-bulk {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	// Cart detail modal — full screen on mobile
+	.wcap-cd-modal {
+		max-width: 100%;
+		max-height: 100dvh;
+		border-radius: 0;
+	}
+
+	.wcap-cd-overlay {
+		padding: 0;
+	}
+}
+
+@media ( max-width: 480px ) {
+	.wcap-ao-select,
+	.wcap-ao-date {
+		min-width: 100%;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.wcap-ao-filterbar__left {
+		width: 100%;
+	}
+}
+
+// ── Email edit modal ──────────────────────────────────────────────────────────
+
+.wcap-ao-email-modal {
+	&__error {
+		color: #d63638;
+		font-size: 13px;
+		margin-bottom: 10px;
+	}
+
+	&__input {
+		width: 100%;
+		height: 38px;
+		border: 1px solid #c8c8c8;
+		border-radius: 5px;
+		padding: 0 12px;
+		font-size: 13px;
+		box-sizing: border-box;
+
+		&:focus { outline: none; border-color: $primary; }
+	}
+
+	&__footer {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+		margin-top: 16px;
+	}
+}
+
+// ── Coupon status badge ────────────────────────────────────────────────────────
+
+.wcap_row_coupon_status {
+	font-size: 12px;
+	font-weight: 500;
+
+	&--success {
+		color: #1d6b30;
+	}
+
+	&--failed {
+		color: #b32d2e;
+	}
+}
+
+// ── Print ─────────────────────────────────────────────────────────────────────
+
+@media print {
+	// Hide everything except the table
+	.wcap-ao-tabs,
+	.wcap-ao-desc,
+	.wcap-ao-filterbar,
+	.wcap-ao-banner,
+	.wcap-ao-error,
+	.wcap-ao-spinner,
+	.wcap-ao-bulk,
+	.wcap-ao-table__check,
+	.wcap-ao-table__edit-icon,
+	.wcap-ao-table__actions {
+		display: none !important;
+	}
+
+	// Remove scroll wrapper constraint so the full table prints
+	.wcap-ao-table-wrap {
+		overflow: visible;
+	}
+
+	.wcap-ao-table {
+		min-width: 0;
+		width: 100%;
+		border-collapse: collapse;
+		border: 1px solid #000;
+
+		th,
+		td {
+			border: 1px solid #000;
+			padding: 5px;
+			font-size: 12px;
+			color: #000;
+			background: #fff !important;
+		}
+
+		th {
+			font-weight: bold;
+		}
+
+		// Remove hover/zebra styles
+		tr {
+			background: #fff !important;
+		}
+	}
+
+	// Strip status badge styling — print plain text
+	.wcap-ao-status {
+		background: none !important;
+		border: none !important;
+		padding: 0 !important;
+		font-size: 12px;
+		color: #000 !important;
+	}
+}
+
+// ── Mark as Recovered modal ────────────────────────────────────────────────────
+
+.wcap-recovery-modal {
+	min-width: 480px;
+	max-width: 640px;
+
+	.components-modal__header {
+		background: $primary;
+
+		.components-modal__header-heading {
+			color: #fff;
+			font-size: 18px;
+			font-weight: 600;
+		}
+
+		button.components-button svg {
+			fill: #fff;
+		}
+	}
+
+	&__body {
+		padding: 24px 24px 0;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	&__option {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		font-size: 14px;
+		line-height: 1.5;
+		cursor: pointer;
+
+		input[type="radio"] {
+			margin-top: 3px;
+			accent-color: $primary;
+			flex-shrink: 0;
+		}
+	}
+
+	&__search {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+
+		&-input {
+			flex: 1;
+			padding: 8px 12px;
+			border: 1px solid #c3c4c7;
+			border-radius: 4px;
+			font-size: 14px;
+
+			&:focus {
+				outline: none;
+				border-color: $primary;
+				box-shadow: 0 0 0 2px rgba($primary, 0.15);
+			}
+		}
+	}
+
+	&__found {
+		font-size: 13px;
+		color: #2a7a2a;
+		margin: 0;
+	}
+
+	&__error {
+		font-size: 13px;
+		color: #cc1818;
+		margin: 0;
+	}
+
+	&__hint {
+		font-size: 13px;
+		color: #50575e;
+		margin: 0;
+
+		a {
+			color: $primary;
+			text-decoration: underline;
+		}
+	}
+
+	&__footer {
+		padding: 16px 24px;
+		border-top: 1px solid #e0e0e0;
+		display: flex;
+		justify-content: flex-start;
+	}
+}
+
+// ── Pro-only controls ─────────────────────────────────────────────────────────
+
+.wcal-locked-action {
+	color: #8c8f94;
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		color: #646970;
+	}
+}
+
+.wcal-ao-recovered {
+	margin-top: 6px;
+	font-size: 12px;
+	line-height: 1.5;
+	color: #50575e;
+}
+
+.wcal-ao-locked-control {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}

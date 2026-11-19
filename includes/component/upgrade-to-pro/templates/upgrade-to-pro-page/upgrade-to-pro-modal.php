@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 $ts_new_tab = $ts_upgrade_to_pro_images_path . '/icon-new-tab.png';
 if ( '' === get_option( 'wcap_migrated_from_lite', '' ) ) {
 	$modal_heading      = __( 'Abandoned Cart Pro for WooCommerce is CHEAPER than you think', 'woocommerce-abandoned-cart' );

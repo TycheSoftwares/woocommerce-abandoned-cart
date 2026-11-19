@@ -5,6 +5,10 @@
  * @package WooCommerce Abandon Cart Pro
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 
 define( 'WCAL_GDPR_EMAILS_VERSION', '0.1.0' );
@@ -61,7 +65,7 @@ class Wcal_GDPR_Emails_Blocks_Integration implements IntegrationInterface {
 			);
 			wp_set_script_translations(
 				'wcal-emails-blocks-integration',
-				'wcal_params',
+				'woocommerce-abandoned-cart',
 				WCAL_PLUGIN_PATH . '/languages'
 			);
 		}

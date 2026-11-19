@@ -184,42 +184,6 @@ class Ts_Upgrade_To_Pro_AC {
 
 		global $wpefield_version;
 
-		$load_style = false;
-		if ( isset( $_GET['action'] ) && 'emailsettings' === $_GET['action'] ) { // phpcs:ignore.
-			if ( isset( $_GET['wcal_section'] ) && in_array( $_GET['wcal_section'], array( 'wcap_atc_settings', 'wcap_fb_settings', 'wcap_sms_settings', 'wcap_connectors' ), true ) ) { // phpcs:ignore.
-				$load_style = true;
-			}
-		}
-
-		if ( isset( $_GET['action'] ) && 'upgrade_to_pro_page' === $_GET['action'] ) { // phpcs:ignore.
-			$load_style = true;
-		}
-
-		if ( $load_style ) {
-			wp_enqueue_style(
-				self::$plugin_prefix . '-theme-style',
-				plugins_url( '/woocommerce-abandoned-cart/assets/css/admin/wcap-admin-style.css' ),
-				array(),
-				$wpefield_version
-			);
-
-			wp_enqueue_style(
-				self::$plugin_prefix . '-integrations-style',
-				plugins_url( '/woocommerce-abandoned-cart/assets/css/admin/wcap_integrations_main.css' ),
-				array(),
-				$wpefield_version
-			);
-
-			wp_register_style(
-				'bootstrap_css',
-				plugins_url( '/woocommerce-abandoned-cart/assets/css/admin/bootstrap.min.css' ),
-				'',
-				WCAL_PLUGIN_VERSION,
-				'all'
-			);
-			wp_enqueue_style( 'bootstrap_css' );
-		}
-
 		wp_enqueue_style(
 			self::$plugin_prefix . '-custom-notice',
 			plugins_url( '/assets/css/ts-upgrade-to-pro.css', __FILE__ ),
@@ -329,18 +293,7 @@ class Ts_Upgrade_To_Pro_AC {
 	 */
 	public function ts_add_upgrade_to_pro_modal() {
 
-		$add_modal = false;
-		if ( isset( $_GET['action'] ) && 'emailsettings' === $_GET['action'] ) { // phpcs:ignore.
-			if ( isset( $_GET['wcal_section'] ) && in_array( $_GET['wcal_section'], array( 'wcap_atc_settings', 'wcap_fb_settings', 'wcap_sms_settings', 'wcap_connectors' ), true ) ) { // phpcs:ignore.
-				$add_modal = true;
-			}
-		}
-
-		if ( isset( $_GET['action'] ) && 'upgrade_to_pro_page' === $_GET['action'] ) { // phpcs:ignore.
-			$add_modal = true;
-		}
-
-		if ( $add_modal ) {
+		if ( doing_action( 'wp_ajax_wcal_pro_section' ) ) {
 			ob_start();
 			wc_get_template(
 				'upgrade-to-pro-page/upgrade-to-pro-modal.php',

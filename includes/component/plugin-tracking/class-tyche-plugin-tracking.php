@@ -262,16 +262,21 @@ if ( ! class_exists( 'Tyche_Plugin_Tracking' ) ) {
 					<div style="position: absolute;bottom: 60px;"><img width="100" class="site-logo" src= "<?php echo esc_url( $this->api_url . '/assets/plugin-tracking/images/site-logo.jpg?v=' . $this->version ); ?> "></div>
 					<div style="overflow: hidden;">
 					<p style="margin: 10px 0 10px 130px; font-size: medium;">
-							<?php printf( 
-								    __( 
-								        'Want to help make %1$s even more awesome? Allow %1$s to collect non-sensitive diagnostic data and usage information and get 20%% off on your next purchase. <a href="%2$s">Find out more</a>.', 
-								        $this->plugin_locale 
-								    ), 
-								    $this->plugin_name, 
-								    $this->blog_link 
-								);
-								// phpcs:ignore 
-								?>
+							<?php
+							echo wp_kses(
+								sprintf(
+									/* translators: %1$s: Plugin name, %2$s: Link to the tracking information page. */
+									__( 'Want to help make %1$s even more awesome? Allow %1$s to collect non-sensitive diagnostic data and usage information and get 20%% off on your next purchase. <a href="%2$s">Find out more</a>.', $this->plugin_locale ), // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
+									esc_html( $this->plugin_name ),
+									esc_url( $this->blog_link )
+								),
+								array(
+									'a' => array(
+										'href' => array(),
+									),
+								)
+							);
+							?>
 
 					</p>
 					<p class="submit" style="margin-top: 10px;">

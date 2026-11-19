@@ -28,40 +28,54 @@ class Wcal_Delete_Handler {
 	 * @since 2.5.2
 	 */
 	public function wcal_delete_bulk_action_handler_function( $abandoned_cart_id ) {
-		if ( $abandoned_cart_id > 0 ) {
-			global $wpdb;
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$results_get_user_id = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT user_id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` 
-					WHERE id = %s',
-					$abandoned_cart_id
-				)
-			);
-			$user_id_of_guest    = isset( $results_get_user_id[0]->user_id ) ? $results_get_user_id[0]->user_id : 0;
+		global $wpdb;
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$results_delete = $wpdb->get_results(
-				$wpdb->prepare(
-					'DELETE FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`
-					WHERE id = %s',
-					$abandoned_cart_id
-				)
-			);
-
-			if ( $user_id_of_guest >= '63000000' ) {
-				// Guest user.
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-				$results_guest = $wpdb->get_results(
-					$wpdb->prepare(
-						'DELETE FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` 
-						WHERE id = %s',
-						$user_id_of_guest
-					)
-				);
-			}
-			wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=listcart&wcal_deleted=YES' ) );
+		$abandoned_cart_id = absint( $abandoned_cart_id );
+		if ( ! $abandoned_cart_id ) {
+			return;
 		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$user_id = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT user_id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE id = %d',
+				$abandoned_cart_id
+			)
+		);
+
+		// Reminder history holds the customer's email address.
+		$wpdb->delete( $wpdb->prefix . 'ac_sent_history_lite', array( 'abandoned_order_id' => $abandoned_cart_id ), array( '%d' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$wpdb->delete( $wpdb->prefix . 'ac_abandoned_cart_history_lite', array( 'id' => $abandoned_cart_id ), array( '%d' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+
+		// Guest name, email and phone live in the guest table. Keep the record while another cart still points to it.
+		if ( $user_id >= 63000000 ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$in_use = (int) $wpdb->get_var(
+				$wpdb->prepare(
+					'SELECT COUNT(id) FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE user_id = %d',
+					$user_id
+				)
+			);
+			if ( ! $in_use ) {
+				$wpdb->delete( $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite', array( 'id' => $user_id ), array( '%d' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			}
+		}
+	}
+
+	/**
+	 * Delete the reminder history of the carts matching a condition, before the carts themselves are deleted.
+	 *
+	 * @param string $where Condition on the cart table (alias c). Must not contain user input.
+	 * @since 6.9.0
+	 */
+	private function delete_sent_history_for_carts( $where ) {
+		global $wpdb;
+
+		$wpdb->query( // phpcs:ignore
+			'DELETE sh FROM `' . $wpdb->prefix . 'ac_sent_history_lite` AS sh
+			INNER JOIN `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` AS c ON sh.abandoned_order_id = c.id
+			WHERE ' . $where
+		);
 	}
 
 	/**
@@ -72,13 +86,13 @@ class Wcal_Delete_Handler {
 	public function wcal_bulk_action_delete_registered_carts_handler() {
 		global $wpdb;
 
+		$this->delete_sent_history_for_carts( 'c.user_id < 63000000 AND c.user_id > 0' );
+
 		$wpdb->query( // phpcs:ignore
 			'DELETE FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`
 			WHERE user_id < 63000000
 			AND user_id > 0'
 		);
-
-		wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=listcart&wcal_deleted=YES&wcal_deleted_all_registered=YES' ) );
 	}
 
 	/**
@@ -89,6 +103,8 @@ class Wcal_Delete_Handler {
 	public function wcal_bulk_action_delete_guest_carts_handler() {
 		global $wpdb;
 
+		$this->delete_sent_history_for_carts( 'c.user_id >= 63000000' );
+
 		$wpdb->query( // phpcs:ignore
 			'DELETE FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`
 			WHERE user_id >= 63000000'
@@ -97,8 +113,6 @@ class Wcal_Delete_Handler {
 		$wpdb->query( // phpcs:ignore
 			'DELETE FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite`'
 		);
-
-		wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=listcart&wcal_deleted=YES&wcal_deleted_all_guest=YES' ) );
 	}
 
 	/**
@@ -109,12 +123,12 @@ class Wcal_Delete_Handler {
 	public function wcal_bulk_action_delete_visitor_carts_handler() {
 		global $wpdb;
 
+		$this->delete_sent_history_for_carts( 'c.user_id = 0' );
+
 		$wpdb->query( // phpcs:ignore
 			'DELETE FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`
 			WHERE user_id = 0'
 		);
-
-		wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=listcart&wcal_deleted=YES&wcal_deleted_all_visitor=YES' ) );
 	}
 
 	/**
@@ -125,6 +139,8 @@ class Wcal_Delete_Handler {
 	public function wcal_bulk_action_delete_all_carts_handler() {
 		global $wpdb;
 
+		$this->delete_sent_history_for_carts( '1 = 1' );
+
 		$wpdb->query( // phpcs:ignore
 			'DELETE FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite`'
 		);
@@ -132,30 +148,6 @@ class Wcal_Delete_Handler {
 		$wpdb->query( // phpcs:ignore
 			'DELETE FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite`'
 		);
-
-		wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=listcart&wcal_deleted=YES&wcal_deleted_all=YES' ) );
-	}
-
-	/**
-	 * Trigger when we delete the template.
-	 *
-	 * @param int | string $template_id Template id.
-	 * @globals mixed $wpdb
-	 * @since 2.5.2
-	 */
-	public function wcal_delete_template_bulk_action_handler_function( $template_id ) {
-		global $wpdb;
-		$id_remove = $template_id;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		$wpdb->query(
-			$wpdb->prepare(
-				'DELETE FROM `' . $wpdb->prefix . 'ac_email_templates_lite` 
-				WHERE id = %s',
-				$id_remove
-			)
-		);
-
-		wp_safe_redirect( admin_url( '/admin.php?page=woocommerce_ac_page&action=emailtemplates&wcal_template_deleted=YES' ) );
 	}
 
 	/**

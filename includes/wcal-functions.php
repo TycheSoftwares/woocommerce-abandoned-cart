@@ -9,6 +9,10 @@
  * @since 5.12.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
 /**

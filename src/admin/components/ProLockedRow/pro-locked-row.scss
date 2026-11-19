@@ -1,0 +1,30 @@
+.wcap-admin-app {
+	.wcal-pro-badge {
+		display: inline-block;
+		margin-left: 4px;
+		padding: 0 6px;
+		border-radius: 3px;
+		background: #41278d;
+		color: #fff;
+		font-size: 11px;
+		font-weight: 600;
+		line-height: 18px;
+		text-decoration: none;
+		vertical-align: middle;
+
+		&:hover,
+		&:focus {
+			background: #58419c;
+			color: #fff;
+		}
+	}
+
+	.wcal-dash-upsell a:not(.wcal-pro-badge) {
+		color: inherit;
+		text-decoration: underline;
+	}
+
+	.wcal-pro-locked .wcap-sp-row-field-content {
+		opacity: 0.6;
+	}
+}

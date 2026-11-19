@@ -1,0 +1,260 @@
+// Copied from the Pro plugin: src/admin/components/SettingsPanel/settings-panel.scss
+// ── WCAP Settings Panel ───────────────────────────────────────────────────────
+// Adapted from order-delivery-date-pro SettingsPanel CSS.
+// Scoped under .wcap-admin-app to outrank wp-components specificity (0,2,0 vs 0,1,0).
+
+.wcap-admin-app {
+
+	// ── Save button ───────────────────────────────────────────────────────────
+	.wcap-sp-save-btn.components-button {
+		height: auto;
+		white-space: nowrap;
+		transition: background 0.15s;
+		display: inline-block;
+		border: none;
+		border-radius: 5px;
+		outline: none;
+		font-size: 18px;
+		color: #fff;
+		font-weight: 600;
+		text-align: center;
+		line-height: 24px;
+		text-decoration: none;
+		letter-spacing: 0;
+		cursor: pointer;
+		padding: 12px 25px;
+		background: #1A8D34;
+
+		// &:hover:not( :disabled ) {
+		// 	background: #58419c;
+		// 	color: #fff;
+		// 	box-shadow: none;
+		// }
+
+		&:disabled,
+		&[aria-disabled='true'] {
+			opacity: 0.6;
+			cursor: not-allowed;
+		}
+	}
+
+	// ── Card ──────────────────────────────────────────────────────────────────
+	.wcap-sp-card {
+		border: 1px solid #e0e0e0;
+		border-radius: 8px;
+		box-shadow: none;
+		margin-bottom: 16px;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+
+	// ── Accordion card header ─────────────────────────────────────────────────
+	.wcap-sp-card-header {
+		&.components-card__header {
+			border-bottom: none;
+			min-height: unset;
+		}
+
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 20px 28px;
+		cursor: pointer;
+		user-select: none;
+		border-radius: 8px 8px 0 0;
+
+		&:hover {
+			background: #f9f9f9;
+		}
+
+		.wcap-sp-card-header-text {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.wcap-sp-card-header-title {
+			font-size: 16px;
+			font-weight: 700;
+			color: #1d2327;
+		}
+
+		.wcap-sp-card-header-subtitle {
+			font-size: 13px;
+			font-weight: 400;
+			color: #757575;
+		}
+
+		svg {
+			color: #1d2327;
+		}
+	}
+
+	// ── Card footer — save button row ────────────────────────────────────────
+	.wcap-sp-card-footer {
+		display: flex;
+		justify-content: flex-end;
+		padding: 16px 28px;
+		border-top: 1px solid #f0f0f0;
+	}
+
+	// ── Setting row ───────────────────────────────────────────────────────────
+	.wcap-sp-row {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+		padding: 22px 28px;
+		border-bottom: 1px solid #f0f0f0;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		&--align-top {
+			align-items: flex-start;
+
+			.wcap-sp-row-label,
+			.wcap-sp-row-field {
+				padding-top: 4px;
+			}
+		}
+
+		// Label column — fixed width to align all rows
+		.wcap-sp-row-label {
+			flex: 0 0 260px;
+
+			.wcap-sp-row-label-text {
+				font-size: 15px;
+				color: #1d2327;
+				line-height: 1.4;
+			}
+		}
+
+		// Field column
+		.wcap-sp-row-field {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			flex: 1;
+
+			// ⓘ info icon
+			.wcap-sp-info-icon {
+				display: inline-flex;
+				align-items: center;
+				color: #41278d;
+				cursor: pointer;
+				flex-shrink: 0;
+				border-radius: 50%;
+				transition: color 0.2s;
+
+				&:hover {
+					color: #58419c;
+				}
+
+				svg {
+					display: block;
+				}
+			}
+
+			.wcap-sp-row-field-content {
+				flex: 1;
+
+				.components-base-control {
+					margin-bottom: 0;
+					max-width: 450px;
+				}
+
+				.components-text-control__input,
+				.components-select-control__input {
+					height: 40px;
+					border: 1px solid #a7acb1;
+					border-radius: 5px;
+					font-size: 13px;
+					color: #424242;
+					padding: 0 15px;
+					transition: border 0.2s, box-shadow 0.2s;
+
+					&:focus {
+						border-color: #41278d;
+						box-shadow: 0 0 20px rgba( 65, 39, 141, 0.1 );
+					}
+				}
+			}
+		}
+	}
+
+}
+
+// ── Tooltip width cap (portal-rendered, outside .wcap-admin-app) ─────────────
+.components-tooltip {
+	max-width: 280px;
+	white-space: normal;
+	word-wrap: break-word;
+}
+
+// ── Toggle grid (cart source multi-select) ────────────────────────────────────
+.wcap-admin-app {
+	.wcap-toggle-grid {
+		display: grid;
+		grid-template-columns: 0.5fr 1fr;
+		gap: 10px;
+
+		.components-toggle-control {
+			margin-bottom: 0;
+		}
+	}
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+
+@media ( max-width: 600px ) {
+	.wcap-admin-app {
+
+		// Stack label + field vertically
+		.wcap-sp-row {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 8px;
+			padding: 16px 16px;
+
+			.wcap-sp-row-label {
+				flex: none;
+				width: 100%;
+			}
+
+			.wcap-sp-row-field {
+				width: 100%;
+			}
+
+			.wcap-sp-row-field-content {
+				width: 100%;
+
+				.components-base-control {
+					max-width: 100%;
+				}
+
+				.components-text-control__input,
+				.components-select-control__input {
+					width: 100%;
+					box-sizing: border-box;
+				}
+			}
+		}
+
+		// Collapse toggle grid to single column
+		.wcap-toggle-grid {
+			grid-template-columns: 1fr;
+		}
+
+		// Card header/footer padding
+		.wcap-sp-card-header {
+			padding: 16px;
+		}
+
+		.wcap-sp-card-footer {
+			padding: 12px 16px;
+		}
+	}
+}

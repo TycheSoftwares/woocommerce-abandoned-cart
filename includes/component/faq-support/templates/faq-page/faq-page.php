@@ -2,6 +2,10 @@
 /**
  * FAQ & Support page
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 ?>
 <style>
     .faq-ts-accordion {
@@ -99,7 +103,7 @@
                 <li>Download the "woocommerce-abandoned-cart.po" file.</li>
                 <li>Open it in PoEdit translation editor, and translate the strings.</li>
                 <li>Save with your language code (e.g., fr_FR.po) to generate the .mo file.</li>
-                <li>Upload both files to "woocommerce-abandoned-cart/i18n/languages" and "wp-content/languages" folder via FTP.</li>
+                <li>Upload both files to "woocommerce-abandoned-cart/languages" and "wp-content/languages" folder via FTP.</li>
             </ol>
             <p>You can also use the Loco Translate or any other translation plugin for this string's translation.</p>
         </p>

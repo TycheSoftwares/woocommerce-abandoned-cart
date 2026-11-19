@@ -8,6 +8,10 @@
  * @package Abandoned-Cart-Lite-for-WooCommerce/Cron
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 if ( ! class_exists( 'Wcal_Cron' ) ) {
 
 	/**
