@@ -57,9 +57,7 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 		 * @param string $user_start - Start date (Y-m-d) of a custom range.
 		 * @param string $user_end - End date (Y-m-d) of a custom range.
 		 */
-		public static function wcal_setup_filter_parms() {
-
-			$duration_select = isset( $_GET['duration_select'] ) ? sanitize_text_field( wp_unslash( $_GET['duration_select'] ) ) : 'this_month'; //phpcs:ignore
+		public static function wcal_setup_filter_parms( $duration_select = 'this_month', $user_start = '', $user_end = '' ) {
 
 			$current_time  = current_time( 'timestamp' ); // phpcs:ignore
 			$current_month = date( 'n' ); //phpcs:ignore
@@ -117,9 +115,6 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 					break;
 
 				case 'custom':
-					$user_start = isset( $_GET['wcal_start_date'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_start_date'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-					$user_end   = isset( $_GET['wcal_end_date'] ) ? sanitize_text_field( wp_unslash( $_GET['wcal_end_date'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-
 					if ( '' === $user_start ) {
 						$user_start = date( 'Y-m-d', mktime( 00, 01, 01, $current_month, 1 ) ); //phpcs:ignore
 						$user_end   = date( 'Y-m-d', $current_time ); //phpcs:ignore
@@ -386,9 +381,10 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 		/**
 		 * Get Graph Data
 		 *
+		 * @param string $selected_data_range - Selected range.
 		 * @since 5.8.8
 		 */
-		public static function get_abandoned_data() {
+		public static function get_abandoned_data( $selected_data_range = 'this_month' ) {
 
 			$start_timestamp = self::$start_timestamp;
 			$end_timestamp   = self::$end_timestamp;
@@ -397,7 +393,6 @@ if ( ! class_exists( 'Wcal_Dashoard_Report' ) ) {
 			$current_month = date( 'm' ); // phpcs:ignore
 			$current_year  = date( 'Y' ); // phpcs:ignore
 
-			$selected_data_range = isset( $_GET['duration_select'] ) ? sanitize_text_field( wp_unslash( $_GET['duration_select'] ) ) : 'this_month'; //phpcs:ignore
 			switch ( $selected_data_range ) {
 				case 'this_month':
 					$display_freq  = $current_date > 15 ? 'weekly' : 'daily';

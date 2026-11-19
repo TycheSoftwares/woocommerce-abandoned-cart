@@ -10,7 +10,7 @@
  * Domain Path: /languages/
  * Requires PHP: 7.4 or higher
  * WC requires at least: 4.0.0
- * WC tested up to: 11.2.1
+ * WC tested up to: 11.3.0
  * Requires Plugins: woocommerce
  *
  * @package Abandoned-Cart-Lite-for-WooCommerce
@@ -854,14 +854,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_section(
 				'ac_lite_general_settings_section',                 // ID used to identify this section and with which to register options.
 				__( 'Cart Abandonment Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
-				array( $this, 'ac_lite_general_options_callback' ), // Callback used to render the description of the section.
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page'                               // Page on which to add this section of options.
 			);
 
 			add_settings_field(
 				'wcal_enable_cart_emails',
 				__( 'Enable abandoned cart emails', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_enable_cart_emails_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_general_settings_section',
 				array( __( 'Yes, enable the abandoned cart emails.', 'woocommerce-abandoned-cart' ) )
@@ -870,7 +870,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'ac_lite_cart_abandoned_time',
 				__( 'Cart abandoned cut-off time', 'woocommerce-abandoned-cart' ),
-				array( $this, 'ac_lite_cart_abandoned_time_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_general_settings_section',
 				array( __( 'Consider cart abandoned after X minutes of item being added to cart & order not placed.', 'woocommerce-abandoned-cart' ) )
@@ -879,7 +879,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'ac_lite_delete_abandoned_order_days',
 				__( 'Automatically Delete Abandoned Orders after X days', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_delete_abandoned_orders_days_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_general_settings_section',
 				array( __( 'Automatically delete abandoned cart orders after X days.', 'woocommerce-abandoned-cart' ) )
@@ -888,7 +888,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'ac_lite_email_admin_on_recovery',
 				__( 'Email admin On Order Recovery', 'woocommerce-abandoned-cart' ),
-				array( $this, 'ac_lite_email_admin_on_recovery' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_general_settings_section',
 				array( __( 'Sends email to Admin if an Abandoned Cart Order is recovered.', 'woocommerce-abandoned-cart' ) )
@@ -897,7 +897,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcap_email_admin_on_abandonment',
 				__( 'Email admin on cart abandonment', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcap_email_admin_on_abandonment' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_general_settings_section',
 				array( __( 'Enable this option to notify the store administrator when a cart is abandoned', 'woocommerce-abandoned-cart' ) )
@@ -906,7 +906,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'ac_lite_track_guest_cart_from_cart_page',
 				__( 'Start tracking from Cart Page', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_track_guest_cart_from_cart_page_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_general_settings_section',
 				array( __( 'Enable tracking of abandoned products & carts even if customer does not visit the checkout page or does not enter any details on the checkout page like Name or Email. Tracking will begin as soon as a visitor adds a product to their cart and visits the cart page.', 'woocommerce-abandoned-cart' ) )
@@ -915,14 +915,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_section(
 				'ac_lite_gdpr_settings',                 // ID used to identify this section and with which to register options.
 				__( 'GDPR Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
-				array( $this, 'ac_lite_gdpr_callback' ), // Callback used to render the description of the section.
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page'                               // Page on which to add this section of options.
 			);
 
 			add_settings_field(
 				'wcal_enable_gdpr_consent',
 				__( 'Enable GDPR Notice', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_enable_gdpr_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_gdpr_settings',
 				array( __( 'Enable this setting to display a notice informing customers that their email and cart data are saved to send abandonment reminders.', 'woocommerce-abandoned-cart' ) )
@@ -931,7 +931,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcal_guest_cart_capture_msg',
 				__( 'Message to be displayed for Guest users when tracking their carts', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_guest_cart_capture_msg_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_gdpr_settings',
 				array( __( '<br>In compliance with GDPR, add a message on the Checkout page to inform Guest users of how their data is being used.<br><i>For example: Your email address will help us support your shopping experience throughout the site. Please check our Privacy Policy to see how we use your personal data.</i>', 'woocommerce-abandoned-cart' ) )
@@ -940,7 +940,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcal_logged_cart_capture_msg',
 				__( 'Message to be displayed for registered users when tracking their carts.', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_logged_cart_capture_msg_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_gdpr_settings',
 				array( __( '<br>In compliance with GDPR, add a message on the Shop & Product pages to inform Registered users of how their data is being used.<br><i>For example: Please check our Privacy Policy to see how we use your personal data.</i>', 'woocommerce-abandoned-cart' ) )
@@ -949,7 +949,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcal_gdpr_allow_opt_out',
 				__( 'Allow the visitor to opt out of cart tracking.', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_gdpr_allow_opt_out_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_gdpr_settings',
 				array( __( '<br>In compliance with GDPR, allow the site visitor (guests & registered users) to opt out from cart tracking. This message will be displayed in conjunction with the GDPR message above.</i>', 'woocommerce-abandoned-cart' ) )
@@ -958,7 +958,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcal_gdpr_opt_out_message',
 				__( 'Message to be displayed when the user chooses to opt out of cart tracking.', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_gdpr_opt_out_msg_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_gdpr_settings',
 				array( __( '<br>Message to be displayed when the user chooses to opt out of cart tracking.</i>', 'woocommerce-abandoned-cart' ) )
@@ -966,13 +966,13 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_section(
 				'ac_lite_coupon_settings',                 // ID used to identify this section and with which to register options.
 				__( 'Coupon Settings', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
-				array( $this, 'ac_lite_coupon_callback' ), // Callback used to render the description of the section.
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page'                               // Page on which to add this section of options.
 			);
 			add_settings_field(
 				'wcal_delete_coupon_data',
 				__( 'Delete Coupons Automatically', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_deleting_coupon_data' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_coupon_settings',
 				array( __( 'Enable this setting if you want to completely remove the expired and used coupon code automatically every 15 days.', 'woocommerce-abandoned-cart' ) )
@@ -980,7 +980,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcal_delete_coupon_data_manually',
 				__( 'Delete Coupons Manually', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_deleting_coupon_data_manually' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_coupon_settings',
 				array( __( 'If you want to completely remove the expired and used coupon code now then click on "Delete" button.', 'woocommerce-abandoned-cart' ) )
@@ -989,14 +989,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_section(
 				'ac_lite_rules_settings',                 // ID used to identify this section and with which to register options.
 				__( 'Rules to exclude capturing abandoned carts', 'woocommerce-abandoned-cart' ),     // Title to be displayed on the administration page.
-				array( $this, 'ac_lite_rules_callback' ), // Callback used to render the description of the section.
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page'                               // Page on which to add this section of options.
 			);
 
 			add_settings_field(
 				'wcap_restrict_ip_address',
 				__( 'Do not capture abandoned carts for these IP Addresses:', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcap_restrict_ip_address_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_rules_settings',
 				array( __( '<br>The carts abandoned from these IP addresses will not be tracked by the plugin. Accepts wildcards, e.g 192.168.* will block all IP addresses which starts from &quot;192.168&quot;. Separate IP addresses with commas.', 'woocommerce-abandoned-cart' ) )
@@ -1005,7 +1005,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcap_restrict_email_address',
 				__( 'Do not capture abandoned carts for these email addresses:', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcap_restrict_email_address_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_rules_settings',
 				array( __( '<br>Carts that are abandoned using these email addresses will not be tracked by the plugin. *Separate email addresses with commas.', 'woocommerce-abandoned-cart' ) )
@@ -1014,7 +1014,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcap_restrict_domain_address',
 				__( 'Do not capture abandoned carts for email addresses from these domains:', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcap_restrict_domain_address_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_rules_settings',
 				array( __( '<br>The carts abandoned from email addresses with these domains will not be tracked by the plugin.', 'woocommerce-abandoned-cart' ) )
@@ -1023,7 +1023,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcap_restrict_countries',
 				__( 'Do not capture carts from countries:', 'woocommerce-abandoned-cart' ),
-				array( $this, 'restriced_countries_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_page',
 				'ac_lite_rules_settings',
 				array( __( '<br>The carts abandoned from these countries will not be tracked by the plugin.', 'woocommerce-abandoned-cart' ) )
@@ -1037,14 +1037,14 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_section(
 				'ac_email_settings_section',                                                       // ID used to identify this section and with which to register options.
 				__( 'Settings for abandoned cart recovery emails', 'woocommerce-abandoned-cart' ), // Title to be displayed on the administration page.
-				array( $this, 'wcal_email_callback' ),                                             // Callback used to render the description of the section.
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_email_page'                                                        // Page on which to add this section of options.
 			);
 
 			add_settings_field(
 				'wcal_from_name',
 				__( '"From" Name', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_from_name_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_email_page',
 				'ac_email_settings_section',
 				array( 'Enter the name that should appear in the email sent.', 'woocommerce-abandoned-cart' )
@@ -1053,7 +1053,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcal_from_email',
 				__( '"From" Address', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_from_email_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_email_page',
 				'ac_email_settings_section',
 				array( 'Email address from which the reminder emails should be sent.', 'woocommerce-abandoned-cart' )
@@ -1062,7 +1062,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcal_reply_email',
 				__( 'Send Reply Emails to', 'woocommerce-abandoned-cart' ),
-				array( $this, 'wcal_reply_email_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_email_page',
 				'ac_email_settings_section',
 				array( 'When a contact receives your email and clicks reply, which email address should that reply be sent to?', 'woocommerce-abandoned-cart' )
@@ -1071,7 +1071,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcal_add_utm_to_links',
 				__( 'UTM parameters to be added to all the links in reminder emails', 'woocommerce-abandoned-cart' ),
-				array( &$this, 'wcal_add_utm_to_links_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_email_page',
 				'ac_email_settings_section',
 				array( __( 'UTM parameters that should be added to all the links in reminder emails.', 'woocommerce-abandoned-cart' ) )
@@ -1080,7 +1080,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			add_settings_field(
 				'wcal_auto_login_users',
 				__( 'Auto login WordPress users coming to the site using reminder email links', 'woocommerce-abandoned-cart' ),
-				array( &$this, 'wcal_auto_login_users_callback' ),
+				'__return_null', // Rendered by the React settings screen.
 				'woocommerce_ac_email_page',
 				'ac_email_settings_section',
 				array( __( 'Should users registered on the site be auto logged in when they click a link in the reminder emails?', 'woocommerce-abandoned-cart' ) )
@@ -1437,54 +1437,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
-		 * Settings API callback for section "ac_lite_general_settings_section".
-		 *
-		 * @since 2.5
-		 */
-		public function ac_lite_general_options_callback() {
-		}
-
-		/**
-		 * Settings API callback for the enable cart reminder emails.
-		 *
-		 * @param array $args - Arguments.
-		 * @since 5.5
-		 */
-		public static function wcal_enable_cart_emails_callback( $args ) {
-
-			$enable_cart_emails = get_option( 'wcal_enable_cart_emails', '' );
-
-			if ( isset( $enable_cart_emails ) && '' === $enable_cart_emails ) {
-				$enable_cart_emails = 'off';
-			}
-			printf(
-				'<input type="checkbox" id="wcal_enable_cart_emails" name="wcal_enable_cart_emails" value="on" ' . checked( 'on', $enable_cart_emails, false ) . ' />'
-			);
-			$html = '<label for="wcal_enable_cart_emails"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Settings API callback for cart time field.
-		 *
-		 * @param array $args Arguments.
-		 * @since 2.5
-		 */
-		public function ac_lite_cart_abandoned_time_callback( $args ) {
-			// First, we read the option.
-			$cart_abandoned_time = get_option( 'ac_lite_cart_abandoned_time' );
-			// Next, we update the name attribute to access this element's ID in the context of the display options array.
-			// We also access the show_header element of the options collection in the call to the checked() helper function.
-			printf(
-				'<input type="text" id="ac_lite_cart_abandoned_time" name="ac_lite_cart_abandoned_time" value="%s" />',
-				isset( $cart_abandoned_time ) ? esc_attr( $cart_abandoned_time ) : ''
-			);
-			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
-			$html = '<label for="ac_lite_cart_abandoned_time"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
 		 * Settings API cart time field validation.
 		 *
 		 * @param int|string $input - Input to be validated.
@@ -1492,10 +1444,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * @since 2.5
 		 */
 		public static function ac_lite_cart_time_validation( $input ) {
-			$output = '';
-			if ( '' != $input && ( is_numeric( $input ) && $input > 0 ) ) { // phpcs:ignore
-				$output = stripslashes( $input );
+			$input = trim( (string) $input );
+			if ( is_numeric( $input ) && $input > 0 ) {
+				$output = $input;
 			} else {
+				// Keep the stored value: a blank would mean 0 minutes and every cart would count as abandoned at once.
+				$output = get_option( 'ac_lite_cart_abandoned_time', 10 );
 				add_settings_error( 'ac_lite_cart_abandoned_time', 'error found', __( 'Abandoned cart cut off time should be numeric and has to be greater than 0.', 'woocommerce-abandoned-cart' ) );
 			}
 			return $output;
@@ -1509,311 +1463,17 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * @since  5.0
 		 */
 		public static function wcal_delete_days_validation( $input ) {
-			$output = '';
+			$input = trim( (string) $input );
 			if ( is_numeric( $input ) && $input > 0 ) {
-				$output = stripslashes( $input );
+				$output = $input;
 			} else {
-				$output = '365';
+				// Keep the stored value.
+				$output = get_option( 'ac_lite_delete_abandoned_order_days', 365 );
 				add_settings_error( 'ac_lite_delete_abandoned_order_days', 'error found', __( 'Automatically Delete Abandoned Orders after X days has to be greater than 0.', 'woocommerce-abandoned-cart' ) );
 			}
 			return $output;
 		}
 
-		/**
-		 * Callback for deleting abandoned order after X days field.
-		 *
-		 * @param array $args Argument given while adding the field.
-		 * @since 5.0
-		 */
-		public static function wcal_delete_abandoned_orders_days_callback( $args ) {
-			// First, we read the option.
-			$delete_abandoned_order_days = get_option( 'ac_lite_delete_abandoned_order_days', '365' );
-			if ( '' === $delete_abandoned_order_days ) {
-				$delete_abandoned_order_days = '365';
-			}
-			// Next, we update the name attribute to access this element's ID in the context of the display options array.
-			// We also access the show_header element of the options collection in the call to the checked() helper function.
-			printf(
-				'<input type="text" id="ac_lite_delete_abandoned_order_days" name="ac_lite_delete_abandoned_order_days" value="%s" />',
-				isset( $delete_abandoned_order_days ) ? esc_attr( $delete_abandoned_order_days ) : ''
-			);
-			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
-			$html = '<label for="ac_lite_delete_abandoned_order_days"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Settings API callback for email admin on cart recovery field.
-		 *
-		 * @param array $args Arguments.
-		 * @since 2.5
-		 */
-		public function ac_lite_email_admin_on_recovery( $args ) {
-			// First, we read the option.
-			$email_admin_on_recovery = get_option( 'ac_lite_email_admin_on_recovery', '' );
-
-			// This condition added to avoid the notie displyed while Check box is unchecked.
-			if ( isset( $email_admin_on_recovery ) && '' === $email_admin_on_recovery ) {
-				$email_admin_on_recovery = 'off';
-			}
-			// Next, we update the name attribute to access this element's ID in the context of the display options array.
-			// We also access the show_header element of the options collection in the call to the checked() helper function.
-			$html = '';
-			printf(
-				'<input type="checkbox" id="ac_lite_email_admin_on_recovery" name="ac_lite_email_admin_on_recovery" value="on"
-			' . checked( 'on', $email_admin_on_recovery, false ) . ' />'
-			);
-
-			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
-			$html .= '<label for="ac_lite_email_admin_on_recovery"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Settings API callback for email admin on cart abaondonment.
-		 *
-		 * @param array $args Arguments.
-		 * @since 2.5
-		 */
-		public function wcap_email_admin_on_abandonment( $args ) {
-			// First, we read the option.
-			$wcap_email_admin_on_abandonment = get_option( 'wcap_email_admin_on_abandonment', '' );
-
-			// This condition added to avoid the notie displyed while Check box is unchecked.
-			if ( isset( $wcap_email_admin_on_abandonment ) && '' === $wcap_email_admin_on_abandonment ) {
-				$wcap_email_admin_on_abandonment = 'off';
-			}
-			// Next, we update the name attribute to access this element's ID in the context of the display options array.
-			// We also access the show_header element of the options collection in the call to the checked() helper function.
-			$html = '';
-			printf(
-				'<input type="checkbox" id="wcap_email_admin_on_abandonment" name="wcap_email_admin_on_abandonment" value="on"
-			' . checked( 'on', $wcap_email_admin_on_abandonment, false ) . ' />'
-			);
-
-			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
-			$html .= '<label for="wcap_email_admin_on_abandonment"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Settings API callback for capturing guest cart which do not reach the checkout page.
-		 *
-		 * @param array $args Arguments.
-		 * @since 2.7
-		 */
-		public function wcal_track_guest_cart_from_cart_page_callback( $args ) {
-			// First, we read the option.
-			$disable_guest_cart_from_cart_page = get_option( 'ac_lite_track_guest_cart_from_cart_page', '' );
-
-			// This condition added to avoid the notice displyed while Check box is unchecked.
-			if ( isset( $disable_guest_cart_from_cart_page ) && '' === $disable_guest_cart_from_cart_page ) {
-				$disable_guest_cart_from_cart_page = 'off';
-			}
-			// Next, we update the name attribute to access this element's ID in the context of the display options array.
-			// We also access the show_header element of the options collection in the call to the checked() helper function.
-			$html = '';
-
-			printf(
-				'<input type="checkbox" id="ac_lite_track_guest_cart_from_cart_page" name="ac_lite_track_guest_cart_from_cart_page" value="on"
-				' . checked( 'on', $disable_guest_cart_from_cart_page, false ) . ' />'
-			);
-			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
-			$html .= '<label for="ac_lite_track_guest_cart_from_cart_page"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Callback - Enable GDPR consent.
-		 *
-		 * @param array $args - Arguments.
-		 * @since 5.12.0
-		 */
-		public static function wcal_enable_gdpr_callback( $args ) {
-			$wcal_enable_gdpr = get_option( 'wcal_enable_gdpr_consent', '' );
-			$wcal_gdpr_status = isset( $wcal_enable_gdpr ) && '' === $wcal_enable_gdpr ? 'off' : 'on';
-			?>
-			<input type="checkbox" id="wcal_enable_gdpr_consent" name="wcal_enable_gdpr_consent" value="on" <?php echo checked( 'on', $wcal_gdpr_status, false ); ?> />
-			<label for="wcal_enable_gdpr_consent"> <?php echo esc_attr( $args[0] ); ?></label>
-			<a >
-			<?php
-		}
-		/**
-		 * Call back function for guest user cart capture message
-		 *
-		 * @param array $args Argument for adding field details.
-		 * @since 7.8
-		 */
-		public static function wcal_guest_cart_capture_msg_callback( $args ) {
-
-			$guest_msg = get_option( 'wcal_guest_cart_capture_msg' );
-
-			printf(
-				"<textarea rows='4' cols='80' id='wcal_guest_cart_capture_msg' name='wcal_guest_cart_capture_msg'>" . htmlspecialchars( $guest_msg, ENT_QUOTES ) . '</textarea>' // phpcs:ignore
-			);
-
-			$html = '<label for="wcal_guest_cart_capture_msg"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Call back function for registered user cart capture message
-		 *
-		 * @param array $args Argument for adding field details.
-		 * @since 7.8
-		 */
-		public static function wcal_logged_cart_capture_msg_callback( $args ) {
-
-			$logged_msg = get_option( 'wcal_logged_cart_capture_msg' );
-
-			printf(
-				"<input type='text' class='regular-text' id='wcal_logged_cart_capture_msg' name='wcal_logged_cart_capture_msg' value='" . htmlspecialchars( $logged_msg, ENT_QUOTES ) . "' />" // phpcs:ignore
-			);
-
-			$html = '<label for="wcal_logged_cart_capture_msg"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-
-		/**
-		 * Text to allow the user the choice to opt out of cart tracking.
-		 *
-		 * @param array $args - Arguments.
-		 * @since 5.5
-		 */
-		public static function wcal_gdpr_allow_opt_out_callback( $args ) {
-
-			$wcal_gdpr_allow_opt_out = get_option( 'wcal_gdpr_allow_opt_out' );
-
-			printf(
-				"<input type='text' class='regular-text' id='wcal_gdpr_allow_opt_out' name='wcal_gdpr_allow_opt_out' value='" . htmlspecialchars( $wcal_gdpr_allow_opt_out, ENT_QUOTES ) . "' />" // phpcs:ignore
-			);
-
-			$html = '<label for="wcal_gdpr_allow_opt_out"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Message to display when the user chooses to opt out of cart tracking.
-		 *
-		 * @param array $args - Arguments.
-		 * @since 5.5
-		 */
-		public static function wcal_gdpr_opt_out_msg_callback( $args ) {
-
-			$wcal_gdpr_opt_out_message = get_option( 'wcal_gdpr_opt_out_message' );
-
-			printf(
-				"<input type='text' class='regular-text' id='wcal_gdpr_opt_out_message' name='wcal_gdpr_opt_out_message' value='" . htmlspecialchars( $wcal_gdpr_opt_out_message, ENT_QUOTES ) . "' />" // phpcs:ignore
-			);
-
-			$html = '<label for="wcal_gdpr_opt_out_message"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Settings API callback for Abandoned cart email settings of the plugin.
-		 *
-		 * @since 3.5
-		 */
-		public function wcal_email_callback() {
-		}
-
-		/**
-		 * Settings API callback for from name used in Abandoned cart email.
-		 *
-		 * @param array $args Arguments.
-		 * @since 3.5
-		 */
-		public static function wcal_from_name_callback( $args ) {
-			// First, we read the option.
-			$wcal_from_name = get_option( 'wcal_from_name' );
-			// Next, we update the name attribute to access this element's ID in the context of the display options array.
-			// We also access the show_header element of the options collection in the call to the checked() helper function.
-			printf(
-				'<input type="text" id="wcal_from_name" name="wcal_from_name" value="%s" />',
-				isset( $wcal_from_name ) ? esc_attr( $wcal_from_name ) : ''
-			);
-			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
-			$html = '<label for="wcal_from_name_label"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Settings API callback for from email used in Abandoned cart email.
-		 *
-		 * @param array $args Arguments.
-		 * @since 3.5
-		 */
-		public static function wcal_from_email_callback( $args ) {
-			// First, we read the option.
-			$wcal_from_email = get_option( 'wcal_from_email' );
-			// Next, we update the name attribute to access this element's ID in the context of the display options array.
-			// We also access the show_header element of the options collection in the call to the checked() helper function.
-			printf(
-				'<input type="text" id="wcal_from_email" name="wcal_from_email" value="%s" />',
-				isset( $wcal_from_email ) ? esc_attr( $wcal_from_email ) : ''
-			);
-			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
-			$html = '<label for="wcal_from_email_label"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Settings API callback for reply email used in Abandoned cart email.
-		 *
-		 * @param array $args Arguments.
-		 * @since 3.5
-		 */
-		public static function wcal_reply_email_callback( $args ) {
-			// First, we read the option.
-			$wcal_reply_email = get_option( 'wcal_reply_email' );
-			// Next, we update the name attribute to access this element's ID in the context of the display options array.
-			// We also access the show_header element of the options collection in the call to the checked() helper function.
-			printf(
-				'<input type="text" id="wcal_reply_email" name="wcal_reply_email" value="%s" />',
-				isset( $wcal_reply_email ) ? esc_attr( $wcal_reply_email ) : ''
-			);
-			// Here, we'll take the first argument of the array and add it to a label next to the checkbox.
-			$html = '<label for="wcal_reply_email_label"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Callback for UTM parameters.
-		 *
-		 * @param array $args - Arguments for the setting.
-		 * @since 5.9.0
-		 */
-		public static function wcal_add_utm_to_links_callback( $args ) {
-
-			$wcal_add_utm_to_links = get_option( 'wcal_add_utm_to_links', '' );
-
-			?>
-			<textarea id='wcal_add_utm_to_links' rows='4' cols='50' name='wcal_add_utm_to_links' ><?php echo esc_html( $wcal_add_utm_to_links ); ?></textarea>
-			<?php
-			$html = '<label for="wcal_add_utm_to_links">' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		/**
-		 * Callback for Auto login Users.
-		 *
-		 * @param array $args - Arguments for the setting.
-		 * @since 5.9.0
-		 */
-		public static function wcal_auto_login_users_callback( $args ) {
-
-			$wcal_auto_login_users = get_option( 'wcal_auto_login_users', '' );
-			if ( isset( $wcal_auto_login_users ) && '' === $wcal_auto_login_users ) {
-				$wcal_auto_login_users = 'off';
-			}
-			printf(
-				'<input type="checkbox" id="wcal_auto_login_users" name="wcal_auto_login_users" value="on" ' . checked( 'on', $wcal_auto_login_users, false ) . ' />'
-			);
-			$html = '<label for="wcal_auto_login_users"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
 
 		/**
 		 * Add a submenu page under the WooCommerce.
@@ -2528,25 +2188,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			}
 		}
 		/**
-		 * Append an HMAC-SHA256 tag to an AES-CTR ciphertext token.
-		 *
-		 * The HMAC key is derived from the per-email encrypt_key already stored in
-		 * ac_sent_history_lite, so no new secret needs to be introduced.
-		 * Output format: <base64-ciphertext>.<hex-hmac>
-		 *
-		 * Security fix for CVE / coordinated disclosure by Shivamani Vastrala.
-		 *
-		 * @param string $ciphertext  Base64-encoded AES-CTR output.
-		 * @param string $crypt_key   Per-email encryption key.
-		 * @return string             Integrity-protected token.
-		 * @since 6.8.2
-		 */
-		private static function wcal_append_hmac( $ciphertext, $crypt_key ) {
-			$hmac = hash_hmac( 'sha256', $ciphertext, $crypt_key );
-			return $ciphertext . '.' . $hmac;
-		}
-
-		/**
 		 * Verify the HMAC tag on a recovery token and return the bare ciphertext.
 		 *
 		 * Uses hash_equals() for constant-time comparison to prevent timing oracles.
@@ -2815,9 +2456,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * @since 1.0
 		 */
 		public function wcal_enqueue_scripts_js( $hook ) {
-			global $pagenow, $woocommerce;
-			$page   = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-			$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+			$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
 			// Tyche JS constructor - needed for deactivation survey.
 			wp_register_script(
@@ -3179,11 +2818,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
-		 * Callback for Coupon settings section.
-		 */
-		public static function ac_lite_coupon_callback() {}
-
-		/**
 		 * Schedule or clear the automatic coupon deletion as per the saved setting.
 		 *
 		 * @since 6.10.0
@@ -3197,28 +2831,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
-		 * Option for deleting the plugin data upon uninstall.
-		 *
-		 * @param array $args Argument for adding field details.
-		 * @since 8.3
-		 */
-		public static function wcal_deleting_coupon_data( $args ) {
-			$wcal_delete_coupon_data = get_option( 'wcal_delete_coupon_data', '' );
-			if ( isset( $wcal_delete_coupon_data ) && '' === $wcal_delete_coupon_data ) {
-				$wcal_delete_coupon_data = 'off';
-			}
-			self::wcal_sync_coupon_schedule();
-
-			?>
-			<input type="checkbox" id="wcal_delete_coupon_data" name="wcal_delete_coupon_data" value="on" <?php echo checked( 'on', $wcal_delete_coupon_data, false ); ?> />
-			<label for="wcal_delete_coupon_data"> <?php echo esc_attr( $args[0] ); ?></label>
-			<a >
-			<?php
-		}
-		/**
 		 * It will delete the expired and used coupon codes.
 		 *
-		 * @hook wp_ajax_wcal_change_manual_email_data
+		 * @hook wp_ajax_wcal_delete_expired_used_coupon_code
 		 * @since: 5.11.0
 		 */
 		public static function wcal_delete_expired_used_coupon_code() {
@@ -3244,53 +2859,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
-		 * Coupon deletion manual button.
-		 *
-		 * @param array $args - Arguments for the setting.
-		 */
-		public static function wcal_deleting_coupon_data_manually( $args ) {
-			?>
-			<input type="button" class="button-secondary" id="wcal_delete_coupons" value="<?php esc_html_e( 'Delete', 'woocommerce-ac' ); ?>" >
-			<label> <?php echo esc_attr( $args[0] ); ?></label>
-			<br>
-			<span class="wcal-spinner" style="display:none;">
-				<img class="ajax_img" src="<?php echo esc_attr( WCAL_PLUGIN_URL . '/assets/images/ajax-loader.gif' ); ?>" />
-			</span>
-			<span class="wcal-coupon-response-msg"></span>
-			<?php
-		}
-		/**
 		 * It will fetch all expired coupons
 		 *
-		 * @hook wp_ajax_wcal_change_manual_email_data.
 		 * @since: 5.11
 		 */
 		public static function wcal_fetch_expired_coupons() {
 			$coupon_ids = array();
-
-			$args = array(
-				'posts_per_page' => -1,
-				'post_type'      => 'shop_coupon',
-				'post_status'    => 'publish',
-				'meta_query'     => array( //phpcs:ignore
-					'relation' => 'AND',
-					array(
-						'key'     => 'date_expires',
-						'value'   => strtotime( 'today' ),
-						'compare' => '<=',
-					),
-					array(
-						'key'     => 'date_expires',
-						'value'   => '',
-						'compare' => '!=',
-					),
-					array(
-						'key'     => 'wcal_created_by',
-						'value'   => 'wcal',
-						'compare' => '=',
-					),
-				),
-			);
 
 			$args    = array(
 				'posts_per_page' => -1,
@@ -3317,8 +2891,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			);
 			$coupons = get_posts( $args );
 			if ( ! empty( $coupons ) ) {
-				$current_time = current_time( 'timestamp' ); // phpcs:ignore
-
 				foreach ( $coupons as $coupon ) {
 					array_push( $coupon_ids, $coupon->ID );
 				}
@@ -3330,7 +2902,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		/**
 		 * It will fetch all used coupons.
 		 *
-		 * @hook wp_ajax_wcal_change_manual_email_data
 		 * @since: 4.2
 		 */
 		public static function wcal_fetch_used_coupons() {
@@ -3390,87 +2961,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			);
 			return $schedules;
 		}
-
-		/**
-		 * Callback for Abandoned cart Coupon settings.
-		 */
-		public static function wcal_coupon_callback() {
-		}
-
-		/**
-		 * Callback for Coupon settings section.
-		 */
-		public static function ac_lite_rules_callback() {}
-
-		public static function wcap_restrict_ip_address_callback( $args ) {
-
-			$guest_msg = get_option( 'wcap_restrict_ip_address' );
-
-			printf(
-				"<textarea rows='4' cols='80' id='wcap_restrict_ip_address' name='wcap_restrict_ip_address'>" . htmlspecialchars( $guest_msg, ENT_QUOTES ) . '</textarea>' // phpcs:ignore
-			);
-
-			$html = '<label for="wcap_restrict_ip_address"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		public static function wcap_restrict_email_address_callback( $args ) {
-
-			$guest_msg = get_option( 'wcap_restrict_email_address' );
-
-			printf(
-				"<textarea rows='4' cols='80' id='wcap_restrict_email_address' name='wcap_restrict_email_address'>" . htmlspecialchars( $guest_msg, ENT_QUOTES ) . '</textarea>' // phpcs:ignore
-			);
-
-			$html = '<label for="wcap_restrict_email_address"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		public static function wcap_restrict_domain_address_callback( $args ) {
-
-			$guest_msg = get_option( 'wcap_restrict_domain_address' );
-
-			printf(
-				"<textarea rows='4' cols='80' id='wcap_restrict_domain_address' name='wcap_restrict_domain_address'>" . htmlspecialchars( $guest_msg, ENT_QUOTES ) . '</textarea>' // phpcs:ignore
-			);
-
-			$html = '<label for="wcap_restrict_domain_address"> ' . $args[0] . '</label>';
-			echo wp_kses_post( $html );
-		}
-
-		public static function restriced_countries_callback( $args ) {
-
-			$stored_value = get_option( 'wcap_restrict_countries', '' );
-    		$guest_msg    = ! empty( $stored_value ) ? explode( ',', $stored_value ) : array();
-
-			$wc_countries_object = new WC_Countries();
-			$all_countries_list  = $wc_countries_object->get_countries();
-			?>
-			
-			<select
-				class="select2 wcap_restrict_countries"
-				id="wcap_restrict_countries"
-				name="wcap_restrict_countries[]"
-				multiple="multiple"
-				data-placeholder="<?php esc_attr_e( 'Select countries', 'woocommerce-abandoned-cart' ); ?>"
-			>
-				<?php foreach ( $all_countries_list as $code => $name ) : ?>
-					<option
-						value="<?php echo esc_attr( $code ); ?>"
-						<?php selected( in_array( $code, $guest_msg, true ), true ); ?>
-					>
-						<?php echo esc_html( $name ); ?>
-					</option>
-				<?php endforeach; ?>
-			</select>
-			<label for="wcap_restrict_countries"><?php echo wp_kses_post( $args[0] ); ?></label>
-			<?php
-		}
-
-		/**
-		 * Callback for GDPR settings section.
-		 */
-		public static function ac_lite_gdpr_callback() {}
 
 		/**
 		 * Skip js files during plugin check validations.

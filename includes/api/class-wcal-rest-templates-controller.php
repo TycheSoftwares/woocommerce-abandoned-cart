@@ -266,6 +266,13 @@ class WCAL_REST_Templates_Controller extends WCAL_REST_Settings_Controller {
 
 		$wpdb->delete( $wpdb->prefix . 'ac_email_templates_lite', array( 'id' => $id ), array( '%d' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
+		// Activation time, read only by the cron for this template.
+		delete_option( 'wcal_template_' . $id . '_time' );
+
+		// The sent history is kept on purpose: the links in reminders already sent are
+		// verified against it, the cron spaces the next reminder of a cart from it, and
+		// the reports count it.
+
 		return self::envelope( array( 'deleted' => true ) );
 	}
 

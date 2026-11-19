@@ -1,0 +1,12 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor and gettext backups
+*~
+*.bak
+*.orig
+*.swp
+
+node_modules/

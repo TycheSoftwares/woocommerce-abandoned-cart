@@ -1,0 +1,17 @@
+# Excluded from the release zip (wp dist-archive and the 10up deploy action read this file).
+.git
+.gitignore
+.distignore
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.bak
+*.orig
+*.swp
+node_modules
+# src, package.json and webpack.config.js stay: WordPress.org asks for the source of the built JS.
+Dangerfile
+Gemfile
+Gemfile.lock
+tyche-phpcs.xml

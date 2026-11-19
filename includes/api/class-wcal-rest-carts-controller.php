@@ -21,6 +21,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WCAL_REST_Carts_Controller extends WCAL_REST_Settings_Controller {
 
 	/**
+	 * Guest records loaded in one query for the rows of the current list, keyed by guest id.
+	 *
+	 * @var array
+	 */
+	protected static $guests = array();
+
+	/**
+	 * Recovered orders loaded in one query for the rows of the current list, keyed by order id.
+	 *
+	 * @var array
+	 */
+	protected static $orders = array();
+
+	/**
+	 * Number of orders loaded per query.
+	 */
+	const ORDER_BATCH_SIZE = 100;
+
+	/**
 	 * Register the routes.
 	 */
 	public static function register_routes() {
@@ -202,19 +221,27 @@ class WCAL_REST_Carts_Controller extends WCAL_REST_Settings_Controller {
 			)
 		);
 
+		self::prime_row_data( $rows );
+
 		$data = array();
 		foreach ( $rows as $row ) {
 			$data[] = self::format_row( $row );
 		}
 
+		self::$guests = array();
+		self::$orders = array();
+
+		// Banner total. The orders are loaded in batches and released after each one.
 		$recovered_count = 0;
 		$recovered_total = 0;
-		$recovered_ids   = $wpdb->get_col( "SELECT recovered_cart FROM `$table` WHERE " . self::where( 'recovered', $view, $start, $end ) ); // phpcs:ignore
-		foreach ( $recovered_ids as $order_id ) {
-			$order = wc_get_order( $order_id );
-			if ( $order ) {
-				$recovered_count++;
-				$recovered_total += $order->get_total();
+		$recovered_ids   = array_map( 'absint', $wpdb->get_col( "SELECT recovered_cart FROM `$table` WHERE " . self::where( 'recovered', $view, $start, $end ) ) ); // phpcs:ignore
+		foreach ( array_chunk( $recovered_ids, self::ORDER_BATCH_SIZE ) as $chunk ) {
+			$orders = self::load_orders( $chunk );
+			foreach ( $chunk as $order_id ) {
+				if ( $orders[ $order_id ] ) {
+					$recovered_count++;
+					$recovered_total += $orders[ $order_id ]->get_total();
+				}
 			}
 		}
 
@@ -398,6 +425,81 @@ class WCAL_REST_Carts_Controller extends WCAL_REST_Settings_Controller {
 	}
 
 	/**
+	 * Load in a few queries the customers and orders that format_row() needs for a list of rows.
+	 *
+	 * @param array $rows Cart rows.
+	 */
+	protected static function prime_row_data( $rows ) {
+		global $wpdb;
+
+		$guest_ids = array();
+		$user_ids  = array();
+		$order_ids = array();
+		foreach ( $rows as $row ) {
+			$user_id = (int) $row->user_id;
+			if ( 'GUEST' === $row->user_type ) {
+				if ( $user_id > 0 ) {
+					$guest_ids[] = $user_id;
+				}
+			} elseif ( $user_id > 0 ) {
+				$user_ids[] = $user_id;
+			}
+			if ( (int) $row->recovered_cart > 0 ) {
+				$order_ids[] = (int) $row->recovered_cart;
+			}
+		}
+
+		self::$guests = array_fill_keys( array_unique( $guest_ids ), null );
+		if ( $guest_ids ) {
+			$placeholders = implode( ',', array_fill( 0, count( self::$guests ), '%d' ) );
+			$guests       = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM `' . $wpdb->prefix . "ac_guest_abandoned_cart_history_lite` WHERE id IN ( $placeholders )", array_keys( self::$guests ) ) ); // phpcs:ignore
+			foreach ( $guests as $guest ) {
+				self::$guests[ (int) $guest->id ] = $guest;
+			}
+		}
+
+		// Users and their meta, in two queries.
+		if ( $user_ids ) {
+			cache_users( array_unique( $user_ids ) );
+		}
+
+		self::$orders = $order_ids ? self::load_orders( $order_ids ) : array();
+	}
+
+	/**
+	 * Load orders by id, giving the same result as wc_get_order() for each id.
+	 *
+	 * @param array $ids Order ids.
+	 * @return array Order object, or false, keyed by id.
+	 */
+	protected static function load_orders( $ids ) {
+		$ids    = array_values( array_unique( array_filter( array_map( 'absint', $ids ) ) ) );
+		$orders = array();
+
+		foreach ( array_chunk( $ids, self::ORDER_BATCH_SIZE ) as $chunk ) {
+			$found = wc_get_orders(
+				array(
+					'post__in' => $chunk,
+					'limit'    => count( $chunk ),
+				)
+			);
+			foreach ( (array) $found as $order ) {
+				if ( $order instanceof WC_Abstract_Order && in_array( $order->get_id(), $chunk, true ) ) {
+					$orders[ $order->get_id() ] = $order;
+				}
+			}
+			// The query skips trashed orders, drafts and other types. Look those up as before.
+			foreach ( $chunk as $id ) {
+				if ( ! isset( $orders[ $id ] ) ) {
+					$orders[ $id ] = wc_get_order( $id );
+				}
+			}
+		}
+
+		return $orders;
+	}
+
+	/**
 	 * Decode the stored cart.
 	 *
 	 * @param object $row Cart row.
@@ -443,7 +545,7 @@ class WCAL_REST_Carts_Controller extends WCAL_REST_Settings_Controller {
 				'date'        => '',
 				'order_total' => '',
 			);
-			$order     = wc_get_order( $recovered_id );
+			$order     = array_key_exists( $recovered_id, self::$orders ) ? self::$orders[ $recovered_id ] : wc_get_order( $recovered_id );
 			if ( $order ) {
 				$created   = $order->get_date_created();
 				$timestamp = $created ? strtotime( $created->date( 'Y-m-d H:i:s' ) ) : (int) $row->abandoned_cart_time;
@@ -496,7 +598,9 @@ class WCAL_REST_Carts_Controller extends WCAL_REST_Settings_Controller {
 					'phone'      => '',
 				);
 			}
-			$guest = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite` WHERE id = %d', $user_id ) ); // phpcs:ignore
+			$guest = array_key_exists( $user_id, self::$guests )
+				? self::$guests[ $user_id ]
+				: $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite` WHERE id = %d', $user_id ) ); // phpcs:ignore
 			return array(
 				'email'      => isset( $guest->email_id ) ? $guest->email_id : '',
 				'first_name' => isset( $guest->billing_first_name ) ? $guest->billing_first_name : '',

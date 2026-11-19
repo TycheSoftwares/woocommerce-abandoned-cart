@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-"
 "abandoned-cart\n"
-"POT-Creation-Date: 2026-11-12T11:15:56+00:00\n"
+"POT-Creation-Date: 2026-11-13T05:44:40+00:00\n"
 "PO-Revision-Date: 2015-08-11 19:03+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -55,33 +55,33 @@ msgstr ""
 msgid "Abandoned cart reminder"
 msgstr ""
 
-#: cron/class-wcal-cron.php:293 woocommerce-ac.php:3080 woocommerce-ac.php:3115
+#: cron/class-wcal-cron.php:293 woocommerce-ac.php:2716 woocommerce-ac.php:2751
 #: build/admin/admin.js:1
 msgid "Item"
 msgstr "פריט"
 
-#: cron/class-wcal-cron.php:294 woocommerce-ac.php:3081 woocommerce-ac.php:3116
+#: cron/class-wcal-cron.php:294 woocommerce-ac.php:2717 woocommerce-ac.php:2752
 msgid "Name"
 msgstr "שם"
 
 #: cron/class-wcal-cron.php:295
 #: includes/templates/emails/abandonment-notification.php:47
-#: woocommerce-ac.php:3082 woocommerce-ac.php:3117
+#: woocommerce-ac.php:2718 woocommerce-ac.php:2753
 msgid "Quantity"
 msgstr "כמות"
 
 #: cron/class-wcal-cron.php:296
 #: includes/templates/emails/abandonment-notification.php:48
-#: woocommerce-ac.php:3083 woocommerce-ac.php:3118
+#: woocommerce-ac.php:2719 woocommerce-ac.php:2754
 msgid "Price"
 msgstr "מחיר"
 
-#: cron/class-wcal-cron.php:297 woocommerce-ac.php:3084 woocommerce-ac.php:3119
+#: cron/class-wcal-cron.php:297 woocommerce-ac.php:2720 woocommerce-ac.php:2755
 msgid "Line Subtotal"
 msgstr "סכום ביניים"
 
 #: cron/class-wcal-cron.php:304 cron/class-wcal-cron.php:315
-#: woocommerce-ac.php:3078 woocommerce-ac.php:3112
+#: woocommerce-ac.php:2714 woocommerce-ac.php:2748
 msgid "Your Shopping Cart"
 msgstr "עגלת הקניות שלך"
 
@@ -89,7 +89,7 @@ msgstr "עגלת הקניות שלך"
 msgid "SKU: "
 msgstr ""
 
-#: cron/class-wcal-cron.php:459 woocommerce-ac.php:3104 woocommerce-ac.php:3139
+#: cron/class-wcal-cron.php:459 woocommerce-ac.php:2740 woocommerce-ac.php:2775
 msgid "Cart Total:"
 msgstr "סה״כ בעגלה:"
 
@@ -121,7 +121,7 @@ msgid "ANONYMIZED"
 msgstr ""
 
 #: includes/admin/class-wcal-personal-data-export.php:137
-#: woocommerce-ac.php:1828 woocommerce-ac.php:1834
+#: woocommerce-ac.php:1485 woocommerce-ac.php:1491
 msgid "Abandoned Carts"
 msgstr "עגלות שננטשו"
 
@@ -216,16 +216,16 @@ msgstr ""
 msgid "includes Tax: %s"
 msgstr ""
 
-#: includes/api/class-wcal-rest-settings-controller.php:179
+#: includes/api/class-wcal-rest-settings-controller.php:165
 msgid "You do not have permission to access this resource."
 msgstr ""
 
-#: includes/api/class-wcal-rest-settings-controller.php:213
+#: includes/api/class-wcal-rest-settings-controller.php:199
 msgid "Request body must be a non-empty JSON object."
 msgstr ""
 
 #. translators: %s: Option name
-#: includes/api/class-wcal-rest-settings-controller.php:226
+#: includes/api/class-wcal-rest-settings-controller.php:212
 msgid "Invalid value for %s."
 msgstr ""
 
@@ -269,106 +269,15 @@ msgid ""
 "security vulnerability."
 msgstr ""
 
-#. translators: %1$s Link to Differences article, %2$s link to pro version
-#: includes/class-wcal-all-component.php:76
-msgid ""
-"Now that you are all set with the Lite version, you can upgrade to Pro "
-"version to take your abandoned cart recovery to the next level. You can "
-"capture  customer’s email address when they click Add to Cart, get access to "
-"11 unique, fully responsive email templates, send text messages for recovery "
-"& <strong><a target=\"_blank\" href= \"%1$s\">much more</a></strong>. "
-"<strong><a target=\"_blank\" href= \"%2$s\">Purchase now</a></strong>."
-msgstr ""
-
-#. translators: %s Link to Abandoned Cart Pro
-#: includes/class-wcal-all-component.php:80
-msgid ""
-"Boost your sales by recovering up to 60% of the abandoned carts with our "
-"Abandoned Cart Pro for WooCommerce plugin. You can capture customer email "
-"addresses right when they click the Add To Cart button. <strong><a "
-"target=\"_blank\" href= \"%s\"> Grab your copy of Abandon Cart Pro plugin "
-"now!</a></strong>"
-msgstr ""
-
-#. translators: %s Link to Abandoned Cart Pro
-#: includes/class-wcal-all-component.php:84
-msgid ""
-"Don't loose your sales to abandoned carts. Use our Abandon Cart Pro plugin & "
-"start recovering your lost sales in less then 60 seconds. <strong><a "
-"target=\"_blank\" href= \"%s\">Grab it now!</a></strong>."
-msgstr ""
-
-#. translators: %s Link to Abandoned Cart Pro
-#: includes/class-wcal-all-component.php:88
-msgid ""
-"Send Abandoned Cart reminders that actually convert. Take advantage of our "
-"fully responsive email templates designed specially with an intent to "
-"trigger conversion. <strong><a target=\"_blank\" href= \"%s\">Purchase now</"
-"a></strong>."
-msgstr ""
-
-#. translators: Pro version link.
-#: includes/class-wcal-all-component.php:95
-msgid ""
-"Increase your store sales by recovering your abandoned carts for just $119. "
-"No profit sharing, no monthly fees. Our Abandoned Cart Pro plugin comes with "
-"a 30 day money back guarantee as well. :) Use coupon code ACPRO20 & save $24!"
-"<br>\n"
-"            <strong><a target=\"_blank\" href= \"%s\">Grab your copy now!</"
-"a></strong>"
-msgstr ""
-
-#. translators: %s Link to Order Delivery Date Pro
-#: includes/class-wcal-all-component.php:106
-msgid ""
-"Reduce cart abandonment rate by 57% with our Order Delivery Date Pro "
-"WooCommerce plugin. You can Create Delivery Settings by Shipping Zones & "
-"Shipping Classes. <br>Use discount code \"ORDPRO20\" and grab 20% discount "
-"on the purchase of the plugin. The discount code is valid only for the first "
-"20 customers. <strong><a target=\"_blank\" href= \"%s\">Purchase now</a></"
-"strong>"
-msgstr ""
-
-#. translators: Order Delivery Date Pro link.
-#: includes/class-wcal-all-component.php:113
-msgid ""
-"Allow your customers to select the Delivery Date on Single Product Page "
-"using our Product Delivery Date pro for WooCommerce Plugin. <br>\n"
-"            <strong><a target=\"_blank\" href= \"%s\">Shop now</a></strong> "
-"& be one of the 20 customers to get 20% discount on the plugin price. Use "
-"the code \"PRDPRO20\". Hurry!!"
-msgstr ""
-
-#. translators: %s Link to WooCommerce Booking Plugin
-#: includes/class-wcal-all-component.php:124
-msgid ""
-"Allow your customers to book an appointment or rent an apartment with our "
-"Booking and Appointment for WooCommerce plugin. You can also sell your "
-"product as a resource or integrate with a few Vendor plugins. <br>Shop now & "
-"Save 20% on the plugin with the code \"BKAP20\". Only for first 20 "
-"customers. <strong><a target=\"_blank\" href= \"%s\">Have it now!</a></"
-"strong>"
-msgstr ""
-
-#. translators: Deposits for WC pro plugin link.
-#: includes/class-wcal-all-component.php:131
-msgid ""
-" Allow your customers to pay deposits on products using our Deposits for "
-"WooCommerce plugin. <br>\n"
-"            <strong><a target=\"_blank\" href= \"%s\">Purchase now</a></"
-"strong> & Grab 20% discount with the code \"DFWP20\". The discount code is "
-"valid only for the first 20 customers."
-msgstr ""
-
-#: includes/class-wcal-common.php:168
+#: includes/class-wcal-common.php:59
 msgid "Database Updated Successfully"
 msgstr ""
 
-#: includes/class-wcal-common.php:183
+#: includes/class-wcal-common.php:74
 msgid "Database Update Failed. Please try again after sometime"
 msgstr ""
 
-#: includes/class-wcal-common.php:343
+#: includes/class-wcal-common.php:234
 msgid "This product no longer exists"
 msgstr ""
 
@@ -792,7 +701,7 @@ msgid ""
 "in the reminder emails?"
 msgstr ""
 
-#: woocommerce-ac.php:1332 woocommerce-ac.php:2895
+#: woocommerce-ac.php:1332 woocommerce-ac.php:2531
 msgid "You do not have sufficient permissions to access this page."
 msgstr "אין לך הרשאה מתאימה לגשת לעמוד זה."
 
@@ -829,40 +738,40 @@ msgid ""
 "string's translation."
 msgstr ""
 
-#: woocommerce-ac.php:1499
+#: woocommerce-ac.php:1451
 msgid ""
 "Abandoned cart cut off time should be numeric and has to be greater than 0."
 msgstr ""
 
-#: woocommerce-ac.php:1517
+#: woocommerce-ac.php:1469
 msgid ""
 "Automatically Delete Abandoned Orders after X days has to be greater than 0."
 msgstr ""
 
-#: woocommerce-ac.php:1829
+#: woocommerce-ac.php:1486
 msgid "Upgrade to Pro!"
 msgstr ""
 
-#: woocommerce-ac.php:2848
+#: woocommerce-ac.php:2484
 msgid ""
 "Are you sure you want delete the expired and used coupons created by "
 "Abandonment Cart Lite for WooCommerce Plugin?"
 msgstr ""
 
-#: woocommerce-ac.php:2880
+#: woocommerce-ac.php:2516
 msgid ""
 "The link you followed has expired. Please refresh the page and try again."
 msgstr ""
 
-#: woocommerce-ac.php:2881
+#: woocommerce-ac.php:2517
 msgid "Security check failed"
 msgstr ""
 
-#: woocommerce-ac.php:2918
+#: woocommerce-ac.php:2554
 msgid "JavaScript is required to use this page."
 msgstr ""
 
-#: woocommerce-ac.php:2936
+#: woocommerce-ac.php:2572
 msgid ""
 "If you love <strong>Abandoned Cart Lite for WooCommerce</strong>, then "
 "please leave us a <a href=\"https://wordpress.org/support/plugin/woocommerce-"
@@ -871,16 +780,12 @@ msgid ""
 "advance. :)"
 msgstr ""
 
-#: woocommerce-ac.php:3088 woocommerce-ac.php:3123
+#: woocommerce-ac.php:2724 woocommerce-ac.php:2759
 msgid "Men's Formal Shoes"
 msgstr ""
 
-#: woocommerce-ac.php:3095 woocommerce-ac.php:3130
+#: woocommerce-ac.php:2731 woocommerce-ac.php:2766
 msgid "Woman's Hand Bags"
-msgstr ""
-
-#: woocommerce-ac.php:3455
-msgid "Select countries"
 msgstr ""
 
 #: build/admin/admin.js:1

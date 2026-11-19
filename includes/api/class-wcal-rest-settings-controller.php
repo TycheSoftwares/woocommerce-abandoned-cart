@@ -31,7 +31,8 @@ class WCAL_REST_Settings_Controller {
 	 * Option schema for every settings panel.
 	 *
 	 * Each option can define:
-	 *   'type'              => 'string'|'boolean'
+	 *   'type'              => 'string'|'boolean'|'countries'|'email'
+	 *   'label'             => field name used in validation errors.
 	 *   'default'           => value used when the option doesn't exist.
 	 *   'sanitize_callback' => same callback the option is registered with in register_setting().
 	 *   'empty_as_default'  => read a stored empty value as the default.
@@ -66,42 +67,64 @@ class WCAL_REST_Settings_Controller {
 					'type'            => 'boolean',
 					'non_empty_is_on' => true,
 				),
-				'wcal_guest_cart_capture_msg'  => array( 'type' => 'string' ),
-				'wcal_logged_cart_capture_msg' => array( 'type' => 'string' ),
-				'wcal_gdpr_allow_opt_out'      => array( 'type' => 'string' ),
-				'wcal_gdpr_opt_out_message'    => array( 'type' => 'string' ),
+				// The logged-in message is printed with wp_kses_post(), so the same HTML is allowed.
+				'wcal_guest_cart_capture_msg'  => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'wp_kses_post',
+				),
+				'wcal_logged_cart_capture_msg' => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'wp_kses_post',
+				),
+				'wcal_gdpr_allow_opt_out'      => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				'wcal_gdpr_opt_out_message'    => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+				),
 			),
 			'coupon'         => array(
 				'wcal_delete_coupon_data' => array( 'type' => 'boolean' ),
 			),
 			'exclusions'     => array(
-				'wcap_restrict_ip_address'     => array( 'type' => 'string' ),
-				'wcap_restrict_email_address'  => array( 'type' => 'string' ),
-				'wcap_restrict_domain_address' => array( 'type' => 'string' ),
+				// One entry per line or comma separated, so the line breaks are kept.
+				'wcap_restrict_ip_address'     => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_textarea_field',
+				),
+				'wcap_restrict_email_address'  => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_textarea_field',
+				),
+				'wcap_restrict_domain_address' => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_textarea_field',
+				),
 				'wcap_restrict_countries'      => array( 'type' => 'countries' ),
 			),
 			'recovery-email' => array(
-				'wcal_from_name'        => array( 'type' => 'string' ),
-				'wcal_from_email'       => array( 'type' => 'string' ),
-				'wcal_reply_email'      => array( 'type' => 'string' ),
-				'wcal_add_utm_to_links' => array( 'type' => 'string' ),
+				// Name and addresses go into the mail headers: no line breaks or tags.
+				'wcal_from_name'        => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				'wcal_from_email'       => array(
+					'type'  => 'email',
+					'label' => __( '"From" Address', 'woocommerce-abandoned-cart' ),
+				),
+				'wcal_reply_email'      => array(
+					'type'  => 'email',
+					'label' => __( 'Send Reply Emails to', 'woocommerce-abandoned-cart' ),
+				),
+				'wcal_add_utm_to_links' => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+				),
 				'wcal_auto_login_users' => array( 'type' => 'boolean' ),
 			),
 		);
-	}
-
-	/**
-	 * Settings fields rendered by the React screen. Anything else registered on
-	 * the settings pages comes from another plugin and needs the PHP form.
-	 *
-	 * @return array
-	 */
-	public static function known_field_ids() {
-		$ids = array( 'wcal_delete_coupon_data_manually' );
-		foreach ( self::panels() as $schema ) {
-			$ids = array_merge( $ids, array_keys( $schema ) );
-		}
-		return $ids;
 	}
 
 	/**
@@ -197,9 +220,9 @@ class WCAL_REST_Settings_Controller {
 	/**
 	 * POST /settings/general/{panel} - update the options of a panel.
 	 *
-	 * Validators keep their options.php behaviour: what they return is stored,
-	 * and their settings errors are returned to the client along with the
-	 * values now stored.
+	 * Every value is validated before anything is written. If a validator reports
+	 * an error, nothing in the panel is saved: the error is returned to the client
+	 * along with the values still stored, so the form goes back to them.
 	 *
 	 * @param string          $panel   Panel name.
 	 * @param WP_REST_Request $request Request object.
@@ -215,24 +238,12 @@ class WCAL_REST_Settings_Controller {
 
 		$schema = self::panels()[ $panel ];
 
-		// Check everything first so that a bad request doesn't save part of the panel.
-		foreach ( $body as $key => $value ) {
-			if ( ! array_key_exists( $key, $schema ) ) {
-				continue;
-			}
-			$accepts_array = 'countries' === $schema[ $key ]['type'] && is_array( $value );
-			if ( ! is_scalar( $value ) && ! $accepts_array ) {
-				/* translators: %s: Option name */
-				return self::invalid( $key, sprintf( __( 'Invalid value for %s.', 'woocommerce-abandoned-cart' ), $key ) );
-			}
-		}
-
 		// Settings errors API isn't loaded in REST requests.
 		require_once ABSPATH . 'wp-admin/includes/template.php';
 
-		// Added only in is_admin() requests by the main class.
-		add_filter( 'pre_update_option_wcal_auto_login_users', array( 'woocommerce_abandon_cart_lite', 'wcal_update_admin_notice_value' ), 10, 2 );
-
+		// Validate and sanitize everything first, so that a bad value never reaches
+		// the database and a bad request doesn't save part of the panel.
+		$values = array();
 		$errors = array();
 
 		foreach ( $body as $key => $value ) {
@@ -240,25 +251,47 @@ class WCAL_REST_Settings_Controller {
 				continue;
 			}
 
-			$field = $schema[ $key ];
+			$field         = $schema[ $key ];
+			$accepts_array = 'countries' === $field['type'] && is_array( $value );
+			if ( ! is_scalar( $value ) && ! $accepts_array ) {
+				/* translators: %s: Option name */
+				return self::invalid( $key, sprintf( __( 'Invalid value for %s.', 'woocommerce-abandoned-cart' ), $key ) );
+			}
 
 			if ( 'boolean' === $field['type'] ) {
-				update_option( $key, self::normalize_bool_for_db( $value ) );
+				$values[ $key ] = self::normalize_bool_for_db( $value );
 			} elseif ( 'countries' === $field['type'] ) {
-				$countries = is_array( $value ) ? $value : explode( ',', (string) $value );
-				update_option( $key, woocommerce_abandon_cart_lite::sanitize_restrict_countries( $countries ) );
+				$countries      = is_array( $value ) ? $value : explode( ',', (string) $value );
+				$values[ $key ] = woocommerce_abandon_cart_lite::sanitize_restrict_countries( $countries );
+			} elseif ( 'email' === $field['type'] ) {
+				$email = sanitize_email( (string) $value );
+				if ( is_email( $email ) ) {
+					$values[ $key ] = $email;
+				} else {
+					/* translators: %s: Field name */
+					$errors[ $key ] = sprintf( __( 'Please enter a valid email address for %s.', 'woocommerce-abandoned-cart' ), isset( $field['label'] ) ? $field['label'] : $key );
+				}
 			} elseif ( isset( $field['sanitize_callback'] ) ) {
-				update_option( $key, call_user_func( $field['sanitize_callback'], (string) $value ) );
+				$values[ $key ] = call_user_func( $field['sanitize_callback'], (string) $value );
 				foreach ( get_settings_errors( $key ) as $error ) {
 					$errors[ $key ] = $error['message'];
 				}
 			} else {
-				update_option( $key, (string) $value );
+				$values[ $key ] = (string) $value;
 			}
 		}
 
-		if ( array_key_exists( 'wcal_delete_coupon_data', $body ) ) {
-			woocommerce_abandon_cart_lite::wcal_sync_coupon_schedule();
+		if ( empty( $errors ) ) {
+			// Added only in is_admin() requests by the main class.
+			add_filter( 'pre_update_option_wcal_auto_login_users', array( 'woocommerce_abandon_cart_lite', 'wcal_update_admin_notice_value' ), 10, 2 );
+
+			foreach ( $values as $key => $value ) {
+				update_option( $key, $value );
+			}
+
+			if ( array_key_exists( 'wcal_delete_coupon_data', $values ) ) {
+				woocommerce_abandon_cart_lite::wcal_sync_coupon_schedule();
+			}
 		}
 
 		if ( ! empty( $errors ) ) {

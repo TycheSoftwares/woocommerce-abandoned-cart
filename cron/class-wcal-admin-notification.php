@@ -262,38 +262,6 @@ if ( ! class_exists( 'Wcal_Admin_Notification' ) ) {
 		}
 
 		/**
-		 * Returns list of email addresses.
-		 *
-		 * @param string $send_list - Send List from DB.
-		 * @return string $final_list - Formatted list of addresses.
-		 *
-		 * @since 9.3.0
-		 */
-		public static function wcap_get_send_to_list( $send_list ) {
-
-			$comma_separated = stripos( $send_list, ',' );
-			$line_separated  = stripos( $send_list, ' ' );
-
-			if ( $comma_separated > 0 ) {
-				$final_list = '';
-				$send_list  = explode( ',', $send_list );
-				foreach ( $send_list as $addr ) {
-					$final_list .= trim( $addr ) . ',';
-				}
-			} elseif ( $line_separated > 0 ) {
-				$final_list = '';
-				$send_list  = explode( ' ', $send_list );
-				foreach ( $send_list as $addr ) {
-					$final_list .= trim( $addr ) . ',';
-				}
-			} else {
-				$final_list = $send_list;
-			}
-
-			return $final_list;
-		}
-
-		/**
 		 * Return Email subject.
 		 *
 		 * @since 9.3.0
