@@ -54,6 +54,11 @@ class Wcal_Admin_Notice {
 			return;
 		}
 
+		// Only users who can open the plugin page can run the update.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -67,7 +72,11 @@ class Wcal_Admin_Notice {
 		);
 
 		foreach ( $results as $key => $value ) {
-			if ( 'utf8mb4_unicode_ci' !== $value->Collation ) { // phpcs:ignore
+			// The update converts the subject and body to utf8mb4 so they can store emojis.
+			// New tables are created with the site's own collation, which is often another
+			// utf8mb4 one (utf8mb4_unicode_520_ci, utf8mb4_0900_ai_ci). Those already store
+			// emojis, so only a column that isn't utf8mb4 at all needs the update.
+			if ( 0 !== strpos( (string) $value->Collation, 'utf8mb4_' ) ) { // phpcs:ignore
 				?>
 				<div id="wcal_update" class="updated woocommerce-message" style="padding:15px;">
 					<span>
