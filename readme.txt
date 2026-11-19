@@ -16,7 +16,7 @@ Track abandoned carts and send automated, customizable abandoned cart recovery e
 
 Cart abandonment is one of the biggest challenges for any WooCommerce store. While customers leave their carts for different reasons, a well-timed reminder can often bring them back to complete their purchase.
 
-**[Abandoned Cart for WooCommerce](https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite)** helps you recover lost sales by automatically tracking abandoned carts and sending reminder emails to customers who leave without checking out. It includes everything you need to start recovering abandoned carts, including customizable email templates, recovery reports, and support for both guest and logged-in shoppers.
+**[Abandoned Cart for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite)** helps you recover lost sales by automatically tracking abandoned carts and sending reminder emails to customers who leave without checking out. It includes everything you need to start recovering abandoned carts, including customizable email templates, recovery reports, and support for both guest and logged-in shoppers.
 
 **[What if you can get better features for less money? - Try Abandoned Cart Pro for just $1](https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin-trial/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite)**
 
@@ -80,7 +80,7 @@ If the plugin helps your business, consider leaving a ⭐⭐⭐⭐⭐ review. Yo
 
 Abandoned Cart Lite includes everything you need to start recovering abandoned WooCommerce carts with automated reminder emails, recovery tracking, reporting, and customizable email templates.
 
-If you're looking for additional recovery tools, [Abandoned Cart Pro for WooCommerce](https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wprepo&utm_medium=topprolink&utm_campaign=AbandonedCartLite) adds advanced features such as:
+If you're looking for additional recovery tools, [Abandoned Cart Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin/?utm_source=wprepo&utm_medium=topprolink&utm_campaign=AbandonedCartLite) adds advanced features such as:
 * Email capture when Add to Cart is clicked
 * Exit-intent and Add to Cart popups
 * Send automated abandoned cart notifications via Messenger, SMS, and Email in a set time interval for better results.
@@ -110,7 +110,7 @@ Tyche Softwares also develops plugins for abandoned cart recovery, order deliver
 
 1. **[Flexi BOGO for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-flexi-bogo-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=FlexiBOGO "Flexi BOGO for WooCommerce")**
 
-2. **[Abandoned Cart Pro for WooCommerce](https://www.tychesoftwares.com/store/premium-plugins/woocommerce-abandoned-cart-pro/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite "Abandoned Cart Pro for WooCommerce")**
+2. **[Abandoned Cart Pro for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-abandoned-cart-pro-plugin/?utm_source=wprepo&utm_medium=link&utm_campaign=AbandonedCartLite "Abandoned Cart Pro for WooCommerce")**
 
 3. **[Booking & Appointment Plugin for WooCommerce](https://www.tychesoftwares.com/products/woocommerce-booking-and-appointment-plugin/?utm_source=wprepo&utm_medium=prolink&utm_campaign=BookingAppointmentLite "Booking & Appointment Plugin for WooCommerce")**
 
@@ -130,7 +130,7 @@ Tyche Softwares also develops plugins for abandoned cart recovery, order deliver
 
 11. **[Price based on User Role for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-price-user-role-plugin/?utm_source=wprepo&utm_medium=prolink&utm_campaign=ProductPricesByUserRoles "Price based on User Role for WooCommerce - Pro")**
 
-12. **[Currency per Product for WooCommerce - Pro](https://www.tychesoftwares.com/store/premium-plugins/currency-per-product-for-woocommerce/?utm_source=wprepo&utm_medium=topprolink&utm_campaign=CurrencyProductLite "Currency per Product for WooCommerce - Pro")**
+12. **[Currency per Product for WooCommerce - Pro](https://www.tychesoftwares.com/products/woocommerce-currency-per-product-plugin/?utm_source=wprepo&utm_medium=topprolink&utm_campaign=CurrencyProductLite "Currency per Product for WooCommerce - Pro")**
 
 **Some of our other free plugins:**
 
