@@ -300,9 +300,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				add_action( 'admin_notices', array( 'Wcal_Update', 'wcal_add_notice' ) );
 			}
 			// 5.15.0
-			add_action( 'wp_login', array( &$this, 'wcal_populate_wc_session' ) );
+			add_action( 'wp_login', array( &$this, 'wcal_populate_wc_session' ), 10, 2 );
 			if ( '' === get_option( 'wcal_auto_login_users', '' ) ) {
-				add_filter( 'woocommerce_login_redirect', array( &$this, 'ts_redirect_login' ), 10, 1 );
+				add_filter( 'woocommerce_login_redirect', array( &$this, 'ts_redirect_login' ), 10, 2 );
 			}
 
 			// 5.20.0 - Deactivation and Tracking v2.
@@ -1629,14 +1629,9 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				return;
 			}
 
-			if ( get_transient( 'wcal_email_sent_id' ) !== false ) {
-				wcal_common::wcal_set_cart_session( 'email_sent_id', get_transient( 'wcal_email_sent_id' ) );
-				delete_transient( 'wcal_email_sent_id' );
-			}
-			if ( get_transient( 'wcal_abandoned_id' ) !== false ) {
-				wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', get_transient( 'wcal_abandoned_id' ) );
-				delete_transient( 'wcal_abandoned_id' );
-			}
+			// recovery-link state (cart id / sent-email id) is no longer copied from
+			// site-wide transients into whichever visitor's session happens to be active. It is stored
+			// only in the session of the visitor who clicked the link (see wcal_email_track_links()).
 
 			if ( isset( $_POST['country'] ) && '' !== $_POST['country'] ) { //phpcs:disable
 	                $wcap_is_country_restricted = wcal_common::wcal_is_country_restricted( $_POST['country'] );
@@ -2122,6 +2117,8 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$crypt_key               = '';
 				$user_id                 = 0;
 				$abandoned_id            = 0;
+				$sent_email              = '';
+				$email_sent_id           = 0;
 				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
 					$sent_email = str_replace( ' ', '+', sanitize_text_field( wp_unslash( $_GET['user_email'] ) ) ); // phpcs:ignore
 					$key_data   = $wpdb->get_results( // phpcs:ignore
@@ -2162,7 +2159,6 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$decode_coupon_code  = Wcal_Aes_Ctr::decrypt( $decrypt_coupon_code, $crypt_key, 256 );
 
 						wcal_common::wcal_set_cart_session( 'wcal_c', $decode_coupon_code ); // we need to set in session coz we directly apply coupon.
-						set_transient( 'wcal_c', $decode_coupon_code, 5 );
 					} else {
 						$decode_coupon_code = '';
 					}
@@ -2173,7 +2169,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						$email_sent_id     = substr( $link_decode, 0, $sent_email_id_pos );
 
 						wcal_common::wcal_set_cart_session( 'email_sent_id', $email_sent_id );
-						set_transient( 'wcal_email_sent_id', $email_sent_id, 5 );
+						wcal_common::wcal_persist_cart_session();
 
 						$get_ac_id_results = $wpdb->get_results( // phpcs:ignore
 							$wpdb->prepare(
@@ -2217,7 +2213,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					$url = substr( $link_decode, $url_pos );
 
 					wcal_common::wcal_set_cart_session( 'abandoned_cart_id_lite', $abandoned_id );
-					set_transient( 'wcal_abandoned_id', $abandoned_id, 5 );
+					wcal_common::wcal_persist_cart_session();
 
 					$get_user_results = array();
 					if ( $abandoned_id > 0 ) {
@@ -2241,6 +2237,22 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 						exit;
 					}
 				}
+
+				// The account that is about to be loaded / authenticated is read from the mutable
+				// `user_id` column of the cart row. Never trust that column on its own: the recovery
+				// e-mail was sent to $sent_email, so the account (or guest cart) must belong to that very
+				// address. This keeps the identity pinned to the original owner of the cart even if the
+				// row's user_id was rewritten later.
+				if ( ! self::wcal_recovery_identity_matches_email( $user_id, $sent_email ) ) {
+					wcal_common::wcal_clear_recovery_session();
+					if ( version_compare( $woocommerce->version, '3.0.0', '>=' ) ) {
+						wp_safe_redirect( get_permalink( wc_get_page_id( 'shop' ) ) );
+					} else {
+						wp_safe_redirect( get_permalink( woocommerce_get_page_id( 'shop' ) ) );
+					}
+					exit;
+				}
+
 				$user = wp_set_current_user( $user_id ); //phpcs:ignore
 				if ( $user_id >= '63000000' ) {
 					$results_guest = $wpdb->get_results( //phpcs:ignore
@@ -2285,8 +2297,10 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					} else {
 						wp_set_auth_cookie( $user_id, false, '', 'loggedout' ); // nosemgrep:audit.php.wp.security.auth-bypass.wp-set-auth-cookie
 						$my_temp = wc_load_persistent_cart( $user_login, $user );
-						set_transient( 'wcal_email_sent_id', $email_sent_id, 1800 );
-						set_transient( 'wcal_user_id', $user_id, 1800 );
+						// SECURITY FIX #1097: keep this in the visitor's own session, not in site-wide transients.
+						wcal_common::wcal_set_cart_session( 'wcal_email_sent_id', $email_sent_id );
+						wcal_common::wcal_set_cart_session( 'wcal_user_id', $user_id );
+						wcal_common::wcal_persist_cart_session();
 						$url = apply_filters( 'wcal_change_redirect_link', get_permalink( wc_get_page_id( 'myaccount' ) ) );
 					}
 				} else {
@@ -2365,29 +2379,87 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
+		 * Check that the account / guest cart a recovery link is about to load belongs to the e-mail
+		 * address the reminder was sent to.
+		 *
+		 * @param int    $user_id    User id read from the abandoned cart row (>= 63000000 for guests).
+		 * @param string $sent_email E-mail address the reminder was sent to (from the link).
+		 * @return bool
+		 * @since 6.9.1
+		 */
+		private static function wcal_recovery_identity_matches_email( $user_id, $sent_email ) {
+			global $wpdb;
+
+			$user_id    = (int) $user_id;
+			$sent_email = strtolower( trim( (string) $sent_email ) );
+
+			if ( $user_id <= 0 || '' === $sent_email ) {
+				return false;
+			}
+
+			$candidates = array();
+
+			if ( $user_id >= 63000000 ) {
+				$guest_email = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+					$wpdb->prepare(
+						'SELECT email_id FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite` WHERE id = %d', // phpcs:ignore
+						$user_id
+					)
+				);
+				$candidates[] = $guest_email;
+			} else {
+				$account = get_userdata( $user_id );
+				if ( ! $account ) {
+					return false;
+				}
+				// Reminders for registered users go to the billing e-mail when set, else the account e-mail.
+				$candidates[] = $account->user_email;
+				$candidates[] = get_user_meta( $user_id, 'billing_email', true );
+			}
+
+			foreach ( $candidates as $candidate ) {
+				$candidate = strtolower( trim( (string) $candidate ) );
+				if ( '' !== $candidate && hash_equals( $candidate, $sent_email ) ) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/**
 		 * Populate WC Session with values on user login.
 		 *
+		 * The values come from the visitor's own session only (never from site-wide storage) and are
+		 * discarded if the account that logs in is not the one the recovery link was issued for.
+		 *
+		 * @param string       $user_login Username.
+		 * @param WP_User|null $user       Logged in user.
 		 * @since 5.14.0
 		 */
-		public static function wcal_populate_wc_session() {
-			$email_sent_id = get_transient( 'wcal_email_sent_id' );
-			$user_id       = get_transient( 'wcal_user_id' );
+		public static function wcal_populate_wc_session( $user_login = '', $user = null ) {
+			$email_sent_id = wcal_common::wcal_get_cart_session( 'wcal_email_sent_id' );
+			$user_id       = wcal_common::wcal_get_cart_session( 'wcal_user_id' );
 			if ( $email_sent_id && $user_id && (int) $email_sent_id > 0 && (int) $user_id > 0 ) {
-				wcal_common::wcal_set_cart_session( 'wcal_email_sent_id', $email_sent_id );
-				wcal_common::wcal_set_cart_session( 'wcal_user_id', $user_id );
+				if ( $user instanceof WP_User && (int) $user->ID !== (int) $user_id ) {
+					wcal_common::wcal_unset_cart_session( 'wcal_email_sent_id' );
+					wcal_common::wcal_unset_cart_session( 'wcal_user_id' );
+				}
 			}
 		}
 
 		/**
 		 * Redirect on cart page after user logged in.
 		 *
-		 * @param string $url - URL user is currently on.
+		 * @param string       $url  - URL user is currently on.
+		 * @param WP_User|null $user - User that logged in.
 		 *
 		 * @since 5.16.0
 		 */
-		public static function ts_redirect_login( $url ) {
+		public static function ts_redirect_login( $url, $user = null ) {
 
-			if ( get_transient( 'wcal_email_sent_id' ) ) {
+			$email_sent_id = wcal_common::wcal_get_cart_session( 'wcal_email_sent_id' );
+			$user_id       = wcal_common::wcal_get_cart_session( 'wcal_user_id' );
+			if ( $email_sent_id && ( ! ( $user instanceof WP_User ) || ! $user_id || (int) $user->ID === (int) $user_id ) ) {
 				$redirect_url = wc_get_cart_url();
 				return $redirect_url;
 			}

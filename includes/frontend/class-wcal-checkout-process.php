@@ -119,6 +119,62 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 		}
 
 		/**
+		 * Whether the owner of an abandoned cart row may be changed to the given (logged in) user.
+		 *
+		 * Only a guest row (user_id >= 63000000) can be moved to a registered account, and only if that
+		 * account shares an e-mail address with the guest cart (or the order being placed).
+		 *
+		 * @param int      $cart_id         Abandoned cart id.
+		 * @param int      $current_user_id Logged in user id.
+		 * @param WC_Order $order           Order being placed.
+		 * @return bool
+		 * @since 6.9.1
+		 */
+		private function wcal_can_reassign_cart_owner( $cart_id, $current_user_id, $order ) {
+			global $wpdb;
+
+			$current_user_id = (int) $current_user_id;
+			$row_user_id     = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				$wpdb->prepare(
+					'SELECT user_id FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE id = %d', // phpcs:ignore
+					$cart_id
+				)
+			);
+
+			if ( $row_user_id === $current_user_id ) {
+				return true; // nothing would change.
+			}
+			if ( $row_user_id < 63000000 ) {
+				return false; // a registered owner is never replaced.
+			}
+
+			$guest_email = strtolower( trim( (string) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				$wpdb->prepare(
+					'SELECT email_id FROM `' . $wpdb->prefix . 'ac_guest_abandoned_cart_history_lite` WHERE id = %d', // phpcs:ignore
+					$row_user_id
+				)
+			) ) );
+			if ( '' === $guest_email ) {
+				return false;
+			}
+
+			$account    = get_userdata( $current_user_id );
+			$candidates = array( get_user_meta( $current_user_id, 'billing_email', true ) );
+			if ( $account ) {
+				$candidates[] = $account->user_email;
+			}
+			if ( $order instanceof WC_Order ) {
+				$candidates[] = $order->get_billing_email();
+			}
+			foreach ( $candidates as $candidate ) {
+				if ( '' !== $candidate && strtolower( trim( (string) $candidate ) ) === $guest_email ) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/**
 		 * Updates the Abandoned Cart History table as well as the
 		 * Email Sent History table to indicate the order has been
 		 * recovered
@@ -159,8 +215,13 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 
 				$current_user_id = get_current_user_id();
 
+				// SECURITY FIX #1097: the cart's owner (`user_id`) must never be re-assigned to an arbitrary
+				// logged-in user. It is only moved from a guest identity to a registered account when that
+				// account demonstrably belongs to the same person (same e-mail address).
 				if ( wcal_common::wcal_get_cart_session( 'user_id' ) != $current_user_id && 0 != $current_user_id ) { // phpcs:ignore
-					$update_details['user_id'] = $current_user_id;
+					if ( $this->wcal_can_reassign_cart_owner( $cart_id, $current_user_id, $order ) ) {
+						$update_details['user_id'] = $current_user_id;
+					}
 				}
 
 				// check if more than one reminder email has been sent.

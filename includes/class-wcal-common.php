@@ -381,7 +381,34 @@ class wcal_common { // phpcs:ignore
 	 * @since 7.11.0
 	 */
 	public static function wcal_unset_cart_session( $session_key ) {
+		if ( ! is_object( WC()->session ) ) {
+			return;
+		}
 		WC()->session->__unset( $session_key );
+	}
+
+	/**
+	 * Make sure the current visitor's WooCommerce session is stored and tied to the visitor's own
+	 * session cookie, so recovery-link state survives the redirect without any site-wide storage.
+	 *
+	 * @since 6.9.1
+	 */
+	public static function wcal_persist_cart_session() {
+		$session = WC()->session;
+		if ( is_object( $session ) && method_exists( $session, 'has_session' ) && method_exists( $session, 'set_customer_session_cookie' ) && ! $session->has_session() ) {
+			$session->set_customer_session_cookie( true );
+		}
+	}
+
+	/**
+	 * Remove recovery-link state from the current visitor's session.
+	 *
+	 * @since 6.9.1
+	 */
+	public static function wcal_clear_recovery_session() {
+		foreach ( array( 'email_sent_id', 'abandoned_cart_id_lite', 'wcal_recovered_cart', 'wcal_c', 'wcal_email_sent_id', 'wcal_user_id' ) as $key ) {
+			self::wcal_unset_cart_session( $key );
+		}
 	}
 
 	/**
