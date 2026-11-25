@@ -129,21 +129,29 @@ function ReminderTab( { config } ) {
 		{ key: 'email_id', label: config.contactLabel, render: ( row ) => (
 			<HoverCell>
 				{ ( hovered ) => (
-					<>
+					// The hover link is positioned below the address instead of taking a
+					// line of its own, so the address stays centred like the other columns.
+					<span style={ { position: 'relative', display: 'inline-block' } }>
 						{ row.email_id ?? '—' }
 						{ row.cart_id && ! row.recovered && (
-							<>
-								<br />
-								<a
-									href="#"
-									style={ { fontSize: '12px', visibility: hovered ? 'visible' : 'hidden' } }
-									onClick={ ( e ) => { e.preventDefault(); setCartPopup( row ); } }
-								>
-									{ __( 'Abandoned', 'woocommerce-abandoned-cart' ) }
-								</a>
-							</>
+							<a
+								href="#"
+								style={ {
+									position:   'absolute',
+									top:        '100%',
+									left:       0,
+									marginTop:  '2px',
+									fontSize:   '12px',
+									lineHeight: 1.4,
+									whiteSpace: 'nowrap',
+									visibility: hovered ? 'visible' : 'hidden',
+								} }
+								onClick={ ( e ) => { e.preventDefault(); setCartPopup( row ); } }
+							>
+								{ __( 'Abandoned', 'woocommerce-abandoned-cart' ) }
+							</a>
 						) }
-					</>
+					</span>
 				) }
 			</HoverCell>
 		) },
