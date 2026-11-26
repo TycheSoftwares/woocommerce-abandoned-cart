@@ -132,6 +132,7 @@ if ( is_multisite() ) { // Multisite.
 
 delete_option( 'woocommerce_ac_email_body' );
 delete_option( 'ac_lite_cart_abandoned_time' );
+delete_option( 'wcal_reminder_job_interval' );
 delete_option( 'ac_lite_email_admin_on_recovery' );
 delete_option( 'wcap_email_admin_on_abandonment' );
 delete_option( 'ac_lite_settings_status' );

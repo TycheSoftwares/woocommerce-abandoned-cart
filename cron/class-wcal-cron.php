@@ -720,13 +720,6 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 
 			$order_date_str = strtotime( $order_date );
 
-			// Retreive the cart status.
-			$cart_ignored_status = $wpdb->get_col( // phpcs:ignore
-				$wpdb->prepare(
-					'SELECT cart_ignored FROM `' . $wpdb->prefix . 'ac_abandoned_cart_history_lite` WHERE id = %d', // phpcs:ignore
-					$cart_id
-				)
-			);
 			if ( strtotime( $order_date_time ) > $wcal_cart_time ) {
 				// Mark the cart as ignored.
 				$wpdb->update( // phpcs:ignore
@@ -771,31 +764,15 @@ if ( ! class_exists( 'Wcal_Cron' ) ) {
 							}
 						} catch ( Exception $e ) { // phpcs:ignore
 						}
-					} else { // Since there's an order placed today for the same user, mark this cart as ignored.
-						$wpdb->update( // phpcs:ignore
-							$wpdb->prefix . 'ac_abandoned_cart_history_lite',
-							array(
-								'cart_ignored' => '1',
-							),
-							array(
-								'id' => $cart_id,
-							)
-						);
+						return 1;
 					}
-				} elseif ( in_array( $order_status, array( 'wc-pending', 'wc-failed' ), true ) ) {
-					return 0; // Return 0 as we want to send reminders for unpaid order status.
-				} elseif ( '1' !== $cart_ignored_status[0] ) {
-					$wpdb->update( // phpcs:ignore
-						$wpdb->prefix . 'ac_abandoned_cart_history_lite',
-						array(
-							'cart_ignored' => '1',
-						),
-						array(
-							'id' => $cart_id,
-						)
-					);
 				}
-				return 1;
+
+				// The order was placed earlier today, before this cart was abandoned, so it
+				// isn't the order for this cart. Ignoring the cart here hid every cart a
+				// customer abandoned on the same day as an earlier order, and no reminder
+				// was sent for it.
+				return 0;
 			} elseif ( 'wc-pending' === $order_status || 'wc-failed' === $order_status ) { // Send the reminders.
 				return 0;
 			}

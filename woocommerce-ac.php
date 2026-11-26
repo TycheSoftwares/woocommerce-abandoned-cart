@@ -371,12 +371,28 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		 * Add Recurring Scheduled Action.
 		 */
 		public static function wcal_add_scheduled_action() {
-			if ( function_exists( 'as_next_scheduled_action' ) ) {
-				if ( false === as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) ) {
-					wp_clear_scheduled_hook( 'woocommerce_ac_send_email_action' ); // Remove the cron job is present.
-					as_schedule_recurring_action( time() + 60, 900, 'woocommerce_ac_send_email_action' ); // Schedule recurring action.
-				}
+			if ( ! function_exists( 'as_next_scheduled_action' ) ) {
+				return;
 			}
+
+			/**
+			 * How often, in seconds, the reminder job runs. Default 900 (15 minutes), minimum 60.
+			 *
+			 * @param int $interval Interval in seconds.
+			 * @since 6.9.1
+			 */
+			$interval           = max( 60, (int) apply_filters( 'wcal_reminder_job_interval', 900 ) );
+			$scheduled_interval = (int) get_option( 'wcal_reminder_job_interval', 900 );
+
+			if ( false !== as_next_scheduled_action( 'woocommerce_ac_send_email_action' ) && $scheduled_interval === $interval ) {
+				return;
+			}
+
+			// Not scheduled yet, or the interval changed: (re)schedule the recurring job.
+			as_unschedule_all_actions( 'woocommerce_ac_send_email_action' );
+			wp_clear_scheduled_hook( 'woocommerce_ac_send_email_action' ); // Remove the cron job is present.
+			as_schedule_recurring_action( time() + 60, $interval, 'woocommerce_ac_send_email_action' );
+			update_option( 'wcal_reminder_job_interval', $interval );
 		}
 
 		/**
@@ -1674,6 +1690,15 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 					}
 				}
 			} else {
+				// A registered customer who opened a recovery link with auto login disabled
+				// shops logged out until they sign in. Their cart is already tracked under
+				// their account, so it isn't tracked again as a visitor cart. A visitor cart
+				// here would also replace the recovered cart's ID in the session, and the
+				// order would then mark the visitor cart as recovered instead.
+				if ( wcal_common::wcal_get_cart_session( 'wcal_email_sent_id' ) ) {
+					return;
+				}
+
 				// start here guest user.
 				$user_id = wcal_common::wcal_get_cart_session( 'user_id' );
 
@@ -2003,6 +2028,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$crypt_key               = '';
 				$user_id                 = 0;
 				$abandoned_id            = 0;
+				$logged_in_user_id       = get_current_user_id(); // Before the link sets the current user.
 				$sent_email              = '';
 				$email_sent_id           = 0;
 				if ( isset( $_GET['user_email'] ) && '' !== $_GET['user_email'] ) { // phpcs:ignore
@@ -2180,6 +2206,12 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 							echo esc_html( $sign_in->get_error_message() );
 							exit;
 						}
+					} elseif ( $logged_in_user_id === $user_id ) {
+						// Already logged in to the cart's account: there's nothing to log in to,
+						// so the shopper goes straight to the link. Logging them out here made
+						// WooCommerce delete their session on the next page, and with it the
+						// recovered cart's ID, so the order never marked the cart as recovered.
+						$my_temp = wc_load_persistent_cart( $user_login, $user );
 					} else {
 						wp_set_auth_cookie( $user_id, false, '', 'loggedout' ); // nosemgrep:audit.php.wp.security.auth-bypass.wp-set-auth-cookie
 						$my_temp = wc_load_persistent_cart( $user_login, $user );
