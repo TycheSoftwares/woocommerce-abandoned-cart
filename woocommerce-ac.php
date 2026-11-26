@@ -292,7 +292,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 			include_once 'includes/frontend/class-wcal-frontend.php';
 
 			add_filter( 'cron_schedules', array( __CLASS__, 'wcal_add_cron_schedule' ) ); //phpcs:ignore
-			add_action( 'woocommerce_ac_delete_coupon_action', array( __CLASS__, 'wcal_delete_expired_used_coupon_code' ) );
+			add_action( 'woocommerce_ac_delete_coupon_action', array( __CLASS__, 'wcal_cron_delete_expired_used_coupon_code' ) );
 			add_action( 'wp_ajax_wcal_delete_expired_used_coupon_code', array( __CLASS__, 'wcal_delete_expired_used_coupon_code' ) );
 
 			add_action( 'woocommerce_coupon_error', array( 'wcal_common', 'wcal_capture_coupon_error' ), 15, 2 );
@@ -2903,21 +2903,53 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 		}
 
 		/**
-		 * It will delete the expired and used coupon codes.
+		 * It will delete the expired and used coupon codes (manual Delete button - AJAX).
+		 * Requires a logged-in user with the capability and a valid nonce.
 		 *
 		 * @hook wp_ajax_wcal_delete_expired_used_coupon_code
 		 * @since: 5.11.0
 		 */
 		public static function wcal_delete_expired_used_coupon_code() {
 
-			global $wpdb;
 			if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['ajax_nonce'] ) || ( isset( $_POST['ajax_nonce'] ) && ! wp_verify_nonce( sanitize_key( $_POST['ajax_nonce'] ), 'delete_expired_used_coupon_code' ) ) ) {
 				wp_send_json_error( 'Security check failed' );
 			}
 
+			$coupon_count = self::wcal_delete_expired_used_coupons();
+
+			// translators: %1$s: Coupons Deleted, %2$s: Deleted coupons count'.
+			wp_send_json_success( sprintf( __( '%1$s: %2$d', 'woo-cart-abandonment-recovery' ), 'Coupons Deleted', $coupon_count ) );
+		}
+
+		/**
+		 * Scheduled (cron) callback to delete the expired and used coupon codes.
+		 * Cron runs without a logged-in user or an AJAX nonce, so the AJAX security checks
+		 * are not applicable here. The cron action is only registered by the plugin itself.
+		 *
+		 * @hook woocommerce_ac_delete_coupon_action
+		 * @since 6.10.0
+		 */
+		public static function wcal_cron_delete_expired_used_coupon_code() {
+			// The event can outlive the setting, so make sure it is still enabled.
+			if ( '' === get_option( 'wcal_delete_coupon_data', '' ) ) {
+				return;
+			}
+			self::wcal_delete_expired_used_coupons();
+		}
+
+		/**
+		 * Deletes the expired and used coupons created by the plugin. No security checks here,
+		 * callers are responsible for authorization.
+		 *
+		 * @return int Number of coupons deleted.
+		 * @since 6.10.0
+		 */
+		public static function wcal_delete_expired_used_coupons() {
+			global $wpdb;
+
 			$expired_coupons = self::wcal_fetch_expired_coupons();
 			$used_coupons    = self::wcal_fetch_used_coupons();
-			$coupons         = array_unique( array_merge( $expired_coupons, $used_coupons ) );
+			$coupons         = array_map( 'absint', array_unique( array_merge( $expired_coupons, $used_coupons ) ) );
 			$coupon_count    = count( $coupons );
 
 			if ( $coupon_count ) {
@@ -2926,8 +2958,7 @@ if ( ! class_exists( 'woocommerce_abandon_cart_lite' ) ) {
 				$wpdb->query( "DELETE FROM {$wpdb->posts} WHERE ID IN(" . $coupons_ids . ')' );//phpcs:ignore
 			}
 
-			// translators: %1$s: Coupons Deleted, %2$s: Deleted coupons count'.
-			wp_send_json_success( sprintf( __( '%1$s: %2$d', 'woo-cart-abandonment-recovery' ), 'Coupons Deleted', $coupon_count ) );
+			return $coupon_count;
 		}
 
 		/**
