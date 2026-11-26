@@ -66,6 +66,13 @@ if ( ! class_exists( 'Wcal_Checkout_Process' ) ) {
 			if ( '' != wcal_common::wcal_get_cart_session( 'email_sent_id' ) ) { // phpcs:ignore
 				wcal_common::wcal_unset_cart_session( 'email_sent_id' );
 			}
+
+			// The recovery link is used up once the order is placed. Left in the session,
+			// it would keep sending the customer to the cart page every time they log in.
+			if ( '' != wcal_common::wcal_get_cart_session( 'wcal_email_sent_id' ) ) { // phpcs:ignore
+				wcal_common::wcal_unset_cart_session( 'wcal_email_sent_id' );
+				wcal_common::wcal_unset_cart_session( 'wcal_user_id' );
+			}
 		}
 
 		/**
